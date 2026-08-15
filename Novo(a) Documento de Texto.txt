@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu 3D Labs — Peças 3D Personalizadas e Assistência Técnica</title>
+<meta name="description" content="Impressão 3D personalizada em Nilópolis/RJ. Miniaturas, chaveiros, peças religiosas, decoração e assistência técnica Creality.">
+<meta name="author" content="Meu 3D Labs">
+<meta name="keywords" content="impressão 3D, peças 3D personalizadas, miniaturas 3D, chaveiros 3D, assistência técnica Creality, Nilópolis, Rio de Janeiro">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Meu 3D Labs — Peças 3D Personalizadas e Assistência Técnica">
+<meta property="og:description" content="Impressão 3D personalizada em Nilópolis/RJ. Miniaturas, chaveiros, peças religiosas, decoração e assistência técnica Creality.">
+<meta property="og:image" content="https://i.imgur.com/FpxmkCj.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Meu 3D Labs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Meu 3D Labs — Peças 3D Personalizadas">
+<meta name="twitter:description" content="Impressão 3D personalizada em Nilópolis/RJ. Miniaturas, chaveiros, peças religiosas e assistência técnica Creality.">
+<meta name="twitter:image" content="https://i.imgur.com/FpxmkCj.png">
+<link rel="icon" href="https://i.imgur.com/LHXYdjB.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"LocalBusiness","name":"Meu 3D Labs","description":"Impressão 3D personalizada e assistência técnica Creality em Nilópolis/RJ.","address":{"@type":"PostalAddress","addressLocality":"Nilópolis","addressRegion":"RJ","addressCountry":"BR"},"telephone":"+5521966594803","aggregateRating":{"@type":"AggregateRating","ratingValue":"5.0","reviewCount":"19"},"sameAs":["https://instagram.com/meu3dlabs","https://www.google.com/maps/place/Meu+3D+Labs/@-22.8065473,-43.4186081,17z"]}
+</script>
+<style>
+:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);--shadow-lg:0 16px 48px rgba(15,30,61,.12);}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;scroll-padding-top:90px;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1120px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}.btn-outline{background:transparent;border:2px solid var(--orange);color:var(--orange);}.btn-outline:hover{background:var(--orange);color:#fff;}.btn-wa{background:#25d366;color:#fff;}.btn-wa:hover{background:#1fb959;}section{padding:70px 0;}h2{font-size:32px;color:var(--navy);margin-bottom:12px;}.subtitle{color:var(--gray);max-width:640px;margin-bottom:36px;}
+*:focus-visible{outline:2px solid var(--orange);outline-offset:2px;border-radius:4px;}
+header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}nav{display:flex;gap:24px;flex-wrap:wrap;}nav a{font-size:15px;opacity:.9;transition:.2s;position:relative;padding:4px 0;}nav a:hover{opacity:1;color:var(--orange-2);}nav a.active{opacity:1;color:var(--orange-2);}nav a.active::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:var(--orange);border-radius:2px;}.header-cta{display:flex;gap:10px;align-items:center;}
+.menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px;flex-direction:column;gap:5px;z-index:101;}.menu-toggle span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:.3s;}.menu-toggle.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}.menu-toggle.open span:nth-child(2){opacity:0;}.menu-toggle.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+.mobile-nav{display:none;position:fixed;top:0;right:-100%;width:75%;max-width:320px;height:100vh;background:var(--navy);padding:80px 24px 24px;flex-direction:column;gap:16px;z-index:99;transition:right .3s ease;box-shadow:-8px 0 30px rgba(0,0,0,.3);}.mobile-nav.open{right:0;display:flex;}.mobile-nav a{color:#fff;font-size:18px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.1);}.mobile-nav a:hover{color:var(--orange-2);}.mobile-nav-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:98;}.mobile-nav-overlay.open{display:block;}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:90px 0;}.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;}.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.15;margin-bottom:18px;font-weight:800;letter-spacing:-1px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:18px;color:rgba(255,255,255,1);margin-bottom:30px;max-width:520px;}.hero-actions{display:flex;gap:14px;flex-wrap:wrap;}.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:8px 16px;border-radius:30px;font-size:14px;margin-bottom:20px;}.hero-img{border-radius:16px;overflow:hidden;border:2px solid rgba(255,255,255,.15);box-shadow:0 20px 60px rgba(0,0,0,.3);background:rgba(0,0,0,.2);}.hero-img img{width:100%;height:auto;display:block;}
+.fade-in{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease;}.fade-in.visible{opacity:1;transform:translateY(0);}
+.why-section{background:var(--white);}.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}.why-card{text-align:center;padding:30px 20px;border-radius:14px;border:1px solid var(--border);transition:.25s;background:var(--white);box-shadow:var(--shadow-sm);}.why-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--orange);}.why-icon{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(135deg,#eef3fb,#dbe4f0);}.why-card h3{color:var(--navy);font-size:17px;margin-bottom:8px;font-weight:700;}.why-card p{color:var(--gray);font-size:14px;line-height:1.5;}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}.service-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:30px;transition:.25s;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;}.service-card:hover{box-shadow:var(--shadow-md);transform:translateY(-4px);}.service-icon{font-size:38px;margin-bottom:16px;}.service-card h3{color:var(--navy);font-size:18px;margin-bottom:10px;font-weight:700;}.service-card p{color:var(--gray);font-size:14px;flex:1;}.service-card ul{list-style:none;margin-top:14px;}.service-card li{padding:6px 0;font-size:14px;color:var(--gray);}.service-card li::before{content:"✓ ";color:var(--orange);font-weight:700;}
+.process-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;position:relative;}.step{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:26px;position:relative;box-shadow:var(--shadow-sm);}.step-num{width:40px;height:40px;background:var(--navy);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-bottom:14px;position:relative;z-index:2;}.step h4{color:var(--navy);margin-bottom:8px;font-weight:700;}.step p{color:var(--gray);font-size:14px;}.step:not(:last-child)::after{content:'';position:absolute;top:46px;right:-24px;width:24px;height:2px;background:repeating-linear-gradient(90deg,var(--border) 0,var(--border) 4px,transparent 4px,transparent 8px);z-index:1;}
+.portfolio{background:var(--light);}.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch;}.cat-block{display:flex;flex-direction:column;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);transition:.25s;min-height:100%;}.cat-block:hover{box-shadow:var(--shadow-md);}.cat-header{display:flex;align-items:center;gap:8px;padding:14px 16px 8px;}.cat-header h3{font-size:16px;color:var(--navy);font-weight:700;}.cat-count{background:var(--navy);color:#fff;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;}.carousel-wrap{position:relative;overflow:hidden;flex:1;display:flex;flex-direction:column;}.carousel-track{display:flex;width:100%;transition:transform .4s ease;flex:1;}.carousel-slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;background:#f0f2f7;aspect-ratio:1/1;}.carousel-slide img{width:100%;height:100%;object-fit:contain;display:block;}.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;z-index:5;font-size:18px;color:var(--navy);box-shadow:var(--shadow-sm);}.carousel-btn:hover{background:var(--navy);color:#fff;}.carousel-btn.prev{left:8px;}.carousel-btn.next{right:8px;}.carousel-dots{display:flex;justify-content:center;gap:5px;padding:8px 0;flex-wrap:wrap;min-height:23px;}.dot{width:7px;height:7px;border-radius:50%;background:#cbd2dc;cursor:pointer;transition:.2s;}.dot.active{background:var(--orange);}.cat-desc{padding:8px 16px 14px;color:var(--gray);font-size:13px;text-align:center;line-height:1.4;margin-top:auto;}
+.testimonials{background:var(--white);}.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:stretch;}.test-col{text-align:center;display:flex;flex-direction:column;}.col-title{font-size:18px;color:var(--navy);margin-bottom:16px;font-weight:700;}.test-badge-row{display:flex;justify-content:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}.test-badge{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:10px;border:1px solid var(--border);background:var(--light);transition:.25s;}.test-badge:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);}.test-badge .stars{color:#f5a623;font-size:16px;}.test-badge .rating-num{font-size:18px;font-weight:700;color:var(--navy);}.test-badge .rating-label{font-size:12px;color:var(--gray);}.ig-badge{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:10px;border:1px solid var(--border);background:var(--light);transition:.25s;}.ig-badge:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);}.ig-badge img{width:24px;height:24px;border-radius:6px;object-fit:cover;}.ig-badge span{font-weight:600;color:var(--navy);}.test-btn-row{display:flex;justify-content:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}.test-btn-row a{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-weight:600;font-size:14px;transition:.25s;}.google-btn{background:#fff;border:2px solid var(--border);color:var(--navy);}.google-btn:hover{border-color:var(--navy);background:var(--light);}.ig-btn{background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);color:#fff;}.ig-btn:hover{opacity:.9;}.ig-btn img{width:16px;height:16px;border-radius:4px;object-fit:cover;}.map-embed{border-radius:12px;overflow:hidden;border:1px solid var(--border);height:400px;display:flex;}.map-embed iframe{width:100%;height:100%;border:0;display:block;filter:grayscale(.3) contrast(1.1);}.stories-carousel{position:relative;max-width:300px;margin:0 auto;overflow:hidden;border-radius:14px;height:400px;}.stories-track{display:flex;width:100%;height:100%;transition:transform .4s ease;}.stories-slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;background:#f0f2f7;height:100%;}.stories-slide img{width:100%;height:100%;object-fit:contain;display:block;}.stories-btn{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.95);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;z-index:5;font-size:20px;color:var(--navy);box-shadow:var(--shadow-sm);}.stories-btn:hover{background:var(--navy);color:#fff;}.stories-btn.prev{left:8px;}.stories-btn.next{right:8px;}.stories-dots{display:flex;justify-content:center;gap:5px;padding:10px 0;flex-wrap:wrap;}.stories-counter{text-align:center;color:var(--gray);font-size:13px;margin-top:4px;}
+.faq-section{background:var(--light);}.faq-list{max-width:760px;margin:0 auto;}.faq-item{background:var(--white);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;transition:.25s;box-shadow:var(--shadow-sm);}.faq-item:hover{border-color:var(--orange);}.faq-q{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;cursor:pointer;font-weight:600;color:var(--navy);font-size:16px;user-select:none;}.faq-q::after{content:'+';font-size:24px;color:var(--orange);transition:transform .3s;flex-shrink:0;margin-left:12px;}.faq-item.open .faq-q::after{transform:rotate(45deg);}.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;padding:0 22px;}.faq-item.open .faq-a{max-height:400px;padding:0 22px 18px;}.faq-a p{color:var(--gray);font-size:15px;line-height:1.6;}.faq-a p+p{margin-top:10px;}.faq-a strong{color:var(--navy);}
+.contact{background:var(--navy);color:#fff;}.contact h2{color:#fff;}.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}.contact-info p{opacity:1;margin-bottom:10px;}.contact-info .wa-link{display:inline-flex;align-items:center;gap:10px;background:#25d366;color:#fff;padding:13px 24px;border-radius:8px;font-weight:600;margin-top:14px;}.form-group{margin-bottom:16px;}.form-group label{display:block;font-size:14px;margin-bottom:6px;opacity:1;}.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font-size:15px;font-family:inherit;transition:.2s;}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--orange);background:rgba(255,255,255,.12);outline:none;}.form-group input.error,.form-group textarea.error{border-color:#ff6b6b;background:rgba(255,107,107,.08);}.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,.5);}.form-group select option{color:#1c2430;background:#fff;}.form-group textarea{resize:vertical;min-height:110px;}.form-error-msg{display:none;color:#ff8a8a;font-size:12px;margin-top:4px;}.form-error-msg.show{display:block;}.form-note{font-size:13px;opacity:.7;margin-top:10px;}
+footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-size:14px;}.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:40px;margin-bottom:36px;}.footer-col h4{color:#fff;font-size:16px;font-weight:700;margin-bottom:16px;}.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px;}.footer-logo img{height:36px;width:auto;display:block;}.footer-logo span{color:var(--orange-2);font-weight:700;font-size:18px;}.footer-logo span:first-child{color:#fff;}.footer-tagline{color:rgba(255,255,255,.6);font-size:13px;line-height:1.6;max-width:280px;}.footer-links-col{display:flex;flex-direction:column;gap:10px;}.footer-links-col a{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.7);transition:.2s;font-size:14px;}.footer-links-col a:hover{color:#fff;}.footer-links-col svg{width:16px;height:16px;flex-shrink:0;}.footer-hours li{list-style:none;padding:4px 0;color:rgba(255,255,255,.6);font-size:13px;}.footer-hours li strong{color:rgba(255,255,255,.9);}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}
+.wa-float{position:fixed;bottom:24px;right:24px;width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:200;transition:.25s;animation:waPulse 2.5s ease-in-out infinite;}.wa-float:hover{transform:scale(1.12);animation:none;}.wa-float svg{width:32px;height:32px;fill:#fff;}@keyframes waPulse{0%,100%{box-shadow:0 6px 20px rgba(37,211,102,.4);}50%{box-shadow:0 6px 20px rgba(37,211,102,.4),0 0 0 12px rgba(37,211,102,.12);}}
+.top-float{position:fixed;bottom:24px;left:24px;width:48px;height:48px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);z-index:200;transition:.25s;opacity:0;pointer-events:none;}.top-float.show{opacity:1;pointer-events:auto;}.top-float:hover{background:var(--orange);transform:translateY(-3px);}.top-float svg{width:22px;height:22px;fill:#fff;}
+@media(max-width:900px){.cat-grid{grid-template-columns:repeat(2,1fr);}.why-grid{grid-template-columns:repeat(2,1fr);}.services-grid{grid-template-columns:1fr;}.footer-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){.test-grid{grid-template-columns:1fr;}.step:not(:last-child)::after{display:none;}}
+@media(max-width:620px){.cat-grid{grid-template-columns:1fr;}.why-grid{grid-template-columns:1fr;}.hero-grid,.contact-grid{grid-template-columns:1fr;}.hero h1{font-size:32px;}nav{display:none;}.menu-toggle{display:flex;}.header-cta .btn-outline{display:none;}.footer-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<div class="container header-inner">
+<div class="logo">
+<img src="https://i.imgur.com/LHXYdjB.png" alt="Logo Meu 3D Labs">
+<span class="logo-text">Meu<span>3D</span>Labs</span>
+</div>
+<nav>
+<a href="#servicos">Serviços</a><a href="#processo">Como Funciona</a><a href="#portfolio">Portfólio</a><a href="#depoimentos">Depoimentos</a><a href="#faq">FAQ</a><a href="#contato">Contato</a>
+</nav>
+<div class="header-cta">
+<button class="menu-toggle" id="menuToggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+<a class="btn btn-wa" href="#contato">Pedir Orçamento</a>
+</div>
+</div>
+</header>
+
+<div class="mobile-nav-overlay" id="navOverlay"></div>
+<div class="mobile-nav" id="mobileNav">
+<a href="#servicos">Serviços</a>
+<a href="#processo">Como Funciona</a>
+<a href="#portfolio">Portfólio</a>
+<a href="#depoimentos">Depoimentos</a>
+<a href="#faq">FAQ</a>
+<a href="#contato">Contato</a>
+<a class="btn btn-wa" href="#contato" style="margin-top:8px;">Pedir Orçamento</a>
+</div>
+
+<section class="hero">
+<div class="container hero-grid">
+<div>
+<span class="hero-badge">📍 Nilópolis / RJ · Atendimento online</span>
+<h1>Peças 3D <span>personalizadas</span> com qualidade e precisão</h1>
+<p>Do projeto à peça pronta: miniaturas, decorações, chaveiros, itens religiosos e soluções sob medida — com design exclusivo e acabamento profissional.</p>
+<div class="hero-actions">
+<a class="btn" href="#contato">Quero meu orçamento</a>
+<a class="btn btn-outline" href="#portfolio">Ver nosso trabalho</a>
+</div>
+</div>
+<div class="hero-img">
+<img src="https://i.imgur.com/UOJQWFj.jpeg" alt="Miniatura 3D personalizada de casal abraçado com base gravada" fetchpriority="high">
+</div>
+</div>
+</section>
+
+<section class="why-section fade-in" id="porque">
+<div class="container">
+<h2>Por que escolher a Meu 3D Labs?</h2>
+<p class="subtitle">Mais que impressão 3D — criamos soluções personalizadas com atendimento de verdade.</p>
+<div class="why-grid">
+<div class="why-card"><div class="why-icon">🎯</div><h3>Design exclusivo</h3><p>Cada peça é projetada do zero, feita sob medida para você. Nada de modelos prontos — tudo personalizado.</p></div>
+<div class="why-card"><div class="why-icon">💬</div><h3>Atendimento direto</h3><p>Você fala direto com quem produz. Sem intermediários, sem burocracia — do pedido à entrega.</p></div>
+<div class="why-card"><div class="why-icon">⚡</div><h3>Orçamento ágil</h3><p>Resposta rápida pelo WhatsApp. Você manda a ideia e recebe o orçamento sem demora.</p></div>
+<div class="why-card"><div class="why-icon">🛡️</div><h3>Qualidade garantida</h3><p>Materiais selecionados e acabamento profissional. Se precisar de ajuste, a gente resolve.</p></div>
+</div>
+</div>
+</section>
+
+<section id="servicos" class="fade-in">
+<div class="container">
+<h2>Nossos serviços</h2>
+<p class="subtitle">Soluções práticas e confiáveis em manufatura aditiva, do projeto à assistência.</p>
+<div class="services-grid">
+<div class="service-card">
+<div class="service-icon">🖨️</div>
+<h3>Peças 3D Personalizadas</h3>
+<p>Criamos peças inovadoras e de design exclusivo, feitas para atender exatamente o que você precisa.</p>
+<ul><li>Miniaturas de pessoas e pets</li><li>Chaveiros e itens decorativos</li><li>Peças religiosas e devocionais</li><li>Carimbos e suportes utilitários</li><li>Diversos materiais e acabamentos</li></ul>
+</div>
+<div class="service-card">
+<div class="service-icon">🔧</div>
+<h3>Assistência Técnica Creality</h3>
+<p>Suporte especializado para manter sua impressora 3D Creality funcionando com qualidade.</p>
+<ul><li>Manutenção preventiva e corretiva</li><li>Calibração e ajustes de impressão</li><li>Orientação e suporte ao usuário</li><li>Atendimento direcionado e acolhedor</li></ul>
+</div>
+<div class="service-card">
+<div class="service-icon">🎥</div>
+<h3>Consultoria 3D em Vídeo</h3>
+<p>Atendimento ao vivo por videochamada para quem está começando ou precisa de ajuda prática com impressão 3D.</p>
+<ul><li>Configuração de fatiador</li><li>Ajustes de temperatura e fluxo</li><li>Calibração de mesa e nivelamento</li><li>Resolução de falhas de impressão</li><li>Orientação para iniciantes</li><li>Otimização de tempo e material</li></ul>
+</div>
+</div>
+</div>
+</section>
+
+<section id="processo" class="fade-in">
+<div class="container">
+<h2>Como funciona</h2>
+<p class="subtitle">Simples e transparente, do primeiro contato à entrega da sua peça.</p>
+<div class="process-grid">
+<div class="step"><div class="step-num">1</div><h4>Fale conosco</h4><p>Envie sua ideia ou foto de referência pelo WhatsApp ou formulário.</p></div>
+<div class="step"><div class="step-num">2</div><h4>Receba o orçamento</h4><p>Analisamos e retornamos com prazo e valor em tempo ágil.</p></div>
+<div class="step"><div class="step-num">3</div><h4>Produzimos</h4><p>Imprimimos sua peça com qualidade e acabamento profissional.</p></div>
+<div class="step"><div class="step-num">4</div><h4>Receba sua peça</h4><p>Entrega combinada, com suporte caso precise de ajustes.</p></div>
+</div>
+</div>
+</section>
+
+<section class="portfolio fade-in" id="portfolio">
+<div class="container">
+<h2>Nosso trabalho</h2>
+<p class="subtitle">Navegue pelas categorias usando as setas. Cada peça é única e feita sob medida.</p>
+<div class="cat-grid">
+<div class="cat-block">
+<div class="cat-header"><h3>Personalizados</h3><span class="cat-count">10</span></div>
+<div class="carousel-wrap"><button class="carousel-btn prev" onclick="mover(this,-1)" aria-label="Anterior">‹</button>
+<div class="carousel-track" data-swipe>
+<div class="carousel-slide"><img src="https://i.imgur.com/l5PnUr0.jpeg" alt="Miniatura 3D de peça personalizada" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/NBbnZuj.jpeg" alt="Peça 3D personalizada em detail" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/M2eihl4.jpeg" alt="Medalha 3D personalizada" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/M9B7rdB.jpeg" alt="Figura 3D personalizada" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/O5uz7Zh.jpeg" alt="Miniatura 3D de piloto" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/oxgIttg.jpeg" alt="Miniatura 3D de pai e filho abraçados" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/UQuk9SJ.jpeg" alt="Miniatura 3D de surfista" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/Lsy8lqW.jpeg" alt="Miniatura 3D de noiva" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/qi66inZ.jpeg" alt="Miniatura 3D de família com pets" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/NPGjZJQ.jpeg" alt="Miniatura 3D bobblehead com cachorro" loading="lazy"></div>
+</div>
+<button class="carousel-btn next" onclick="mover(this,1)" aria-label="Próximo">›</button></div>
+<div class="carousel-dots"></div>
+<p class="cat-desc">Miniaturas e figuras exclusivas — cada projeto é único.</p>
+</div>
+<div class="cat-block">
+<div class="cat-header"><h3>Religiosos</h3><span class="cat-count">7</span></div>
+<div class="carousel-wrap"><button class="carousel-btn prev" onclick="mover(this,-1)" aria-label="Anterior">‹</button>
+<div class="carousel-track" data-swipe>
+<div class="carousel-slide"><img src="https://i.imgur.com/40R12po.jpeg" alt="Estátua 3D de Nossa Senhora" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/lbKOTZR.jpeg" alt="Peça religiosa 3D em PLA" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/WxHDM1g.jpeg" alt="Figura religiosa 3D personalizada" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/c53oNB6.jpeg" alt="Item devocional 3D impresso" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/ZKK0v89.jpeg" alt="Peça religiosa 3D com acabamento fosco" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/AxGrKy7.jpeg" alt="Figura devocional 3D detalhada" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/PNBJQue.jpeg" alt="Santinhas 3D impressas em PLA" loading="lazy"></div>
+</div>
+<button class="carousel-btn next" onclick="mover(this,1)" aria-label="Próximo">›</button></div>
+<div class="carousel-dots"></div>
+<p class="cat-desc">Itens devocionais com acabamento cuidado e detalhes fiéis.</p>
+</div>
+<div class="cat-block">
+<div class="cat-header"><h3>Decorações</h3><span class="cat-count">3</span></div>
+<div class="carousel-wrap"><button class="carousel-btn prev" onclick="mover(this,-1)" aria-label="Anterior">‹</button>
+<div class="carousel-track" data-swipe>
+<div class="carousel-slide"><img src="https://i.imgur.com/yMyhnlK.jpeg" alt="Elefantes decorativos 3D em filamento colorido" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/VJTzfSu.jpeg" alt="Peça decorativa 3D para ambiente" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/FX5YP6h.jpeg" alt="Item decorativo 3D abstrato" loading="lazy"></div>
+</div>
+<button class="carousel-btn next" onclick="mover(this,1)" aria-label="Próximo">›</button></div>
+<div class="carousel-dots"></div>
+<p class="cat-desc">Peças decorativas com design exclusivo e acabamento fosco.</p>
+</div>
+<div class="cat-block">
+<div class="cat-header"><h3>Chaveiros</h3><span class="cat-count">3</span></div>
+<div class="carousel-wrap"><button class="carousel-btn prev" onclick="mover(this,-1)" aria-label="Anterior">‹</button>
+<div class="carousel-track" data-swipe>
+<div class="carousel-slide"><img src="https://i.imgur.com/ZpmC5lN.jpeg" alt="Chaveiro 3D com letra D em vermelho" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/srWTORJ.jpeg" alt="Chaveiro 3D com letra R" loading="lazy"></div>
+<div class="carousel-slide"><img src="https://i.imgur.com/2IBZvLf.jpeg" alt="Chaveiro 3D personalizado com nome" loading="lazy"></div>
+</div>
+<button class="carousel-btn next" onclick="mover(this,1)" aria-label="Próximo">›</button></div>
+<div class="carousel-dots"></div>
+<p class="cat-desc">Chaveiros com letras, nomes e designs exclusivos. Diversas cores.</p>
+</div>
+<div class="cat-block">
+<div class="cat-header"><h3>Carimbos</h3><span class="cat-count">1</span></div>
+<div class="carousel-wrap"><div class="carousel-track"><div class="carousel-slide"><img src="https://i.imgur.com/oay3nAv.jpeg" alt="Carimbo 3D personalizado com logo" loading="lazy"></div></div></div>
+<div class="carousel-dots"></div>
+<p class="cat-desc">Carimbos 3D sob medida. Personalize com seu logo ou texto.</p>
+</div>
+<div class="cat-block">
+<div class="cat-header"><h3>Suportes</h3><span class="cat-count">1</span></div>
+<div class="carousel-wrap"><div class="carousel-track"><div class="carousel-slide"><img src="https://i.imgur.com/Y56SU74.jpeg" alt="Suporte de tablet impresso em 3D" loading="lazy"></div></div></div>
+<div class="carousel-dots"></div>
+<p class="cat-desc">Suportes e utilitários resistentes e ergonomicamente projetados.</p>
+</div>
+<div class="cat-block">
+<div class="cat-header"><h3>Miniaturas</h3><span class="cat-count">1</span></div>
+<div class="carousel-wrap"><div class="carousel-track"><div class="carousel-slide"><img src="https://i.imgur.com/B9kLCG3.jpeg" alt="Miniatura 3D do personagem E.T." loading="lazy"></div></div></div>
+<div class="carousel-dots"></div>
+<p class="cat-desc">Personagens e miniaturas exclusivas com cores vibrantes e detalhes fiéis.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="testimonials fade-in" id="depoimentos">
+<div class="container">
+<h2>O que dizem nossos clientes</h2>
+<p class="subtitle">Avaliações reais no Google e stories de clientes satisfeitos recebendo seus pedidos.</p>
+<div class="test-grid">
+<div class="test-col">
+<h3 class="col-title">Avaliações no Google</h3>
+<div class="test-badge-row">
+<a class="test-badge" href="https://g.page/r/CcGSg0AxWsPnEAE/review" target="_blank">
+<div><div class="stars">⭐⭐⭐⭐⭐</div>
+<div><span class="rating-num">5.0</span> <span class="rating-label">· 19 avaliações</span></div></div>
+</a>
+</div>
+<div class="test-btn-row">
+<a class="google-btn" href="https://g.page/r/CcGSg0AxWsPnEAE/review" target="_blank">
+<svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg>
+Avaliar no Google</a>
+</div>
+<div class="map-embed">
+<iframe src="https://maps.google.com/maps?q=-22.8065473,-43.4160332&z=15&output=embed" loading="lazy"></iframe>
+</div>
+</div>
+<div class="test-col">
+<h3 class="col-title">Stories de clientes</h3>
+<div class="test-badge-row">
+<a class="ig-badge" href="https://instagram.com/meu3dlabs" target="_blank">
+<img src="https://i.imgur.com/CncM1g3.png" alt="Logo Instagram Meu 3D Labs">
+<span>@meu3dlabs</span></a>
+</div>
+<div class="test-btn-row">
+<a class="ig-btn" href="https://instagram.com/meu3dlabs" target="_blank">
+<img src="https://i.imgur.com/CncM1g3.png" alt="Logo Instagram">
+Seguir no Instagram</a>
+</div>
+<div class="stories-carousel">
+<button class="stories-btn prev" onclick="moverStory(this,-1)" aria-label="Anterior">‹</button>
+<div class="stories-track" id="storiesTrack" data-swipe>
+<div class="stories-slide"><img src="https://i.imgur.com/uVanNYx.jpeg" alt="Story de cliente satisfeito com peça 3D" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/KYg6FQ1.jpeg" alt="Story de cliente recebendo miniatura 3D" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/VTUZHvE.jpeg" alt="Story de cliente com peça personalizada" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/0Epnx27.jpeg" alt="Story de cliente com chaveiro 3D" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/iM7eF8P.jpeg" alt="Story de cliente com miniatura 3D" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/DXikUAy.jpeg" alt="Story de cliente com peça religiosa 3D" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/SV6yNDI.jpeg" alt="Story de cliente satisfeito com pedido" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/vBeKWRq.jpeg" alt="Story de cliente com peça 3D personalizada" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/jA3CNb6.jpeg" alt="Story de cliente com miniatura 3D exclusiva" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/iRmN93b.jpeg" alt="Story de cliente recebendo encomenda 3D" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/wQHkRvi.jpeg" alt="Story de cliente com peça decorativa 3D" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/3j49Klp.jpeg" alt="Story de cliente com item personalizado 3D" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/3PJf35I.jpeg" alt="Story de cliente com miniatura 3D colorida" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/Bsi8CfE.jpeg" alt="Story de cliente com peça 3D finalizada" loading="lazy"></div>
+<div class="stories-slide"><img src="https://i.imgur.com/UjQNNcD.jpeg" alt="Story de cliente com pedido 3D entregue" loading="lazy"></div>
+</div>
+<button class="stories-btn next" onclick="moverStory(this,1)" aria-label="Próximo">›</button>
+</div>
+<div class="stories-dots" id="storiesDots"></div>
+<p class="stories-counter" id="storiesCounter">1 / 15</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="faq-section fade-in" id="faq">
+<div class="container">
+<h2>Perguntas frequentes</h2>
+<p class="subtitle">Tire suas dúvidas antes de pedir. Se não encontrar a resposta, é só chamar no WhatsApp.</p>
+<div class="faq-list">
+<div class="faq-item">
+<div class="faq-q" onclick="toggleFaq(this)">Quais são as formas de pagamento?</div>
+<div class="faq-a">
+<p><strong>Modelagem 3D:</strong> O valor é pago 100% no ato do pedido para iniciar o projeto.</p>
+<p><strong>Impressão 3D:</strong> Pedimos 30% do valor total para iniciar a produção. O restante é pago na retirada do pedido no local ou no envio por Uber Flash (por conta do cliente).</p>
+<p><strong>Formas aceitas:</strong> Pix e cartão de crédito ou débito (apenas no ato da retirada).</p>
+</div>
+</div>
+<div class="faq-item">
+<div class="faq-q" onclick="toggleFaq(this)">Como funciona a retirada ou envio?</div>
+<div class="faq-a">
+<p><strong>Retirada no local:</strong> Endereço em Nilópolis/RJ, informado no ato da encomenda.</p>
+<p><strong>Envio:</strong> Por Uber Flash, com custo de transporte por conta do cliente.</p>
+</div>
+</div>
+<div class="faq-item">
+<div class="faq-q" onclick="toggleFaq(this)">Quais materiais vocês utilizam?</div>
+<div class="faq-a">
+<p>Trabalhamos com quatro materiais principais, cada um com características específicas:</p>
+<p><strong>PLA</strong> — acabamento limpo, ideal para decoração e miniaturas.</p>
+<p><strong>PETG</strong> — mais resistente e durável, ótimo para peças funcionais.</p>
+<p><strong>ABS</strong> — alta resistência térmica e mecânica.</p>
+<p><strong>TPU</strong> — material flexível, perfeito para peças que precisam deformar.</p>
+<p>Te ajudamos a escolher o material ideal para seu projeto.</p>
+</div>
+</div>
+<div class="faq-item">
+<div class="faq-q" onclick="toggleFaq(this)">Como funciona o processo de peças personalizadas?</div>
+<div class="faq-a">
+<p>O processo tem duas etapas:</p>
+<p><strong>1. Modelagem 3D:</strong> Criamos o modelo digital do seu projeto. Essa etapa é paga 100% para iniciar. Ao finalizar, enviamos fotos e o arquivo STL para sua aprovação.</p>
+<p><strong>2. Impressão 3D:</strong> Depois da aprovação, iniciamos o orçamento da impressão. Pedimos 30% de entrada e o restante na retirada.</p>
+</div>
+</div>
+<div class="faq-item">
+<div class="faq-q" onclick="toggleFaq(this)">Preciso mandar foto ou referência? Como faço?</div>
+<div class="faq-a">
+<p>Sim! Fotos e imagens de referência ajudam a entender exatamente o que você quer criar.</p>
+<p>Você pode enviar tudo pelo nosso <strong>WhatsApp</strong>, onde você fala direto com a equipe de impressão. Tiramos dúvidas, sugerimos melhorias e garantimos que o resultado fique do jeito que você imagina.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="contact fade-in" id="contato">
+<div class="container contact-grid">
+<div class="contact-info">
+<h2>Solicite seu orçamento</h2>
+<p>Conte o que você precisa — retornamos com orçamento rápido e sem compromisso.</p>
+<p><strong>📍</strong> Nilópolis / RJ · Atendimento online</p>
+<p><strong>⏱️</strong> Resposta rápida pelo WhatsApp</p>
+<a class="wa-link" href="https://wa.me/5521966594803" target="_blank">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>
+Falar no WhatsApp</a>
+</div>
+<form class="contact-form" onsubmit="enviarOrcamento(event)">
+<div class="form-group"><label for="nome">Seu nome</label><input type="text" id="nome" placeholder="Como podemos te chamar?" required><span class="form-error-msg" id="err-nome">Por favor, preencha seu nome.</span></div>
+<div class="form-group"><label for="contato">WhatsApp ou e-mail</label><input type="text" id="contato" placeholder="Seu melhor contato" required><span class="form-error-msg" id="err-contato">Por favor, preencha seu contato.</span></div>
+<div class="form-group"><label for="tipo">O que você precisa?</label>
+<select id="tipo"><option>Orçamento</option><option>Manutenção de impressora</option><option>Consultoria em vídeo</option><option>Outros</option></select></div>
+<div class="form-group"><label for="msg">Descreva sua solicitação</label><textarea id="msg" placeholder="Conte o que você precisa..."></textarea></div>
+<button class="btn" type="submit">Enviar para o WhatsApp</button>
+<p class="form-note">Seu pedido chega direto no nosso WhatsApp.</p>
+</form>
+</div>
+</section>
+
+<footer>
+<div class="container">
+<div class="footer-grid">
+<div class="footer-col">
+<div class="footer-logo">
+<img src="https://i.imgur.com/LHXYdjB.png" alt="Logo Meu 3D Labs">
+<span>Meu<span>3D</span>Labs</span>
+</div>
+<p class="footer-tagline">Impressão 3D personalizada e assistência técnica Creality em Nilópolis/RJ. Peças sob medida com design exclusivo e acabamento profissional.</p>
+</div>
+<div class="footer-col">
+<h4>Navegação</h4>
+<div class="footer-links-col">
+<a href="#servicos">Serviços</a>
+<a href="#processo">Como funciona</a>
+<a href="#portfolio">Portfólio</a>
+<a href="#depoimentos">Depoimentos</a>
+<a href="#faq">Perguntas frequentes</a>
+<a href="#contato">Solicitar orçamento</a>
+</div>
+</div>
+<div class="footer-col">
+<h4>Contato</h4>
+<div class="footer-links-col">
+<a href="https://wa.me/5521966594803" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"/></svg>WhatsApp</a>
+<a href="https://instagram.com/meu3dlabs" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.2.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.2.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2-.1-1.2-.1-1.6-.1-4.8s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4 1.2-.1 1.6-.1 4.8-.1z"/></svg>Instagram @meu3dlabs</a>
+<a href="https://g.page/r/CcGSg0AxWsPnEAE/review" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5c-1.4 0-2.5-1.1-2.5-2.5s1.1-2.5 2.5-2.5 2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5z"/></svg>Avaliar no Google</a>
+<a href="https://www.google.com/maps/place/Meu+3D+Labs/@-22.8065473,-43.4186081,17z" target="_blank"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"/></svg>Nilópolis / RJ</a>
+</div>
+<h4 style="margin-top:20px;">Atendimento</h4>
+<ul class="footer-hours">
+<li><strong>Seg a Sex:</strong> 9h às 18h</li>
+<li><strong>Sáb:</strong> 9h às 13h</li>
+<li><strong>Dom:</strong> Fechado</li>
+</ul>
+</div>
+</div>
+<div class="footer-bottom">
+<p>© 2026 Meu 3D Labs · Todos os direitos reservados</p>
+<p>Peças sob medida · Impressão 3D · Assistência técnica Creality</p>
+</div>
+</div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/5521966594803" target="_blank" aria-label="Falar no WhatsApp">
+<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>
+</a>
+
+<a class="top-float" id="topBtn" href="#" aria-label="Voltar ao topo">
+<svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
+</a>
+
+<script>
+document.querySelectorAll('.carousel-track').forEach(function(track){track.dataset.current='0';var slides=track.children.length;var catBlock=track.closest('.cat-block');var dotsContainer=catBlock.querySelector('.carousel-dots');if(dotsContainer&&slides>1){for(var i=0;i<slides;i++){var dot=document.createElement('div');dot.className='dot'+(i===0?' active':'');dot.setAttribute('data-i',i);dot.onclick=function(){var t=this.closest('.cat-block').querySelector('.carousel-track');irPara(t,parseInt(this.getAttribute('data-i')));};dotsContainer.appendChild(dot);}}});
+function mover(btn,direction){var track=btn.parentElement.querySelector('.carousel-track');var current=parseInt(track.dataset.current);var total=track.children.length;current+=direction;if(current<0)current=total-1;if(current>=total)current=0;track.dataset.current=current;track.style.transform='translateX(-'+current*100+'%)';atualizarDots(track,current);}
+function irPara(track,index){track.dataset.current=index;track.style.transform='translateX(-'+index*100+'%)';atualizarDots(track,index);}
+function atualizarDots(track,current){var catBlock=track.closest('.cat-block');var dotsContainer=catBlock.querySelector('.carousel-dots');if(dotsContainer){dotsContainer.querySelectorAll('.dot').forEach(function(d){d.classList.remove('active');});var ad=dotsContainer.querySelector('.dot[data-i="'+current+'"]');if(ad)ad.classList.add('active');}}
+var storiesTrack=document.getElementById('storiesTrack');
+if(storiesTrack){storiesTrack.dataset.current='0';var totalStories=storiesTrack.children.length;var storiesDots=document.getElementById('storiesDots');var storiesCounter=document.getElementById('storiesCounter');if(storiesDots){for(var i=0;i<totalStories;i++){var dot=document.createElement('div');dot.className='dot'+(i===0?' active':'');dot.setAttribute('data-i',i);dot.onclick=function(){irParaStory(parseInt(this.getAttribute('data-i')));};storiesDots.appendChild(dot);}}}
+function moverStory(btn,direction){var current=parseInt(storiesTrack.dataset.current);current+=direction;if(current<0)current=totalStories-1;if(current>=totalStories)current=0;irParaStory(current);}
+function irParaStory(index){storiesTrack.dataset.current=index;storiesTrack.style.transform='translateX(-'+index*100+'%)';if(storiesDots){storiesDots.querySelectorAll('.dot').forEach(function(d){d.classList.remove('active');});var ad=storiesDots.querySelector('.dot[data-i="'+index+'"]');if(ad)ad.classList.add('active');}storiesCounter.textContent=(index+1)+' / '+totalStories;}
+function toggleFaq(el){var item=el.parentElement;var isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(f){f.classList.remove('open');});if(!isOpen){item.classList.add('open');}}
+var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');}});},{threshold:0.1});document.querySelectorAll('.fade-in').forEach(function(el){observer.observe(el);});
+var navLinks=document.querySelectorAll('nav a');var sections=document.querySelectorAll('section[id]');var navObserver=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){var id=entry.target.getAttribute('id');navLinks.forEach(function(link){link.classList.remove('active');if(link.getAttribute('href')==='#'+id){link.classList.add('active');}});}});},{rootMargin:'-30% 0px -60% 0px'});sections.forEach(function(sec){navObserver.observe(sec);});
+var menuToggle=document.getElementById('menuToggle');var mobileNav=document.getElementById('mobileNav');var navOverlay=document.getElementById('navOverlay');
+function toggleMobileMenu(){menuToggle.classList.toggle('open');mobileNav.classList.toggle('open');navOverlay.classList.toggle('open');}
+menuToggle.addEventListener('click',toggleMobileMenu);
+navOverlay.addEventListener('click',toggleMobileMenu);
+mobileNav.querySelectorAll('a').forEach(function(link){link.addEventListener('click',function(){menuToggle.classList.remove('open');mobileNav.classList.remove('open');navOverlay.classList.remove('open');});});
+document.querySelectorAll('[data-swipe]').forEach(function(track){var isStory=track.id==='storiesTrack';var startX=0,currentX=0,isDragging=false;track.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;isDragging=true;},{passive:true});track.addEventListener('touchmove',function(e){if(!isDragging)return;currentX=e.touches[0].clientX;},{passive:true});track.addEventListener('touchend',function(){if(!isDragging)return;var diff=currentX-startX;if(Math.abs(diff)>50){if(diff<0){if(isStory){var c=parseInt(storiesTrack.dataset.current);c++;if(c>=totalStories)c=0;irParaStory(c);}else{var btn=track.parentElement.querySelector('.next');if(btn)mover(btn,1);}}else{if(isStory){var c=parseInt(storiesTrack.dataset.current);c--;if(c<0)c=totalStories-1;irParaStory(c);}else{var btn=track.parentElement.querySelector('.prev');if(btn)mover(btn,-1);}}}isDragging=false;startX=0;currentX=0;},{passive:true});});
+var topBtn=document.getElementById('topBtn');
+window.addEventListener('scroll',function(){if(window.scrollY>window.innerHeight*0.5){topBtn.classList.add('show');}else{topBtn.classList.remove('show');}});
+function enviarOrcamento(e){e.preventDefault();var nome=document.getElementById('nome');var contato=document.getElementById('contato');var tipo=document.getElementById('tipo');var msg=document.getElementById('msg');var hasError=false;if(!nome.value.trim()){nome.classList.add('error');document.getElementById('err-nome').classList.add('show');hasError=true;}else{nome.classList.remove('error');document.getElementById('err-nome').classList.remove('show');}if(!contato.value.trim()){contato.classList.add('error');document.getElementById('err-contato').classList.add('show');hasError=true;}else{contato.classList.remove('error');document.getElementById('err-contato').classList.remove('show');}if(hasError)return;var texto="Olá, Meu 3D Labs! Quero um orçamento.%0A%0A";texto+="*Nome:* "+encodeURIComponent(nome.value)+"%0A";texto+="*Contato:* "+encodeURIComponent(contato.value)+"%0A";texto+="*Tipo:* "+encodeURIComponent(tipo.value)+"%0A";texto+="*Mensagem:* "+encodeURIComponent(msg.value);window.open("https://wa.me/5521966594803?text="+texto,"_blank");}
+document.getElementById('nome').addEventListener('input',function(){this.classList.remove('error');document.getElementById('err-nome').classList.remove('show');});
+document.getElementById('contato').addEventListener('input',function(){this.classList.remove('error');document.getElementById('err-contato').classList.remove('show');});
+</script>
+</body>
+</html>
