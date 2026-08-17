@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enviar Projeto — Meu 3D Labs</title>
+<meta name="description" content="Envie seu projeto para orçamento. Anexe arquivos STL, imagens de referência ou links. Resposta rápida pelo WhatsApp.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Enviar Projeto — Meu 3D Labs">
+<meta property="og:description" content="Envie seu projeto para orçamento. Arquivos STL, imagens e links de referência.">
+<meta property="og:image" content="https://i.imgur.com/FpxmkCj.png">
+<meta property="og:site_name" content="Meu 3D Labs">
+<link rel="icon" href="https://i.imgur.com/LHXYdjB.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);--shadow-lg:0 16px 48px rgba(15,30,61,.12);}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:760px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}.btn-outline{background:transparent;border:2px solid var(--orange);color:var(--orange);}.btn-outline:hover{background:var(--orange);color:#fff;}.btn-wa{background:#25d366;color:#fff;}.btn-wa:hover{background:#1fb959;}
+*:focus-visible{outline:2px solid var(--orange);outline-offset:2px;border-radius:4px;}
+header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:60px 0 40px;text-align:center;}.hero h1{font-size:clamp(28px,4.5vw,40px);line-height:1.2;margin-bottom:14px;font-weight:800;letter-spacing:-.5px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:17px;color:rgba(255,255,255,.9);max-width:520px;margin:0 auto 24px;}
+.hero-steps{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-top:20px;}.hero-step{display:flex;align-items:center;gap:8px;font-size:14px;color:rgba(255,255,255,.85);}.hero-step-icon{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.form-section{padding:50px 0 70px;background:var(--light);}
+.form-card{background:var(--white);border-radius:16px;padding:36px;box-shadow:var(--shadow-md);border:1px solid var(--border);}
+.form-card h2{font-size:24px;color:var(--navy);margin-bottom:6px;font-weight:700;}
+.form-card .subtitle{color:var(--gray);font-size:14px;margin-bottom:28px;}
+.form-group{margin-bottom:20px;}.form-group label{display:block;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:6px;}.form-group label .req{color:var(--orange);}.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--light-2);color:#1c2430;font-size:15px;font-family:inherit;transition:.2s;}.form-group input:focus,.form-group textarea:focus{border-color:var(--orange);background:var(--white);outline:none;box-shadow:0 0 0 3px rgba(242,101,34,.1);}.form-group input.error,.form-group textarea.error{border-color:#e74c3c;background:rgba(231,76,60,.05);}.form-group textarea{resize:vertical;min-height:100px;}.form-error-msg{display:none;color:#e74c3c;font-size:12px;margin-top:4px;}.form-error-msg.show{display:block;}
+.form-hint{font-size:13px;color:var(--gray);margin-top:4px;}
+.info-box{background:#eef6ff;border:1px solid #d0e3ff;border-radius:10px;padding:16px 18px;margin-bottom:24px;display:flex;gap:12px;align-items:flex-start;}.info-box-icon{font-size:20px;flex-shrink:0;}.info-box p{font-size:14px;color:#2c5282;line-height:1.5;}.info-box strong{color:#1a3a6b;}
+.links-section{margin-bottom:24px;}.links-section label{display:block;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+.link-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}.link-row input{flex:1;}.link-remove{flex-shrink:0;width:38px;height:42px;border-radius:8px;border:1px solid var(--border);background:var(--light-2);color:#e74c3c;cursor:pointer;font-size:18px;transition:.2s;display:flex;align-items:center;justify-content:center;}.link-remove:hover{background:#e74c3c;color:#fff;border-color:#e74c3c;}.link-add{display:inline-flex;align-items:center;gap:6px;color:var(--orange);font-size:14px;font-weight:600;cursor:pointer;background:none;border:none;padding:6px 0;transition:.2s;}.link-add:hover{color:var(--orange-2);}.link-add:disabled{opacity:.4;cursor:not-allowed;}
+.form-divider{height:1px;background:var(--border);margin:28px 0;}
+.submit-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+.submit-row .btn{flex:1;min-width:200px;text-align:center;font-size:16px;padding:15px 26px;}
+.form-note{font-size:13px;color:var(--gray);margin-top:12px;text-align:center;}
+.success-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,61,.85);z-index:300;align-items:center;justify-content:center;padding:20px;}.success-overlay.show{display:flex;}.success-box{background:#fff;border-radius:16px;padding:40px 30px;max-width:420px;text-align:center;box-shadow:var(--shadow-lg);}.success-icon{width:64px;height:64px;border-radius:50%;background:#25d366;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;}.success-box h3{font-size:22px;color:var(--navy);margin-bottom:10px;font-weight:700;}.success-box p{font-size:15px;color:var(--gray);margin-bottom:8px;line-height:1.5;}.success-box .success-note{background:var(--light);border-radius:10px;padding:14px;margin:16px 0;font-size:14px;color:var(--navy);text-align:left;}.success-box .success-note strong{color:var(--orange);}.success-actions{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;text-align:center;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}
+.wa-float{position:fixed;bottom:24px;right:24px;width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:200;transition:.25s;}.wa-float:hover{transform:scale(1.12);}.wa-float svg{width:32px;height:32px;fill:#fff;}
+@media(max-width:620px){.form-card{padding:24px 18px;}.hero-steps{gap:16px;}.submit-row .btn{min-width:100%;}}
+</style>
+</head>
+<body>
+<header>
+<div class="container header-inner">
+<div class="logo">
+<img src="https://i.imgur.com/LHXYdjB.png" alt="Logo Meu 3D Labs">
+<span class="logo-text">Meu<span>3D</span>Labs</span>
+</div>
+<a class="back-link" href="index.html">← Voltar ao site</a>
+</div>
+</header>
+
+<section class="hero">
+<div class="container">
+<h1>Envie seu <span>projeto</span> para orçamento</h1>
+<p>Conte o que você precisa e receba uma resposta rápida pelo WhatsApp. Sem compromisso.</p>
+<div class="hero-steps">
+<div class="hero-step"><span class="hero-step-icon">📝</span> Descreva seu projeto</div>
+<div class="hero-step"><span class="hero-step-icon">📎</span> Anexe arquivos no WhatsApp</div>
+<div class="hero-step"><span class="hero-step-icon">💬</span> Receba o orçamento</div>
+</div>
+</div>
+</section>
+
+<section class="form-section">
+<div class="container">
+<div class="form-card">
+<h2>Detalhes do projeto</h2>
+<p class="subtitle">Preencha as informações abaixo. Os campos com * são obrigatórios.</p>
+
+<form id="projetoForm" onsubmit="enviarProjeto(event)">
+
+<div class="form-group">
+<label for="nome">Seu nome <span class="req">*</span></label>
+<input type="text" id="nome" placeholder="Como podemos te chamar?" required>
+<span class="form-error-msg" id="err-nome">Por favor, preencha seu nome.</span>
+</div>
+
+<div class="form-group">
+<label for="contato">WhatsApp ou e-mail <span class="req">*</span></label>
+<input type="text" id="contato" placeholder="Seu melhor contato" required>
+<span class="form-error-msg" id="err-contato">Por favor, preencha seu contato.</span>
+</div>
+
+<div class="form-group">
+<label for="descricao">Descreva o que você quer criar <span class="req">*</span></label>
+<textarea id="descricao" placeholder="Ex: Quero uma miniatura de um casal, altura 15cm, com base gravada. Cores: azul e amarelo." required></textarea>
+<span class="form-error-msg" id="err-descricao">Por favor, descreva seu projeto.</span>
+<p class="form-hint">Quanto mais detalhes, melhor conseguimos orçar. Tamanho, cores, quantidade, material desejado...</p>
+</div>
+
+<div class="form-divider"></div>
+
+<div class="info-box">
+<div class="info-box-icon">📎</div>
+<div>
+<p><strong>Tem arquivos STL ou imagens de referência?</strong></p>
+<p>Após enviar este formulário, o WhatsApp vai abrir. Anexe seus arquivos <strong>.STL</strong>, fotos ou prints diretamente no chat — é o jeito mais rápido e seguro.</p>
+</div>
+</div>
+
+<div class="links-section">
+<label>Links de referência (opcional)</label>
+<p class="form-hint" style="margin-bottom:10px;">Cole aqui links de produtos, inspirações, modelos do Thingiverse, etc.</p>
+<div id="links-container">
+<div class="link-row">
+<input type="url" class="link-input" placeholder="https://exemplo.com/referencia">
+</div>
+</div>
+<button type="button" class="link-add" id="addLinkBtn" onclick="adicionarLink()">+ Adicionar outro link</button>
+</div>
+
+<div class="form-divider"></div>
+
+<div class="submit-row">
+<button type="submit" class="btn btn-wa">Enviar para o WhatsApp</button>
+</div>
+<p class="form-note">Seu projeto chega direto no nosso WhatsApp. Depois é só anexar os arquivos.</p>
+
+</form>
+</div>
+</div>
+</section>
+
+<footer>
+<div class="container">
+<div class="footer-bottom">
+<p>© 2026 Meu 3D Labs · Todos os direitos reservados</p>
+<p>Peças sob medida · Impressão 3D · Assistência técnica Creality</p>
+</div>
+</div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/5521966594803" target="_blank" aria-label="Falar no WhatsApp">
+<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>
+</a>
+
+<div class="success-overlay" id="successOverlay">
+<div class="success-box">
+<div class="success-icon">✓</div>
+<h3>Projeto enviado!</h3>
+<p>O WhatsApp foi aberto com todas as informações do seu projeto.</p>
+<div class="success-note">
+<strong>👉 Importante:</strong> Se você tem arquivos <strong>.STL</strong> ou <strong>imagens</strong> de referência, anexe agora no WhatsApp que abriu. É só enviar no chat.
+</div>
+<div class="success-actions">
+<a class="btn btn-wa" href="https://wa.me/5521966594803" target="_blank" onclick="fecharSucesso()">Abrir WhatsApp</a>
+<a class="btn btn-outline" href="index.html">Voltar ao site</a>
+</div>
+</div>
+</div>
+
+<script>
+var MAX_LINKS = 5;
+var linkCount = 1;
+
+function adicionarLink(){
+if(linkCount >= MAX_LINKS) return;
+var container = document.getElementById('links-container');
+var row = document.createElement('div');
+row.className = 'link-row';
+row.innerHTML = '<input type="url" class="link-input" placeholder="https://exemplo.com/referencia">' +
+'<button type="button" class="link-remove" onclick="removerLink(this)" aria-label="Remover link">×</button>';
+container.appendChild(row);
+linkCount++;
+if(linkCount >= MAX_LINKS){
+document.getElementById('addLinkBtn').disabled = true;
+document.getElementById('addLinkBtn').textContent = 'Limite de ' + MAX_LINKS + ' links atingido';
+}
+}
+
+function removerLink(btn){
+btn.parentElement.remove();
+linkCount--;
+var addBtn = document.getElementById('addLinkBtn');
+addBtn.disabled = false;
+addBtn.textContent = '+ Adicionar outro link';
+}
+
+function enviarProjeto(e){
+e.preventDefault();
+var nome = document.getElementById('nome');
+var contato = document.getElementById('contato');
+var descricao = document.getElementById('descricao');
+var hasError = false;
+
+if(!nome.value.trim()){
+nome.classList.add('error');
+document.getElementById('err-nome').classList.add('show');
+hasError = true;
+} else {
+nome.classList.remove('error');
+document.getElementById('err-nome').classList.remove('show');
+}
+
+if(!contato.value.trim()){
+contato.classList.add('error');
+document.getElementById('err-contato').classList.add('show');
+hasError = true;
+} else {
+contato.classList.remove('error');
+document.getElementById('err-contato').classList.remove('show');
+}
+
+if(!descricao.value.trim()){
+descricao.classList.add('error');
+document.getElementById('err-descricao').classList.add('show');
+hasError = true;
+} else {
+descricao.classList.remove('error');
+document.getElementById('err-descricao').classList.remove('show');
+}
+
+if(hasError) return;
+
+var links = [];
+document.querySelectorAll('.link-input').forEach(function(input){
+if(input.value.trim()) links.push(input.value.trim());
+});
+
+var texto = "Olá, Meu 3D Labs! Quero enviar um projeto para orçamento.%0A%0A";
+texto += "*Nome:* " + encodeURIComponent(nome.value) + "%0A";
+texto += "*Contato:* " + encodeURIComponent(contato.value) + "%0A";
+texto += "*Descrição do projeto:*%0A" + encodeURIComponent(descricao.value) + "%0A";
+
+if(links.length > 0){
+texto += "%0A*Links de referência:*%0A";
+links.forEach(function(link, i){
+texto += (i+1) + ". " + encodeURIComponent(link) + "%0A";
+});
+}
+
+texto += "%0A*Arquivos:* Vou anexar STL/imagens neste chat.";
+
+fetch('https://meu3dlabs-backend.onrender.com/api/orcamentos',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+nome_cliente:nome.value,
+email:contato.value,
+whatsapp:contato.value,
+descricao_peca:descricao.value + (links.length ? ' | Links: ' + links.join(', ') : ''),
+status:'novo'
+})
+}).catch(function(err){console.error('Erro ao salvar:',err)});
+
+window.open("https://wa.me/5521966594803?text=" + texto, "_blank");
+
+document.getElementById('successOverlay').classList.add('show');
+}
+
+function fecharSucesso(){
+document.getElementById('successOverlay').classList.remove('show');
+}
+
+document.getElementById('nome').addEventListener('input',function(){
+this.classList.remove('error');
+document.getElementById('err-nome').classList.remove('show');
+});
+document.getElementById('contato').addEventListener('input',function(){
+this.classList.remove('error');
+document.getElementById('err-contato').classList.remove('show');
+});
+document.getElementById('descricao').addEventListener('input',function(){
+this.classList.remove('error');
+document.getElementById('err-descricao').classList.remove('show');
+});
+</script>
+</body>
+</html>
