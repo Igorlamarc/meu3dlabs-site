@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel de Pedidos — Meu 3D Labs</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="img/logo/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--green:#25a858;--yellow:#d9a406;--blue:#1f6feb;--purple:#8250df;--red:#d73a49;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;background:var(--light);color:#1c2430;line-height:1.5;}
+a{text-decoration:none;color:inherit;}
+header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.logo{display:flex;align-items:center;gap:10px;}.logo img{height:36px;width:auto;}.logo span{font-weight:800;font-size:17px;}.logo span b{color:var(--orange-2);}
+.header-right{display:flex;align-items:center;gap:14px;font-size:13px;}
+.header-right .user{opacity:.85;}
+.logout-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:.2s;}
+.logout-btn:hover{background:rgba(255,255,255,.2);}
+main{max-width:1200px;margin:0 auto;padding:30px 20px 60px;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:24px;}
+.top-bar h1{font-size:24px;color:var(--navy);font-weight:800;}
+.top-bar .actions{display:flex;gap:10px;align-items:center;}
+.refresh-btn{background:var(--navy);color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px;transition:.2s;display:inline-flex;align-items:center;gap:8px;}
+.refresh-btn:hover{background:var(--navy-2);}
+.refresh-btn:disabled{opacity:.5;cursor:wait;}
+.last-update{font-size:12px;color:var(--gray);}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:26px;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(15,30,61,.05);}
+.stat-card .stat-label{font-size:12px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+.stat-card .stat-value{font-size:28px;font-weight:800;color:var(--navy);margin-top:4px;}
+.stat-card .stat-detail{font-size:12px;color:var(--gray);margin-top:2px;}
+.stat-card.orange{border-left:4px solid var(--orange);}
+.stat-card.green{border-left:4px solid var(--green);}
+.stat-card.blue{border-left:4px solid var(--blue);}
+.stat-card.purple{border-left:4px solid var(--purple);}
+.stat-card.yellow{border-left:4px solid var(--yellow);}
+.controls{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.search-box{flex:1;min-width:220px;position:relative;}
+.search-box input{width:100%;padding:11px 14px 11px 40px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--white);}
+.search-box input:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(242,101,34,.1);}
+.search-box .icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9aa3b2;font-size:15px;}
+.filter-select{padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:var(--white);color:#1c2430;}
+.filter-select:focus{outline:none;border-color:var(--orange);}
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:auto;box-shadow:0 2px 8px rgba(15,30,61,.05);}
+table{width:100%;border-collapse:collapse;min-width:900px;font-size:13px;}
+thead th{background:var(--navy);color:#fff;text-align:left;padding:12px 14px;font-size:12px;text-transform:uppercase;letter-spacing:.4px;font-weight:600;white-space:nowrap;position:sticky;top:0;}
+tbody td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+tbody tr:hover{background:#f8fafc;}
+tbody tr:last-child td{border-bottom:none;}
+.td-id{font-weight:700;color:var(--navy);white-space:nowrap;}
+.td-client{font-weight:600;color:var(--navy);}
+.td-contact{font-size:12px;color:var(--gray);}
+.td-desc{color:#3d4856;max-width:320px;}
+.td-desc small{display:block;color:var(--gray);margin-top:4px;}
+.td-date{white-space:nowrap;color:var(--gray);font-size:12px;}
+.status-pill{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;}
+.status-novo{background:#e7f1ff;color:#1f6feb;}
+.status-orcamento{background:#fef3c7;color:#92600a;}
+.status-aprovado{background:#e6f7ee;color:#1a7f43;}
+.status-producao{background:#f3e8ff;color:#6b21a8;}
+.status-pronto{background:#e0f2fe;color:#075985;}
+.status-entregue{background:#e9ecef;color:#495057;}
+.status-cancelado{background:#fde8e8;color:#b91c1c;}
+.status-select{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;background:var(--white);cursor:pointer;}
+.status-select:focus{outline:none;border-color:var(--orange);}
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray);}
+.empty-state .big{font-size:40px;margin-bottom:12px;}
+.empty-state p{font-size:15px;}
+.error-box{background:#fde8e8;border:1px solid #f5c6c6;color:#b91c1c;border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:14px;display:none;}
+.error-box.show{display:block;}
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;}
+.login-box{background:var(--white);border-radius:16px;padding:40px 32px;width:100%;max-width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.login-box .lock-icon{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#eef3fb,#dbe4f0);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px;}
+.login-box h2{font-size:20px;color:var(--navy);margin-bottom:6px;font-weight:800;}
+.login-box p{font-size:13px;color:var(--gray);margin-bottom:20px;}
+.login-box input{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:15px;font-family:inherit;margin-bottom:12px;text-align:center;}
+.login-box input:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(242,101,34,.1);}
+.login-box .btn{width:100%;background:var(--orange);color:#fff;border:none;padding:13px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;}
+.login-box .btn:hover{background:var(--orange-2);}
+.login-error{color:#d73a49;font-size:13px;margin-top:10px;display:none;}
+.login-error.show{display:block;}
+footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
+.loading-row td{text-align:center;padding:50px 20px;color:var(--gray);font-size:14px;}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr);}.top-bar h1{font-size:20px;}}
+</style>
+</head>
+<body>
+
+<!-- TELA DE LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+<div class="login-box">
+<div class="lock-icon">🔒</div>
+<h2>Área restrita</h2>
+<p>Digite a senha para acessar o painel de pedidos.</p>
+<input type="password" id="senhaInput" placeholder="Senha" autocomplete="off">
+<button class="btn" onclick="tentarLogin()">Entrar</button>
+<div class="login-error" id="loginError">Senha incorreta.</div>
+</div>
+</div>
+
+<header>
+<div class="header-inner">
+<div class="logo">
+<img src="img/logo/logo.png" alt="Meu 3D Labs">
+<span>Painel de <b>Pedidos</b></span>
+</div>
+<div class="header-right">
+<span class="user" id="userLabel">👤 Meu 3D Labs</span>
+<button class="logout-btn" onclick="sair()">Sair</button>
+</div>
+</div>
+</header>
+
+<main id="mainContent">
+<div class="top-bar">
+<h1>📋 Pedidos de orçamento</h1>
+<div class="actions">
+<span class="last-update" id="lastUpdate"></span>
+<button class="refresh-btn" id="refreshBtn" onclick="carregarPedidos()">🔄 Atualizar</button>
+</div>
+</div>
+
+<div class="error-box" id="errorBox"></div>
+
+<div class="stats-grid" id="statsGrid"></div>
+
+<div class="controls">
+<div class="search-box">
+<span class="icon">🔍</span>
+<input type="text" id="buscaInput" placeholder="Buscar por nome, contato, descrição ou ID..." oninput="aplicarFiltros()">
+</div>
+<select class="filter-select" id="statusFilter" onchange="aplicarFiltros()">
+<option value="">Todos os status</option>
+<option value="novo">Novo</option>
+<option value="orcamento">Em orçamento</option>
+<option value="aprovado">Aprovado</option>
+<option value="producao">Em produção</option>
+<option value="pronto">Pronto</option>
+<option value="entregue">Entregue</option>
+<option value="cancelado">Cancelado</option>
+</select>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Cliente</th>
+<th>Contato</th>
+<th>Descrição</th>
+<th>Recebido em</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="tabelaBody">
+<tr class="loading-row"><td colspan="6"><div class="spinner"></div><br>Carregando pedidos...</td></tr>
+</tbody>
+</table>
+</div>
+</main>
+
+<footer>Painel interno · Meu 3D Labs · Apenas para uso da equipe</footer>
+
+<script>
+// ============================================
+// 🔑 SENHA DO PAINEL — TROQUE AQUI
+// ============================================
+var SENHA = 'm3dlabs2026';
+
+// ============================================
+// 🔗 URL DA API — não precisa mexer
+// ============================================
+var API_URL = 'https://meu3dlabs-backend.onrender.com/api/orcamentos';
+
+var pedidos = [];
+var logado = sessionStorage.getItem('m3d_admin_logado') === 'sim';
+
+// ---------- LOGIN ----------
+if (logado) {
+  document.getElementById('loginOverlay').style.display = 'none';
+  iniciar();
+} else {
+  document.getElementById('senhaInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') tentarLogin();
+  });
+  document.getElementById('senhaInput').focus();
+}
+
+function tentarLogin() {
+  var senha = document.getElementById('senhaInput').value;
+  if (senha === SENHA) {
+    sessionStorage.setItem('m3d_admin_logado', 'sim');
+    document.getElementById('loginOverlay').style.display = 'none';
+    iniciar();
+  } else {
+    document.getElementById('loginError').classList.add('show');
+    document.getElementById('senhaInput').value = '';
+    document.getElementById('senhaInput').focus();
+  }
+}
+
+function sair() {
+  sessionStorage.removeItem('m3d_admin_logado');
+  location.reload();
+}
+
+// ---------- CARREGAMENTO ----------
+function iniciar() {
+  carregarPedidos();
+  setInterval(carregarPedidosSilencioso, 60000); // auto-atualiza a cada 1 min
+}
+
+function carregarPedidos() {
+  var btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  document.getElementById('tabelaBody').innerHTML = '<tr class="loading-row"><td colspan="6"><div class="spinner"></div><br>Carregando pedidos...</td></tr>';
+  fetch(API_URL)
+    .then(function(res) {
+      if (!res.ok) throw new Error('Erro ' + res.status);
+      return res.json();
+    })
+    .then(function(dados) {
+      pedidos = Array.isArray(dados) ? dados : [];
+      renderizar();
+      btn.disabled = false;
+      var agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('lastUpdate').textContent = 'Atualizado às ' + agora;
+      document.getElementById('errorBox').classList.remove('show');
+    })
+    .catch(function(err) {
+      btn.disabled = false;
+      document.getElementById('tabelaBody').innerHTML = '<tr class="loading-row"><td colspan="6">⚠️ Não foi possível carregar os pedidos.</td></tr>';
+      var box = document.getElementById('errorBox');
+      box.textContent = 'Erro ao conectar com a API: ' + err.message + '. Verifique se o backend no Render está online e tente novamente.';
+      box.classList.add('show');
+    });
+}
+
+function carregarPedidosSilencioso() {
+  fetch(API_URL)
+    .then(function(res) { return res.json(); })
+    .then(function(dados) {
+      pedidos = Array.isArray(dados) ? dados : [];
+      renderizar();
+    })
+    .catch(function() { /* silencioso */ });
+}
+
+// ---------- RENDERIZAÇÃO ----------
+function renderizar() {
+  renderizarStats();
+  aplicarFiltros();
+}
+
+function renderizarStats() {
+  var total = pedidos.length;
+  var novos = contarStatus('novo');
+  var orcamento = contarStatus('orcamento') + contarStatus('aprovado');
+  var producao = contarStatus('producao') + contarStatus('pronto');
+  var entregues = contarStatus('entregue');
+  var grid = document.getElementById('statsGrid');
+  grid.innerHTML =
+    '<div class="stat-card orange"><div class="stat-label">Total de pedidos</div><div class="stat-value">' + total + '</div></div>' +
+    '<div class="stat-card blue"><div class="stat-label">Novos</div><div class="stat-value">' + novos + '</div><div class="stat-detail">Aguardando orçamento</div></div>' +
+    '<div class="stat-card yellow"><div class="stat-label">Em orçamento</div><div class="stat-value">' + orcamento + '</div></div>' +
+    '<div class="stat-card purple"><div class="stat-label">Em produção</div><div class="stat-value">' + producao + '</div></div>' +
+    '<div class="stat-card green"><div class="stat-label">Entregues</div><div class="stat-value">' + entregues + '</div></div>';
+}
+
+function contarStatus(status) {
+  return pedidos.filter(function(p) { return (p.status || 'novo') === status; }).length;
+}
+
+function aplicarFiltros() {
+  var busca = document.getElementById('buscaInput').value.toLowerCase().trim();
+  var filtroStatus = document.getElementById('statusFilter').value;
+  var body = document.getElementById('tabelaBody');
+
+  var filtrados = pedidos.filter(function(p) {
+    if (filtroStatus && (p.status || 'novo') !== filtroStatus) return false;
+    if (!busca) return true;
+    var texto = [
+      p.id, p.nome_cliente, p.email, p.whatsapp, p.descricao_peca, p.pedido_id, p.tipo_peca
+    ].filter(Boolean).join(' ').toLowerCase();
+    return texto.indexOf(busca) !== -1;
+  });
+
+  if (filtrados.length === 0) {
+    body.innerHTML = '<tr class="loading-row"><td colspan="6"><div class="big">📭</div><p>Nenhum pedido encontrado' + (busca || filtroStatus ? ' com esses filtros' : ' ainda') + '.</p></td></tr>';
+    return;
+  }
+
+  var html = '';
+  filtrados.forEach(function(p) {
+    var status = p.status || 'novo';
+    var statusLabel = traduzirStatus(status);
+    var data = formatarData(p.created_at);
+    var idExibido = p.pedido_id || ('#' + p.id);
+    var contato = p.whatsapp || p.email || '—';
+    var descricao = p.descricao_peca || '—';
+    var extra = [];
+    if (p.tipo_peca) extra.push(p.tipo_peca);
+    if (p.quantidade) extra.push('Qtd: ' + p.quantidade);
+    if (p.orcamento_estimado) extra.push('Orç. ref.: ' + p.orcamento_estimado);
+
+    html += '<tr>' +
+      '<td class="td-id">' + idExibido + '</td>' +
+      '<td><div class="td-client">' + escapar(p.nome_cliente || '—') + '</div></td>' +
+      '<td class="td-contact">' + escapar(contato) + '</td>' +
+      '<td class="td-desc">' + escapar(descricao) +
+        (extra.length ? '<small>' + escapar(extra.join(' · ')) + '</small>' : '') +
+      '</td>' +
+      '<td class="td-date">' + data + '</td>' +
+      '<td>' +
+        '<span class="status-pill status-' + status + '" id="pill-' + p.id + '">' + statusLabel + '</span>' +
+        '<div style="margin-top:6px;">' +
+          '<select class="status-select" onchange="mudarStatus(' + p.id + ', this.value)">' +
+            opcoesStatus(status) +
+          '</select>' +
+        '</div>' +
+      '</td>' +
+    '</tr>';
+  });
+  body.innerHTML = html;
+}
+
+function opcoesStatus(atual) {
+  var lista = [
+    ['novo', 'Novo'],
+    ['orcamento', 'Em orçamento'],
+    ['aprovado', 'Aprovado'],
+    ['producao', 'Em produção'],
+    ['pronto', 'Pronto'],
+    ['entregue', 'Entregue'],
+    ['cancelado', 'Cancelado']
+  ];
+  return lista.map(function(item) {
+    return '<option value="' + item[0] + '"' + (item[0] === atual ? ' selected' : '') + '>' + item[1] + '</option>';
+  }).join('');
+}
+
+function traduzirStatus(s) {
+  var map = {
+    novo: 'Novo',
+    orcamento: 'Em orçamento',
+    aprovado: 'Aprovado',
+    producao: 'Em produção',
+    pronto: 'Pronto',
+    entregue: 'Entregue',
+    cancelado: 'Cancelado'
+  };
+  return map[s] || s;
+}
+
+function formatarData(iso) {
+  if (!iso) return '—';
+  try {
+    var d = new Date(iso);
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }) +
+      ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    return iso;
+  }
+}
+
+function escapar(texto) {
+  var div = document.createElement('div');
+  div.textContent = texto;
+  return div.innerHTML;
+}
+
+// ---------- MUDAR STATUS ----------
+function mudarStatus(id, novoStatus) {
+  fetch(API_URL + '/' + id, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: novoStatus })
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error('Erro ' + res.status);
+    return res.json();
+  })
+  .then(function() {
+    var p = pedidos.find(function(x) { return x.id === id; });
+    if (p) p.status = novoStatus;
+    renderizar();
+  })
+  .catch(function(err) {
+    alert('Erro ao atualizar o status: ' + err.message);
+    carregarPedidos();
+  });
+}
+</script>
+</body>
+</html>
