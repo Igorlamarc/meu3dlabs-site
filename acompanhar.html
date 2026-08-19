@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acompanhar pedido — Meu 3D Labs</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="img/logo/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--green:#25a858;--yellow:#d9a406;--blue:#1f6feb;--purple:#8250df;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;background:var(--light);color:#1c2430;line-height:1.5;}
+a{text-decoration:none;color:inherit;}
+header{background:var(--navy);color:#fff;padding:14px 0;box-shadow:0 2px 10px rgba(0,0,0,.15);}
+.header-inner{max-width:760px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.logo{display:flex;align-items:center;gap:10px;}.logo img{height:36px;width:auto;}.logo span{font-weight:800;font-size:17px;color:#fff;}.logo span b{color:var(--orange-2);}
+.header-inner a{font-size:13px;color:rgba(255,255,255,.85);transition:.2s;}
+.header-inner a:hover{color:var(--orange-2);}
+main{max-width:760px;margin:0 auto;padding:40px 20px 60px;}
+.titulo{text-align:center;margin-bottom:30px;}
+.titulo h1{font-size:26px;color:var(--navy);font-weight:800;margin-bottom:8px;}
+.titulo p{color:var(--gray);font-size:15px;}
+.search-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:26px;box-shadow:0 4px 16px rgba(15,30,61,.06);margin-bottom:24px;}
+.search-card label{display:block;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:8px;}
+.search-row{display:flex;gap:10px;}
+.search-row input{flex:1;padding:13px 16px;border:1px solid var(--border);border-radius:10px;font-size:16px;font-family:inherit;text-transform:uppercase;letter-spacing:1px;}
+.search-row input:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(242,101,34,.1);}
+.search-row button{background:var(--orange);color:#fff;border:none;padding:13px 24px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap;}
+.search-row button:hover{background:var(--orange-2);}
+.search-row button:disabled{opacity:.5;cursor:wait;}
+.hint{font-size:12px;color:var(--gray);margin-top:8px;}
+.status-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:28px;box-shadow:0 4px 16px rgba(15,30,61,.06);display:none;}
+.status-card.show{display:block;}
+.status-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.status-head .pedido-id{font-size:18px;font-weight:800;color:var(--navy);}
+.status-head .pedido-id small{display:block;font-size:12px;color:var(--gray);font-weight:500;}
+.pill{display:inline-block;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;}
+.pill-novo{background:#e7f1ff;color:#1f6feb;}
+.pill-orcamento{background:#fef3c7;color:#92600a;}
+.pill-aprovado{background:#e6f7ee;color:#1a7f43;}
+.pill-producao{background:#f3e8ff;color:#6b21a8;}
+.pill-pronto{background:#e0f2fe;color:#075985;}
+.pill-entregue{background:#e9ecef;color:#495057;}
+.pill-cancelado{background:#fde8e8;color:#b91c1c;}
+.progress{display:flex;align-items:center;justify-content:space-between;margin:24px 0 8px;position:relative;}
+.progress::before{content:'';position:absolute;top:20px;left:10%;right:10%;height:3px;background:var(--border);border-radius:2px;}
+.progress::after{content:'';position:absolute;top:20px;left:10%;height:3px;background:var(--orange);border-radius:2px;transition:width .5s ease;}
+.progress.step-1::after{width:0%;}
+.progress.step-2::after{width:20%;}
+.progress.step-3::after{width:40%;}
+.progress.step-4::after{width:60%;}
+.progress.step-5::after{width:80%;}
+.progress.step-6::after{width:80%;}
+.progress.step-entregue::after{width:80%;}
+.step{display:flex;flex-direction:column;align-items:center;gap:6px;width:20%;position:relative;z-index:1;}
+.step-dot{width:40px;height:40px;border-radius:50%;background:var(--white);border:3px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;transition:.3s;}
+.step.active .step-dot{background:var(--navy);border-color:var(--navy);color:#fff;}
+.step.done .step-dot{background:var(--orange);border-color:var(--orange);color:#fff;}
+.step-label{font-size:10px;color:var(--gray);text-align:center;font-weight:600;line-height:1.2;}
+.step.active .step-label,.step.done .step-label{color:var(--navy);}
+.status-info{margin-top:24px;padding:18px;background:var(--light);border-radius:10px;font-size:14px;color:#3d4856;}
+.status-info strong{color:var(--navy);}
+.status-meta{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;}
+.meta-item{background:var(--light);border-radius:10px;padding:14px;}
+.meta-item .meta-label{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;font-weight:600;}
+.meta-item .meta-value{font-size:15px;color:var(--navy);font-weight:700;margin-top:3px;}
+.error-box{background:#fde8e8;border:1px solid #f5c6c6;color:#b91c1c;border-radius:10px;padding:16px 20px;font-size:14px;display:none;margin-bottom:20px;}
+.error-box.show{display:block;}
+@media(max-width:520px){.search-row{flex-direction:column;}.status-meta{grid-template-columns:1fr;}.step-label{font-size:9px;}}
+</style>
+</head>
+<body>
+<header>
+<div class="header-inner">
+<div class="logo">
+<img src="img/logo/logo.png" alt="Meu 3D Labs">
+<span>Meu<b>3D</b>Labs</span>
+</div>
+<a href="login.html">← Voltar</a>
+</div>
+</header>
+<main>
+<div class="titulo">
+<h1>📦 Acompanhar meu pedido</h1>
+<p>Digite o código do seu pedido (ex: M3D-1908-001) para ver o status atualizado.</p>
+</div>
+<div class="error-box" id="errorBox"></div>
+<div class="search-card">
+<label for="codigoInput">Código do pedido</label>
+<div class="search-row">
+<input type="text" id="codigoInput" placeholder="M3D-0000-000" autocomplete="off">
+<button id="buscarBtn" onclick="buscarPedido()">Buscar</button>
+</div>
+<p class="hint">Você recebeu esse código quando fez seu pedido. Ele está no formato M3D-XXXX-XXX.</p>
+</div>
+<div class="status-card" id="statusCard"></div>
+</main>
+<script>
+var API_URL = 'https://meu3dlabs-backend.onrender.com/api/orcamentos/pedido/';
+
+document.getElementById('codigoInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') buscarPedido();
+});
+
+function buscarPedido() {
+  var codigo = document.getElementById('codigoInput').value.trim().toUpperCase();
+  var btn = document.getElementById('buscarBtn');
+  var errorBox = document.getElementById('errorBox');
+  errorBox.classList.remove('show');
+  if (!codigo) {
+    errorBox.textContent = 'Digite o código do pedido.';
+    errorBox.classList.add('show');
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Buscando...';
+  fetch(API_URL + encodeURIComponent(codigo))
+    .then(function(res) {
+      if (res.status === 404) throw new Error('Pedido não encontrado. Confira o código e tente novamente.');
+      if (!res.ok) throw new Error('Erro ' + res.status);
+      return res.json();
+    })
+    .then(function(pedido) {
+      renderizar(pedido);
+      btn.disabled = false;
+      btn.textContent = 'Buscar';
+    })
+    .catch(function(err) {
+      btn.disabled = false;
+      btn.textContent = 'Buscar';
+      document.getElementById('statusCard').classList.remove('show');
+      errorBox.textContent = err.message;
+      errorBox.classList.add('show');
+    });
+}
+
+function renderizar(p) {
+  var status = p.status || 'novo';
+  var card = document.getElementById('statusCard');
+  var passos = [
+    ['novo', 'Recebido', '📥'],
+    ['orcamento', 'Orçamento', '💰'],
+    ['aprovado', 'Aprovado', '✅'],
+    ['producao', 'Produção', '🖨️'],
+    ['pronto', 'Pronto', '📦'],
+    ['entregue', 'Entregue', '🚚']
+  ];
+  var ordem = ['novo','orcamento','aprovado','producao','pronto','entregue'];
+  var idxAtual = ordem.indexOf(status);
+  if (idxAtual < 0) idxAtual = 0;
+  var progressClass = status === 'entregue' ? 'step-entregue' : 'step-' + (idxAtual + 1);
+  var passosHtml = passos.map(function(item, i) {
+    var cls = i < idxAtual ? 'done' : (i === idxAtual ? 'active' : '');
+    return '<div class="step ' + cls + '"><div class="step-dot">' + item[2] + '</div><div class="step-label">' + item[1] + '</div></div>';
+  }).join('');
+  var data = p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : '—';
+  card.innerHTML =
+    '<div class="status-head">' +
+      '<div class="pedido-id">' + (p.pedido_id || 'Pedido') + '<small>Recebido em ' + data + '</small></div>' +
+      '<span class="pill pill-' + status + '">' + traduzir(status) + '</span>' +
+    '</div>' +
+    '<div class="progress ' + progressClass + '">' + passosHtml + '</div>' +
+    '<div class="status-info"><strong>Status atual:</strong> ' + descricao(status) + '</div>' +
+    '<div class="status-meta">' +
+      '<div class="meta-item"><div class="meta-label">Tipo de peça</div><div class="meta-value">' + (p.tipo_peca || '—') + '</div></div>' +
+      '<div class="meta-item"><div class="meta-label">Código</div><div class="meta-value">' + (p.pedido_id || '—') + '</div></div>' +
+    '</div>';
+  card.classList.add('show');
+}
+
+function traduzir(s) {
+  var map = {novo:'Recebido',orcamento:'Em orçamento',aprovado:'Aprovado',producao:'Em produção',pronto:'Pronto',entregue:'Entregue',cancelado:'Cancelado'};
+  return map[s] || s;
+}
+
+function descricao(s) {
+  var map = {
+    novo: 'Seu pedido foi recebido e está aguardando análise. Em breve entraremos em contato.',
+    orcamento: 'Estamos preparando o orçamento do seu pedido.',
+    aprovado: 'Orçamento aprovado! Vamos iniciar a produção em breve.',
+    producao: 'Seu pedido está em produção. Estamos imprimindo com todo o cuidado.',
+    pronto: 'Seu pedido está pronto! Combinaremos a retirada ou o envio.',
+    entregue: 'Seu pedido foi entregue. Obrigado pela preferência!',
+    cancelado: 'Este pedido foi cancelado.'
+  };
+  return map[s] || 'Status em atualização.';
+}
+</script>
+</body>
+</html>
