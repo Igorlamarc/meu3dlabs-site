@@ -164,17 +164,15 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 <footer>Painel interno · Meu 3D Labs · Apenas para uso da equipe</footer>
 <script>
 // ============================================
-// 🔑 SENHA DO PAINEL — TROQUE AQUI
-// ============================================
-var SENHA = 'm3dlabs2026';
-// ============================================
 // 🔗 URL DA API — não precisa mexer
 // ============================================
-var API_URL = 'https://meu3dlabs-backend.onrender.com/api/orcamentos';
+var API_URL = 'https://meu3dlabs-backend.onrender.com/api';
+
 var pedidos = [];
-var logado = sessionStorage.getItem('m3d_admin_logado') === 'sim';
+var token = sessionStorage.getItem('m3d_admin_token');
+
 // ---------- LOGIN ----------
-if (logado) {
+if (token) {
   document.getElementById('loginOverlay').style.display = 'none';
   iniciar();
 } else {
@@ -183,66 +181,95 @@ if (logado) {
   });
   document.getElementById('senhaInput').focus();
 }
+
 function tentarLogin() {
   var senha = document.getElementById('senhaInput').value;
-  if (senha === SENHA) {
-    sessionStorage.setItem('m3d_admin_logado', 'sim');
+  var btn = document.querySelector('.login-box .btn');
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+
+  fetch(API_URL + '/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ senha: senha })
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error('Senha incorreta');
+    return res.json();
+  })
+  .then(function(dados) {
+    token = dados.token;
+    sessionStorage.setItem('m3d_admin_token', token);
     document.getElementById('loginOverlay').style.display = 'none';
     iniciar();
-  } else {
+  })
+  .catch(function(err) {
     document.getElementById('loginError').classList.add('show');
     document.getElementById('senhaInput').value = '';
     document.getElementById('senhaInput').focus();
-  }
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+  });
 }
+
 function sair() {
-  sessionStorage.removeItem('m3d_admin_logado');
+  sessionStorage.removeItem('m3d_admin_token');
   location.reload();
 }
+
 // ---------- CARREGAMENTO ----------
 function iniciar() {
   carregarPedidos();
   setInterval(carregarPedidosSilencioso, 60000); // auto-atualiza a cada 1 min
 }
+
 function carregarPedidos() {
   var btn = document.getElementById('refreshBtn');
   btn.disabled = true;
   document.getElementById('tabelaBody').innerHTML = '<tr class="loading-row"><td colspan="6"><div class="spinner"></div><br>Carregando pedidos...</td></tr>';
-  fetch(API_URL)
-    .then(function(res) {
-      if (!res.ok) throw new Error('Erro ' + res.status);
-      return res.json();
-    })
-    .then(function(dados) {
-      pedidos = Array.isArray(dados) ? dados : [];
-      renderizar();
-      btn.disabled = false;
-      var agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      document.getElementById('lastUpdate').textContent = 'Atualizado às ' + agora;
-      document.getElementById('errorBox').classList.remove('show');
-    })
-    .catch(function(err) {
-      btn.disabled = false;
-      document.getElementById('tabelaBody').innerHTML = '<tr class="loading-row"><td colspan="6">⚠️ Não foi possível carregar os pedidos.</td></tr>';
-      var box = document.getElementById('errorBox');
-      box.textContent = 'Erro ao conectar com a API: ' + err.message + '. Verifique se o backend no Render está online e tente novamente.';
-      box.classList.add('show');
-    });
+  fetch(API_URL + '/orcamentos', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(function(res) {
+    if (res.status === 401) { sair(); throw new Error('Sessão expirada'); }
+    if (!res.ok) throw new Error('Erro ' + res.status);
+    return res.json();
+  })
+  .then(function(dados) {
+    pedidos = Array.isArray(dados) ? dados : [];
+    renderizar();
+    btn.disabled = false;
+    var agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    document.getElementById('lastUpdate').textContent = 'Atualizado às ' + agora;
+    document.getElementById('errorBox').classList.remove('show');
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    document.getElementById('tabelaBody').innerHTML = '<tr class="loading-row"><td colspan="6">⚠️ Não foi possível carregar os pedidos.</td></tr>';
+    var box = document.getElementById('errorBox');
+    box.textContent = 'Erro ao conectar com a API: ' + err.message + '. Verifique se o backend no Render está online e tente novamente.';
+    box.classList.add('show');
+  });
 }
+
 function carregarPedidosSilencioso() {
-  fetch(API_URL)
-    .then(function(res) { return res.json(); })
-    .then(function(dados) {
-      pedidos = Array.isArray(dados) ? dados : [];
-      renderizar();
-    })
-    .catch(function() { /* silencioso */ });
+  fetch(API_URL + '/orcamentos', {
+    headers: { 'Authorization': 'Bearer ' + token }
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(dados) {
+    pedidos = Array.isArray(dados) ? dados : [];
+    renderizar();
+  })
+  .catch(function() { /* silencioso */ });
 }
+
 // ---------- RENDERIZAÇÃO ----------
 function renderizar() {
   renderizarStats();
   aplicarFiltros();
 }
+
 function renderizarStats() {
   var total = pedidos.length;
   var novos = contarStatus('novo');
@@ -257,9 +284,11 @@ function renderizarStats() {
     '<div class="stat-card purple"><div class="stat-label">Em produção</div><div class="stat-value">' + producao + '</div></div>' +
     '<div class="stat-card green"><div class="stat-label">Entregues</div><div class="stat-value">' + entregues + '</div></div>';
 }
+
 function contarStatus(status) {
   return pedidos.filter(function(p) { return (p.status || 'novo') === status; }).length;
 }
+
 // ---------- MONTAR DESCRIÇÃO ORGANIZADA ----------
 function montarDescricao(texto) {
   if (!texto) return '<span style="color:var(--gray)">—</span>';
@@ -284,6 +313,7 @@ function montarDescricao(texto) {
   }
   return html;
 }
+
 function aplicarFiltros() {
   var busca = document.getElementById('buscaInput').value.toLowerCase().trim();
   var filtroStatus = document.getElementById('statusFilter').value;
@@ -333,6 +363,7 @@ function aplicarFiltros() {
   });
   body.innerHTML = html;
 }
+
 function opcoesStatus(atual) {
   var lista = [
     ['novo', 'Novo'],
@@ -347,6 +378,7 @@ function opcoesStatus(atual) {
     return '<option value="' + item[0] + '"' + (item[0] === atual ? ' selected' : '') + '>' + item[1] + '</option>';
   }).join('');
 }
+
 function traduzirStatus(s) {
   var map = {
     novo: 'Novo',
@@ -359,6 +391,7 @@ function traduzirStatus(s) {
   };
   return map[s] || s;
 }
+
 function formatarData(iso) {
   if (!iso) return '—';
   try {
@@ -369,19 +402,25 @@ function formatarData(iso) {
     return iso;
   }
 }
+
 function escapar(texto) {
   var div = document.createElement('div');
   div.textContent = texto;
   return div.innerHTML;
 }
+
 // ---------- MUDAR STATUS ----------
 function mudarStatus(id, novoStatus) {
-  fetch(API_URL + '/' + id, {
+  fetch(API_URL + '/orcamentos/' + id, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
     body: JSON.stringify({ status: novoStatus })
   })
   .then(function(res) {
+    if (res.status === 401) { sair(); throw new Error('Sessão expirada'); }
     if (!res.ok) throw new Error('Erro ' + res.status);
     return res.json();
   })
