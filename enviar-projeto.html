@@ -194,7 +194,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 <div class="success-pedido-id" id="successPedidoId">Pedido: M3D-0000</div>
 <p>O WhatsApp foi aberto com todas as informações do seu projeto.</p>
 <div class="success-note">
-<strong>👉 Importante:</strong> Se você tem arquivos <strong>.STL</strong> ou <strong>imagens</strong> de referência, anexe agora no WhatsApp que abriu. É só enviar no chat.
+<strong>👉 Guarde seu número de pedido</strong> — ele é usado para acompanhar o status. Se o WhatsApp não abriu, anote o número acima e fale conosco por <a href="https://wa.me/5521966594803" target="_blank" style="color:var(--orange);font-weight:600;">este link</a>.
 </div>
 <div class="success-actions">
 <a class="btn btn-wa" href="https://wa.me/5521966594803" target="_blank" onclick="fecharSucesso()">Abrir WhatsApp</a>
@@ -205,15 +205,6 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 <script>
 var MAX_LINKS = 5;
 var linkCount = 1;
-function gerarPedidoId(){
-var counter = parseInt(localStorage.getItem('m3d_counter') || '0') + 1;
-localStorage.setItem('m3d_counter', counter);
-var data = new Date();
-var dd = String(data.getDate()).padStart(2,'0');
-var mm = String(data.getMonth()+1).padStart(2,'0');
-var num = String(counter).padStart(3,'0');
-return 'M3D-' + dd + mm + '-' + num;
-}
 function adicionarLink(){
 if(linkCount >= MAX_LINKS) return;
 var container = document.getElementById('links-container');
@@ -257,6 +248,25 @@ orcamentoAvisoIcone.textContent = 'ℹ️';
 orcamentoAvisoTexto.innerHTML = 'Este valor é apenas uma estimativa de referência. O orçamento final será confirmado via WhatsApp e pode variar conforme as especificações reais do projeto.';
 }
 });
+function montarTextoWhatsApp(pedidoId, nome, contato, tipo, quantidade, prazo, orcamento, descricao, links){
+var texto = "Olá, Meu 3D Labs! Quero enviar um projeto para orçamento.%0A%0A";
+texto += "📋 *Pedido:* " + pedidoId + "%0A";
+texto += "*Nome:* " + encodeURIComponent(nome) + "%0A";
+texto += "*Contato:* " + encodeURIComponent(contato) + "%0A";
+texto += "*Tipo de peça:* " + encodeURIComponent(tipo) + "%0A";
+texto += "*Quantidade:* " + encodeURIComponent(quantidade) + "%0A";
+if(prazo) texto += "*Prazo desejado:* " + encodeURIComponent(prazo) + "%0A";
+if(orcamento) texto += "*Orçamento estimado:* " + encodeURIComponent(orcamento) + " (valor de referência, sujeito a alteração)%0A";
+texto += "%0A*Descrição do projeto:*%0A" + encodeURIComponent(descricao) + "%0A";
+if(links.length > 0){
+texto += "%0A*Links de referência:*%0A";
+links.forEach(function(link, i){
+texto += (i+1) + ". " + encodeURIComponent(link) + "%0A";
+});
+}
+texto += "%0A*Arquivos:* Vou anexar STL/imagens neste chat.";
+return texto;
+}
 function enviarProjeto(e){
 e.preventDefault();
 var nome = document.getElementById('nome');
@@ -273,8 +283,6 @@ else{tipo.classList.remove('error');document.getElementById('err-tipo').classLis
 if(!descricao.value.trim()){descricao.classList.add('error');document.getElementById('err-descricao').classList.add('show');hasError=true;}
 else{descricao.classList.remove('error');document.getElementById('err-descricao').classList.remove('show');}
 if(hasError) return;
-// Gera o número do pedido SOMENTE agora, no envio real
-var pedidoId = gerarPedidoId();
 var quantidade = document.getElementById('quantidade').value || '1';
 var prazo = document.getElementById('prazo').value;
 var orcamento = document.getElementById('orcamento').value;
@@ -282,22 +290,10 @@ var links = [];
 document.querySelectorAll('.link-input').forEach(function(input){
 if(input.value.trim()) links.push(input.value.trim());
 });
-var texto = "Olá, Meu 3D Labs! Quero enviar um projeto para orçamento.%0A%0A";
-texto += "📋 *Pedido:* " + pedidoId + "%0A";
-texto += "*Nome:* " + encodeURIComponent(nome.value) + "%0A";
-texto += "*Contato:* " + encodeURIComponent(contato.value) + "%0A";
-texto += "*Tipo de peça:* " + encodeURIComponent(tipo.value) + "%0A";
-texto += "*Quantidade:* " + encodeURIComponent(quantidade) + "%0A";
-if(prazo) texto += "*Prazo desejado:* " + encodeURIComponent(prazo) + "%0A";
-if(orcamento) texto += "*Orçamento estimado:* " + encodeURIComponent(orcamento) + " (valor de referência, sujeito a alteração)%0A";
-texto += "%0A*Descrição do projeto:*%0A" + encodeURIComponent(descricao.value) + "%0A";
-if(links.length > 0){
-texto += "%0A*Links de referência:*%0A";
-links.forEach(function(link, i){
-texto += (i+1) + ". " + encodeURIComponent(link) + "%0A";
-});
-}
-texto += "%0A*Arquivos:* Vou anexar STL/imagens neste chat.";
+var btn = document.querySelector('.submit-row .btn');
+btn.disabled = true;
+btn.textContent = 'Enviando...';
+// Envia SEM numero — o backend gera o pedido_id
 fetch('https://meu3dlabs-backend.onrender.com/api/orcamentos',{
 method:'POST',
 headers:{'Content-Type':'application/json'},
@@ -310,13 +306,29 @@ quantidade:parseInt(quantidade),
 descricao_peca:descricao.value + (links.length ? ' | Links: ' + links.join(', ') : ''),
 prazo_desejado:prazo || null,
 orcamento_estimado:orcamento || null,
-pedido_id:pedidoId,
 status:'novo'
 })
-}).catch(function(err){console.error('Erro ao salvar:',err)});
+})
+.then(function(res){ return res.json(); })
+.then(function(pedido){
+var pedidoId = pedido.pedido_id || '';
+var texto = montarTextoWhatsApp(pedidoId, nome.value, contato.value, tipo.value, quantidade, prazo, orcamento, descricao.value, links);
 window.open("https://wa.me/5521966594803?text=" + texto, "_blank");
 document.getElementById('successPedidoId').textContent = 'Pedido: ' + pedidoId;
 document.getElementById('successOverlay').classList.add('show');
+btn.disabled = false;
+btn.textContent = 'Enviar para o WhatsApp';
+})
+.catch(function(err){
+console.error('Erro ao salvar:',err);
+// Fallback: abre WhatsApp sem numero, mas mostra a caixa
+var texto = montarTextoWhatsApp('GERADO', nome.value, contato.value, tipo.value, quantidade, prazo, orcamento, descricao.value, links);
+window.open("https://wa.me/5521966594803?text=" + texto, "_blank");
+document.getElementById('successPedidoId').textContent = 'Pedido: GERADO';
+document.getElementById('successOverlay').classList.add('show');
+btn.disabled = false;
+btn.textContent = 'Enviar para o WhatsApp';
+});
 }
 function fecharSucesso(){
 document.getElementById('successOverlay').classList.remove('show');
