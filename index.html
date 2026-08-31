@@ -20,9 +20,10 @@
 <meta name="twitter:title" content="Meu 3D Labs — Peças 3D Personalizadas">
 <meta name="twitter:description" content="Impressão 3D personalizada em Nilópolis/RJ. Miniaturas, chaveiros, peças religiosas e assistência técnica Creality.">
 <meta name="twitter:image" content="https://meu3dlabs.com.br/img/logo/logo.png">
-<link rel="icon" href="https://meu3dlabs.com.br/img/logo/logo.png" type="image/png">
-<link rel="icon" href="/favicon.ico" type="image/x-icon">
-<link rel="apple-touch-icon" href="https://meu3dlabs.com.br/img/logo/logo.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,6 +36,9 @@ gtag('config','G-NZTH0ZSLV0');
 </script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"LocalBusiness","name":"Meu 3D Labs","description":"Impressão 3D personalizada e assistência técnica Creality em Nilópolis/RJ.","image":"https://meu3dlabs.com.br/img/logo/logo.png","address":{"@type":"PostalAddress","addressLocality":"Nilópolis","addressRegion":"RJ","addressCountry":"BR"},"telephone":"+5521966594803","url":"https://meu3dlabs.com.br","priceRange":"R$ 30 - R$ 500+","areaServed":{"@type":"State","name":"Rio de Janeiro"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"09:00","closes":"18:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"13:00"}],"aggregateRating":{"@type":"AggregateRating","ratingValue":"5.0","reviewCount":"19"},"sameAs":["https://instagram.com/meu3dlabs","https://www.google.com/maps/place/Meu+3D+Labs/@-22.8065473,-43.4186081,17z"]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Quais são as formas de pagamento?","acceptedAnswer":{"@type":"Answer","text":"Modelagem 3D: valor pago 100% no ato do pedido. Impressão 3D: 30% para iniciar e o restante na retirada ou envio. Formas aceitas: Pix e cartão de crédito ou débito (apenas na retirada)."}},{"@type":"Question","name":"Como funciona a retirada ou envio?","acceptedAnswer":{"@type":"Answer","text":"Retirada no local em Nilópolis/RJ ou envio por Uber Flash, com custo de transporte por conta do cliente."}},{"@type":"Question","name":"Quais materiais vocês utilizam?","acceptedAnswer":{"@type":"Answer","text":"Trabalhamos com PLA, PETG, ABS e TPU, cada um com características específicas. Ajudamos a escolher o material ideal."}},{"@type":"Question","name":"Quanto tempo leva para produzir minha peça?","acceptedAnswer":{"@type":"Answer","text":"De 1 a 10 dias úteis para a maioria dos projetos. Grandes lotes ou peças complexas têm avaliação personalizada."}},{"@type":"Question","name":"Preciso mandar foto ou referência?","acceptedAnswer":{"@type":"Answer","text":"Sim, fotos e imagens de referência ajudam. Você pode enviar tudo pelo nosso WhatsApp."}}]}
 </script>
 <style>
 :root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);--shadow-lg:0 16px 48px rgba(15,30,61,.12);}
@@ -56,15 +60,26 @@ header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-
 .drawer-link:hover{background:rgba(242,101,34,.08);color:var(--orange);transform:translateX(4px);}
 .drawer-footer{padding:20px 24px;border-top:1px solid rgba(15,30,61,.08);}
 .drawer-footer .btn{width:100%;text-align:center;}
-.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:90px 0;}.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;}.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.15;margin-bottom:18px;font-weight:800;letter-spacing:-1px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:18px;color:rgba(255,255,255,1);margin-bottom:30px;max-width:520px;}.hero-actions{display:flex;gap:14px;flex-wrap:wrap;}.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:8px 16px;border-radius:30px;font-size:14px;margin-bottom:20px;}.hero-img{border-radius:16px;overflow:hidden;border:2px solid rgba(255,255,255,.15);box-shadow:0 20px 60px rgba(0,0,0,.3);background:rgba(0,0,0,.2);}.hero-img img{width:100%;height:auto;display:block;}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:90px 0;}.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;}.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.15;margin-bottom:18px;font-weight:800;letter-spacing:-1px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:18px;color:rgba(255,255,255,1);margin-bottom:30px;max-width:520px;}.hero-actions{display:flex;gap:14px;flex-wrap:wrap;}.hero-badge{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:8px 16px;border-radius:30px;font-size:14px;margin-bottom:20px;}.hero-img{position:relative;border-radius:16px;overflow:hidden;border:2px solid rgba(255,255,255,.15);box-shadow:0 20px 60px rgba(0,0,0,.3);background:rgba(0,0,0,.2);}.hero-img img{width:100%;height:auto;display:block;}
+.hero-selo{position:absolute;top:14px;left:14px;background:rgba(15,30,61,.85);backdrop-filter:blur(4px);color:#fff;padding:8px 14px;border-radius:30px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.25);z-index:2;box-shadow:0 4px 14px rgba(0,0,0,.25);}
+.hero-selo::before{content:'✦';color:var(--orange-2);font-size:15px;}
+/* ===== BARRA DE CONFIANÇA ===== */
+.trust-bar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 0;}.trust-inner{display:flex;justify-content:center;align-items:center;gap:32px;flex-wrap:wrap;}.trust-item{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--navy);font-weight:500;}.trust-item .t-icone{font-size:16px;}.trust-item strong{color:var(--orange);}
+/* ===== PULSO NO CTA ===== */
+.btn-pulse{animation:ctaPulse 2.2s ease-in-out infinite;}
+@keyframes ctaPulse{0%,100%{box-shadow:0 6px 20px rgba(242,101,34,.45);}50%{box-shadow:0 6px 20px rgba(242,101,34,.45),0 0 0 14px rgba(242,101,34,.12);}}
 .fade-in{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease;}.fade-in.visible{opacity:1;transform:translateY(0);}
 .why-section{background:var(--white);}.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}.why-card{text-align:center;padding:30px 20px;border-radius:14px;border:1px solid var(--border);transition:.25s;background:var(--white);box-shadow:var(--shadow-sm);}.why-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--orange);}.why-icon{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(135deg,#eef3fb,#dbe4f0);}.why-card h3{color:var(--navy);font-size:17px;margin-bottom:8px;font-weight:700;}.why-card p{color:var(--gray);font-size:14px;line-height:1.5;}
 .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}.service-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:30px;transition:.25s;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;}.service-card:hover{box-shadow:var(--shadow-md);transform:translateY(-4px);}.service-icon{font-size:38px;margin-bottom:16px;}.service-card h3{color:var(--navy);font-size:18px;margin-bottom:10px;font-weight:700;}.service-card p{color:var(--gray);font-size:14px;flex:1;}.service-card ul{list-style:none;margin-top:14px;}.service-card li{padding:6px 0;font-size:14px;color:var(--gray);}.service-card li::before{content:"✓ ";color:var(--orange);font-weight:700;}
 .process-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:24px;position:relative;}.step{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:26px;position:relative;box-shadow:var(--shadow-sm);}.step-num{width:40px;height:40px;background:var(--navy);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-bottom:14px;position:relative;z-index:2;}.step h4{color:var(--navy);margin-bottom:8px;font-weight:700;}.step p{color:var(--gray);font-size:14px;}.step:not(:last-child)::after{content:'';position:absolute;top:46px;right:-24px;width:24px;height:2px;background:repeating-linear-gradient(90deg,var(--border) 0,var(--border) 4px,transparent 4px,transparent 8px);z-index:1;}
+/* ===== GUIA ENVIO DE REFERÊNCIA ===== */
+.guide-section{background:var(--light-2);}.guide-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}.guide-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:26px;text-align:center;transition:.25s;box-shadow:var(--shadow-sm);}.guide-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--orange);}.guide-num{width:40px;height:40px;margin:0 auto 14px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;}.guide-card h4{color:var(--navy);font-size:16px;margin-bottom:8px;font-weight:700;}.guide-card p{color:var(--gray);font-size:14px;line-height:1.5;}
 .portfolio{background:var(--light);}.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch;}.cat-block{display:flex;flex-direction:column;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);transition:.25s;min-height:100%;}.cat-block:hover{box-shadow:var(--shadow-md);}.cat-header{display:flex;align-items:center;gap:8px;padding:14px 16px 8px;}.cat-header h3{font-size:16px;color:var(--navy);font-weight:700;}.cat-count{background:var(--navy);color:#fff;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;}.carousel-wrap{position:relative;overflow:hidden;flex:1;display:flex;flex-direction:column;}.carousel-track{display:flex;width:100%;transition:transform .4s ease;flex:1;}.carousel-slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;background:#f0f2f7;aspect-ratio:1/1;}.carousel-slide img{width:100%;height:100%;object-fit:contain;display:block;}.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;z-index:5;font-size:18px;color:var(--navy);box-shadow:var(--shadow-sm);}.carousel-btn:hover{background:var(--navy);color:#fff;}.carousel-btn.prev{left:8px;}.carousel-btn.next{right:8px;}.carousel-dots{display:flex;justify-content:center;gap:5px;padding:8px 0;flex-wrap:wrap;min-height:23px;}.dot{width:7px;height:7px;border-radius:50%;background:#cbd2dc;cursor:pointer;transition:.2s;}.dot.active{background:var(--orange);}.cat-desc{padding:8px 16px 8px;color:var(--gray);font-size:13px;text-align:center;line-height:1.4;}
 .cat-cta{display:block;text-align:center;padding:8px 16px 14px;}
 .cat-cta a{display:inline-block;background:var(--orange);color:#fff;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;transition:.2s;}
 .cat-cta a:hover{background:var(--orange-2);transform:translateY(-1px);}
+/* ===== PROVA SOCIAL (strip) ===== */
+.social-strip{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;padding:34px 0;}.social-strip-inner{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;text-align:center;}.social-strip .ss-rating{font-size:44px;font-weight:800;color:var(--orange-2);line-height:1;}.social-strip .ss-stars{color:#f5a623;font-size:20px;margin:6px 0 4px;letter-spacing:2px;}.social-strip .ss-label{font-size:14px;color:rgba(255,255,255,.85);}.social-strip .ss-div{width:1px;height:56px;background:rgba(255,255,255,.2);}.social-strip .ss-item{max-width:220px;}.social-strip .ss-item .ss-quote{font-size:14px;color:rgba(255,255,255,.9);font-style:italic;line-height:1.5;}.social-strip .ss-item .ss-author{font-size:12px;color:rgba(255,255,255,.6);margin-top:6px;}
 .testimonials{background:var(--white);}.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:stretch;}.test-col{text-align:center;display:flex;flex-direction:column;}.col-title{font-size:18px;color:var(--navy);margin-bottom:16px;font-weight:700;}.test-badge-row{display:flex;justify-content:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}.test-badge{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:10px;border:1px solid var(--border);background:var(--light);transition:.25s;}.test-badge:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);}.test-badge .stars{color:#f5a623;font-size:16px;}.test-badge .rating-num{font-size:18px;font-weight:700;color:var(--navy);}.test-badge .rating-label{font-size:12px;color:var(--gray);}.ig-badge{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:10px;border:1px solid var(--border);background:var(--light);transition:.25s;}.ig-badge:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);}.ig-badge img{width:24px;height:24px;border-radius:6px;object-fit:cover;}.ig-badge span{font-weight:600;color:var(--navy);}.test-btn-row{display:flex;justify-content:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}.test-btn-row a{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:8px;font-weight:600;font-size:14px;transition:.25s;}.google-btn{background:#fff;border:2px solid var(--border);color:var(--navy);}.google-btn:hover{border-color:var(--navy);background:var(--light);}.ig-btn{background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);color:#fff;}.ig-btn:hover{opacity:.9;}.ig-btn img{width:16px;height:16px;border-radius:4px;object-fit:cover;}.map-embed{border-radius:12px;overflow:hidden;border:1px solid var(--border);height:320px;display:flex;}.map-embed iframe{width:100%;height:100%;border:0;display:block;filter:grayscale(.3) contrast(1.1);}.stories-carousel{position:relative;max-width:300px;margin:0 auto;overflow:hidden;border-radius:14px;height:400px;}.stories-track{display:flex;width:100%;height:100%;transition:transform .4s ease;}.stories-slide{flex:0 0 100%;display:flex;align-items:center;justify-content:center;background:#f0f2f7;height:100%;}.stories-slide img{width:100%;height:100%;object-fit:contain;display:block;}.stories-btn{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.95);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.2s;z-index:5;font-size:20px;color:var(--navy);box-shadow:var(--shadow-sm);}.stories-btn:hover{background:var(--navy);color:#fff;}.stories-btn.prev{left:8px;}.stories-btn.next{right:8px;}.stories-dots{display:flex;justify-content:center;gap:5px;padding:10px 0;flex-wrap:wrap;}.stories-counter{text-align:center;color:var(--gray);font-size:13px;margin-top:4px;}
 .reviews-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;}
 .review-card{background:var(--light);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:var(--shadow-sm);transition:.25s;display:flex;flex-direction:column;}
@@ -120,7 +135,8 @@ header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-
 .about-divider{height:2px;background:linear-gradient(90deg,transparent,#b0bbcc 15%,#b0bbcc 85%,transparent);max-width:320px;margin:60px auto;border-radius:2px;}
 @media(max-width:768px){.about-story,.about-story.reverse{grid-template-columns:1fr;gap:30px;}.about-story.reverse .about-text{order:1;}.about-story.reverse .about-image{order:2;}.about-person-cards{grid-template-columns:repeat(3,1fr);gap:10px;}.about-person-cards .about-value{padding:14px 8px;}.about-person-cards .about-value h4{font-size:11px;}.about-person-cards .about-value p{font-size:10px;line-height:1.3;}.about-person-cards .about-value-icon{width:36px;height:36px;font-size:16px;}.about-image{max-width:320px;margin:0 auto;}}
 footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-size:14px;}.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:40px;margin-bottom:36px;}.footer-col h4{color:#fff;font-size:16px;font-weight:700;margin-bottom:16px;}.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px;}.footer-logo img{height:36px;width:auto;display:block;}.footer-logo span{color:var(--orange-2);font-weight:700;font-size:18px;}.footer-logo span:first-child{color:#fff;}.footer-tagline{color:rgba(255,255,255,.6);font-size:13px;line-height:1.6;max-width:280px;}.footer-links-col{display:flex;flex-direction:column;gap:10px;}.footer-links-col a{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.7);transition:.2s;font-size:14px;}.footer-links-col a:hover{color:#fff;}.footer-links-col svg{width:16px;height:16px;flex-shrink:0;}.footer-links-col img{width:16px;height:16px;border-radius:4px;object-fit:cover;flex-shrink:0;}.footer-hours li{list-style:none;padding:4px 0;color:rgba(255,255,255,.6);font-size:13px;}.footer-hours li strong{color:rgba(255,255,255,.9);}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}
-.wa-float{position:fixed;bottom:24px;right:24px;width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:200;transition:.25s;animation:waPulse 2.5s ease-in-out infinite;}.wa-float:hover{transform:scale(1.12);animation:none;}.wa-float svg{width:32px;height:32px;fill:#fff;}@keyframes waPulse{0%,100%{box-shadow:0 6px 20px rgba(37,211,102,.4);}50%{box-shadow:0 6px 20px rgba(37,211,102,.4),0 0 0 12px rgba(37,211,102,.12);}}
+.wa-float{position:fixed;bottom:24px;right:24px;display:inline-flex;align-items:center;gap:10px;background:#25d366;color:#fff;padding:14px 22px;border-radius:50px;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:200;transition:.25s;animation:waPulse 2.5s ease-in-out infinite;font-weight:600;font-size:15px;}.wa-float:hover{transform:scale(1.06);animation:none;background:#1fb959;}.wa-float svg{width:22px;height:22px;fill:#fff;flex-shrink:0;}@keyframes waPulse{0%,100%{box-shadow:0 6px 20px rgba(37,211,102,.4);}50%{box-shadow:0 6px 20px rgba(37,211,102,.4),0 0 0 12px rgba(37,211,102,.12);}}
+@media(max-width:620px){.wa-float{padding:13px 16px;font-size:14px;}}
 .top-float{position:fixed;bottom:24px;left:24px;width:48px;height:48px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-md);z-index:200;transition:.25s;opacity:0;pointer-events:none;}.top-float.show{opacity:1;pointer-events:auto;}.top-float:hover{background:var(--orange);transform:translateY(-3px);}.top-float svg{width:22px;height:22px;fill:#fff;}
 .cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--navy);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;z-index:250;transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -4px 20px rgba(0,0,0,.2);font-size:13px;}
 .cookie-banner.show{transform:translateY(0);}
@@ -129,9 +145,9 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-si
 .cookie-btn{background:var(--orange);color:#fff;border:none;padding:8px 20px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;transition:.2s;white-space:nowrap;}
 .cookie-btn:hover{background:var(--orange-2);}
 @media(max-width:620px){.cookie-banner{padding:12px 16px;}.cookie-banner p{text-align:left;font-size:12px;}}
-@media(max-width:900px){.cat-grid{grid-template-columns:repeat(2,1fr);}.why-grid{grid-template-columns:repeat(2,1fr);}.services-grid{grid-template-columns:1fr;}.footer-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){.cat-grid{grid-template-columns:repeat(2,1fr);}.why-grid{grid-template-columns:repeat(2,1fr);}.services-grid{grid-template-columns:1fr;}.footer-grid{grid-template-columns:1fr 1fr;}.guide-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:768px){.test-grid{grid-template-columns:1fr;}.step:not(:last-child)::after{display:none;}}
-@media(max-width:620px){.cat-grid{grid-template-columns:1fr;}.why-grid{grid-template-columns:1fr;}.hero-grid{grid-template-columns:1fr;}.hero h1{font-size:32px;}nav{display:none;}.header-cta .btn-outline{display:none;}.footer-grid{grid-template-columns:1fr;}}
+@media(max-width:620px){.cat-grid{grid-template-columns:1fr;}.why-grid{grid-template-columns:1fr;}.hero-grid{grid-template-columns:1fr;}.hero h1{font-size:32px;}nav{display:none;}.header-cta .btn-outline{display:none;}.footer-grid{grid-template-columns:1fr;}.guide-grid{grid-template-columns:1fr;}.trust-inner{gap:16px;}.social-strip-inner{gap:20px;}.social-strip .ss-div{display:none;}}
 </style>
 </head>
 <body>
@@ -146,7 +162,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-si
 </nav>
 <div class="header-cta">
 <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
-<a class="btn btn-wa" href="enviar-projeto.html">Enviar Projeto</a>
+<a class="btn btn-wa" href="enviar-projeto.html">Solicite seu orçamento</a>
 </div>
 </div>
 </header>
@@ -163,7 +179,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-si
 <a class="drawer-link" href="login.html">Acompanhar pedido</a>
 </div>
 <div class="drawer-footer">
-<a class="btn" href="enviar-projeto.html">Enviar Projeto</a>
+<a class="btn" href="enviar-projeto.html">Solicite seu orçamento</a>
 </div>
 </div>
 <section class="hero">
@@ -173,15 +189,24 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-si
 <h1>Peças 3D <span>personalizadas</span> com qualidade e precisão</h1>
 <p>Do projeto à peça pronta: miniaturas, decorações, chaveiros, itens religiosos e soluções sob medida — com design exclusivo e acabamento profissional.</p>
 <div class="hero-actions">
-<a class="btn" href="enviar-projeto.html">Enviar meu projeto</a>
+<a class="btn btn-pulse" href="enviar-projeto.html">Solicite seu orçamento</a>
 <a class="btn btn-outline" href="#portfolio">Ver nosso trabalho</a>
 </div>
 </div>
 <div class="hero-img">
+<span class="hero-selo">Feito sob medida</span>
 <img src="img/portfolio/Hero.png" alt="Miniatura 3D personalizada de casal abraçado com base gravada" fetchpriority="high">
 </div>
 </div>
 </section>
+<div class="trust-bar">
+<div class="container trust-inner">
+<span class="trust-item"><span class="t-icone">⭐</span> <strong>5.0</strong> · 19 avaliações no Google</span>
+<span class="trust-item"><span class="t-icone">🚚</span> Entrega em Nilópolis/RJ</span>
+<span class="trust-item"><span class="t-icone">💳</span> Pix e cartão</span>
+<span class="trust-item"><span class="t-icone">⚡</span> Resposta rápida pelo WhatsApp</span>
+</div>
+</div>
 <section class="why-section fade-in" id="porque">
 <div class="container">
 <h2>Por que escolher a Meu 3D Labs?</h2>
@@ -232,6 +257,17 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-si
 </div>
 </div>
 </section>
+<section class="guide-section fade-in">
+<div class="container">
+<h2>Como enviar sua referência</h2>
+<p class="subtitle">Simples assim — você não precisa entender de impressão 3D para começar.</p>
+<div class="guide-grid">
+<div class="guide-card"><div class="guide-num">1</div><h4>Tire uma foto</h4><p>Da peça, do personagem, do objeto ou da ideia que você quer criar.</p></div>
+<div class="guide-card"><div class="guide-num">2</div><h4>Envie no WhatsApp</h4><p>Mande a foto ou o arquivo STL direto no nosso chat, sem enrolação.</p></div>
+<div class="guide-card"><div class="guide-num">3</div><h4>Receba o orçamento</h4><p>Te respondemos com prazo e valor. Você aprova e a gente produz.</p></div>
+</div>
+</div>
+</section>
 <section class="portfolio fade-in" id="portfolio">
 <div class="container">
 <h2>Nosso trabalho</h2>
@@ -255,7 +291,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-si
 <button class="carousel-btn next" onclick="mover(this,1)" aria-label="Próximo">›</button></div>
 <div class="carousel-dots"></div>
 <p class="cat-desc">Miniaturas e figuras exclusivas — cada projeto é único.</p>
-<div class="cat-cta"><a href="enviar-projeto.html">Quero uma peça assim</a></div>
+<div class="cat-cta"><a href="enviar-projeto.html">Quero um orçamento</a></div>
 </div>
 <div class="cat-block">
 <div class="cat-header"><h3>Religiosos</h3><span class="cat-count">7</span></div>
@@ -272,7 +308,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-si
 <button class="carousel-btn next" onclick="mover(this,1)" aria-label="Próximo">›</button></div>
 <div class="carousel-dots"></div>
 <p class="cat-desc">Itens devocionais com acabamento cuidado e detalhes fiéis.</p>
-<div class="cat-cta"><a href="enviar-projeto.html">Quero uma peça assim</a></div>
+<div class="cat-cta"><a href="enviar-projeto.html">Quero um orçamento</a></div>
 </div>
 <div class="cat-block">
 <div class="cat-header"><h3>Decorações</h3><span class="cat-count">3</span></div>
@@ -285,7 +321,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-si
 <button class="carousel-btn next" onclick="mover(this,1)" aria-label="Próximo">›</button></div>
 <div class="carousel-dots"></div>
 <p class="cat-desc">Peças decorativas com design exclusivo e acabamento fosco.</p>
-<div class="cat-cta"><a href="enviar-projeto.html">Quero uma peça assim</a></div>
+<div class="cat-cta"><a href="enviar-projeto.html">Quero um orçamento</a></div>
 </div>
 <div class="cat-block">
 <div class="cat-header"><h3>Chaveiros</h3><span class="cat-count">3</span></div>
@@ -298,32 +334,51 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:50px 0 26px;font-si
 <button class="carousel-btn next" onclick="mover(this,1)" aria-label="Próximo">›</button></div>
 <div class="carousel-dots"></div>
 <p class="cat-desc">Chaveiros com letras, nomes e designs exclusivos. Diversas cores.</p>
-<div class="cat-cta"><a href="enviar-projeto.html">Quero uma peça assim</a></div>
+<div class="cat-cta"><a href="enviar-projeto.html">Quero um orçamento</a></div>
 </div>
 <div class="cat-block">
 <div class="cat-header"><h3>Carimbos</h3><span class="cat-count">1</span></div>
 <div class="carousel-wrap"><div class="carousel-track"><div class="carousel-slide"><img src="img/portfolio/Carimbos1.jpeg" alt="Carimbo 3D personalizado com logo" loading="lazy"></div></div></div>
 <div class="carousel-dots"></div>
 <p class="cat-desc">Carimbos 3D sob medida. Personalize com seu logo ou texto.</p>
-<div class="cat-cta"><a href="enviar-projeto.html">Quero uma peça assim</a></div>
+<div class="cat-cta"><a href="enviar-projeto.html">Quero um orçamento</a></div>
 </div>
 <div class="cat-block">
 <div class="cat-header"><h3>Suportes</h3><span class="cat-count">1</span></div>
 <div class="carousel-wrap"><div class="carousel-track"><div class="carousel-slide"><img src="img/portfolio/Suportes1.jpeg" alt="Suporte de tablet impresso em 3D" loading="lazy"></div></div></div>
 <div class="carousel-dots"></div>
 <p class="cat-desc">Suportes e utilitários resistentes e ergonomicamente projetados.</p>
-<div class="cat-cta"><a href="enviar-projeto.html">Quero uma peça assim</a></div>
+<div class="cat-cta"><a href="enviar-projeto.html">Quero um orçamento</a></div>
 </div>
 <div class="cat-block">
 <div class="cat-header"><h3>Miniaturas</h3><span class="cat-count">1</span></div>
 <div class="carousel-wrap"><div class="carousel-track"><div class="carousel-slide"><img src="img/portfolio/Miniaturas1.jpg" alt="Miniatura 3D do personagem E.T." loading="lazy"></div></div></div>
 <div class="carousel-dots"></div>
 <p class="cat-desc">Personagens e miniaturas exclusivas com cores vibrantes e detalhes fiéis.</p>
-<div class="cat-cta"><a href="enviar-projeto.html">Quero uma peça assim</a></div>
+<div class="cat-cta"><a href="enviar-projeto.html">Quero um orçamento</a></div>
 </div>
 </div>
 </div>
 </section>
+<div class="social-strip">
+<div class="container social-strip-inner">
+<div class="ss-item">
+<div class="ss-rating">5.0</div>
+<div class="ss-stars">★★★★★</div>
+<div class="ss-label">19 avaliações no Google</div>
+</div>
+<div class="ss-div"></div>
+<div class="ss-item">
+<div class="ss-quote">"Trabalho sério com detalhes de acabamento perfeitos."</div>
+<div class="ss-author">— Carlos Augusto</div>
+</div>
+<div class="ss-div"></div>
+<div class="ss-item">
+<div class="ss-quote">"Produto de excelente qualidade, superou minhas expectativas."</div>
+<div class="ss-author">— João Elias</div>
+</div>
+</div>
+</div>
 <section class="post-sale fade-in" id="pos-venda">
 <div class="container">
 <h2>Pós-venda</h2>
@@ -658,6 +713,7 @@ Avaliação no Google</div>
 </footer>
 <a class="wa-float" href="https://wa.me/5521966594803" target="_blank" aria-label="Falar no WhatsApp">
 <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>
+Fale conosco
 </a>
 <a class="top-float" id="topBtn" href="#" aria-label="Voltar ao topo">
 <svg viewBox="0 0 24 24"><path d="M12 4l-8 8h5v8h6v-8h5z"/></svg>

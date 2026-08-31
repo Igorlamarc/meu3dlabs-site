@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Enviar Projeto — Meu 3D Labs</title>
-<meta name="description" content="Envie seu projeto para orçamento. Anexe arquivos STL, imagens de referência ou links. Resposta rápida pelo WhatsApp.">
+<title>Solicitar Orçamento — Meu 3D Labs</title>
+<meta name="description" content="Solicite seu orçamento: impressão 3D, consultoria 3D, assistência técnica Creality ou outros. Resposta rápida pelo WhatsApp.">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Enviar Projeto — Meu 3D Labs">
-<meta property="og:description" content="Envie seu projeto para orçamento. Arquivos STL, imagens e links de referência.">
+<meta property="og:title" content="Solicitar Orçamento — Meu 3D Labs">
+<meta property="og:description" content="Solicite seu orçamento: impressão 3D, consultoria 3D, assistência técnica Creality ou outros.">
 <meta property="og:image" content="img/logo/logo.png">
 <meta property="og:site_name" content="Meu 3D Labs">
 <link rel="icon" href="img/logo/logo.png" type="image/png">
@@ -37,12 +37,37 @@ header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-
 .form-group{margin-bottom:20px;}.form-group label{display:block;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:6px;}.form-group label .req{color:var(--orange);}.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border);background:var(--light-2);color:#1c2430;font-size:15px;font-family:inherit;transition:.2s;}.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--orange);background:var(--white);outline:none;box-shadow:0 0 0 3px rgba(242,101,34,.1);}.form-group input.error,.form-group textarea.error,.form-group select.error{border-color:#e74c3c;background:rgba(231,76,60,.05);}.form-group textarea{resize:vertical;min-height:100px;}.form-error-msg{display:none;color:#e74c3c;font-size:12px;margin-top:4px;}.form-error-msg.show{display:block;}
 .form-hint{font-size:13px;color:var(--gray);margin-top:4px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+/* ===== SELEÇÃO DE SERVIÇO (cards) ===== */
+.servico-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:4px;}
+.servico-card{position:relative;display:flex;flex-direction:column;gap:4px;padding:16px;border:2px solid var(--border);border-radius:12px;background:var(--light-2);cursor:pointer;transition:.2s;}
+.servico-card:hover{border-color:var(--orange-2);transform:translateY(-2px);}
+.servico-card input{position:absolute;opacity:0;pointer-events:none;}
+.servico-card .servico-icone{font-size:26px;line-height:1;}
+.servico-card .servico-nome{font-weight:700;color:var(--navy);font-size:15px;}
+.servico-card .servico-desc{font-size:12px;color:var(--gray);}
+.servico-card.selected{border-color:var(--orange);background:rgba(242,101,34,.06);box-shadow:var(--shadow-sm);}
+/* ===== CAMPOS CONDICIONAIS ===== */
+.campos-servico{display:none;padding-top:4px;}
+.campos-servico.ativo{display:block;animation:slideDown .3s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.secao-titulo{font-size:15px;font-weight:700;color:var(--navy);margin:24px 0 12px;padding-top:20px;border-top:1px dashed var(--border);}
+.opcoes-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.opcao-check{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--light-2);cursor:pointer;transition:.2s;font-size:14px;color:var(--navy);}
+.opcao-check:hover{border-color:var(--orange);}
+.opcao-check input{margin-top:3px;flex-shrink:0;}
+.opcao-check input:checked + span{color:var(--orange);}
+.opcao-check:has(input:checked){border-color:var(--orange);background:rgba(242,101,34,.06);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.radio-group{display:flex;gap:10px;flex-wrap:wrap;}
+.radio-pill{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border:1px solid var(--border);border-radius:30px;background:var(--light-2);cursor:pointer;font-size:14px;color:var(--navy);transition:.2s;}
+.radio-pill:hover{border-color:var(--orange);}
+.radio-pill input{margin:0;flex-shrink:0;}
+.radio-pill:has(input:checked){border-color:var(--orange);background:rgba(242,101,34,.08);font-weight:600;}
 .orcamento-aviso{display:none;margin-top:8px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.5;align-items:flex-start;gap:8px;animation:slideDown .3s ease;}
 .orcamento-aviso.show{display:flex;}
 .orcamento-aviso.aviso-baixo{background:#fff3cd;border:1px solid #ffe08a;color:#856404;}
 .orcamento-aviso.aviso-normal{background:#e8f4fd;border:1px solid #b3d7f2;color:#0c5460;}
 .orcamento-aviso-icone{flex-shrink:0;font-size:16px;line-height:1.5;}
-@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
 .info-box{background:#eef6ff;border:1px solid #d0e3ff;border-radius:10px;padding:16px 18px;margin-bottom:24px;display:flex;gap:12px;align-items:flex-start;}.info-box-icon{font-size:20px;flex-shrink:0;}.info-box p{font-size:14px;color:#2c5282;line-height:1.5;}.info-box strong{color:#1a3a6b;}
 .links-section{margin-bottom:24px;}.links-section label{display:block;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:6px;}
 .link-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}.link-row input{flex:1;}.link-remove{flex-shrink:0;width:38px;height:42px;border-radius:8px;border:1px solid var(--border);background:var(--light-2);color:#e74c3c;cursor:pointer;font-size:18px;transition:.2s;display:flex;align-items:center;justify-content:center;}.link-remove:hover{background:#e74c3c;color:#fff;border-color:#e74c3c;}.link-add{display:inline-flex;align-items:center;gap:6px;color:var(--orange);font-size:14px;font-weight:600;cursor:pointer;background:none;border:none;padding:6px 0;transition:.2s;}.link-add:hover{color:var(--orange-2);}.link-add:disabled{opacity:.4;cursor:not-allowed;}
@@ -54,7 +79,7 @@ header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-
 .success-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,61,.85);z-index:300;align-items:center;justify-content:center;padding:20px;}.success-overlay.show{display:flex;}.success-box{background:#fff;border-radius:16px;padding:40px 30px;max-width:420px;text-align:center;box-shadow:var(--shadow-lg);}.success-icon{width:64px;height:64px;border-radius:50%;background:#25d366;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;}.success-box h3{font-size:22px;color:var(--navy);margin-bottom:10px;font-weight:700;}.success-box p{font-size:15px;color:var(--gray);margin-bottom:8px;line-height:1.5;}.success-box .success-pedido-id{font-size:18px;font-weight:700;color:var(--orange);margin:12px 0;}.success-box .success-note{background:var(--light);border-radius:10px;padding:14px;margin:16px 0;font-size:14px;color:var(--navy);text-align:left;}.success-box .success-note strong{color:var(--orange);}.success-actions{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
 footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;text-align:center;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}
 .wa-float{position:fixed;bottom:24px;right:24px;width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:200;transition:.25s;}.wa-float:hover{transform:scale(1.12);}.wa-float svg{width:32px;height:32px;fill:#fff;}
-@media(max-width:620px){.form-card{padding:24px 18px;}.hero-steps{gap:16px;}.submit-row .btn{min-width:100%;}.form-row{grid-template-columns:1fr;}}
+@media(max-width:620px){.form-card{padding:24px 18px;}.hero-steps{gap:16px;}.submit-row .btn{min-width:100%;}.form-row,.two-col{grid-template-columns:1fr;}.servico-grid,.opcoes-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -69,10 +94,10 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 </header>
 <section class="hero">
 <div class="container">
-<h1>Envie seu <span>projeto</span> para orçamento</h1>
-<p>Conte o que você precisa e receba uma resposta rápida pelo WhatsApp. Sem compromisso.</p>
+<h1>Solicite seu <span>orçamento</span></h1>
+<p>Escolha o serviço, conte o que precisa e receba uma resposta rápida pelo WhatsApp. Sem compromisso.</p>
 <div class="hero-steps">
-<div class="hero-step"><span class="hero-step-icon">📝</span> Descreva seu projeto</div>
+<div class="hero-step"><span class="hero-step-icon">🛠️</span> Escolha o serviço</div>
 <div class="hero-step"><span class="hero-step-icon">📎</span> Anexe arquivos no WhatsApp</div>
 <div class="hero-step"><span class="hero-step-icon">💬</span> Receba o orçamento</div>
 </div>
@@ -81,8 +106,8 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 <section class="form-section">
 <div class="container">
 <div class="form-card">
-<h2>Detalhes do projeto</h2>
-<p class="subtitle">Preencha as informações abaixo. Os campos com * são obrigatórios.</p>
+<h2>Qual serviço você precisa?</h2>
+<p class="subtitle">Preencha os campos abaixo. Os campos com * são obrigatórios. Depois de escolher o serviço, o formulário se ajusta automaticamente.</p>
 <form id="projetoForm" onsubmit="enviarProjeto(event)">
 <div class="form-row">
 <div class="form-group">
@@ -91,29 +116,51 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 <span class="form-error-msg" id="err-nome">Por favor, preencha seu nome.</span>
 </div>
 <div class="form-group">
-<label for="contato">WhatsApp ou e-mail <span class="req">*</span></label>
-<input type="text" id="contato" placeholder="Seu melhor contato" required>
-<span class="form-error-msg" id="err-contato">Por favor, preencha seu contato.</span>
+<label for="whatsapp">Seu WhatsApp <span class="req">*</span></label>
+<input type="tel" id="whatsapp" placeholder="(21) 99999-9999" maxlength="15" required>
+<span class="form-error-msg" id="err-whatsapp">Informe um WhatsApp válido com DDD.</span>
+<p class="form-hint">É por ele que recebemos seu orçamento.</p>
 </div>
 </div>
-<div class="form-row">
 <div class="form-group">
-<label for="tipo">Tipo de peça <span class="req">*</span></label>
-<select id="tipo" required>
-<option value="">Selecione uma opção</option>
-<option value="Miniatura personalizada">Miniatura personalizada</option>
-<option value="Chaveiro">Chaveiro</option>
-<option value="Peça religiosa">Peça religiosa/devocional</option>
-<option value="Decoração">Decoração</option>
-<option value="Peça funcional/utilitária">Peça funcional/utilitária</option>
-<option value="Carimbo">Carimbo</option>
-<option value="Suporte">Suporte</option>
-<option value="Assistência técnica Creality">Assistência técnica Creality</option>
-<option value="Consultoria 3D">Consultoria 3D</option>
-<option value="Outro">Outro</option>
-</select>
-<span class="form-error-msg" id="err-tipo">Selecione o tipo de peça.</span>
+<label for="email">E-mail (opcional)</label>
+<input type="email" id="email" placeholder="voce@email.com">
+<p class="form-hint">Use apenas se preferir receber contato por e-mail.</p>
 </div>
+<div class="form-group">
+<label>Escolha o serviço <span class="req">*</span></label>
+<div class="servico-grid" id="servicoGrid">
+<label class="servico-card">
+<input type="radio" name="servico" value="Impressão 3D" required>
+<span class="servico-icone">🖨️</span>
+<span class="servico-nome">Impressão 3D</span>
+<span class="servico-desc">Peças personalizadas, miniaturas, chaveiros, decorações</span>
+</label>
+<label class="servico-card">
+<input type="radio" name="servico" value="Consultoria 3D">
+<span class="servico-icone">🎥</span>
+<span class="servico-nome">Consultoria 3D</span>
+<span class="servico-desc">Aprenda a imprimir, calibrar e usar melhor sua impressora</span>
+</label>
+<label class="servico-card">
+<input type="radio" name="servico" value="Assistência técnica Creality">
+<span class="servico-icone">🔧</span>
+<span class="servico-nome">Assistência Creality</span>
+<span class="servico-desc">Manutenção, reparos e suporte para sua impressora</span>
+</label>
+<label class="servico-card">
+<input type="radio" name="servico" value="Outros">
+<span class="servico-icone">📦</span>
+<span class="servico-nome">Outros</span>
+<span class="servico-desc">Modelagem, orçamento diferente ou dúvida geral</span>
+</label>
+</div>
+<span class="form-error-msg" id="err-servico">Escolha um dos serviços.</span>
+</div>
+
+<!-- ===== IMPRESSÃO 3D ===== -->
+<div class="campos-servico" id="campos-impressao">
+<div class="form-row">
 <div class="form-group">
 <label for="quantidade">Quantidade</label>
 <input type="number" id="quantidade" placeholder="Ex: 1" min="1" max="999" value="1">
@@ -121,7 +168,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 </div>
 <div class="form-group">
 <label for="descricao">Descreva o que você quer criar <span class="req">*</span></label>
-<textarea id="descricao" placeholder="Ex: Quero uma miniatura de um casal, altura 15cm, com base gravada. Cores: azul e amarelo." required></textarea>
+<textarea id="descricao" placeholder="Ex: Quero uma miniatura de um casal, altura 15cm, com base gravada. Cores: azul e amarelo."></textarea>
 <span class="form-error-msg" id="err-descricao">Por favor, descreva seu projeto.</span>
 <p class="form-hint">Quanto mais detalhes, melhor conseguimos orçar. Tamanho, cores, material desejado...</p>
 </div>
@@ -148,14 +195,6 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 </div>
 </div>
 </div>
-<div class="form-divider"></div>
-<div class="info-box">
-<div class="info-box-icon">📎</div>
-<div>
-<p><strong>Tem arquivos STL ou imagens de referência?</strong></p>
-<p>Após enviar este formulário, o WhatsApp vai abrir. Anexe seus arquivos <strong>.STL</strong>, fotos ou prints diretamente no chat — é o jeito mais rápido e seguro.</p>
-</div>
-</div>
 <div class="links-section">
 <label>Links de referência (opcional)</label>
 <p class="form-hint" style="margin-bottom:10px;">Cole aqui links de produtos, inspirações, modelos do Thingiverse, etc.</p>
@@ -166,11 +205,114 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 </div>
 <button type="button" class="link-add" id="addLinkBtn" onclick="adicionarLink()">+ Adicionar outro link</button>
 </div>
-<div class="form-divider"></div>
-<div class="submit-row">
-<button type="submit" class="btn btn-wa">Enviar para o WhatsApp</button>
 </div>
-<p class="form-note">Seu projeto chega direto no nosso WhatsApp com um número de pedido. Depois é só anexar os arquivos.</p>
+
+<!-- ===== CONSULTORIA 3D ===== -->
+<div class="campos-servico" id="campos-consultoria">
+<div class="form-group">
+<label for="horas">Número de horas de consultoria <span class="req">*</span></label>
+<input type="number" id="horas" min="1" max="40" placeholder="Ex: 2">
+<span class="form-error-msg" id="err-horas">Informe ao menos 1 hora.</span>
+<p class="form-hint">O valor por hora é informado no WhatsApp depois da sua solicitação.</p>
+</div>
+<div class="form-group">
+<label>O que você precisa de ajuda? <span class="req">*</span></label>
+<p class="form-hint" style="margin-bottom:10px;">Marque as opções que se aplicam a você:</p>
+<div class="opcoes-grid">
+<label class="opcao-check"><input type="checkbox" class="cons-opcao" value="Configuração do fatiador"><span>Configuração do fatiador</span></label>
+<label class="opcao-check"><input type="checkbox" class="cons-opcao" value="Calibração e nivelamento da mesa"><span>Calibração e nivelamento da mesa</span></label>
+<label class="opcao-check"><input type="checkbox" class="cons-opcao" value="Ajustes de temperatura, fluxo e velocidade"><span>Ajustes de temperatura, fluxo e velocidade</span></label>
+<label class="opcao-check"><input type="checkbox" class="cons-opcao" value="Manutenção periódica da impressora"><span>Manutenção periódica da impressora</span></label>
+<label class="opcao-check"><input type="checkbox" class="cons-opcao" value="Armazenamento e cuidados com filamentos"><span>Armazenamento e cuidados com filamentos</span></label>
+<label class="opcao-check"><input type="checkbox" class="cons-opcao" value="Escolha do material ideal (PLA, PETG, ABS, TPU)"><span>Escolha do material ideal (PLA, PETG, ABS, TPU)</span></label>
+<label class="opcao-check"><input type="checkbox" class="cons-opcao" value="Correção de falhas (primeira camada, stringing, warping)"><span>Correção de falhas (primeira camada, stringing, warping)</span></label>
+<label class="opcao-check"><input type="checkbox" class="cons-opcao" value="Montagem e primeiro uso da impressora"><span>Montagem e primeiro uso da impressora</span></label>
+<label class="opcao-check"><input type="checkbox" class="cons-opcao" value="Otimização de tempo e material"><span>Otimização de tempo e material</span></label>
+<label class="opcao-check"><input type="checkbox" class="cons-opcao cons-outro-check" value="Outro assunto"><span>Outro assunto</span></label>
+</div>
+<span class="form-error-msg" id="err-cons-opcoes">Marque ao menos uma opção ou escreva no campo abaixo.</span>
+<div class="form-group" id="cons-outro-box" style="display:none;margin-top:12px;">
+<input type="text" id="cons-outro-texto" placeholder="Descreva o que você precisa de ajuda">
+</div>
+<div class="form-group" style="margin-top:16px;">
+<label for="cons-descricao-extra">Descreva aqui uma dúvida a mais (opcional)</label>
+<textarea id="cons-descricao-extra" placeholder="Se tiver mais alguma dúvida ou detalhe, escreva aqui..."></textarea>
+</div>
+</div>
+</div>
+
+<!-- ===== ASSISTÊNCIA CREALITY ===== -->
+<div class="campos-servico" id="campos-assistencia">
+<div class="form-group">
+<label for="ass-modelo">Modelo da sua impressora <span class="req">*</span></label>
+<input type="text" id="ass-modelo" placeholder="Ex: Creality Ender 3 V3, CR-10, K1...">
+<span class="form-error-msg" id="err-ass-modelo">Informe o modelo da impressora.</span>
+<p class="form-hint">Escreva o modelo exato, se souber.</p>
+</div>
+<div class="form-group">
+<label>O que está acontecendo? <span class="req">*</span></label>
+<p class="form-hint" style="margin-bottom:10px;">Marque os sintomas que você observa:</p>
+<div class="opcoes-grid">
+<label class="opcao-check"><input type="checkbox" class="ass-opcao" value="Primeira camada não adere"><span>Primeira camada não adere</span></label>
+<label class="opcao-check"><input type="checkbox" class="ass-opcao" value="Entupimento no bico"><span>Entupimento no bico</span></label>
+<label class="opcao-check"><input type="checkbox" class="ass-opcao" value="Empenamento (warping)"><span>Empenamento (warping)</span></label>
+<label class="opcao-check"><input type="checkbox" class="ass-opcao" value="Ruídos estranhos"><span>Ruídos estranhos</span></label>
+<label class="opcao-check"><input type="checkbox" class="ass-opcao" value="Filamento não extruda"><span>Filamento não extruda</span></label>
+<label class="opcao-check"><input type="checkbox" class="ass-opcao" value="Peças saindo com defeito"><span>Peças saindo com defeito</span></label>
+<label class="opcao-check"><input type="checkbox" class="ass-opcao" value="Erros na tela"><span>Erros na tela</span></label>
+<label class="opcao-check"><input type="checkbox" class="ass-opcao" value="Manutenção preventiva"><span>Manutenção preventiva</span></label>
+<label class="opcao-check"><input type="checkbox" class="ass-opcao" value="Upgrade de peças"><span>Upgrade de peças</span></label>
+<label class="opcao-check"><input type="checkbox" class="ass-opcao ass-outro-check" value="Outro problema"><span>Outro problema</span></label>
+</div>
+<span class="form-error-msg" id="err-ass-opcoes">Marque ao menos um sintoma ou escreva no campo abaixo.</span>
+<div class="form-group" id="ass-outro-box" style="display:none;margin-top:12px;">
+<input type="text" id="ass-outro-texto" placeholder="Descreva o problema">
+</div>
+</div>
+<div class="two-col">
+<div class="form-group">
+<label>Prioridade</label>
+<div class="radio-group">
+<label class="radio-pill"><input type="radio" name="ass-prioridade" value="Normal" checked> Normal</label>
+<label class="radio-pill"><input type="radio" name="ass-prioridade" value="Urgente"> Urgente</label>
+</div>
+</div>
+<div class="form-group">
+<label>Como prefere ser atendido?</label>
+<div class="radio-group">
+<label class="radio-pill"><input type="radio" name="ass-atendimento" value="Remoto" checked> Remoto</label>
+<label class="radio-pill"><input type="radio" name="ass-atendimento" value="Presencial"> Presencial</label>
+</div>
+</div>
+</div>
+<div class="form-group">
+<label for="ass-problema">Descreva o problema <span class="req">*</span></label>
+<textarea id="ass-problema" placeholder="Conte com detalhes o que está acontecendo com sua impressora..."></textarea>
+<span class="form-error-msg" id="err-ass-problema">Descreva o problema da sua impressora.</span>
+</div>
+</div>
+
+<!-- ===== OUTROS ===== -->
+<div class="campos-servico" id="campos-outros">
+<div class="form-group">
+<label for="outros-descricao">Descreva o que você precisa <span class="req">*</span></label>
+<textarea id="outros-descricao" placeholder="Conte o que você precisa..."></textarea>
+<span class="form-error-msg" id="err-outros-descricao">Por favor, descreva o que você precisa.</span>
+</div>
+</div>
+
+<div class="form-divider"></div>
+<div class="info-box">
+<div class="info-box-icon">📎</div>
+<div>
+<p><strong>Tem arquivos STL, fotos ou imagens de referência?</strong></p>
+<p>Após enviar este formulário, o WhatsApp vai abrir. Anexe seus arquivos <strong>diretamente no chat</strong> — é o jeito mais rápido e seguro.</p>
+</div>
+</div>
+<div class="submit-row">
+<button type="submit" class="btn btn-wa">Finalizar no WhatsApp</button>
+</div>
+<p class="form-note">Seu pedido chega no nosso WhatsApp com um número para acompanhamento. Depois é só anexar os arquivos.</p>
 <p class="lgpd-note">Ao enviar, você concorda com o tratamento dos seus dados para fins de orçamento. Não compartilhamos suas informações. Saiba mais em nossa <a href="privacidade.html" target="_blank">Política de Privacidade</a>.</p>
 </form>
 </div>
@@ -190,9 +332,9 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 <div class="success-overlay" id="successOverlay">
 <div class="success-box">
 <div class="success-icon">✓</div>
-<h3>Projeto enviado!</h3>
+<h3>Solicitação enviada!</h3>
 <div class="success-pedido-id" id="successPedidoId">Pedido: M3D-0000</div>
-<p>O WhatsApp foi aberto com todas as informações do seu projeto.</p>
+<p>O WhatsApp foi aberto com todas as informações do seu pedido.</p>
 <div class="success-note">
 <strong>👉 Guarde seu número de pedido</strong> — ele é usado para acompanhar o status. Se o WhatsApp não abriu, anote o número acima e fale conosco por <a href="https://wa.me/5521966594803" target="_blank" style="color:var(--orange);font-weight:600;">este link</a>.
 </div>
@@ -226,12 +368,57 @@ var addBtn = document.getElementById('addLinkBtn');
 addBtn.disabled = false;
 addBtn.textContent = '+ Adicionar outro link';
 }
+/* Máscara de WhatsApp */
+function formatarWhatsApp(el){
+var v = el.value.replace(/\D/g,'').slice(0,11);
+var out = '';
+if(v.length > 0){ out = '(' + v.slice(0,2); }
+if(v.length >= 3){ out += ') ' + v.slice(2,7); }
+if(v.length >= 8){ out += '-' + v.slice(7,11); }
+el.value = out;
+}
+var whatsappInput = document.getElementById('whatsapp');
+whatsappInput.addEventListener('input', function(){ formatarWhatsApp(this); });
+whatsappInput.addEventListener('input', function(){ this.classList.remove('error'); document.getElementById('err-whatsapp').classList.remove('show'); });
+/* Seleção de serviço — mostra campos condicionais */
+var MAPA_SERVICO = {
+'Impressão 3D':'impressao',
+'Consultoria 3D':'consultoria',
+'Assistência técnica Creality':'assistencia',
+'Outros':'outros'
+};
+document.querySelectorAll('input[name="servico"]').forEach(function(r){
+r.addEventListener('change', function(){
+if(this.checked){
+document.querySelectorAll('.servico-card').forEach(function(c){ c.classList.remove('selected'); });
+this.closest('.servico-card').classList.add('selected');
+document.querySelectorAll('.campos-servico').forEach(function(b){ b.classList.remove('ativo'); });
+var alvo = document.getElementById('campos-' + MAPA_SERVICO[this.value]);
+if(alvo) alvo.classList.add('ativo');
+document.getElementById('err-servico').classList.remove('show');
+}
+});
+});
+/* Checkbox "Outro" mostra campo de texto */
+var consOutroCheck = document.querySelector('.cons-outro-check');
+if(consOutroCheck){
+consOutroCheck.addEventListener('change', function(){
+document.getElementById('cons-outro-box').style.display = this.checked ? 'block' : 'none';
+});
+}
+var assOutroCheck = document.querySelector('.ass-outro-check');
+if(assOutroCheck){
+assOutroCheck.addEventListener('change', function(){
+document.getElementById('ass-outro-box').style.display = this.checked ? 'block' : 'none';
+});
+}
+/* Aviso do orçamento estimado (só na impressão) */
 var orcamentoSelect = document.getElementById('orcamento');
 var orcamentoAviso = document.getElementById('orcamentoAviso');
 var orcamentoAvisoTexto = document.getElementById('orcamentoAvisoTexto');
 var orcamentoAvisoIcone = document.getElementById('orcamentoAvisoIcone');
-orcamentoSelect.addEventListener('change', function(){
-var valor = this.value;
+function ajustarAvisoOrcamento(){
+var valor = orcamentoSelect.value;
 if(!valor){
 orcamentoAviso.classList.remove('show','aviso-baixo','aviso-normal');
 return;
@@ -247,45 +434,129 @@ orcamentoAviso.classList.remove('aviso-baixo');
 orcamentoAvisoIcone.textContent = 'ℹ️';
 orcamentoAvisoTexto.innerHTML = 'Este valor é apenas uma estimativa de referência. O orçamento final será confirmado via WhatsApp e pode variar conforme as especificações reais do projeto.';
 }
-});
-function montarTextoWhatsApp(pedidoId, nome, contato, tipo, quantidade, prazo, orcamento, descricao, links){
-var texto = "Olá, Meu 3D Labs! Quero enviar um projeto para orçamento.%0A%0A";
+}
+if(orcamentoSelect) orcamentoSelect.addEventListener('change', ajustarAvisoOrcamento);
+/* Validação de obrigatórios por serviço */
+function marcarErrado(id, mostrar){
+var el = document.getElementById(id);
+if(el) el.classList.toggle('error', mostrar);
+}
+function validarCampos(servico, base){
+var ok = true;
+if(!base.nome){ marcarErrado('nome', true); document.getElementById('err-nome').classList.add('show'); ok = false; }
+else { marcarErrado('nome', false); document.getElementById('err-nome').classList.remove('show'); }
+var ddds = (base.whatsapp || '').replace(/\D/g,'');
+if(ddds.length < 10){ marcarErrado('whatsapp', true); document.getElementById('err-whatsapp').classList.add('show'); ok = false; }
+else { marcarErrado('whatsapp', false); document.getElementById('err-whatsapp').classList.remove('show'); }
+if(servico === 'Impressão 3D'){
+if(!base.descricao){ marcarErrado('descricao', true); document.getElementById('err-descricao').classList.add('show'); ok = false; }
+else { marcarErrado('descricao', false); document.getElementById('err-descricao').classList.remove('show'); }
+}
+if(servico === 'Consultoria 3D'){
+var horas = parseInt(document.getElementById('horas').value) || 0;
+if(horas < 1){ marcarErrado('horas', true); document.getElementById('err-horas').classList.add('show'); ok = false; }
+else { marcarErrado('horas', false); document.getElementById('err-horas').classList.remove('show'); }
+var algumTopico = document.querySelector('.cons-opcao:checked');
+var outroTexto = document.getElementById('cons-outro-texto').value.trim();
+if(!algumTopico && !outroTexto){ document.getElementById('err-cons-opcoes').classList.add('show'); ok = false; }
+else { document.getElementById('err-cons-opcoes').classList.remove('show'); }
+}
+if(servico === 'Assistência técnica Creality'){
+if(!base.modelo){ marcarErrado('ass-modelo', true); document.getElementById('err-ass-modelo').classList.add('show'); ok = false; }
+else { marcarErrado('ass-modelo', false); document.getElementById('err-ass-modelo').classList.remove('show'); }
+if(!base.problema){ marcarErrado('ass-problema', true); document.getElementById('err-ass-problema').classList.add('show'); ok = false; }
+else { marcarErrado('ass-problema', false); document.getElementById('err-ass-problema').classList.remove('show'); }
+var algumSintoma = document.querySelector('.ass-opcao:checked');
+var outroAss = document.getElementById('ass-outro-texto').value.trim();
+if(!algumSintoma && !outroAss){ document.getElementById('err-ass-opcoes').classList.add('show'); ok = false; }
+else { document.getElementById('err-ass-opcoes').classList.remove('show'); }
+}
+if(servico === 'Outros'){
+if(!base.descricao){ marcarErrado('outros-descricao', true); document.getElementById('err-outros-descricao').classList.add('show'); ok = false; }
+else { marcarErrado('outros-descricao', false); document.getElementById('err-outros-descricao').classList.remove('show'); }
+}
+return ok;
+}
+/* Monta a descrição consolidada por serviço */
+function montarDescricao(servico){
+var partes = [];
+if(servico === 'Impressão 3D'){
+partes.push(document.getElementById('descricao').value.trim());
+}
+if(servico === 'Consultoria 3D'){
+var horas = document.getElementById('horas').value || '1';
+partes.push('Horas de consultoria: ' + horas);
+var topos = [];
+document.querySelectorAll('.cons-opcao:checked').forEach(function(c){ topos.push(c.value); });
+var outroTexto = document.getElementById('cons-outro-texto').value.trim();
+if(outroTexto) topos.push(outroTexto);
+if(topos.length) partes.push('Preciso de ajuda com: ' + topos.join('; '));
+var extra = document.getElementById('cons-descricao-extra').value.trim();
+if(extra) partes.push('Dúvida adicional: ' + extra);
+}
+if(servico === 'Assistência técnica Creality'){
+partes.push('Impressora: ' + document.getElementById('ass-modelo').value.trim());
+var sint = [];
+document.querySelectorAll('.ass-opcao:checked').forEach(function(c){ sint.push(c.value); });
+var outroAss = document.getElementById('ass-outro-texto').value.trim();
+if(outroAss) sint.push(outroAss);
+if(sint.length) partes.push('Sintomas: ' + sint.join('; '));
+var prioridade = (document.querySelector('input[name="ass-prioridade"]:checked') || {}).value || 'Normal';
+var atendimento = (document.querySelector('input[name="ass-atendimento"]:checked') || {}).value || 'Remoto';
+partes.push('Prioridade: ' + prioridade);
+partes.push('Atendimento: ' + atendimento);
+var problema = document.getElementById('ass-problema').value.trim();
+if(problema) partes.push('Descrição do problema: ' + problema);
+}
+if(servico === 'Outros'){
+partes.push(document.getElementById('outros-descricao').value.trim());
+}
+return partes.filter(function(p){ return p; }).join(' | ');
+}
+/* Monta a mensagem do WhatsApp */
+function montarTextoWhatsApp(pedidoId, dados){
+var texto = "Olá, Meu 3D Labs! Quero solicitar um orçamento.%0A%0A";
 texto += "📋 *Pedido:* " + pedidoId + "%0A";
-texto += "*Nome:* " + encodeURIComponent(nome) + "%0A";
-texto += "*Contato:* " + encodeURIComponent(contato) + "%0A";
-texto += "*Tipo de peça:* " + encodeURIComponent(tipo) + "%0A";
-texto += "*Quantidade:* " + encodeURIComponent(quantidade) + "%0A";
-if(prazo) texto += "*Prazo desejado:* " + encodeURIComponent(prazo) + "%0A";
-if(orcamento) texto += "*Orçamento estimado:* " + encodeURIComponent(orcamento) + " (valor de referência, sujeito a alteração)%0A";
-texto += "%0A*Descrição do projeto:*%0A" + encodeURIComponent(descricao) + "%0A";
-if(links.length > 0){
+texto += "*Nome:* " + encodeURIComponent(dados.nome) + "%0A";
+texto += "*WhatsApp:* " + encodeURIComponent(dados.whatsapp) + "%0A";
+if(dados.email) texto += "*E-mail:* " + encodeURIComponent(dados.email) + "%0A";
+texto += "*Serviço:* " + encodeURIComponent(dados.servico) + "%0A";
+if(dados.quantidade) texto += "*Quantidade:* " + encodeURIComponent(dados.quantidade) + "%0A";
+if(dados.prazo) texto += "*Prazo desejado:* " + encodeURIComponent(dados.prazo) + "%0A";
+if(dados.orcamento) texto += "*Orçamento estimado:* " + encodeURIComponent(dados.orcamento) + " (valor de referência, sujeito a alteração)%0A";
+texto += "%0A*Detalhes:*%0A" + encodeURIComponent(dados.descricao) + "%0A";
+if(dados.links.length > 0){
 texto += "%0A*Links de referência:*%0A";
-links.forEach(function(link, i){
+dados.links.forEach(function(link, i){
 texto += (i+1) + ". " + encodeURIComponent(link) + "%0A";
 });
 }
-texto += "%0A*Arquivos:* Vou anexar STL/imagens neste chat.";
+texto += "%0A*Arquivos:* Vou anexar STL/imagens/fotos neste chat.";
 return texto;
 }
+/* Envio */
 function enviarProjeto(e){
 e.preventDefault();
-var nome = document.getElementById('nome');
-var contato = document.getElementById('contato');
-var tipo = document.getElementById('tipo');
-var descricao = document.getElementById('descricao');
-var hasError = false;
-if(!nome.value.trim()){nome.classList.add('error');document.getElementById('err-nome').classList.add('show');hasError=true;}
-else{nome.classList.remove('error');document.getElementById('err-nome').classList.remove('show');}
-if(!contato.value.trim()){contato.classList.add('error');document.getElementById('err-contato').classList.add('show');hasError=true;}
-else{contato.classList.remove('error');document.getElementById('err-contato').classList.remove('show');}
-if(!tipo.value){tipo.classList.add('error');document.getElementById('err-tipo').classList.add('show');hasError=true;}
-else{tipo.classList.remove('error');document.getElementById('err-tipo').classList.remove('show');}
-if(!descricao.value.trim()){descricao.classList.add('error');document.getElementById('err-descricao').classList.add('show');hasError=true;}
-else{descricao.classList.remove('error');document.getElementById('err-descricao').classList.remove('show');}
-if(hasError) return;
-var quantidade = document.getElementById('quantidade').value || '1';
-var prazo = document.getElementById('prazo').value;
-var orcamento = document.getElementById('orcamento').value;
+var servico = (document.querySelector('input[name="servico"]:checked') || {}).value || '';
+if(!servico){ document.getElementById('err-servico').classList.add('show'); return; }
+else { document.getElementById('err-servico').classList.remove('show'); }
+var nome = document.getElementById('nome').value.trim();
+var whatsapp = document.getElementById('whatsapp').value.trim();
+var email = document.getElementById('email').value.trim();
+var quantidade = '1';
+if(servico === 'Impressão 3D') quantidade = document.getElementById('quantidade').value || '1';
+var prazo = '';
+var orcamento = '';
+if(servico === 'Impressão 3D'){
+prazo = document.getElementById('prazo').value || '';
+orcamento = document.getElementById('orcamento').value || '';
+}
+var base = { nome: nome, whatsapp: whatsapp, email: email, descricao: null, modelo: null, problema: null };
+if(servico === 'Impressão 3D') base.descricao = document.getElementById('descricao').value.trim();
+if(servico === 'Assistência técnica Creality'){ base.modelo = document.getElementById('ass-modelo').value.trim(); base.problema = document.getElementById('ass-problema').value.trim(); }
+if(servico === 'Outros') base.descricao = document.getElementById('outros-descricao').value.trim();
+if(!validarCampos(servico, base)) return;
+var descricao = montarDescricao(servico);
 var links = [];
 document.querySelectorAll('.link-input').forEach(function(input){
 if(input.value.trim()) links.push(input.value.trim());
@@ -293,49 +564,49 @@ if(input.value.trim()) links.push(input.value.trim());
 var btn = document.querySelector('.submit-row .btn');
 btn.disabled = true;
 btn.textContent = 'Enviando...';
-// Envia SEM numero — o backend gera o pedido_id
+var dados = {
+nome_cliente: nome,
+email: email || null,
+whatsapp: whatsapp,
+tipo_peca: servico,
+quantidade: parseInt(quantidade),
+descricao_peca: descricao + (links.length ? ' | Links: ' + links.join(', ') : ''),
+prazo_desejado: prazo || null,
+orcamento_estimado: orcamento || null,
+status: 'novo'
+};
 fetch('https://meu3dlabs-backend.onrender.com/api/orcamentos',{
 method:'POST',
 headers:{'Content-Type':'application/json'},
-body:JSON.stringify({
-nome_cliente:nome.value,
-email:contato.value,
-whatsapp:contato.value,
-tipo_peca:tipo.value,
-quantidade:parseInt(quantidade),
-descricao_peca:descricao.value + (links.length ? ' | Links: ' + links.join(', ') : ''),
-prazo_desejado:prazo || null,
-orcamento_estimado:orcamento || null,
-status:'novo'
-})
+body:JSON.stringify(dados)
 })
 .then(function(res){ return res.json(); })
 .then(function(pedido){
 var pedidoId = pedido.pedido_id || '';
-var texto = montarTextoWhatsApp(pedidoId, nome.value, contato.value, tipo.value, quantidade, prazo, orcamento, descricao.value, links);
+var texto = montarTextoWhatsApp(pedidoId, { nome:nome, whatsapp:whatsapp, email:email, servico:servico, quantidade:quantidade, prazo:prazo, orcamento:orcamento, descricao:descricao, links:links });
 window.open("https://wa.me/5521966594803?text=" + texto, "_blank");
 document.getElementById('successPedidoId').textContent = 'Pedido: ' + pedidoId;
 document.getElementById('successOverlay').classList.add('show');
 btn.disabled = false;
-btn.textContent = 'Enviar para o WhatsApp';
+btn.textContent = 'Finalizar no WhatsApp';
 })
 .catch(function(err){
 console.error('Erro ao salvar:',err);
-// Fallback: abre WhatsApp sem numero, mas mostra a caixa
-var texto = montarTextoWhatsApp('GERADO', nome.value, contato.value, tipo.value, quantidade, prazo, orcamento, descricao.value, links);
+var pedidoId = 'GERADO';
+var texto = montarTextoWhatsApp(pedidoId, { nome:nome, whatsapp:whatsapp, email:email, servico:servico, quantidade:quantidade, prazo:prazo, orcamento:orcamento, descricao:descricao, links:links });
 window.open("https://wa.me/5521966594803?text=" + texto, "_blank");
 document.getElementById('successPedidoId').textContent = 'Pedido: GERADO';
 document.getElementById('successOverlay').classList.add('show');
 btn.disabled = false;
-btn.textContent = 'Enviar para o WhatsApp';
+btn.textContent = 'Finalizar no WhatsApp';
 });
 }
 function fecharSucesso(){
 document.getElementById('successOverlay').classList.remove('show');
 }
-['nome','contato','tipo','descricao'].forEach(function(id){
+['nome','whatsapp','email'].forEach(function(id){
 var el = document.getElementById(id);
-if(el) el.addEventListener('input',function(){
+if(el) el.addEventListener('input', function(){
 this.classList.remove('error');
 var err = document.getElementById('err-'+id);
 if(err) err.classList.remove('show');
