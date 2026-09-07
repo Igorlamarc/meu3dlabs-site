@@ -119,6 +119,23 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 .spinner{display:inline-block;width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 @media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr);}.top-bar h1{font-size:20px;}}
+/* ===== BALÃO DE MENSAGEM (status) ===== */
+.status-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,61,.55);z-index:400;align-items:center;justify-content:center;padding:20px;}
+.status-overlay.show{display:flex;}
+.status-box{background:#fff;border-radius:16px;padding:30px 26px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:slideDown .3s ease;position:relative;}
+.status-box .sb-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--light);cursor:pointer;font-size:16px;color:var(--gray);display:flex;align-items:center;justify-content:center;transition:.2s;}
+.status-box .sb-close:hover{background:var(--navy);color:#fff;}
+.status-box .sb-icon{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e6f7ee,#c9f0d9);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px;}
+.status-box h3{font-size:18px;color:var(--navy);text-align:center;margin-bottom:4px;font-weight:800;}
+.status-box .sb-sub{font-size:13px;color:var(--gray);text-align:center;margin-bottom:18px;}
+.status-box .sb-msg{background:var(--light);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:14px;color:#1c2430;line-height:1.6;white-space:pre-wrap;margin-bottom:18px;max-height:220px;overflow-y:auto;}
+.status-box .sb-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.status-box .btn{display:inline-block;background:var(--orange);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;transition:.2s;text-decoration:none;flex:1;min-width:150px;text-align:center;font-size:14px;padding:12px 16px;}
+.status-box .btn:hover{background:var(--orange-2);}
+.status-box .btn-wa{background:#25d366;}
+.status-box .btn-wa:hover{background:#1fb959;}
+.sb-copied{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:500;opacity:0;pointer-events:none;transition:.3s;box-shadow:0 6px 20px rgba(0,0,0,.25);}
+.sb-copied.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -200,6 +217,21 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 </div>
 </main>
 <footer>Painel interno · Meu 3D Labs · Apenas para uso da equipe</footer>
+<!-- BALÃO DE MENSAGEM (status) -->
+<div class="status-overlay" id="statusOverlay">
+  <div class="status-box">
+    <button class="sb-close" onclick="fecharBalcao()" aria-label="Fechar">✕</button>
+    <div class="sb-icon">✅</div>
+    <h3 id="sbTitulo">Status atualizado!</h3>
+    <p class="sb-sub" id="sbSubtitulo">Mensagem pronta para enviar ao cliente.</p>
+    <div class="sb-msg" id="sbMensagem"></div>
+    <div class="sb-actions">
+      <button class="btn" onclick="copiarMensagem()">📋 Copiar mensagem</button>
+      <a class="btn btn-wa" id="sbWaLink" href="#" target="_blank" rel="noopener">💬 Abrir WhatsApp</a>
+    </div>
+  </div>
+</div>
+<div class="sb-copied" id="sbCopiado">Mensagem copiada!</div>
 <script>
 // ============================================
 // 🔗 URL DA API — não precisa mexer
@@ -537,6 +569,11 @@ function excluirPedido(id) {
 }
 // ---------- MUDAR STATUS ----------
 function mudarStatus(id, novoStatus) {
+  var p = pedidos.find(function(x) { return x.id === id; });
+  var nome = p ? (p.nome_cliente || '') : '';
+  var pedidoRef = p && p.pedido_id ? p.pedido_id : ('#' + id);
+  var contato = p ? (p.whatsapp || p.email || '') : '';
+  var statusAnterior = p ? (p.status || 'novo') : '';
   fetch(API_URL + '/orcamentos/' + id, {
     method: 'PUT',
     headers: {
@@ -551,14 +588,66 @@ function mudarStatus(id, novoStatus) {
     return res.json();
   })
   .then(function() {
-    var p = pedidos.find(function(x) { return x.id === id; });
     if (p) p.status = novoStatus;
     renderizar();
+    if (novoStatus !== statusAnterior) {
+      mostrarBalcao(nome, pedidoRef, contato, novoStatus);
+    }
   })
   .catch(function(err) {
     alert('Erro ao atualizar o status: ' + err.message);
     carregarPedidos();
   });
+}
+// ---------- BALÃO DE MENSAGEM (status) ----------
+var mensagemAtual = '';
+function montarMensagemStatus(nome, id, status) {
+  var primeiroNome = (nome || '').trim().split(' ')[0] || 'Cliente';
+  var map = {
+    orcamento: 'Olá, ' + primeiroNome + '! Recebemos seu pedido ' + id + ' ✅\nJá estamos preparando o orçamento e retornamos em breve aqui mesmo, pelo WhatsApp. Fica de olho!',
+    aprovado: 'Olá, ' + primeiroNome + '! Seu pedido ' + id + ' foi aprovado. 🎉\nEm breve iniciamos a produção. Qualquer dúvida, é só chamar!',
+    producao: 'Olá, ' + primeiroNome + '! Boa notícia: seu pedido ' + id + ' entrou em produção! 🖨️\nSe surgir qualquer dúvida, é só chamar a gente por aqui.',
+    pronto: 'Olá, ' + primeiroNome + '! Seu pedido ' + id + ' está pronto para retirada ou envio! 🎉\nÉ só combinar com a gente o melhor jeito de receber. 😉',
+    entregue: 'Olá, ' + primeiroNome + '! Seu pedido ' + id + ' foi entregue. Obrigado pela preferência! ⭐\nSe precisar de algo, ou quiser encomendar uma nova peça, é só chamar!',
+    cancelado: 'Olá, ' + primeiroNome + '! Uma atualização sobre o pedido ' + id + ': ele foi cancelado.\nSe quiser refazer o pedido, ajustar algo ou tirar qualquer dúvida, é só nos chamar — vamos adorar te atender! 💛'
+  };
+  return map[status] || '';
+}
+function mostrarBalcao(nome, id, contato, status) {
+  mensagemAtual = montarMensagemStatus(nome, id, status);
+  if (!mensagemAtual) return;
+  document.getElementById('sbTitulo').textContent = 'Status: ' + traduzirStatus(status);
+  document.getElementById('sbMensagem').textContent = mensagemAtual;
+  var wa = montarLinkWhatsApp(contato);
+  var link = document.getElementById('sbWaLink');
+  if (wa) {
+    link.href = wa + '?text=' + encodeURIComponent(mensagemAtual);
+    link.style.display = '';
+  } else {
+    link.style.display = 'none';
+  }
+  document.getElementById('statusOverlay').classList.add('show');
+}
+function copiarMensagem() {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(mensagemAtual).then(function() { mostrarCopiado(); });
+  } else {
+    var ta = document.createElement('textarea');
+    ta.value = mensagemAtual;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); mostrarCopiado(); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+}
+function mostrarCopiado() {
+  var el = document.getElementById('sbCopiado');
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(function() { el.classList.remove('show'); }, 2000);
+}
+function fecharBalcao() {
+  document.getElementById('statusOverlay').classList.remove('show');
 }
 </script>
 </body>
