@@ -30,6 +30,16 @@ header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-
 .back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
 .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:60px 0 40px;text-align:center;}.hero h1{font-size:clamp(28px,4.5vw,40px);line-height:1.2;margin-bottom:14px;font-weight:800;letter-spacing:-.5px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:17px;color:rgba(255,255,255,.9);max-width:520px;margin:0 auto 24px;}
 .hero-steps{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin-top:20px;}.hero-step{display:flex;align-items:center;gap:8px;font-size:14px;color:rgba(255,255,255,.85);}.hero-step-icon{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+/* ===== GUIA DE VALORES ===== */
+.guia-valores{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:var(--shadow-sm);margin-bottom:28px;}
+.guia-valores h2{font-size:22px;color:var(--navy);margin-bottom:6px;font-weight:700;}
+.guia-valores .gv-sub{font-size:14px;color:var(--gray);margin-bottom:20px;}
+.guia-valores table{width:100%;border-collapse:collapse;font-size:14px;}
+.guia-valores th{background:var(--navy);color:#fff;text-align:left;padding:10px 14px;font-size:13px;}
+.guia-valores td{padding:9px 14px;border-bottom:1px solid var(--border);color:#1c2430;}
+.guia-valores tr:nth-child(even) td{background:var(--light);}
+.guia-valores .gv-preco{text-align:right;font-weight:700;color:var(--orange);white-space:nowrap;}
+.guia-valores .gv-note{font-size:12px;color:var(--gray);margin-top:14px;line-height:1.5;}
 .form-section{padding:50px 0 70px;background:var(--light);}
 .form-card{background:var(--white);border-radius:16px;padding:36px;box-shadow:var(--shadow-md);border:1px solid var(--border);}
 .form-card h2{font-size:24px;color:var(--navy);margin-bottom:6px;font-weight:700;}
@@ -63,11 +73,18 @@ header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-
 .radio-pill:hover{border-color:var(--orange);}
 .radio-pill input{margin:0;flex-shrink:0;}
 .radio-pill:has(input:checked){border-color:var(--orange);background:rgba(242,101,34,.08);font-weight:600;}
-.orcamento-aviso{display:none;margin-top:8px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.5;align-items:flex-start;gap:8px;animation:slideDown .3s ease;}
-.orcamento-aviso.show{display:flex;}
-.orcamento-aviso.aviso-baixo{background:#fff3cd;border:1px solid #ffe08a;color:#856404;}
-.orcamento-aviso.aviso-normal{background:#e8f4fd;border:1px solid #b3d7f2;color:#0c5460;}
-.orcamento-aviso-icone{flex-shrink:0;font-size:16px;line-height:1.5;}
+/* ===== NÍVEL DE URGÊNCIA ===== */
+.urgencia-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:4px;}
+.urgencia-card{position:relative;display:flex;flex-direction:column;gap:4px;padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:var(--light-2);cursor:pointer;transition:.2s;}
+.urgencia-card:hover{border-color:var(--orange-2);transform:translateY(-1px);}
+.urgencia-card input{position:absolute;opacity:0;pointer-events:none;}
+.urgencia-nivel{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--navy);font-size:14px;}
+.urgencia-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.urgencia-dot.verde{background:#2ecc71;}
+.urgencia-dot.amarelo{background:#f1c40f;}
+.urgencia-dot.vermelho{background:#e74c3c;}
+.urgencia-desc{font-size:12px;color:var(--gray);line-height:1.4;padding-left:20px;}
+.urgencia-card.selected{border-color:var(--navy);background:#fff;box-shadow:var(--shadow-sm);}
 .info-box{background:#eef6ff;border:1px solid #d0e3ff;border-radius:10px;padding:16px 18px;margin-bottom:24px;display:flex;gap:12px;align-items:flex-start;}.info-box-icon{font-size:20px;flex-shrink:0;}.info-box p{font-size:14px;color:#2c5282;line-height:1.5;}.info-box strong{color:#1a3a6b;}
 .links-section{margin-bottom:24px;}.links-section label{display:block;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:6px;}
 .link-row{display:flex;gap:8px;margin-bottom:8px;align-items:center;}.link-row input{flex:1;}.link-remove{flex-shrink:0;width:38px;height:42px;border-radius:8px;border:1px solid var(--border);background:var(--light-2);color:#e74c3c;cursor:pointer;font-size:18px;transition:.2s;display:flex;align-items:center;justify-content:center;}.link-remove:hover{background:#e74c3c;color:#fff;border-color:#e74c3c;}.link-add{display:inline-flex;align-items:center;gap:6px;color:var(--orange);font-size:14px;font-weight:600;cursor:pointer;background:none;border:none;padding:6px 0;transition:.2s;}.link-add:hover{color:var(--orange-2);}.link-add:disabled{opacity:.4;cursor:not-allowed;}
@@ -79,7 +96,7 @@ header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-
 .success-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,61,.85);z-index:300;align-items:center;justify-content:center;padding:20px;}.success-overlay.show{display:flex;}.success-box{background:#fff;border-radius:16px;padding:40px 30px;max-width:420px;text-align:center;box-shadow:var(--shadow-lg);}.success-icon{width:64px;height:64px;border-radius:50%;background:#25d366;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;}.success-box h3{font-size:22px;color:var(--navy);margin-bottom:10px;font-weight:700;}.success-box p{font-size:15px;color:var(--gray);margin-bottom:8px;line-height:1.5;}.success-box .success-pedido-id{font-size:18px;font-weight:700;color:var(--orange);margin:12px 0;}.success-box .success-note{background:var(--light);border-radius:10px;padding:14px;margin:16px 0;font-size:14px;color:var(--navy);text-align:left;}.success-box .success-note strong{color:var(--orange);}.success-actions{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
 footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;text-align:center;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}
 .wa-float{position:fixed;bottom:24px;right:24px;width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:200;transition:.25s;}.wa-float:hover{transform:scale(1.12);}.wa-float svg{width:32px;height:32px;fill:#fff;}
-@media(max-width:620px){.form-card{padding:24px 18px;}.hero-steps{gap:16px;}.submit-row .btn{min-width:100%;}.form-row,.two-col{grid-template-columns:1fr;}.servico-grid,.opcoes-grid{grid-template-columns:1fr;}}
+@media(max-width:620px){.form-card{padding:24px 18px;}.hero-steps{gap:16px;}.submit-row .btn{min-width:100%;}.form-row,.two-col{grid-template-columns:1fr;}.servico-grid,.opcoes-grid{grid-template-columns:1fr;}.guia-valores{padding:20px 16px;}.guia-valores th,.guia-valores td{padding:8px 10px;font-size:13px;}}
 </style>
 </head>
 <body>
@@ -105,6 +122,26 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 </section>
 <section class="form-section">
 <div class="container">
+<div class="guia-valores">
+<h2>Guia de valores</h2>
+<p class="gv-sub">Valores de referência para te ajudar a dimensionar seu pedido. O orçamento final é calculado conforme tamanho, material e complexidade.</p>
+<table>
+<thead><tr><th>Tipo de peça</th><th>Valor de referência</th></tr></thead>
+<tbody>
+<tr><td>Chaveiro</td><td class="gv-preco">a partir de R$ 14,90</td></tr>
+<tr><td>Carimbo</td><td class="gv-preco">a partir de R$ 24,90</td></tr>
+<tr><td>Peça religiosa / devocional</td><td class="gv-preco">a partir de R$ 29,90</td></tr>
+<tr><td>Peça funcional / utilitária</td><td class="gv-preco">a partir de R$ 29,90</td></tr>
+<tr><td>Suporte</td><td class="gv-preco">a partir de R$ 29,90</td></tr>
+<tr><td>Action figures e semelhantes de personagens</td><td class="gv-preco">a partir de R$ 39,90</td></tr>
+<tr><td>Decoração</td><td class="gv-preco">a partir de R$ 59,90</td></tr>
+<tr><td>Miniatura personalizada</td><td class="gv-preco">a partir de R$ 129,90</td></tr>
+<tr><td>Assistência técnica Creality</td><td class="gv-preco">sob consulta</td></tr>
+<tr><td>Consultoria 3D</td><td class="gv-preco">sob consulta</td></tr>
+</tbody>
+</table>
+<p class="gv-note">* Valores "a partir de": o preço final depende do tamanho, do material e da complexidade da peça. Envie seu projeto e receba o orçamento exato.</p>
+</div>
 <div class="form-card">
 <h2>Qual serviço você precisa?</h2>
 <p class="subtitle">Preencha os campos abaixo. Os campos com * são obrigatórios. Depois de escolher o serviço, o formulário se ajusta automaticamente.</p>
@@ -157,7 +194,6 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 </div>
 <span class="form-error-msg" id="err-servico">Escolha um dos serviços.</span>
 </div>
-
 <!-- ===== IMPRESSÃO 3D ===== -->
 <div class="campos-servico" id="campos-impressao">
 <div class="form-row">
@@ -174,25 +210,31 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 </div>
 <div class="form-row">
 <div class="form-group">
-<label for="prazo">Prazo desejado (opcional)</label>
+<label for="prazo">Prazo desejado <span class="req">*</span></label>
 <input type="date" id="prazo">
-<p class="form-hint">Quando precisa estar pronto?</p>
+<span class="form-error-msg" id="err-prazo">Informe a data limite para receber a peça.</span>
+<p class="form-hint">Data em que você precisa receber a peça.</p>
 </div>
 <div class="form-group">
-<label for="orcamento">Orçamento estimado (opcional)</label>
-<select id="orcamento">
-<option value="">Não sei / a definir</option>
-<option value="Ate R$ 50">Até R$ 50</option>
-<option value="R$ 50 - R$ 100">R$ 50 - R$ 100</option>
-<option value="R$ 100 - R$ 200">R$ 100 - R$ 200</option>
-<option value="R$ 200 - R$ 500">R$ 200 - R$ 500</option>
-<option value="Acima de R$ 500">Acima de R$ 500</option>
-</select>
-<p class="form-hint">Ajuda a direcionar a solução.</p>
-<div class="orcamento-aviso" id="orcamentoAviso">
-<span class="orcamento-aviso-icone" id="orcamentoAvisoIcone">⚠️</span>
-<span id="orcamentoAvisoTexto"></span>
+<label>Nível de urgência <span class="req">*</span></label>
+<div class="urgencia-grid">
+<label class="urgencia-card">
+<input type="radio" name="urgencia" value="Sem urgência">
+<span class="urgencia-nivel"><span class="urgencia-dot verde"></span>Sem urgência</span>
+<span class="urgencia-desc">Produção no prazo normal, sem taxa extra.</span>
+</label>
+<label class="urgencia-card">
+<input type="radio" name="urgencia" value="Urgência moderada">
+<span class="urgencia-nivel"><span class="urgencia-dot amarelo"></span>Urgência moderada</span>
+<span class="urgencia-desc">Produção priorizada, com taxa extra.</span>
+</label>
+<label class="urgencia-card">
+<input type="radio" name="urgencia" value="Muito urgente">
+<span class="urgencia-nivel"><span class="urgencia-dot vermelho"></span>Muito urgente</span>
+<span class="urgencia-desc">Produção imediata, com taxa extra.</span>
+</label>
 </div>
+<span class="form-error-msg" id="err-urgencia">Selecione um nível de urgência.</span>
 </div>
 </div>
 <div class="links-section">
@@ -206,7 +248,6 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 <button type="button" class="link-add" id="addLinkBtn" onclick="adicionarLink()">+ Adicionar outro link</button>
 </div>
 </div>
-
 <!-- ===== CONSULTORIA 3D ===== -->
 <div class="campos-servico" id="campos-consultoria">
 <div class="form-group">
@@ -240,7 +281,6 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 </div>
 </div>
 </div>
-
 <!-- ===== ASSISTÊNCIA CREALITY ===== -->
 <div class="campos-servico" id="campos-assistencia">
 <div class="form-group">
@@ -291,7 +331,6 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 <span class="form-error-msg" id="err-ass-problema">Descreva o problema da sua impressora.</span>
 </div>
 </div>
-
 <!-- ===== OUTROS ===== -->
 <div class="campos-servico" id="campos-outros">
 <div class="form-group">
@@ -300,7 +339,6 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:40px 0 26px;font-si
 <span class="form-error-msg" id="err-outros-descricao">Por favor, descreva o que você precisa.</span>
 </div>
 </div>
-
 <div class="form-divider"></div>
 <div class="info-box">
 <div class="info-box-icon">📎</div>
@@ -399,6 +437,16 @@ document.getElementById('err-servico').classList.remove('show');
 }
 });
 });
+/* Seleção de urgência — destaca o card escolhido */
+document.querySelectorAll('input[name="urgencia"]').forEach(function(r){
+r.addEventListener('change', function(){
+if(this.checked){
+document.querySelectorAll('.urgencia-card').forEach(function(c){ c.classList.remove('selected'); });
+this.closest('.urgencia-card').classList.add('selected');
+document.getElementById('err-urgencia').classList.remove('show');
+}
+});
+});
 /* Checkbox "Outro" mostra campo de texto */
 var consOutroCheck = document.querySelector('.cons-outro-check');
 if(consOutroCheck){
@@ -412,30 +460,6 @@ assOutroCheck.addEventListener('change', function(){
 document.getElementById('ass-outro-box').style.display = this.checked ? 'block' : 'none';
 });
 }
-/* Aviso do orçamento estimado (só na impressão) */
-var orcamentoSelect = document.getElementById('orcamento');
-var orcamentoAviso = document.getElementById('orcamentoAviso');
-var orcamentoAvisoTexto = document.getElementById('orcamentoAvisoTexto');
-var orcamentoAvisoIcone = document.getElementById('orcamentoAvisoIcone');
-function ajustarAvisoOrcamento(){
-var valor = orcamentoSelect.value;
-if(!valor){
-orcamentoAviso.classList.remove('show','aviso-baixo','aviso-normal');
-return;
-}
-if(valor === 'Ate R$ 50'){
-orcamentoAviso.classList.add('show','aviso-baixo');
-orcamentoAviso.classList.remove('aviso-normal');
-orcamentoAvisoIcone.textContent = '⚠️';
-orcamentoAvisoTexto.innerHTML = '<strong>Atenção:</strong> Este valor é apenas uma referência do que você gostaria de investir. O orçamento real será confirmado via WhatsApp e pode ser diferente do informado aqui. Projetos personalizados podem custar mais dependendo de tamanho, material e complexidade.';
-}else{
-orcamentoAviso.classList.add('show','aviso-normal');
-orcamentoAviso.classList.remove('aviso-baixo');
-orcamentoAvisoIcone.textContent = 'ℹ️';
-orcamentoAvisoTexto.innerHTML = 'Este valor é apenas uma estimativa de referência. O orçamento final será confirmado via WhatsApp e pode variar conforme as especificações reais do projeto.';
-}
-}
-if(orcamentoSelect) orcamentoSelect.addEventListener('change', ajustarAvisoOrcamento);
 /* Validação de obrigatórios por serviço */
 function marcarErrado(id, mostrar){
 var el = document.getElementById(id);
@@ -451,6 +475,11 @@ else { marcarErrado('whatsapp', false); document.getElementById('err-whatsapp').
 if(servico === 'Impressão 3D'){
 if(!base.descricao){ marcarErrado('descricao', true); document.getElementById('err-descricao').classList.add('show'); ok = false; }
 else { marcarErrado('descricao', false); document.getElementById('err-descricao').classList.remove('show'); }
+if(!document.getElementById('prazo').value){ marcarErrado('prazo', true); document.getElementById('err-prazo').classList.add('show'); ok = false; }
+else { marcarErrado('prazo', false); document.getElementById('err-prazo').classList.remove('show'); }
+var urg = (document.querySelector('input[name="urgencia"]:checked')||{}).value || '';
+if(!urg){ document.getElementById('err-urgencia').classList.add('show'); ok = false; }
+else { document.getElementById('err-urgencia').classList.remove('show'); }
 }
 if(servico === 'Consultoria 3D'){
 var horas = parseInt(document.getElementById('horas').value) || 0;
@@ -523,7 +552,7 @@ if(dados.email) texto += "*E-mail:* " + encodeURIComponent(dados.email) + "%0A";
 texto += "*Serviço:* " + encodeURIComponent(dados.servico) + "%0A";
 if(dados.quantidade) texto += "*Quantidade:* " + encodeURIComponent(dados.quantidade) + "%0A";
 if(dados.prazo) texto += "*Prazo desejado:* " + encodeURIComponent(dados.prazo) + "%0A";
-if(dados.orcamento) texto += "*Orçamento estimado:* " + encodeURIComponent(dados.orcamento) + " (valor de referência, sujeito a alteração)%0A";
+if(dados.urgencia) texto += "*Nível de urgência:* " + encodeURIComponent(dados.urgencia) + "%0A";
 texto += "%0A*Detalhes:*%0A" + encodeURIComponent(dados.descricao) + "%0A";
 if(dados.links.length > 0){
 texto += "%0A*Links de referência:*%0A";
@@ -546,10 +575,10 @@ var email = document.getElementById('email').value.trim();
 var quantidade = '1';
 if(servico === 'Impressão 3D') quantidade = document.getElementById('quantidade').value || '1';
 var prazo = '';
-var orcamento = '';
+var urgencia = '';
 if(servico === 'Impressão 3D'){
 prazo = document.getElementById('prazo').value || '';
-orcamento = document.getElementById('orcamento').value || '';
+urgencia = (document.querySelector('input[name="urgencia"]:checked')||{}).value || '';
 }
 var base = { nome: nome, whatsapp: whatsapp, email: email, descricao: null, modelo: null, problema: null };
 if(servico === 'Impressão 3D') base.descricao = document.getElementById('descricao').value.trim();
@@ -572,7 +601,7 @@ tipo_peca: servico,
 quantidade: parseInt(quantidade),
 descricao_peca: descricao + (links.length ? ' | Links: ' + links.join(', ') : ''),
 prazo_desejado: prazo || null,
-orcamento_estimado: orcamento || null,
+urgencia: urgencia || null,
 status: 'novo'
 };
 fetch('https://meu3dlabs-backend.onrender.com/api/orcamentos',{
@@ -583,7 +612,7 @@ body:JSON.stringify(dados)
 .then(function(res){ return res.json(); })
 .then(function(pedido){
 var pedidoId = pedido.pedido_id || '';
-var texto = montarTextoWhatsApp(pedidoId, { nome:nome, whatsapp:whatsapp, email:email, servico:servico, quantidade:quantidade, prazo:prazo, orcamento:orcamento, descricao:descricao, links:links });
+var texto = montarTextoWhatsApp(pedidoId, { nome:nome, whatsapp:whatsapp, email:email, servico:servico, quantidade:quantidade, prazo:prazo, urgencia:urgencia, descricao:descricao, links:links });
 window.open("https://wa.me/5521966594803?text=" + texto, "_blank");
 document.getElementById('successPedidoId').textContent = 'Pedido: ' + pedidoId;
 document.getElementById('successOverlay').classList.add('show');
@@ -593,7 +622,7 @@ btn.textContent = 'Finalizar no WhatsApp';
 .catch(function(err){
 console.error('Erro ao salvar:',err);
 var pedidoId = 'GERADO';
-var texto = montarTextoWhatsApp(pedidoId, { nome:nome, whatsapp:whatsapp, email:email, servico:servico, quantidade:quantidade, prazo:prazo, orcamento:orcamento, descricao:descricao, links:links });
+var texto = montarTextoWhatsApp(pedidoId, { nome:nome, whatsapp:whatsapp, email:email, servico:servico, quantidade:quantidade, prazo:prazo, urgencia:urgencia, descricao:descricao, links:links });
 window.open("https://wa.me/5521966594803?text=" + texto, "_blank");
 document.getElementById('successPedidoId').textContent = 'Pedido: GERADO';
 document.getElementById('successOverlay').classList.add('show');

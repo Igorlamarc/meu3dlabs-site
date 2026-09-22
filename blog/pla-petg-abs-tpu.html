@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLA vs PETG vs ABS vs TPU: qual filamento usar? | Meu 3D Labs</title>
+<meta name="description" content="Compare os 4 filamentos mais usados na impressão 3D: PLA, PETG, ABS e TPU. Veja resistência, temperatura, acabamento e qual escolher para cada projeto.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PLA vs PETG vs ABS vs TPU: qual filamento usar?">
+<meta property="og:description" content="Compare resistência, temperatura, acabamento e descubra qual material combina com o seu projeto.">
+<meta property="og:site_name" content="Meu 3D Labs">
+<link rel="icon" href="../img/logo/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NZTH0ZSLV0"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-NZTH0ZSLV0');
+</script>
+<style>
+:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1060px;margin:0 auto;padding:0 20px;}.container-narrow{max-width:780px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}.btn-wa{background:#25d366;color:#fff;}.btn-wa:hover{background:#1fb959;}
+header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:56px 0 48px;}.hero h1{font-size:clamp(26px,4vw,38px);line-height:1.25;margin-bottom:14px;font-weight:800;letter-spacing:-.5px;}.meta-linha{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,.8);}.meta-linha span{display:inline-flex;align-items:center;gap:6px;}
+.article{padding:50px 0 30px;}.article h2{font-size:24px;color:var(--navy);margin:36px 0 14px;font-weight:800;letter-spacing:-.3px;}.article h3{font-size:18px;color:var(--navy);margin:26px 0 10px;font-weight:700;}.article p{font-size:16px;color:#3d4856;line-height:1.75;margin-bottom:16px;}.article ul{margin:0 0 18px 20px;}.article li{font-size:15.5px;color:#3d4856;line-height:1.7;margin-bottom:8px;}.article strong{color:var(--navy);}.article .destaque{background:var(--light);border-left:4px solid var(--orange);border-radius:0 10px 10px 0;padding:18px 22px;margin:22px 0;}.article .destaque p{margin:0;font-size:15px;}
+.tabela{width:100%;border-collapse:collapse;margin:20px 0 8px;font-size:14.5px;background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow-sm);}
+.tabela th{background:var(--navy);color:#fff;text-align:left;padding:12px 14px;font-size:13px;}
+.tabela td{padding:11px 14px;border-bottom:1px solid var(--border);color:#1c2430;}
+.tabela tr:nth-child(even) td{background:var(--light);}
+.tabela .destaque-linha{font-weight:700;color:var(--orange);}
+.nota-tabela{font-size:13px;color:var(--gray);margin:10px 0 22px;line-height:1.5;}
+.material-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px;box-shadow:var(--shadow-sm);}.material-card h3{color:var(--navy);font-size:19px;margin-bottom:8px;font-weight:700;}.material-card ul{margin-bottom:6px;}.material-card .veredito{margin-top:10px;padding:12px 16px;background:rgba(37,211,102,.1);border-radius:8px;font-size:14px;color:#0f7a44;font-weight:600;}
+.faq-item{background:var(--light);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}.faq-q{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;font-weight:600;color:var(--navy);font-size:15px;user-select:none;}.faq-q::after{content:'+';font-size:22px;color:var(--orange);transition:transform .3s;flex-shrink:0;margin-left:12px;}.faq-item.open .faq-q::after{transform:rotate(45deg);}.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;padding:0 20px;}.faq-item.open .faq-a{max-height:500px;padding:0 20px 18px;}.faq-a p{color:var(--gray);font-size:14.5px;line-height:1.6;}.faq-a strong{color:var(--navy);}
+.cta-final{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;text-align:center;padding:56px 0;}.cta-final h2{color:#fff;font-size:26px;margin-bottom:12px;font-weight:800;}.cta-final p{color:rgba(255,255,255,.88);max-width:540px;margin:0 auto 24px;font-size:15px;}.cta-final .btn{font-size:16px;padding:15px 34px;}
+footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
+@media(max-width:620px){.tabela{font-size:13px;}.tabela th,.tabela td{padding:9px 10px;}}
+</style>
+</head>
+<body>
+<header>
+<div class="container header-inner">
+<a href="../index.html" class="logo">
+<img src="../img/logo/logo.png" alt="Logo Meu 3D Labs">
+<span class="logo-text">Meu<span>3D</span>Labs</span>
+</a>
+<a class="back-link" href="../blog.html">← Voltar ao blog</a>
+</div>
+</header>
+<section class="hero">
+<div class="container-narrow">
+<h1>PLA vs PETG vs ABS vs TPU: qual filamento usar?</h1>
+<div class="meta-linha">
+<span>📅 Atualizado em 2026</span>
+<span>📖 7 min de leitura</span>
+<span>🏷️ Materiais</span>
+</div>
+</div>
+</section>
+<div class="article">
+<div class="container-narrow">
+<p>Escolher o filamento certo é metade do resultado de uma impressão 3D. Usar o material errado pode significar peça frágil, empenada, derretida ou que quebra no primeiro uso. Este guia compara os quatro materiais mais comuns, <strong>PLA, PETG, ABS e TPU</strong>, e te ajuda a decidir sem complicação, mesmo se você está começando agora.</p>
+
+<h2>Os quatro materiais em uma tabela</h2>
+<p>Resumo direto ao ponto, para comparar sem precisar ler tudo duas vezes:</p>
+<div style="overflow-x:auto;">
+<table class="tabela">
+<thead>
+<tr><th>Material</th><th>Dificuldade</th><th>Resistência</th><th>Temperatura de impressão</th><th>Melhor uso</th></tr>
+</thead>
+<tbody>
+<tr><td class="destaque-linha">PLA</td><td>Fácil</td><td>Boa para uso interno</td><td>190 a 220°C</td><td>Decoração, miniaturas, chaveiros</td></tr>
+<tr><td class="destaque-linha">PETG</td><td>Média</td><td>Alta, resiste a impacto</td><td>230 a 250°C</td><td>Peças funcionais, suportes, uso no dia a dia</td></tr>
+<tr><td class="destaque-linha">ABS</td><td>Difícil</td><td>Muito alta, resiste a calor</td><td>220 a 250°C</td><td>Peças que esquentam, uso automotivo</td></tr>
+<tr><td class="destaque-linha">TPU</td><td>Difícil</td><td>Flexível, emborrachado</td><td>220 a 250°C</td><td>Peças que precisam dobrar, capas, protetores</td></tr>
+</tbody>
+</table>
+</div>
+<p class="nota-tabela">Valores de temperatura são referências gerais. Cada fabricante de filamento tem a faixa exata indicada no rótulo.</p>
+
+<h2>PLA, o favorito para começar</h2>
+<div class="material-card">
+<p>O PLA é o material mais usado no mundo da impressão 3D, e por um bom motivo: é o mais fácil de imprimir, tem ótimo acabamento, cheiro suave e preço acessível. Peças em PLA saem limpas, com detalhes precisos e cores vivas.</p>
+<ul>
+<li>Fácil de imprimir, ideal para iniciantes</li>
+<li>Acabamento liso e detalhes fiéis</li>
+<li>Perfeito para decoração, miniaturas, chaveiros e itens religiosos</li>
+<li>Não suporta calor: peças deixadas no sol ou perto de fontes de calor podem deformar</li>
+</ul>
+<div class="veredito">Use PLA quando o foco é aparência, preço e facilidade. É a escolha certa para a maioria das peças personalizadas e decorativas.</div>
+</div>
+
+<h2>PETG, o resistente do dia a dia</h2>
+<div class="material-card">
+<p>O PETG une a facilidade de impressão do PLA com uma resistência bem maior. Ele aguenta impacto, umidade e uso contínuo, por isso é o queridinho de quem imprime peças funcionais.</p>
+<ul>
+<li>Resistente a impacto e trincas</li>
+<li>Aguenta umidade melhor que o PLA</li>
+<li>Ótimo para suportes, organizadores, peças utilitárias e de reposição</li>
+<li>Exige temperatura um pouco mais alta e mesa aquecida</li>
+</ul>
+<div class="veredito">Use PETG quando a peça vai ser usada de verdade, sofrer esforço ou ficar exposta ao ambiente.</div>
+</div>
+
+<h2>ABS, resistência com exigência</h2>
+<div class="material-card">
+<p>O ABS é o material de peças resistentes a impacto e calor, muito usado em peças automotivas e eletrônicos. Ele aguenta temperaturas mais altas sem deformar, algo que PLA e PETG não fazem bem.</p>
+<ul>
+<li>Muito resistente a calor e impacto</li>
+<li>Ideal para peças que esquentam ou ficam no sol</li>
+<li>Difícil de imprimir: exige ambiente fechado para evitar empenamento</li>
+<li>Cheiro forte durante a impressão</li>
+</ul>
+<div class="veredito">Use ABS apenas quando a peça realmente precisa suportar calor. Para quase tudo, PETG é mais fácil e entrega resistência parecida.</div>
+</div>
+
+<h2>TPU, o flexível</h2>
+<div class="material-card">
+<p>O TPU é o material emborrachado da impressão 3D. Ele dobra, comprime e volta ao formato original. Perfeito para capas de celular, protetores, pneus de brinquedo e peças que precisam de elasticidade.</p>
+<ul>
+<li>Flexível e resistente ao desgaste</li>
+<li>Imprime devagar e exige paciência</li>
+<li>Não é indicado para decoração ou peças rígidas</li>
+</ul>
+<div class="veredito">Use TPU quando a peça precisa dobrar ou absorver impacto. Para peça rígida, escolha outro material.</div>
+</div>
+
+<h2>Como escolher na prática</h2>
+<p>Se você não sabe por onde começar, use esta regra simples:</p>
+<ul>
+<li><strong>É para enfeitar ou presentear?</strong> PLA resolve bem e sai mais barato.</li>
+<li><strong>É para usar no dia a dia, com esforço?</strong> PETG é a escolha equilibrada.</li>
+<li><strong>Vai pegar calor ou sol o tempo todo?</strong> ABS.</li>
+<li><strong>Precisa dobrar, ser emborrachado?</strong> TPU.</li>
+</ul>
+
+<div class="destaque">
+<p><strong>Na dúvida, pergunte.</strong> Na Meu 3D Labs indicamos o material ideal para cada projeto antes de produzir, considerando uso, ambiente e orçamento. Você não precisa decorar nada disso: a gente recomenda e explica.</p>
+</div>
+
+<h2>Perguntas frequentes sobre filamentos</h2>
+<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Qual filamento é melhor para começar?</div><div class="faq-a"><p><strong>PLA.</strong> É o mais fácil de imprimir, barato e com ótimo acabamento. A maioria das primeiras peças saem melhores em PLA.</p></div></div>
+<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">PLA derrete no carro?</div><div class="faq-a"><p>Pode acontecer. O PLA amolece em temperaturas acima de 50 a 60°C, e dentro de um carro fechado no sol é fácil passar disso. Para peças automotivas, ABS ou PETG são mais seguros.</p></div></div>
+<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">PETG é mais resistente que PLA?</div><div class="faq-a"><p>Sim, significativamente. PETG aguenta mais impacto, flexão e umidade, sem ser tão difícil de imprimir quanto o ABS. É o melhor custo-benefício para peças funcionais.</p></div></div>
+<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">TPU é difícil de imprimir?</div><div class="faq-a"><p>Exige mais paciência: velocidade baixa, retração ajustada e temperatura estável. Mas com as configurações certas e experiência, sai bem. Para quem está começando, vale começar por PLA e PETG.</p></div></div>
+
+</div>
+</div>
+<section class="cta-final">
+<div class="container-narrow">
+<h2>Não sabe qual material escolher?</h2>
+<p>Envie sua ideia e a gente recomenda o material ideal para o seu projeto, com orçamento incluso. Sem compromisso.</p>
+<a class="btn btn-wa" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20uma%20dica%20de%20material.%20Vi%20o%20artigo%20de%20filamentos%20no%20blog.">Perguntar no WhatsApp</a>
+</div>
+</section>
+<footer>
+<div class="container">
+<div class="footer-bottom">
+<p>© 2026 Meu 3D Labs · Todos os direitos reservados</p>
+<div class="footer-links">
+<a href="../index.html">Início</a>
+<a href="../blog.html">Blog</a>
+<a href="../enviar-projeto.html">Orçamento</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+function toggleFaq(el){var item=el.parentElement;var isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(f){f.classList.remove('open');});if(!isOpen){item.classList.add('open');}}
+</script>
+</body>
+</html>

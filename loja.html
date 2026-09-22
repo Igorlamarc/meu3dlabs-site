@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loja — Peças 3D Prontas para Entrega | Meu 3D Labs</title>
+<meta name="description" content="Compre peças 3D prontas para entrega: chaveiros, itens religiosos, decoração e miniaturas. Carrinho, cupom de desconto, pagamento via Pix, retirada em Nilópolis/RJ ou envio por Uber Flash.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Loja — Peças 3D Prontas para Entrega | Meu 3D Labs">
+<meta property="og:description" content="Peças 3D prontas para entrega, com preço fixo, carrinho, cupom de desconto e pedido pelo WhatsApp.">
+<meta property="og:image" content="img/logo/logo.png">
+<meta property="og:site_name" content="Meu 3D Labs">
+<link rel="icon" href="img/logo/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NZTH0ZSLV0"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-NZTH0ZSLV0');
+</script>
+<style>
+:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);--green:#25d366;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;scroll-padding-top:90px;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1200px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}
+header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:48px 0;text-align:center;}.hero h1{font-size:clamp(26px,4vw,38px);line-height:1.2;margin-bottom:10px;font-weight:800;letter-spacing:-.5px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:16px;color:rgba(255,255,255,.92);max-width:640px;margin:0 auto;}
+section{padding:46px 0;}
+/* ===== LAYOUT LOJA ===== */
+.loja-layout{display:flex;gap:32px;align-items:flex-start;}
+.sidebar{width:250px;flex-shrink:0;position:sticky;top:90px;display:flex;flex-direction:column;gap:26px;}
+.sidebar-titulo{display:flex;align-items:center;justify-content:space-between;font-size:16px;font-weight:800;color:var(--navy);padding-bottom:10px;border-bottom:2px solid var(--navy);}
+.sidebar-titulo .limpar{font-size:12px;font-weight:600;color:var(--orange);cursor:pointer;background:none;border:none;}
+.sidebar-titulo .limpar:hover{text-decoration:underline;}
+.grupo h4{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gray);margin-bottom:12px;}
+.cat-lista{display:flex;flex-direction:column;gap:2px;}
+.cat-btn{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:8px;border:1px solid transparent;background:none;cursor:pointer;font-size:14px;color:var(--navy);font-weight:500;transition:.15s;text-align:left;width:100%;}
+.cat-btn:hover{background:var(--light);}
+.cat-btn.active{background:var(--navy);color:#fff;font-weight:600;}
+.cat-btn .qtd{font-size:12px;color:var(--gray);}
+.cat-btn.active .qtd{color:rgba(255,255,255,.7);}
+.check-lista{display:flex;flex-direction:column;gap:10px;}
+.check-item{display:flex;align-items:center;gap:10px;font-size:14px;color:#2b3342;cursor:pointer;user-select:none;}
+.check-item input{width:16px;height:16px;accent-color:var(--orange);cursor:pointer;}
+.loja-main{flex:1;min-width:0;}
+.barra-lojas{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:24px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.barra-lojas .contagem{font-size:13px;color:var(--gray);}
+.barra-lojas .contagem strong{color:var(--navy);}
+.barra-direita{display:flex;align-items:center;gap:12px;}
+.btn-filtros{display:none;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--navy);font-weight:600;font-size:13px;cursor:pointer;}
+.btn-filtros:hover{border-color:var(--navy);}
+.ordenar{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray);}
+.ordenar select{padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-weight:600;color:var(--navy);background:var(--white);cursor:pointer;font-family:'Inter',sans-serif;}
+.ordenar select:focus{outline:2px solid var(--orange);outline-offset:1px;}
+.btn-carrinho{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:8px;border:1px solid var(--border);background:var(--white);color:var(--navy);font-weight:700;font-size:13px;cursor:pointer;transition:.2s;position:relative;}
+.btn-carrinho:hover{border-color:var(--orange);color:var(--orange);}
+.btn-carrinho svg{width:17px;height:17px;fill:currentColor;}
+.carrinho-badge{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--orange);color:#fff;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;}
+.carrinho-badge.show{display:flex;}
+.loja-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.produto{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);transition:.25s;display:flex;flex-direction:column;}
+.produto:hover{box-shadow:var(--shadow-md);transform:translateY(-4px);border-color:var(--orange);}
+.produto-img{position:relative;background:#f0f2f7;aspect-ratio:1/1;overflow:hidden;}
+.produto-img .variante-track{display:flex;width:100%;height:100%;transition:transform .4s ease;}
+.produto-img .variante-slide{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.produto-img .variante-slide img{width:100%;height:100%;object-fit:contain;display:block;}
+.badge{position:absolute;top:12px;left:12px;font-size:11px;font-weight:700;letter-spacing:.3px;padding:5px 12px;border-radius:20px;z-index:2;}
+.badge.estoque{background:rgba(37,211,102,.92);color:#0b4d2a;}
+.badge.ultimas{background:rgba(242,101,34,.94);color:#fff;}
+.variantes-lista{position:absolute;bottom:10px;left:10px;right:10px;background:rgba(255,255,255,.94);backdrop-filter:blur(4px);border:1px solid var(--border);border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none;z-index:3;}
+.produto:hover .variantes-lista{opacity:1;transform:translateY(0);pointer-events:auto;}
+.variantes-lista.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+.variantes-lista .vl-label{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.3px;margin-right:2px;}
+.sw{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--border);cursor:pointer;transition:.15s;background-size:cover;background-position:center;}
+.sw:hover{transform:scale(1.2);}
+.sw.ativo{box-shadow:0 0 0 2px var(--orange);}
+.produto-body{padding:18px 18px 20px;display:flex;flex-direction:column;flex:1;}
+.produto-cat{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
+.produto-body h3{font-size:16px;color:var(--navy);font-weight:700;margin-bottom:6px;line-height:1.3;}
+.produto-desc{font-size:13px;color:var(--gray);line-height:1.55;flex:1;margin-bottom:12px;}
+.produto-cor{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray);margin-bottom:10px;}
+.produto-cor .mini-swatch{width:14px;height:14px;border-radius:50%;border:1px solid var(--border);display:inline-block;background-size:cover;background-position:center;}
+.produto-preco{font-size:21px;font-weight:800;color:var(--navy);margin-bottom:14px;}.produto-preco small{font-size:12px;color:var(--gray);font-weight:500;}
+.btn-comprar{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--orange);color:#fff;padding:11px;border-radius:8px;font-weight:700;font-size:14px;transition:.2s;border:none;cursor:pointer;width:100%;}
+.btn-comprar:hover{background:var(--orange-2);transform:translateY(-1px);}
+.btn-comprar svg{width:17px;height:17px;fill:#fff;}
+.sem-resultado{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray);}
+.sem-resultado h3{color:var(--navy);font-size:18px;margin-bottom:6px;}
+.como-funciona{background:var(--light-2);}.cf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:980px;margin:0 auto;}.cf-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:26px;text-align:center;box-shadow:var(--shadow-sm);}.cf-num{width:40px;height:40px;margin:0 auto 14px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;}.cf-card h4{color:var(--navy);font-size:15px;margin-bottom:8px;font-weight:700;}.cf-card p{color:var(--gray);font-size:13.5px;line-height:1.5;}
+.entrega-info{max-width:860px;margin:26px auto 0;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px 24px;box-shadow:var(--shadow-sm);}
+.entrega-info h3{font-size:16px;color:var(--navy);margin-bottom:10px;}
+.entrega-info ul{list-style:none;}
+.entrega-info li{padding:5px 0;font-size:14px;color:#3d4856;}
+.entrega-info li::before{content:"✓ ";color:var(--orange);font-weight:700;}
+.entrega-info strong{color:var(--navy);}
+.cta-final{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;text-align:center;}.cta-final h2{color:#fff;}.cta-final p{color:rgba(255,255,255,.88);max-width:540px;margin:0 auto 26px;font-size:15px;}.cta-final .btn{font-size:17px;padding:16px 36px;}
+footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
+/* ===== CARRINHO DRAWER ===== */
+.cart-overlay{position:fixed;inset:0;background:rgba(15,30,61,.45);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s ease;}
+.cart-overlay.open{opacity:1;pointer-events:auto;}
+.cart-drawer{position:fixed;top:0;right:-420px;width:min(420px,92vw);height:100vh;background:var(--white);z-index:170;transition:right .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(15,30,61,.18);}
+.cart-drawer.open{right:0;}
+.cart-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);}
+.cart-header h3{font-size:17px;color:var(--navy);font-weight:800;}
+.cart-close{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:none;font-size:16px;cursor:pointer;color:var(--navy);}
+.cart-body{flex:1;overflow-y:auto;padding:16px 24px;}
+.cart-vazio{text-align:center;color:var(--gray);padding:50px 0;}
+.cart-vazio .cv-icon{font-size:44px;margin-bottom:12px;}
+.cart-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--light-2);}
+.cart-item img{width:64px;height:64px;object-fit:contain;background:#f0f2f7;border-radius:10px;border:1px solid var(--border);flex-shrink:0;}
+.ci-info{flex:1;min-width:0;}
+.ci-nome{font-size:14px;font-weight:700;color:var(--navy);line-height:1.3;}
+.ci-preco{font-size:14px;font-weight:700;color:var(--orange);margin-top:4px;}
+.ci-qtd{display:flex;align-items:center;gap:10px;margin-top:8px;}
+.ci-qtd button{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-weight:700;color:var(--navy);}
+.ci-qtd button:hover{border-color:var(--orange);color:var(--orange);}
+.ci-qtd span{font-weight:700;font-size:14px;min-width:18px;text-align:center;}
+.ci-remove{margin-left:auto;background:none;border:none;color:#c0392b;font-size:12px;cursor:pointer;align-self:flex-start;font-weight:600;}
+.ci-remove:hover{text-decoration:underline;}
+.cart-footer{padding:18px 24px;border-top:1px solid var(--border);}
+.cart-total{display:flex;justify-content:space-between;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:14px;}
+.cart-total .valor{color:var(--orange);}
+.cart-footer .btn{width:100%;text-align:center;font-size:15px;padding:14px;}
+/* ===== CHECKOUT MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,30,61,.6);backdrop-filter:blur(3px);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s ease;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{opacity:1;pointer-events:auto;}
+.modal{background:var(--white);border-radius:18px;width:min(560px,100%);max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-md);transform:translateY(16px);transition:transform .3s ease;}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-header{position:sticky;top:0;background:var(--white);display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);z-index:2;border-radius:18px 18px 0 0;}
+.modal-header h3{font-size:17px;color:var(--navy);font-weight:800;}
+.modal-close{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:none;font-size:16px;cursor:pointer;color:var(--navy);}
+.modal-body{padding:22px 24px;}
+.modal-body .etapa-titulo{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gray);margin:20px 0 10px;}
+.modal-body .etapa-titulo:first-child{margin-top:0;}
+.resumo-item{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:#3d4856;padding:5px 0;}
+.resumo-item .ri-nome{flex:1;}
+.resumo-item .ri-cor{color:var(--gray);font-size:12px;}
+.resumo-total{display:flex;justify-content:space-between;font-weight:800;color:var(--navy);font-size:16px;padding:12px 0 0;border-top:1px solid var(--border);margin-top:8px;}
+.resumo-total .valor{color:var(--orange);}
+/* ===== CAMPOS DO CLIENTE ===== */
+.erro-box{background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.3);color:#a93226;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:14px;display:none;}
+.erro-box.show{display:block;}
+.campos-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.campo{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.campo label{font-size:12.5px;font-weight:700;color:var(--navy);}
+.campo label span{color:var(--orange);}
+.campo input{width:100%;border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;font-family:'Inter',sans-serif;color:var(--navy);transition:.15s;}
+.campo input:focus{outline:2px solid var(--orange);outline-offset:1px;}
+.campo input.erro{border-color:#c0392b;outline:1px solid #c0392b;}
+.optin{margin:2px 0 4px;font-size:13px;color:var(--gray);line-height:1.5;}
+/* ===== CUPOM ===== */
+.cupom-linha{display:flex;gap:10px;}
+.cupom-linha input{flex:1;border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;font-family:'Inter',sans-serif;color:var(--navy);text-transform:uppercase;}
+.cupom-linha input:focus{outline:2px solid var(--orange);outline-offset:1px;}
+.btn-aplicar{padding:0 20px;background:var(--navy);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;font-family:'Inter',sans-serif;}
+.btn-aplicar:hover{background:var(--orange);}
+.cupom-msg{font-size:12.5px;margin-top:8px;min-height:18px;}
+.cupom-msg.ok{color:#0f7a44;}
+.cupom-msg.erro{color:#a93226;}
+.cupom-aplicado{display:inline-flex;align-items:center;gap:6px;background:rgba(37,211,102,.12);color:#0f7a44;font-weight:700;font-size:12.5px;padding:6px 12px;border-radius:20px;margin-top:10px;}
+.cupom-aplicado button{background:none;border:none;color:#0f7a44;font-weight:800;cursor:pointer;font-size:14px;margin-left:2px;line-height:1;}
+/* ===== ENTREGA ===== */
+.entrega-opcoes{display:flex;flex-direction:column;gap:10px;}
+.entrega-op{display:flex;gap:12px;border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:.15s;align-items:flex-start;}
+.entrega-op:hover{border-color:var(--orange);}
+.entrega-op.sel{border-color:var(--orange);background:rgba(242,101,34,.05);box-shadow:0 0 0 1px var(--orange);}
+.entrega-op input{margin-top:3px;accent-color:var(--orange);}
+.entrega-op .eo-titulo{font-size:14px;font-weight:700;color:var(--navy);}
+.entrega-op .eo-desc{font-size:12.5px;color:var(--gray);line-height:1.45;margin-top:2px;}
+.entrega-op .eo-desc strong{color:var(--navy);}
+.entrega-aviso{margin-top:12px;background:rgba(242,101,34,.08);border-left:4px solid var(--orange);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#7a3a12;line-height:1.5;}
+.nota-field{width:100%;min-height:74px;border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;font-family:'Inter',sans-serif;resize:vertical;color:var(--navy);}
+.nota-field:focus{outline:2px solid var(--orange);outline-offset:1px;}
+.btn-finalizar{width:100%;background:var(--orange);color:#fff;border:none;padding:15px;border-radius:10px;font-weight:800;font-size:16px;cursor:pointer;transition:.2s;margin-top:20px;}
+.btn-finalizar:hover{background:var(--orange-2);}
+/* ===== PEDIDO GERADO ===== */
+.pedido-ok{text-align:center;padding:0;}
+.pedido-ok .ok-icon{width:64px;height:64px;border-radius:50%;background:rgba(37,211,102,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:30px;}
+.pedido-ok h3{font-size:19px;color:var(--navy);margin-bottom:6px;font-weight:800;}
+.pedido-ok p{font-size:14px;color:var(--gray);line-height:1.6;margin-bottom:16px;}
+.pedido-numero{display:inline-block;background:var(--navy);color:#fff;font-size:20px;font-weight:800;letter-spacing:1px;padding:12px 26px;border-radius:12px;margin-bottom:14px;}
+.pedido-numero span{color:var(--orange-2);}
+.btn-acompanhar{display:inline-block;background:var(--orange);color:#fff;padding:11px 24px;border-radius:8px;font-weight:700;font-size:14px;transition:.2s;margin-bottom:20px;}
+.btn-acompanhar:hover{background:var(--orange-2);transform:translateY(-1px);}
+.resumo-clean{text-align:left;background:var(--light);border:1px solid var(--border);border-radius:12px;padding:6px 18px;margin-bottom:18px;}
+.rc-secao{padding:14px 0;border-bottom:1px solid var(--border);}
+.rc-secao:last-child{border-bottom:none;}
+.rc-titulo{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--gray);margin-bottom:10px;}
+.rc-linha{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13.5px;color:#3d4856;padding:4px 0;}
+.rc-linha span{flex:1;text-align:left;}
+.rc-linha em{font-style:normal;color:var(--gray);font-size:12px;}
+.rc-linha strong{font-weight:700;color:var(--navy);text-align:right;white-space:nowrap;}
+.rc-desconto{color:#0f7a44 !important;}
+.rc-total{border-top:2px solid var(--border);margin-top:6px;padding-top:10px;}
+.rc-total span,.rc-total strong{font-size:16px;}
+.rc-total strong{color:var(--orange);}
+.btn-wa{width:100%;background:var(--green);color:#fff;border:none;padding:15px;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-wa:hover{background:#1fb959;}
+.btn-wa svg{width:18px;height:18px;fill:#fff;}
+.btn-voltar{width:100%;background:none;border:1px solid var(--border);padding:12px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;color:var(--navy);margin-top:10px;transition:.2s;}
+.btn-voltar:hover{border-color:var(--navy);}
+/* ===== FILTROS MOBILE ===== */
+.filtro-overlay{position:fixed;inset:0;background:rgba(15,30,61,.45);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s ease;}
+.filtro-overlay.open{opacity:1;pointer-events:auto;}
+.sidebar-mobile-top{display:none;}
+@media(max-width:900px){.loja-grid{grid-template-columns:repeat(2,1fr);}.cf-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:760px){
+.loja-layout{flex-direction:column;}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:min(320px,86vw);background:var(--white);box-shadow:8px 0 30px rgba(15,30,61,.18);z-index:170;transform:translateX(-102%);transition:transform .3s ease;padding:24px;overflow-y:auto;border-radius:0 14px 14px 0;}
+.sidebar.open{transform:translateX(0);}
+.sidebar-mobile-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sidebar-mobile-top .titulo{font-size:16px;font-weight:800;color:var(--navy);}
+.sidebar-mobile-top .fechar{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:none;font-size:16px;cursor:pointer;color:var(--navy);}
+.btn-filtros{display:inline-flex;}
+}
+@media(max-width:620px){.loja-grid{grid-template-columns:1fr;}.cf-grid{grid-template-columns:1fr;}}
+@media(max-width:480px){.campos-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+<div class="container header-inner">
+<a href="index.html" class="logo">
+<img src="img/logo/logo.png" alt="Logo Meu 3D Labs">
+<span class="logo-text">Meu<span>3D</span>Labs</span>
+</a>
+<a class="back-link" href="index.html">← Voltar ao site</a>
+</div>
+</header>
+<section class="hero">
+<div class="container">
+<h1>Loja <span>pronta entrega</span></h1>
+<p>Peças 3D já produzidas, com preço fixo e entrega rápida. Adicione ao carrinho, gere seu pedido e finalize no WhatsApp.</p>
+</div>
+</section>
+<section>
+<div class="container loja-layout">
+
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-mobile-top">
+<span class="titulo">Filtros</span>
+<button class="fechar" onclick="fecharFiltros()" aria-label="Fechar filtros">✕</button>
+</div>
+<div class="sidebar-titulo">
+Filtros
+<button class="limpar" onclick="limparFiltros()">Limpar tudo</button>
+</div>
+<div class="grupo">
+<h4>Categorias</h4>
+<div class="cat-lista" id="catLista">
+<button class="cat-btn active" data-cat="todos" onclick="selecionarCategoria(this)">Todos os produtos <span class="qtd" id="qtdTodos"></span></button>
+<button class="cat-btn" data-cat="chaveiros" onclick="selecionarCategoria(this)">Chaveiros <span class="qtd" id="qtdChaveiros"></span></button>
+<button class="cat-btn" data-cat="religiosos" onclick="selecionarCategoria(this)">Religiosos <span class="qtd" id="qtdReligiosos"></span></button>
+<button class="cat-btn" data-cat="decoracao" onclick="selecionarCategoria(this)">Decoração <span class="qtd" id="qtdDecoracao"></span></button>
+<button class="cat-btn" data-cat="miniaturas" onclick="selecionarCategoria(this)">Miniaturas <span class="qtd" id="qtdMiniaturas"></span></button>
+</div>
+</div>
+<div class="grupo">
+<h4>Disponibilidade</h4>
+<div class="check-lista">
+<label class="check-item"><input type="checkbox" value="estoque" checked onchange="aplicarFiltros()"> Em estoque</label>
+<label class="check-item"><input type="checkbox" value="ultimas" checked onchange="aplicarFiltros()"> Últimas unidades</label>
+</div>
+</div>
+<div class="grupo">
+<h4>Faixa de preço</h4>
+<div class="check-lista">
+<label class="check-item"><input type="checkbox" value="ate25" checked onchange="aplicarFiltros()"> Até R$ 25</label>
+<label class="check-item"><input type="checkbox" value="25a50" checked onchange="aplicarFiltros()"> R$ 25 a R$ 50</label>
+<label class="check-item"><input type="checkbox" value="50a100" checked onchange="aplicarFiltros()"> R$ 50 a R$ 100</label>
+</div>
+</div>
+</aside>
+
+<div class="loja-main">
+<div class="barra-lojas">
+<span class="contagem"><strong id="contagem">0</strong> produtos encontrados</span>
+<div class="barra-direita">
+<button class="btn-filtros" onclick="abrirFiltros()">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v2H3zM7 11h10v2H7zM11 17h2v2h-2z"/></svg>
+Filtros</button>
+<div class="ordenar">
+<span>Ordenar por</span>
+<select id="ordem" onchange="aplicarOrdem()">
+<option value="destaques">Destaques</option>
+<option value="menor">Menor preço</option>
+<option value="maior">Maior preço</option>
+<option value="nome">Nome A-Z</option>
+</select>
+</div>
+<button class="btn-carrinho" onclick="abrirCarrinho()">
+<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
+Carrinho
+<span class="carrinho-badge" id="carrinhoBadge">0</span>
+</button>
+</div>
+</div>
+
+<div class="loja-grid" id="lojaGrid">
+
+<div class="produto" data-cat="chaveiros" data-estoque="estoque" data-preco="19.90" data-nome="Chaveiro Cogumelo" data-id="p1">
+<div class="produto-img">
+<span class="badge estoque">Em estoque</span>
+<div class="variante-track">
+<div class="variante-slide"><img src="img/portfolio/Chaveiros1.jpg" alt="Chaveiro cogumelo vermelho" loading="lazy"></div>
+<div class="variante-slide"><img src="img/portfolio/Chaveiros2.jpg" alt="Chaveiro cogumelo verde" loading="lazy"></div>
+</div>
+<div class="variantes-lista" data-sw="p1">
+<span class="vl-label">Cores:</span>
+<div class="sw ativo" data-idx="0" data-cor-label="Vermelho" data-img="img/portfolio/Chaveiros1.jpg" style="background:#d32f2f" title="Vermelho"></div>
+<div class="sw" data-idx="1" data-cor-label="Verde" data-img="img/portfolio/Chaveiros2.jpg" style="background:#2e7d32" title="Verde"></div>
+</div>
+</div>
+<div class="produto-body">
+<span class="produto-cat">Chaveiros</span>
+<h3>Chaveiro Cogumelo</h3>
+<p class="produto-desc">Chaveiro 3D em PLA com detalhes divertidos. Tamanho aproximado de 5cm.</p>
+<div class="produto-cor"><span class="mini-swatch" style="background:#d32f2f"></span> Vermelho</div>
+<div class="produto-preco">R$ 19,90 <small>· unidade</small></div>
+<button class="btn-comprar" onclick="addCarrinho('p1','Chaveiro Cogumelo','R$ 19,90','19.90')">
+<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
+Adicionar</button>
+</div>
+</div>
+
+<div class="produto" data-cat="chaveiros" data-estoque="estoque" data-preco="24.90" data-nome="Chaveiro Personalizado com Nome" data-id="p2">
+<div class="produto-img">
+<span class="badge estoque">Em estoque</span>
+<div class="variante-track">
+<div class="variante-slide"><img src="img/portfolio/Chaveiros3.jpg" alt="Chaveiro personalizado com nome" loading="lazy"></div>
+</div>
+</div>
+<div class="produto-body">
+<span class="produto-cat">Chaveiros</span>
+<h3>Chaveiro Personalizado com Nome</h3>
+<p class="produto-desc">Chaveiro 3D em PLA com nome em relevo. Tamanho aproximado de 6cm.</p>
+<div class="produto-preco">R$ 24,90 <small>· unidade</small></div>
+<button class="btn-comprar" onclick="addCarrinho('p2','Chaveiro Personalizado com Nome','R$ 24,90','24.90')">
+<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
+Adicionar</button>
+</div>
+</div>
+
+<div class="produto" data-cat="religiosos" data-estoque="estoque" data-preco="49.90" data-nome="Estátua Nossa Senhora" data-id="p3">
+<div class="produto-img">
+<span class="badge estoque">Em estoque</span>
+<div class="variante-track">
+<div class="variante-slide"><img src="img/portfolio/Religiosos1.jpg" alt="Estátua Nossa Senhora branca" loading="lazy"></div>
+<div class="variante-slide"><img src="img/portfolio/Religiosos2.jpg" alt="Estátua Nossa Senhora azul" loading="lazy"></div>
+</div>
+<div class="variantes-lista" data-sw="p3">
+<span class="vl-label">Cores:</span>
+<div class="sw ativo" data-idx="0" data-cor-label="Branca" data-img="img/portfolio/Religiosos1.jpg" style="background:#f5f5f5" title="Branca"></div>
+<div class="sw" data-idx="1" data-cor-label="Azul" data-img="img/portfolio/Religiosos2.jpg" style="background:#1565c0" title="Azul"></div>
+</div>
+</div>
+<div class="produto-body">
+<span class="produto-cat">Religiosos</span>
+<h3>Estátua Nossa Senhora</h3>
+<p class="produto-desc">Peça devocional em PLA, acabamento fosco e detalhes fiéis. Altura aproximada de 15cm.</p>
+<div class="produto-cor"><span class="mini-swatch" style="background:#f5f5f5"></span> Branca</div>
+<div class="produto-preco">R$ 49,90 <small>· unidade</small></div>
+<button class="btn-comprar" onclick="addCarrinho('p3','Estátua Nossa Senhora','R$ 49,90','49.90')">
+<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
+Adicionar</button>
+</div>
+</div>
+
+<div class="produto" data-cat="decoracao" data-estoque="ultimas" data-preco="59.90" data-nome="Elefantes Decorativos" data-id="p4">
+<div class="produto-img">
+<span class="badge ultimas">Últimas unidades</span>
+<div class="variante-track">
+<div class="variante-slide"><img src="img/portfolio/Decoracao1.jpg" alt="Elefantes decorativos" loading="lazy"></div>
+</div>
+</div>
+<div class="produto-body">
+<span class="produto-cat">Decoração</span>
+<h3>Elefantes Decorativos</h3>
+<p class="produto-desc">Par de elefantes decorativos em filamento colorido, acabamento fosco. Perfeito para prateleiras.</p>
+<div class="produto-preco">R$ 59,90 <small>· par</small></div>
+<button class="btn-comprar" onclick="addCarrinho('p4','Elefantes Decorativos','R$ 59,90','59.90')">
+<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
+Adicionar</button>
+</div>
+</div>
+
+<div class="produto" data-cat="miniaturas" data-estoque="estoque" data-preco="39.90" data-nome="Miniatura de Personagem" data-id="p5">
+<div class="produto-img">
+<span class="badge estoque">Em estoque</span>
+<div class="variante-track">
+<div class="variante-slide"><img src="img/portfolio/Miniaturas1.jpg" alt="Miniatura de personagem" loading="lazy"></div>
+</div>
+</div>
+<div class="produto-body">
+<span class="produto-cat">Miniaturas</span>
+<h3>Miniatura de Personagem</h3>
+<p class="produto-desc">Figura colecionável em PLA, cores vibrantes e detalhes fiéis. Altura aproximada de 12cm.</p>
+<div class="produto-preco">R$ 39,90 <small>· unidade</small></div>
+<button class="btn-comprar" onclick="addCarrinho('p5','Miniatura de Personagem','R$ 39,90','39.90')">
+<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
+Adicionar</button>
+</div>
+</div>
+
+<div class="produto" data-cat="chaveiros" data-estoque="estoque" data-preco="14.90" data-nome="Chaveiro Letra" data-id="p6">
+<div class="produto-img">
+<span class="badge estoque">Em estoque</span>
+<div class="variante-track">
+<div class="variante-slide"><img src="img/portfolio/Chaveiros1.jpg" alt="Chaveiro letra vermelho" loading="lazy"></div>
+<div class="variante-slide"><img src="img/portfolio/Chaveiros2.jpg" alt="Chaveiro letra azul" loading="lazy"></div>
+<div class="variante-slide"><img src="img/portfolio/Chaveiros3.jpg" alt="Chaveiro letra rosa" loading="lazy"></div>
+</div>
+<div class="variantes-lista" data-sw="p6">
+<span class="vl-label">Cores:</span>
+<div class="sw ativo" data-idx="0" data-cor-label="Vermelho" data-img="img/portfolio/Chaveiros1.jpg" style="background:#d32f2f" title="Vermelho"></div>
+<div class="sw" data-idx="1" data-cor-label="Azul" data-img="img/portfolio/Chaveiros2.jpg" style="background:#1565c0" title="Azul"></div>
+<div class="sw" data-idx="2" data-cor-label="Rosa" data-img="img/portfolio/Chaveiros3.jpg" style="background:#ec407a" title="Rosa"></div>
+</div>
+</div>
+<div class="produto-body">
+<span class="produto-cat">Chaveiros</span>
+<h3>Chaveiro Letra</h3>
+<p class="produto-desc">Chaveiro 3D em PLA com letra em relevo e acabamento liso. Tamanho aproximado de 5cm.</p>
+<div class="produto-cor"><span class="mini-swatch" style="background:#d32f2f"></span> Vermelho</div>
+<div class="produto-preco">R$ 14,90 <small>· unidade</small></div>
+<button class="btn-comprar" onclick="addCarrinho('p6','Chaveiro Letra','R$ 14,90','14.90')">
+<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
+Adicionar</button>
+</div>
+</div>
+
+</div>
+
+<div class="sem-resultado" id="semResultado" style="display:none;">
+<h3>Nenhum produto encontrado</h3>
+<p>Tente remover algum filtro para ver mais resultados.</p>
+</div>
+
+</div>
+</div>
+</section>
+<section class="como-funciona">
+<div class="container">
+<h2 style="text-align:center;">Como comprar</h2>
+<p class="subtitle" style="margin:0 auto 36px;text-align:center;">Quatro passos simples, do carrinho ao pedido.</p>
+<div class="cf-grid">
+<div class="cf-card"><div class="cf-num">1</div><h4>Escolha e adicione</h4><p>Navegue, escolha a cor (se houver) e adicione ao carrinho quantos itens quiser.</p></div>
+<div class="cf-card"><div class="cf-num">2</div><h4>Seus dados e cupom</h4><p>Informe nome e WhatsApp e aplique um cupom de desconto, se tiver.</p></div>
+<div class="cf-card"><div class="cf-num">3</div><h4>Escolha a entrega</h4><p>Retirada em Nilópolis/RJ ou envio por Uber Flash. Fora do RJ, consultamos o frete antes.</p></div>
+<div class="cf-card"><div class="cf-num">4</div><h4>Finalize no WhatsApp</h4><p>Receba o número do pedido e finalize com um toque no WhatsApp.</p></div>
+</div>
+<div class="entrega-info">
+<h3>🚚 Formas de entrega e prazos</h3>
+<ul>
+<li><strong>Retirada em Nilópolis/RJ:</strong> sem custo, combinamos o horário.</li>
+<li><strong>Uber Flash (somente RJ):</strong> envio rápido, entrega por conta do cliente.</li>
+<li><strong>Fora do RJ:</strong> envio pelos Correios, consultamos o frete e o prazo antes de confirmar o pedido.</li>
+</ul>
+</div>
+</div>
+</section>
+<section class="cta-final">
+<div class="container">
+<h2>Não achou o que procurava?</h2>
+<p>Fazemos peças sob medida também. Mande sua ideia e receba o orçamento gratuito.</p>
+<a class="btn" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20N%C3%A3o%20achei%20o%20que%20procuro%20na%20loja.%20Quero%20um%20or%C3%A7amento%20sob%20medida.">Pedir peça sob medida</a>
+</div>
+</section>
+<footer>
+<div class="container">
+<div class="footer-bottom">
+<p>© 2026 Meu 3D Labs · Todos os direitos reservados</p>
+<div class="footer-links">
+<a href="index.html">Início</a>
+<a href="blog.html">Blog</a>
+<a href="avaliacoes.html">Avaliações</a>
+<a href="enviar-projeto.html">Orçamento</a>
+</div>
+</div>
+</div>
+</footer>
+<div class="cart-overlay" id="cartOverlay" onclick="fecharCarrinho()"></div>
+<div class="cart-drawer" id="cartDrawer">
+<div class="cart-header">
+<h3>🛒 Seu carrinho</h3>
+<button class="cart-close" onclick="fecharCarrinho()" aria-label="Fechar carrinho">✕</button>
+</div>
+<div class="cart-body" id="cartBody">
+<div class="cart-vazio">
+<div class="cv-icon">🛒</div>
+<p>Seu carrinho está vazio.</p>
+<p style="font-size:13px;margin-top:6px;">Adicione peças da loja para começar.</p>
+</div>
+</div>
+<div class="cart-footer" id="cartFooter" style="display:none;">
+<div class="cart-total"><span>Total</span><span class="valor" id="cartTotal">R$ 0,00</span></div>
+<button class="btn" onclick="abrirCheckout()">Finalizar pedido</button>
+</div>
+</div>
+<div class="modal-overlay" id="modalOverlay">
+<div class="modal" id="modal">
+<div class="modal-header" id="modalHeader">
+<h3 id="modalTitulo">Finalizar pedido</h3>
+<button class="modal-close" onclick="fecharModal()" aria-label="Fechar">✕</button>
+</div>
+<div class="modal-body" id="modalBody"></div>
+</div>
+</div>
+<div class="filtro-overlay" id="filtroOverlay" onclick="fecharFiltros()"></div>
+<script>
+/* ================= ESTADO ================= */
+var carrinho=[];
+try{carrinho=JSON.parse(localStorage.getItem('m3d_carrinho')||'[]');}catch(e){carrinho=[];}
+var pedidoAtual=null;
+var entregaSel='retirada';
+var cupomAtivo=null;
+var clienteDados={nome:'',fone:''};
+/* ================= CUPONS (estrutura pronta) ================= */
+var CUPONS={
+ /* Formato para ativar cupons futuramente (sem precisar mexer na estrutura):
+ 'BEMVINDO10': {tipo:'porcentagem', valor:10},
+ 'M3D5': {tipo:'fixo', valor:5}
+ */
+};
+
+/* ================= VARIANTES ================= */
+document.querySelectorAll('.produto').forEach(function(produto){
+var sw=produto.querySelector('.variantes-lista');
+if(!sw)return;
+var track=produto.querySelector('.variante-track');
+var swatches=sw.querySelectorAll('.sw');
+function atualizar(idx){
+track.style.transform='translateX(-'+idx*100+'%)';
+swatches.forEach(function(s){s.classList.toggle('ativo',parseInt(s.getAttribute('data-idx'))===idx);});
+var ativo=swatches[idx];
+if(ativo){
+produto.setAttribute('data-cor-label',ativo.getAttribute('data-cor-label'));
+var corEl=produto.querySelector('.produto-cor');
+if(corEl){
+var mini=corEl.querySelector('.mini-swatch');
+if(mini)mini.style.background=ativo.style.background||ativo.getAttribute('data-cor-label');
+corEl.childNodes.forEach(function(n){if(n.nodeType===3)n.textContent=' '+ativo.getAttribute('data-cor-label');});
+}
+}
+}
+swatches.forEach(function(s){
+s.addEventListener('click',function(e){
+e.stopPropagation();
+atualizar(parseInt(s.getAttribute('data-idx')));
+});
+});
+if(window.matchMedia('(pointer: coarse)').matches){
+var toque=0;
+produto.addEventListener('click',function(e){
+if(e.target.closest('.btn-comprar'))return;
+if(!e.target.closest('.variantes-lista')){
+toque++;
+if(toque===1){
+sw.classList.add('show');
+setTimeout(function(){toque=0;},3000);
+}
+}
+});
+document.addEventListener('click',function(e){
+if(!e.target.closest(produto)){sw.classList.remove('show');}
+});
+}
+});
+
+/* ================= CARRINHO ================= */
+function pNome(id){var p=document.querySelector('.produto[data-id="'+id+'"]');return p?p.querySelector('.variantes-lista'):null;}
+function produtoInfo(id){
+var p=document.querySelector('.produto[data-id="'+id+'"]');
+if(!p)return null;
+return {nome:p.getAttribute('data-nome'),img:p.querySelector('.variante-track img').getAttribute('src')};
+}
+function addCarrinho(id,nome,precoLabel,precoNum){
+var info=produtoInfo(id);
+var img=info?info.img:'';
+var cor='';
+var sw=pNome(id);
+if(sw&&sw.querySelector('.sw.ativo')){
+cor=sw.querySelector('.sw.ativo').getAttribute('data-cor-label');
+}
+var chave=id+'|'+cor;
+var achou=false;
+carrinho.forEach(function(item){
+if(item.chave===chave){item.qtd++;achou=true;}
+});
+if(!achou){
+carrinho.push({chave:chave,id:id,nome:nome,cor:cor,precoNum:parseFloat(precoNum),precoLabel:precoLabel,qtd:1,img:img});
+}
+salvarCarrinho();
+atualizarCarrinhoUI();
+abrirCarrinho();
+}
+function removerItem(chave){
+carrinho=carrinho.filter(function(i){return i.chave!==chave;});
+salvarCarrinho();atualizarCarrinhoUI();
+}
+function mudarQtd(chave,delta){
+carrinho.forEach(function(item){
+if(item.chave===chave){
+item.qtd+=delta;
+if(item.qtd<1)item.qtd=1;
+}
+});
+salvarCarrinho();atualizarCarrinhoUI();
+}
+function salvarCarrinho(){
+localStorage.setItem('m3d_carrinho',JSON.stringify(carrinho));
+}
+function totalCarrinho(){
+var t=0;carrinho.forEach(function(i){t+=i.precoNum*i.qtd;});return t;
+}
+function fmt(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
+function cupomDesconto(){return cupomAtivo?cupomAtivo.desc:0;}
+function totalFinal(){var t=totalCarrinho()-cupomDesconto();return t<0?0:t;}
+function atualizarCarrinhoUI(){
+var n=0;carrinho.forEach(function(i){n+=i.qtd;});
+var badge=document.getElementById('carrinhoBadge');
+badge.textContent=n;badge.classList.toggle('show',n>0);
+var body=document.getElementById('cartBody');
+var footer=document.getElementById('cartFooter');
+if(n===0){
+cupomAtivo=null;
+body.innerHTML='<div class="cart-vazio"><div class="cv-icon">🛒</div><p>Seu carrinho está vazio.</p><p style="font-size:13px;margin-top:6px;">Adicione peças da loja para começar.</p></div>';
+footer.style.display='none';
+return;
+}
+var html='';
+carrinho.forEach(function(item){
+html+='<div class="cart-item">'
++'<img src="'+item.img+'" alt="'+item.nome.replace(/"/g,'&quot;')+'">'
++'<div class="ci-info">'
++'<div class="ci-nome">'+item.nome+(item.cor?' <span style="color:var(--gray);font-weight:500;">('+item.cor+')</span>':'')+'</div>'
++'<div class="ci-preco">'+item.precoLabel+'</div>'
++'<div class="ci-qtd"><button onclick="mudarQtd(\''+item.chave+'\',-1)">−</button><span>'+item.qtd+'</span><button onclick="mudarQtd(\''+item.chave+'\',1)">+</button></div>'
++'</div>'
++'<button class="ci-remove" onclick="removerItem(\''+item.chave+'\')">Remover</button>'
++'</div>';
+});
+body.innerHTML=html;
+footer.style.display='block';
+document.getElementById('cartTotal').textContent=fmt(totalCarrinho());
+}
+function abrirCarrinho(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
+function fecharCarrinho(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
+
+/* ================= CHECKOUT ================= */
+function abrirCheckout(){
+if(totalCarrinho()<=0)return;
+fecharCarrinho();
+document.getElementById('modalTitulo').textContent='Finalizar pedido';
+document.getElementById('modalBody').innerHTML=etapaResumo();
+restaurarCupomUI();
+abrirModal();
+}
+function etapaResumo(){
+var html='';
+html+='<div class="erro-box" id="erroBox"></div>';
+html+='<div class="etapa-titulo">Seus dados</div>';
+html+='<div class="campos-grid">'
++'<div class="campo"><label>Nome completo <span>*</span></label><input type="text" id="cliNome" placeholder="Seu nome" autocomplete="name" value="'+clienteDados.nome.replace(/"/g,'&quot;')+'" oninput="guardarNome(this)"></div>'
++'<div class="campo"><label>Celular / WhatsApp <span>*</span></label><input type="tel" id="cliFone" placeholder="(21) 99999-9999" maxlength="16" autocomplete="tel" value="'+clienteDados.fone.replace(/"/g,'&quot;')+'" oninput="guardarFone(this)"></div>'
++'</div>';
+html+='<label class="check-item optin"><input type="checkbox" id="cliOptin"> Quero receber novidades e peças em estoque pelo WhatsApp</label>';
+html+='<div class="etapa-titulo">Seus itens</div>';
+carrinho.forEach(function(item){
+html+='<div class="resumo-item"><span class="ri-nome">'+item.qtd+'x '+item.nome+(item.cor?' <span class="ri-cor">('+item.cor+')</span>':'')+'</span><span>'+fmt(item.precoNum*item.qtd)+'</span></div>';
+});
+html+='<div class="resumo-item"><span class="ri-nome">Subtotal</span><span>'+fmt(totalCarrinho())+'</span></div>';
+html+='<div class="resumo-total"><span>Total</span><span class="valor">'+fmt(totalFinal())+'</span></div>';
+html+='<div class="etapa-titulo">Cupom de desconto</div>';
+html+='<div class="cupom-linha"><input type="text" id="cupomInput" placeholder="Digite seu cupom"><button class="btn-aplicar" onclick="aplicarCupom()">Aplicar</button></div>';
+html+='<div class="cupom-msg" id="cupomMsg"></div>';
+html+='<div class="etapa-titulo">Forma de entrega</div>';
+html+='<div class="entrega-opcoes">'
++'<div class="entrega-op'+(entregaSel==='retirada'?' sel':'')+'" onclick="selEntrega(\'retirada\',this)"><input type="radio" name="entrega" '+(entregaSel==='retirada'?'checked':'')+'><div><div class="eo-titulo">Retirada em Nilópolis/RJ</div><div class="eo-desc"><strong>Sem custo.</strong> Combinamos o horário pelo WhatsApp.</div></div></div>'
++'<div class="entrega-op'+(entregaSel==='uber'?' sel':'')+'" onclick="selEntrega(\'uber\',this)"><input type="radio" name="entrega" '+(entregaSel==='uber'?'checked':'')+'><div><div class="eo-titulo">Uber Flash (somente RJ)</div><div class="eo-desc">Envio rápido, <strong>entrega por conta do cliente</strong>.</div></div></div>'
++'<div class="entrega-op'+(entregaSel==='correios'?' sel':'')+'" onclick="selEntrega(\'correios\',this)"><input type="radio" name="entrega" '+(entregaSel==='correios'?'checked':'')+'><div><div class="eo-titulo">Outro estado (Correios)</div><div class="eo-desc">Enviamos pelos Correios: <strong>consultamos o frete e o prazo antes de confirmar</strong>.</div></div></div>'
++'</div>';
+html+='<div class="entrega-aviso">📦 <strong>Importante:</strong> fora do Rio de Janeiro, o pedido só é confirmado após o cálculo do frete e do prazo de envio. Vamos te passar o valor antes de qualquer pagamento.</div>';
+html+='<div class="etapa-titulo">Observações (opcional)</div>';
+html+='<textarea class="nota-field" id="notaPedido" placeholder="Ex: prefiro retirar à tarde, presente, combinar outra cor..."></textarea>';
+html+='<button class="btn-finalizar" onclick="gerarPedido()">Gerar meu pedido</button>';
+return html;
+}
+function guardarNome(el){clienteDados.nome=el.value;}
+function guardarFone(el){clienteDados.fone=el.value;mascaraFone(el);}
+function mascaraFone(el){
+var d=el.value.replace(/\D/g,'').slice(0,11);
+var v='';
+if(d.length>0)v='('+d.slice(0,2);
+if(d.length>=3)v+=') '+d.slice(2,7);
+if(d.length>=7)v+='-'+d.slice(7,11);
+else if(d.length>2)v+=' '+d.slice(2);
+el.value=v;
+}
+function selEntrega(v,el){
+entregaSel=v;
+document.querySelectorAll('.entrega-op').forEach(function(o){o.classList.remove('sel');});
+el.classList.add('sel');
+el.querySelector('input').checked=true;
+}
+
+/* ================= CUPOM ================= */
+function aplicarCupom(){
+var input=document.getElementById('cupomInput');
+var msg=document.getElementById('cupomMsg');
+var codigo=(input.value||'').trim().toUpperCase();
+var chip=document.getElementById('cupomAplicado');
+msg.className='cupom-msg';
+if(!codigo){msg.className='cupom-msg erro';msg.textContent='Digite um cupom para aplicar.';return;}
+if(chip)chip.remove();
+if(!CUPONS[codigo]){
+cupomAtivo=null;
+msg.className='cupom-msg erro';
+msg.textContent='Cupom não encontrado. Você ainda pode finalizar normalmente.';
+atualizarTotalResumo();
+return;
+}
+var c=CUPONS[codigo];
+var desconto=c.tipo==='porcentagem'?totalCarrinho()*c.valor/100:Math.min(c.valor,totalCarrinho());
+cupomAtivo={codigo:codigo,desc:desconto};
+msg.className='cupom-msg ok';
+msg.textContent='Cupom aplicado com sucesso!';
+criarChipCupom();
+atualizarTotalResumo();
+}
+function criarChipCupom(){
+if(!cupomAtivo||document.getElementById('cupomAplicado'))return;
+var linha=document.querySelector('.cupom-linha');
+if(!linha)return;
+var chip=document.createElement('span');
+chip.className='cupom-aplicado';
+chip.id='cupomAplicado';
+chip.innerHTML='🎟️ '+cupomAtivo.codigo+' · -'+fmt(cupomAtivo.desc)+' <button onclick="removerCupom()" title="Remover cupom">✕</button>';
+linha.parentElement.appendChild(chip);
+}
+function removerCupom(){
+cupomAtivo=null;
+var chip=document.getElementById('cupomAplicado');
+if(chip)chip.remove();
+var msg=document.getElementById('cupomMsg');
+if(msg){msg.className='cupom-msg';msg.textContent='';}
+atualizarTotalResumo();
+}
+function restaurarCupomUI(){
+criarChipCupom();
+atualizarTotalResumo();
+}
+function atualizarTotalResumo(){
+var el=document.querySelector('.resumo-total .valor');
+if(el)el.textContent=fmt(totalFinal());
+document.querySelectorAll('.resumo-item.desc').forEach(function(l){l.remove();});
+if(cupomAtivo){
+var box=document.querySelector('.resumo-total');
+if(box){
+var d=document.createElement('div');
+d.className='resumo-item desc';
+d.innerHTML='<span class="ri-nome">Cupom '+cupomAtivo.codigo+'</span><span style="color:#0f7a44;font-weight:700;">-'+fmt(cupomAtivo.desc)+'</span>';
+box.parentElement.insertBefore(d,box);
+}
+}
+}
+
+/* ================= PEDIDO ================= */
+function gerarPedido(){
+var erroBox=document.getElementById('erroBox');
+var inputNome=document.getElementById('cliNome');
+var inputFone=document.getElementById('cliFone');
+var nome=(inputNome?inputNome.value.trim():'');
+var fone=(inputFone?inputFone.value.replace(/\D/g,''):'');
+var optin=document.getElementById('cliOptin')?document.getElementById('cliOptin').checked:false;
+var nota=document.getElementById('notaPedido')?document.getElementById('notaPedido').value.trim():'';
+erroBox.classList.remove('show');erroBox.textContent='';
+if(inputNome)inputNome.classList.remove('erro');
+if(inputFone)inputFone.classList.remove('erro');
+if(nome.length<3){
+erroBox.textContent='Informe seu nome completo para gerar o pedido.';
+erroBox.classList.add('show');
+if(inputNome)inputNome.classList.add('erro');
+return;
+}
+if(fone.length<10){
+erroBox.textContent='Informe um celular válido com DDD. Exemplo: (21) 99999-9999.';
+erroBox.classList.add('show');
+if(inputFone)inputFone.classList.add('erro');
+return;
+}
+var numero='M3D-'+String(Math.floor(100000+Math.random()*900000));
+var itens=carrinho.map(function(i){return {nome:i.nome,cor:i.cor,qtd:i.qtd,precoLabel:i.precoLabel,precoNum:i.precoNum};});
+pedidoAtual={numero:numero,itens:itens,total:totalFinal(),subtotal:totalCarrinho(),cupom:cupomAtivo,entrega:entregaSel,nota:nota,nome:nome,fone:fone,optin:optin};
+document.getElementById('modalTitulo').textContent='Pedido gerado';
+document.getElementById('modalBody').innerHTML=etapaPedido(pedidoAtual);
+}
+function entregaTexto(e){
+if(e==='retirada')return 'Retirada em Nilópolis/RJ';
+if(e==='uber')return 'Uber Flash (por conta do cliente)';
+return 'Correios (fora do RJ, aguardando frete)';
+}
+function etapaPedido(p){
+var html='<div class="pedido-ok">'
++'<div class="ok-icon">✅</div>'
++'<h3>Pedido gerado com sucesso!</h3>'
++'<p>Guarde o número abaixo. Você pode acompanhar o status a qualquer momento.</p>'
++'<div class="pedido-numero"><span>#</span>'+p.numero+'</div>'
++'<a class="btn-acompanhar" href="acompanhar.html?numero='+p.numero+'">Acompanhar meu pedido</a>'
++'<div class="resumo-clean">'
++'<div class="rc-secao">'
++'<div class="rc-titulo">Seus dados</div>'
++'<div class="rc-linha"><span>Cliente</span><strong>'+p.nome+'</strong></div>'
++'<div class="rc-linha"><span>WhatsApp</span><strong>'+p.fone+'</strong></div>'
++'</div>'
++'<div class="rc-secao">'
++'<div class="rc-titulo">Itens</div>';
+p.itens.forEach(function(i){
+html+='<div class="rc-linha"><span>'+i.qtd+'x '+i.nome+(i.cor?' <em>('+i.cor+')</em>':'')+'</span><strong>'+fmt(i.precoNum*i.qtd)+'</strong></div>';
+});
+html+='</div>'
++'<div class="rc-secao">'
++'<div class="rc-linha"><span>Subtotal</span><strong>'+fmt(p.subtotal)+'</strong></div>';
+if(p.cupom){
+html+='<div class="rc-linha"><span>Cupom '+p.cupom.codigo+'</span><strong class="rc-desconto">-'+fmt(p.cupom.desc)+'</strong></div>';
+}
+html+='<div class="rc-linha rc-total"><span>Total</span><strong>'+fmt(p.total)+'</strong></div>'
++'</div>'
++'<div class="rc-secao">'
++'<div class="rc-linha"><span>Entrega</span><strong>'+entregaTexto(p.entrega)+'</strong></div>';
+if(p.nota){
+html+='<div class="rc-linha"><span>Observação</span><strong>'+p.nota+'</strong></div>';
+}
+if(p.optin){
+html+='<div class="rc-linha"><span>Novidades</span><strong>Aceitou receber ofertas</strong></div>';
+}
+html+='</div>'
++'</div>'
++'<button class="btn-wa" onclick="enviarWhats()"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"/></svg>Enviar pedido no WhatsApp</button>'
++'<button class="btn-voltar" onclick="abrirCheckout()">← Voltar e ajustar</button>'
++'</div>';
+return html;
+}
+function enviarWhats(){
+if(!pedidoAtual)return;
+var p=pedidoAtual;
+var linhas=['Olá! Quero confirmar o pedido #'+p.numero+' na loja da Meu 3D Labs.',''];
+linhas.push('👤 Cliente: '+p.nome);
+linhas.push('📱 WhatsApp: '+p.fone);
+linhas.push('');
+linhas.push('Itens:');
+p.itens.forEach(function(i){
+linhas.push('- '+i.qtd+'x '+i.nome+(i.cor?' ('+i.cor+')':'')+' — '+fmt(i.precoNum*i.qtd));
+});
+linhas.push('');
+if(p.cupom){linhas.push('Cupom '+p.cupom.codigo+': -'+fmt(p.cupom.desc));}
+linhas.push('Subtotal: '+fmt(p.subtotal));
+linhas.push('Total: '+fmt(p.total));
+linhas.push('Entrega: '+entregaTexto(p.entrega));
+if(p.nota){linhas.push('Observação: '+p.nota);}
+if(p.optin){linhas.push('Cliente aceitou receber novidades pelo WhatsApp');}
+linhas.push('');
+linhas.push('Número do pedido: #'+p.numero);
+var msg=linhas.join('\n');
+window.open('https://wa.me/5521966594803?text='+encodeURIComponent(msg),'_blank');
+}
+function abrirModal(){document.getElementById('modalOverlay').classList.add('open');}
+function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');pedidoAtual=null;entregaSel='retirada';cupomAtivo=null;}
+
+/* ================= FILTROS ================= */
+var categoriaAtiva='todos';
+function qtdPorCategoria(){
+var prods=document.querySelectorAll('.produto');
+var qtds={todos:prods.length,chaveiros:0,religiosos:0,decoracao:0,miniaturas:0};
+prods.forEach(function(p){var c=p.getAttribute('data-cat');qtds[c]=(qtds[c]||0)+1;});
+var mapa={todos:'qtdTodos',chaveiros:'qtdChaveiros',religiosos:'qtdReligiosos',decoracao:'qtdDecoracao',miniaturas:'qtdMiniaturas'};
+for(var k in mapa){var el=document.getElementById(mapa[k]);if(el)el.textContent='('+qtds[k]+')';}
+}
+function selecionarCategoria(btn){
+document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('active');});
+btn.classList.add('active');
+categoriaAtiva=btn.getAttribute('data-cat');
+aplicarFiltros();
+}
+function aplicarFiltros(){
+var disp=[];
+var precos=[];
+document.querySelectorAll('.check-item input').forEach(function(el){
+if(el.checked&&(el.value==='estoque'||el.value==='ultimas'))disp.push(el.value);
+if(el.checked&&(el.value==='ate25'||el.value==='25a50'||el.value==='50a100'))precos.push(el.value);
+});
+var prods=document.querySelectorAll('.produto');
+var visiveis=0;
+prods.forEach(function(p){
+var ok=true;
+if(categoriaAtiva!=='todos'&&p.getAttribute('data-cat')!==categoriaAtiva)ok=false;
+if(ok&&disp.indexOf(p.getAttribute('data-estoque'))===-1)ok=false;
+if(ok){
+var preco=parseFloat(p.getAttribute('data-preco'));
+var faixaOk=false;
+if(precos.indexOf('ate25')>-1&&preco<=25)faixaOk=true;
+if(precos.indexOf('25a50')>-1&&preco>25&&preco<=50)faixaOk=true;
+if(precos.indexOf('50a100')>-1&&preco>50&&preco<=100)faixaOk=true;
+if(!faixaOk)ok=false;
+}
+if(ok){p.style.display='';visiveis++;}else{p.style.display='none';}
+});
+document.getElementById('contagem').textContent=visiveis;
+document.getElementById('semResultado').style.display=(visiveis===0)?'block':'none';
+}
+function aplicarOrdem(){
+var ordem=document.getElementById('ordem').value;
+var grid=document.getElementById('lojaGrid');
+var prods=Array.prototype.slice.call(grid.querySelectorAll('.produto'));
+prods.sort(function(a,b){
+if(ordem==='menor')return parseFloat(a.getAttribute('data-preco'))-parseFloat(b.getAttribute('data-preco'));
+if(ordem==='maior')return parseFloat(b.getAttribute('data-preco'))-parseFloat(a.getAttribute('data-preco'));
+if(ordem==='nome')return a.getAttribute('data-nome').localeCompare(b.getAttribute('data-nome'),'pt-BR');
+return 0;
+});
+prods.forEach(function(p){grid.appendChild(p);});
+}
+function limparFiltros(){
+categoriaAtiva='todos';
+document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-cat')==='todos');});
+document.querySelectorAll('.check-item input').forEach(function(el){el.checked=true;});
+document.getElementById('ordem').value='destaques';
+aplicarFiltros();
+}
+function abrirFiltros(){document.getElementById('sidebar').classList.add('open');document.getElementById('filtroOverlay').classList.add('open');}
+function fecharFiltros(){document.getElementById('sidebar').classList.remove('open');document.getElementById('filtroOverlay').classList.remove('open');}
+
+qtdPorCategoria();
+aplicarFiltros();
+atualizarCarrinhoUI();
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Como calibrar sua impressora 3D passo a passo | Meu 3D Labs</title>
+<meta name="description" content="Guia completo de calibração de impressora 3D: nivelamento da mesa, temperatura, fluxo e primeira camada. Aprenda a calibrar sem complicação.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Como calibrar sua impressora 3D passo a passo">
+<meta property="og:description" content="Nivelamento da mesa, temperatura, fluxo e primeira camada perfeita em um guia simples.">
+<meta property="og:site_name" content="Meu 3D Labs">
+<link rel="icon" href="../img/logo/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NZTH0ZSLV0"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-NZTH0ZSLV0');
+</script>
+<style>
+:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1060px;margin:0 auto;padding:0 20px;}.container-narrow{max-width:780px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}.btn-wa{background:#25d366;color:#fff;}.btn-wa:hover{background:#1fb959;}
+header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:56px 0 48px;}.hero h1{font-size:clamp(26px,4vw,38px);line-height:1.25;margin-bottom:14px;font-weight:800;letter-spacing:-.5px;}.meta-linha{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;color:rgba(255,255,255,.8);}.meta-linha span{display:inline-flex;align-items:center;gap:6px;}
+.article{padding:50px 0 30px;}.article h2{font-size:24px;color:var(--navy);margin:36px 0 14px;font-weight:800;letter-spacing:-.3px;}.article h3{font-size:18px;color:var(--navy);margin:26px 0 10px;font-weight:700;}.article p{font-size:16px;color:#3d4856;line-height:1.75;margin-bottom:16px;}.article ul{margin:0 0 18px 20px;}.article li{font-size:15.5px;color:#3d4856;line-height:1.7;margin-bottom:8px;}.article strong{color:var(--navy);}.article .destaque{background:var(--light);border-left:4px solid var(--orange);border-radius:0 10px 10px 0;padding:18px 22px;margin:22px 0;}.article .destaque p{margin:0;font-size:15px;}
+.passo{display:flex;gap:16px;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow-sm);}.passo-num{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;}.passo h3{color:var(--navy);font-size:17px;margin-bottom:6px;font-weight:700;}.passo p{font-size:14.5px;color:var(--gray);line-height:1.65;margin:0;}.passo ul{margin:8px 0 0;}.passo li{font-size:14px;color:var(--gray);line-height:1.6;}
+.faq-item{background:var(--light);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}.faq-q{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;font-weight:600;color:var(--navy);font-size:15px;user-select:none;}.faq-q::after{content:'+';font-size:22px;color:var(--orange);transition:transform .3s;flex-shrink:0;margin-left:12px;}.faq-item.open .faq-q::after{transform:rotate(45deg);}.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;padding:0 20px;}.faq-item.open .faq-a{max-height:500px;padding:0 20px 18px;}.faq-a p{color:var(--gray);font-size:14.5px;line-height:1.6;}.faq-a strong{color:var(--navy);}
+.cta-final{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;text-align:center;padding:56px 0;}.cta-final h2{color:#fff;font-size:26px;margin-bottom:12px;font-weight:800;}.cta-final p{color:rgba(255,255,255,.88);max-width:540px;margin:0 auto 24px;font-size:15px;}.cta-final .btn{font-size:16px;padding:15px 34px;}
+footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
+@media(max-width:620px){.passo{flex-direction:column;gap:10px;}}
+</style>
+</head>
+<body>
+<header>
+<div class="container header-inner">
+<a href="../index.html" class="logo">
+<img src="../img/logo/logo.png" alt="Logo Meu 3D Labs">
+<span class="logo-text">Meu<span>3D</span>Labs</span>
+</a>
+<a class="back-link" href="../blog.html">← Voltar ao blog</a>
+</div>
+</header>
+<section class="hero">
+<div class="container-narrow">
+<h1>Como calibrar sua impressora 3D passo a passo</h1>
+<div class="meta-linha">
+<span>📅 Atualizado em 2026</span>
+<span>📖 8 min de leitura</span>
+<span>🏷️ Manutenção</span>
+</div>
+</div>
+</section>
+<div class="article">
+<div class="container-narrow">
+<p>Quase todo problema de impressão 3D começa em uma calibração mal feita: primeira camada que não cola, peça solta no meio do trabalho, bico entupido, extrusão irregular. A boa notícia é que calibrar não é difícil. Este guia divide o processo em passos simples, na ordem certa, para você fazer uma vez e repetir só quando trocar de material ou mexer na máquina.</p>
+
+<div class="destaque">
+<p><strong>Regra de ouro da calibração:</strong> faça sempre os passos fora das suas impressões, ao ar livre ou em um teste pequeno, nunca ajustando temperatura ou fluxo pela metade de uma peça grande.</p>
+</div>
+
+<h2>Antes de começar</h2>
+<p>Você vai precisar de uma folha de papel sulfite comum, as configurações do fabricante do seu filamento (temperatura está no rótulo do rolo) e paciência. Deixe a impressora esquentar por alguns minutos antes de ajustar a mesa, porque a temperatura muda o nível.</p>
+
+<div class="passo">
+<div class="passo-num">1</div>
+<div>
+<h3>Nivele a mesa (o passo mais importante)</h3>
+<p>Com a mesa aquecida na temperatura de impressão do seu material e o bico também, mova o cabeçote até o canto e desça até quase encostar na mesa. Deslize a folha de papel entre bico e mesa: você deve sentir um leve atrito, sem travar. Repita nos quatro cantos e no centro, ajustando os parafusos ou a calibração automática até todos os pontos terem o mesmo atrito.</p>
+</div>
+</div>
+
+<div class="passo">
+<div class="passo-num">2</div>
+<div>
+<h3>Ajuste a temperatura do bico e da mesa</h3>
+<p>Comece pela temperatura central indicada no rótulo do filamento. Se a peça sair com fios soltos (stringing), reduza um pouco; se a extrusão falhar ou o filamento esfarelar, aumente. Teste sempre com um pequeno quadrado ou cubo antes da peça final.</p>
+</div>
+</div>
+
+<div class="passo">
+<div class="passo-num">3</div>
+<div>
+<h3>Confira a primeira camada</h3>
+<p>A primeira camada é o alicerce. Ela deve sair achatada, contínua e colada. Se sair redonda e solta, o bico está longe da mesa: desça um pouco. Se sair amassada e transparente, está perto demais: suba. Uma primeira camada perfeita elimina a maioria das falhas de adesão.</p>
+</div>
+</div>
+
+<div class="passo">
+<div class="passo-num">4</div>
+<div>
+<h3>Ajuste o fluxo de filamento</h3>
+<p>Se a peça sai com frestas entre as linhas, o fluxo está baixo. Se sai com excesso de material e detalhes borrados, está alto. Ajuste o fluxo em pequenos passos (2 a 5%) e teste até as linhas se unirem sem excesso.</p>
+</div>
+</div>
+
+<div class="passo">
+<div class="passo-num">5</div>
+<div>
+<h3>Valide com um teste pequeno</h3>
+<p>Imprima um cubo de calibração ou um quadrado de primeira camada e analise o resultado antes da peça real. Esse teste de 10 minutos evita desperdiçar horas de impressão em uma peça com defeito.</p>
+</div>
+</div>
+
+<div class="passo">
+<div class="passo-num">6</div>
+<div>
+<h3>Registre suas configurações</h3>
+<p>Anote a temperatura, o fluxo e a altura da camada que funcionaram para cada material. Na próxima vez que usar o mesmo filamento, você parte da configuração pronta em vez de recalibrar tudo.</p>
+</div>
+</div>
+
+<h2>Quando recalibrar</h2>
+<ul>
+<li>Ao trocar de material, mesmo que seja a mesma marca</li>
+<li>Depois de trocar o bico, o hotend ou a placa de vidro</li>
+<li>Se as peças começam a falhar sem motivo aparente, recalibre antes de trocar peças</li>
+</ul>
+
+<div class="destaque">
+<p><strong>Não consegue resolver sozinho?</strong> Na Meu 3D Labs fazemos assistência técnica online para impressoras Creality, por WhatsApp e videochamada. Você executa cada passo com orientação em tempo real, sem sair de casa. Se a máquina for de outra marca, também ajudamos com consultoria.</p>
+</div>
+
+<h2>Perguntas frequentes sobre calibração</h2>
+<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Com que frequência devo nivelar a mesa?</div><div class="faq-a"><p>Depende do uso. Quem imprime todo dia costuma conferir uma vez por semana. Também nivele sempre que a primeira camada começar a sair irregular ou depois de manusear a mesa.</p></div></div>
+<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Minha primeira camada não adere, o que faço?</div><div class="faq-a"><p>Confira na ordem: nível da mesa, temperatura da mesa e temperatura do bico. Na maioria dos casos, o bico está longe demais ou a mesa fria. Existe também a opção de adesivo próprio para mesa aquecida.</p></div></div>
+<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">O que é stringing e como resolver?</div><div class="faq-a"><p>São fios finos de plástico entre partes da peça. Ajuste a retração (aumente) e reduza levemente a temperatura do bico. Um teste pequeno confirma o ajuste certo.</p></div></div>
+<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Preciso aquecer a mesa antes de nivelar?</div><div class="faq-a"><p>Sim. A mesa dilata com o calor e muda o nível. Sempre nivele com a mesa na temperatura de impressão do material que vai usar.</p></div></div>
+
+</div>
+</div>
+<section class="cta-final">
+<div class="container-narrow">
+<h2>Sua impressora está desregulada?</h2>
+<p>Chame no WhatsApp e receba orientação passo a passo por vídeo. Ajudamos a resolver sem você sair de casa.</p>
+<a class="btn btn-wa" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20para%20calibrar%20minha%20impressora%203D.">Pedir ajuda no WhatsApp</a>
+</div>
+</section>
+<footer>
+<div class="container">
+<div class="footer-bottom">
+<p>© 2026 Meu 3D Labs · Todos os direitos reservados</p>
+<div class="footer-links">
+<a href="../index.html">Início</a>
+<a href="../blog.html">Blog</a>
+<a href="../enviar-projeto.html">Orçamento</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+function toggleFaq(el){var item=el.parentElement;var isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(f){f.classList.remove('open');});if(!isOpen){item.classList.add('open');}}
+</script>
+</body>
+</html>

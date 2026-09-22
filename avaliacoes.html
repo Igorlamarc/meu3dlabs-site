@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliações — Meu 3D Labs</title>
+<meta name="description" content="Veja as avaliações de quem já comprou ou foi atendido pela Meu 3D Labs. Nota 5.0 no Google com mais de 25 avaliações reais.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Avaliações — Meu 3D Labs">
+<meta property="og:description" content="Nota 5.0 no Google. Veja o que os clientes dizem da Meu 3D Labs.">
+<meta property="og:image" content="img/logo/logo.png">
+<meta property="og:site_name" content="Meu 3D Labs">
+<link rel="icon" href="img/logo/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NZTH0ZSLV0"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-NZTH0ZSLV0');
+</script>
+<style>
+:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1060px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}.btn-outline{background:transparent;border:2px solid var(--orange);color:var(--orange);}.btn-outline:hover{background:var(--orange);color:#fff;}
+header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:64px 0;text-align:center;}.hero h1{font-size:clamp(28px,4.5vw,42px);line-height:1.2;margin-bottom:12px;font-weight:800;letter-spacing:-.5px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:17px;color:rgba(255,255,255,.92);max-width:640px;margin:0 auto 26px;}
+.hero-score{display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;margin-bottom:26px;}.hero-num{font-size:64px;font-weight:800;color:var(--orange-2);line-height:1;}.hero-stars{color:#f5a623;font-size:26px;letter-spacing:3px;margin:6px 0 4px;}.hero-count{font-size:14px;color:rgba(255,255,255,.85);}
+.hero-chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;}.chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:7px 16px;border-radius:30px;font-size:13px;font-weight:600;}
+section{padding:60px 0;}h2{font-size:28px;color:var(--navy);margin-bottom:10px;font-weight:800;letter-spacing:-.4px;}.subtitle{color:var(--gray);max-width:620px;margin-bottom:32px;font-size:15px;}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.review-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:var(--shadow-sm);transition:.25s;display:flex;flex-direction:column;}
+.review-card:hover{box-shadow:var(--shadow-md);transform:translateY(-4px);border-color:var(--navy);}
+.review-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.review-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;flex-shrink:0;}
+.review-namebox{min-width:0;}.review-name{font-weight:700;color:var(--navy);font-size:15px;line-height:1.3;}.review-tag{font-size:11.5px;color:var(--gray);display:inline-flex;align-items:center;gap:5px;}.review-tag svg{width:13px;height:13px;flex-shrink:0;}
+.review-stars{color:#f5a623;font-size:14px;margin-bottom:8px;letter-spacing:1px;}
+.review-text{color:var(--gray);font-size:14px;line-height:1.6;flex:1;}
+.review-service{margin-top:14px;display:inline-block;font-size:11px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;padding:4px 10px;border-radius:20px;background:rgba(242,101,34,.1);color:var(--orange);align-self:flex-start;}
+/* ===== SEÇÃO NÚMEROS + BONECO ===== */
+.stats-wrap{display:flex;align-items:center;justify-content:center;gap:28px;max-width:1000px;margin:0 auto;flex-wrap:wrap;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;flex:1;min-width:280px;max-width:760px;}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center;box-shadow:var(--shadow-sm);}
+.stat .num{font-size:32px;font-weight:800;color:var(--navy);line-height:1.1;}.stat .num strong{color:var(--orange);}
+.stat p{font-size:13px;color:var(--gray);margin-top:6px;}
+.stat-boneco{flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.stat-boneco img{height:140px;width:auto;display:block;filter:drop-shadow(0 10px 20px rgba(15,30,61,.15));}
+.cta-final{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;text-align:center;}.cta-final h2{color:#fff;}.cta-final p{color:rgba(255,255,255,.88);max-width:540px;margin:0 auto 26px;font-size:15px;}.cta-final .btn{font-size:17px;padding:16px 36px;}.cta-final .btn-outline{margin-left:10px;}
+footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
+@media(max-width:900px){.reviews-grid{grid-template-columns:repeat(2,1fr);}.stats{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:620px){.reviews-grid{grid-template-columns:1fr;}.stats{grid-template-columns:1fr;}.hero-num{font-size:52px;}.stat-boneco img{height:100px;}.stats-wrap{gap:18px;}}
+</style>
+</head>
+<body>
+<header>
+<div class="container header-inner">
+<a href="index.html" class="logo">
+<img src="img/logo/logo.png" alt="Logo Meu 3D Labs">
+<span class="logo-text">Meu<span>3D</span>Labs</span>
+</a>
+<a class="back-link" href="index.html">← Voltar ao site</a>
+</div>
+</header>
+<section class="hero">
+<div class="container">
+<h1>Avaliações <span>reais de clientes</span></h1>
+<p>Cada estrela representa um trabalho entregue com qualidade, atenção e compromisso. Veja o que dizem quem já comprou ou foi atendido pela Meu 3D Labs.</p>
+<div class="hero-score">
+<div class="hero-num">5.0</div>
+<div>
+<div class="hero-stars">★★★★★</div>
+<div class="hero-count">Nota média · 25 avaliações no Google</div>
+</div>
+</div>
+<div class="hero-chips">
+<span class="chip">⭐ Nota máxima</span>
+<span class="chip">✅ Clientes reais</span>
+<span class="chip">🏆 Recomendado</span>
+</div>
+</div>
+</section>
+<section>
+<div class="container">
+<h2>O que nossos clientes dizem</h2>
+<p class="subtitle">Avaliações no Google, com nome real de cada cliente.</p>
+<div class="reviews-grid">
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">C</div>
+<div class="review-namebox">
+<div class="review-name">Carlos.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Excelente. Trabalho sério com detalhes de acabamento perfeitos."</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">J</div>
+<div class="review-namebox">
+<div class="review-name">Jorge.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Time super atencioso. Prazo e capacidade de adequar as peças. Super recomendo."</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">J</div>
+<div class="review-namebox">
+<div class="review-name">João.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Produto de excelente qualidade, vale totalmente o investimento. Fiquei muito satisfeito com a compra, superou minhas expectativas."</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">G</div>
+<div class="review-namebox">
+<div class="review-name">Gabriela.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Produtos de qualidade! Amamos. Vamos comprar sempre!"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">E</div>
+<div class="review-namebox">
+<div class="review-name">Elisagela.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Foi incrível! Eu não conhecia e após conhecer estou muito satisfeita com os produtos e com o trabalho do Meu 3D Labs. Profissionais empenhados e peças satisfatórias!"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">K</div>
+<div class="review-namebox">
+<div class="review-name">Karen.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Eles têm peças lindas! Apaixonantes! Super indico."</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">M</div>
+<div class="review-namebox">
+<div class="review-name">Marcos.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Consegui resolver o problema da minha impressora 3D. Explicação clara."</p>
+<span class="review-service">Assistência técnica</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">A</div>
+<div class="review-namebox">
+<div class="review-name">Aruana.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Entrei em contato e obtive atendimento rapidamente. Relatei meu problema e me deram a orientação certa para resolver."</p>
+<span class="review-service">Assistência técnica</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">J</div>
+<div class="review-namebox">
+<div class="review-name">Jessica.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Amei meu chaveiro de Nossa Senhora! Ficou a coisa mais linda e delicada do mundo. Super indico!!"</p>
+<span class="review-service">Chaveiros</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">F</div>
+<div class="review-namebox">
+<div class="review-name">Felipe.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Fiz uma encomenda com eles e só tenho elogios. Atendimento e produtos excelentes. Recomendo pra todo tipo de ideia em 3d"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">D</div>
+<div class="review-namebox">
+<div class="review-name">Daniel.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Tudo perfeito!"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">A</div>
+<div class="review-namebox">
+<div class="review-name">Acacio.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Melhor escolha que eu fiz, produto de excelente qualidade, parabéns!!!"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">P</div>
+<div class="review-namebox">
+<div class="review-name">Patricia.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Material de ótima qualidade e um excelente atendimento!"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">D</div>
+<div class="review-namebox">
+<div class="review-name">Dayana.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Trabalho de qualidade!! Parabéns 👏"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">J</div>
+<div class="review-namebox">
+<div class="review-name">Julio.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Excelente serviço, muito satisfeito!"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">F</div>
+<div class="review-namebox">
+<div class="review-name">Francisco.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Excelente loja com trabalho impecável! Recomendo!"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">C</div>
+<div class="review-namebox">
+<div class="review-name">Charliton.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Trabalho de excelência que faz o custo parecer investimento."</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">F</div>
+<div class="review-namebox">
+<div class="review-name">Fernanda.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Peças lindas, resistentes e com excelente acabamento. Gosto muito do atendimento e do fato de conseguir mandar fazer tudo do jeito que eu quero."</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">F</div>
+<div class="review-namebox">
+<div class="review-name">Flávio.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Recomendo bastante. Profissionalismo, excelente atendimento e qualidade incrível. Conseguem transformar a sua ideia em realidade. Um trabalho impecável e que vale super a pena conhecer!"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+<div class="review-card">
+<div class="review-header">
+<div class="review-avatar">C</div>
+<div class="review-namebox">
+<div class="review-name">Claudio.</div>
+<div class="review-tag"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.5 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.9c-.3 1.4-1.1 2.5-2.3 3.3v2.7h3.7c2.2-2 3.2-4.9 3.2-7.9z"/><path fill="#34A853" d="M12 23c2.9 0 5.4-1 7.2-2.6l-3.7-2.7c-1 .7-2.3 1.1-3.5 1.1-2.7 0-5-1.8-5.8-4.2H2.4v2.8C4.2 20.9 7.9 23 12 23z"/><path fill="#FBBC04" d="M6.2 14.6c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.8H2.4C1.6 9.4 1.2 11.2 1.2 12.6s.4 3.2 1.2 4.8l3.8-2.8z"/><path fill="#EA4335" d="M12 5.8c1.6 0 3 .5 4.1 1.6l3.1-3.1C17.4 2.6 14.9 1.6 12 1.6 7.9 1.6 4.2 3.7 2.4 7.2l3.8 2.8C7 7.6 9.3 5.8 12 5.8z"/></svg> Avaliação no Google</div>
+</div>
+</div>
+<div class="review-stars">★★★★★</div>
+<p class="review-text">"Meu projeto ficou incrível, obrigado Igor pelo empenho e dedicação, recomendo muito"</p>
+<span class="review-service">Peças personalizadas</span>
+</div>
+
+</div>
+</div>
+</section>
+<section style="background:var(--light-2);">
+<div class="container">
+<h2 style="text-align:center;">Números que provam a confiança</h2>
+<div class="stats-wrap" style="margin-top:8px;">
+<div class="stats">
+<div class="stat"><div class="num"><strong>5.0</strong></div><p>Nota média no Google</p></div>
+<div class="stat"><div class="num">25</div><p>Avaliações no Google</p></div>
+<div class="stat"><div class="num">100%</div><p>Clientes satisfeitos</p></div>
+</div>
+<div class="stat-boneco">
+<img src="img/avaliacoes/boneco.png" alt="Boneco Meu 3D Labs com a camisa da marca e gesto de positivo">
+</div>
+</div>
+</div>
+</section>
+<section class="cta-final">
+<div class="container">
+<h2>Já foi atendido pela Meu 3D Labs?</h2>
+<p>Sua opinião ajuda outras pessoas a descobrirem a qualidade do nosso trabalho. Leva menos de 1 minuto.</p>
+<a class="btn" href="https://g.page/r/CcGSg0AxWsPnEAE/review" target="_blank">Avaliar no Google</a>
+<a class="btn btn-outline" href="index.html">Voltar ao site</a>
+</div>
+</section>
+<footer>
+<div class="container">
+<div class="footer-bottom">
+<p>© 2026 Meu 3D Labs · Todos os direitos reservados</p>
+<div class="footer-links">
+<a href="index.html">Início</a>
+<a href="assistencia.html">Assistência</a>
+<a href="consultoria.html">Consultoria</a>
+<a href="enviar-projeto.html">Orçamento</a>
+</div>
+</div>
+</div>
+</footer>
+</body>
+</html>
