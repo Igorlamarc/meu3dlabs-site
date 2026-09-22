@@ -24,18 +24,6 @@ gtag('config','G-NZTH0ZSLV0');
 </script>
 <style>
 
-
-/* ===== TELA DE MANUTENÇÃO (TEMPORÁRIA) ===== */
-#manutencao{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0f1e3d 0%,#16294f 60%,#1d3a6b 100%);display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;}
-#manutencao .mt-box{max-width:520px;color:#fff;}
-#manutencao .mt-icon{font-size:64px;margin-bottom:18px;}
-#manutencao h1{font-size:clamp(24px,4vw,34px);font-weight:800;margin-bottom:12px;letter-spacing:-.5px;}
-#manutencao h1 span{color:#ff8a3d;}
-#manutencao p{font-size:15px;color:rgba(255,255,255,.9);line-height:1.6;margin-bottom:22px;}
-#manutencao .mt-btn{display:inline-block;background:#f26522;color:#fff;padding:13px 28px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none;transition:.2s;}
-#manutencao .mt-btn:hover{background:#ff8a3d;transform:translateY(-2px);}
-
-
 :root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);--green:#25d366;}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;scroll-padding-top:90px;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1200px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}
 header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
@@ -223,20 +211,17 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 }
 @media(max-width:620px){.loja-grid{grid-template-columns:1fr;}.cf-grid{grid-template-columns:1fr;}}
 @media(max-width:480px){.campos-grid{grid-template-columns:1fr;}}
+
+/* ===== LOJA DINÂMICA VIA API ===== */
+.produto.esgotado{opacity:.55;filter:grayscale(.18);}
+.badge.esgotado{background:rgba(192,57,43,.9);color:#fff;}
+.btn-pedir{display:flex;align-items:center;justify-content:center;gap:8px;background:#fde8e5;color:#c0392b;border:1px solid #f5c6c0;width:100%;padding:11px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s;}
+.btn-pedir:hover{background:#f5c6c0;}
+.loja-carregando{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray);}
+
 </style>
 </head>
 <body>
-
-
-<div id="manutencao">
-  <div class="mt-box">
-    <div class="mt-icon">🛠️</div>
-    <h1>Loja em <span>manutenção</span></h1>
-    <p>Estamos ajustando os detalhes e adicionando novidades. Volte em breve — em instantes a loja estará de volta com tudo!</p>
-    <a class="mt-btn" href="index.html">← Voltar ao site</a>
-  </div>
-</div>
-
 
 <header>
 <div class="container header-inner">
@@ -272,6 +257,7 @@ Filtros
 <button class="cat-btn" data-cat="religiosos" onclick="selecionarCategoria(this)">Religiosos <span class="qtd" id="qtdReligiosos"></span></button>
 <button class="cat-btn" data-cat="decoracao" onclick="selecionarCategoria(this)">Decoração <span class="qtd" id="qtdDecoracao"></span></button>
 <button class="cat-btn" data-cat="miniaturas" onclick="selecionarCategoria(this)">Miniaturas <span class="qtd" id="qtdMiniaturas"></span></button>
+<button class="cat-btn" data-cat="outros" onclick="selecionarCategoria(this)">Outros <span class="qtd" id="qtdOutros"></span></button>
 </div>
 </div>
 <div class="grupo">
@@ -314,131 +300,7 @@ Carrinho
 </div>
 </div>
 <div class="loja-grid" id="lojaGrid">
-<div class="produto" data-cat="chaveiros" data-estoque="estoque" data-preco="19.90" data-nome="Chaveiro Cogumelo" data-id="p1">
-<div class="produto-img">
-<span class="badge estoque">Em estoque</span>
-<div class="variante-track">
-<div class="variante-slide"><img src="img/portfolio/Chaveiros1.jpg" alt="Chaveiro cogumelo vermelho" loading="lazy"></div>
-<div class="variante-slide"><img src="img/portfolio/Chaveiros2.jpg" alt="Chaveiro cogumelo verde" loading="lazy"></div>
-</div>
-<div class="variantes-lista" data-sw="p1">
-<span class="vl-label">Cores:</span>
-<div class="sw ativo" data-idx="0" data-cor-label="Vermelho" data-img="img/portfolio/Chaveiros1.jpg" style="background:#d32f2f" title="Vermelho"></div>
-<div class="sw" data-idx="1" data-cor-label="Verde" data-img="img/portfolio/Chaveiros2.jpg" style="background:#2e7d32" title="Verde"></div>
-</div>
-</div>
-<div class="produto-body">
-<span class="produto-cat">Chaveiros</span>
-<h3>Chaveiro Cogumelo</h3>
-<p class="produto-desc">Chaveiro 3D em PLA com detalhes divertidos. Tamanho aproximado de 5cm.</p>
-<div class="produto-cor"><span class="mini-swatch" style="background:#d32f2f"></span> Vermelho</div>
-<div class="produto-preco">R$ 19,90 <small>· unidade</small></div>
-<button class="btn-comprar" onclick="addCarrinho('p1','Chaveiro Cogumelo','R$ 19,90','19.90')">
-<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
-Adicionar</button>
-</div>
-</div>
-<div class="produto" data-cat="chaveiros" data-estoque="estoque" data-preco="24.90" data-nome="Chaveiro Personalizado com Nome" data-id="p2">
-<div class="produto-img">
-<span class="badge estoque">Em estoque</span>
-<div class="variante-track">
-<div class="variante-slide"><img src="img/portfolio/Chaveiros3.jpg" alt="Chaveiro personalizado com nome" loading="lazy"></div>
-</div>
-</div>
-<div class="produto-body">
-<span class="produto-cat">Chaveiros</span>
-<h3>Chaveiro Personalizado com Nome</h3>
-<p class="produto-desc">Chaveiro 3D em PLA com nome em relevo. Tamanho aproximado de 6cm.</p>
-<div class="produto-preco">R$ 24,90 <small>· unidade</small></div>
-<button class="btn-comprar" onclick="addCarrinho('p2','Chaveiro Personalizado com Nome','R$ 24,90','24.90')">
-<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
-Adicionar</button>
-</div>
-</div>
-<div class="produto" data-cat="religiosos" data-estoque="estoque" data-preco="49.90" data-nome="Estátua Nossa Senhora" data-id="p3">
-<div class="produto-img">
-<span class="badge estoque">Em estoque</span>
-<div class="variante-track">
-<div class="variante-slide"><img src="img/portfolio/Religiosos1.jpg" alt="Estátua Nossa Senhora branca" loading="lazy"></div>
-<div class="variante-slide"><img src="img/portfolio/Religiosos2.jpg" alt="Estátua Nossa Senhora azul" loading="lazy"></div>
-</div>
-<div class="variantes-lista" data-sw="p3">
-<span class="vl-label">Cores:</span>
-<div class="sw ativo" data-idx="0" data-cor-label="Branca" data-img="img/portfolio/Religiosos1.jpg" style="background:#f5f5f5" title="Branca"></div>
-<div class="sw" data-idx="1" data-cor-label="Azul" data-img="img/portfolio/Religiosos2.jpg" style="background:#1565c0" title="Azul"></div>
-</div>
-</div>
-<div class="produto-body">
-<span class="produto-cat">Religiosos</span>
-<h3>Estátua Nossa Senhora</h3>
-<p class="produto-desc">Peça devocional em PLA, acabamento fosco e detalhes fiéis. Altura aproximada de 15cm.</p>
-<div class="produto-cor"><span class="mini-swatch" style="background:#f5f5f5"></span> Branca</div>
-<div class="produto-preco">R$ 49,90 <small>· unidade</small></div>
-<button class="btn-comprar" onclick="addCarrinho('p3','Estátua Nossa Senhora','R$ 49,90','49.90')">
-<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
-Adicionar</button>
-</div>
-</div>
-<div class="produto" data-cat="decoracao" data-estoque="ultimas" data-preco="59.90" data-nome="Elefantes Decorativos" data-id="p4">
-<div class="produto-img">
-<span class="badge ultimas">Últimas unidades</span>
-<div class="variante-track">
-<div class="variante-slide"><img src="img/portfolio/Decoracao1.jpg" alt="Elefantes decorativos" loading="lazy"></div>
-</div>
-</div>
-<div class="produto-body">
-<span class="produto-cat">Decoração</span>
-<h3>Elefantes Decorativos</h3>
-<p class="produto-desc">Par de elefantes decorativos em filamento colorido, acabamento fosco. Perfeito para prateleiras.</p>
-<div class="produto-preco">R$ 59,90 <small>· par</small></div>
-<button class="btn-comprar" onclick="addCarrinho('p4','Elefantes Decorativos','R$ 59,90','59.90')">
-<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
-Adicionar</button>
-</div>
-</div>
-<div class="produto" data-cat="miniaturas" data-estoque="estoque" data-preco="39.90" data-nome="Miniatura de Personagem" data-id="p5">
-<div class="produto-img">
-<span class="badge estoque">Em estoque</span>
-<div class="variante-track">
-<div class="variante-slide"><img src="img/portfolio/Miniaturas1.jpg" alt="Miniatura de personagem" loading="lazy"></div>
-</div>
-</div>
-<div class="produto-body">
-<span class="produto-cat">Miniaturas</span>
-<h3>Miniatura de Personagem</h3>
-<p class="produto-desc">Figura colecionável em PLA, cores vibrantes e detalhes fiéis. Altura aproximada de 12cm.</p>
-<div class="produto-preco">R$ 39,90 <small>· unidade</small></div>
-<button class="btn-comprar" onclick="addCarrinho('p5','Miniatura de Personagem','R$ 39,90','39.90')">
-<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
-Adicionar</button>
-</div>
-</div>
-<div class="produto" data-cat="chaveiros" data-estoque="estoque" data-preco="14.90" data-nome="Chaveiro Letra" data-id="p6">
-<div class="produto-img">
-<span class="badge estoque">Em estoque</span>
-<div class="variante-track">
-<div class="variante-slide"><img src="img/portfolio/Chaveiros1.jpg" alt="Chaveiro letra vermelho" loading="lazy"></div>
-<div class="variante-slide"><img src="img/portfolio/Chaveiros2.jpg" alt="Chaveiro letra azul" loading="lazy"></div>
-<div class="variante-slide"><img src="img/portfolio/Chaveiros3.jpg" alt="Chaveiro letra rosa" loading="lazy"></div>
-</div>
-<div class="variantes-lista" data-sw="p6">
-<span class="vl-label">Cores:</span>
-<div class="sw ativo" data-idx="0" data-cor-label="Vermelho" data-img="img/portfolio/Chaveiros1.jpg" style="background:#d32f2f" title="Vermelho"></div>
-<div class="sw" data-idx="1" data-cor-label="Azul" data-img="img/portfolio/Chaveiros2.jpg" style="background:#1565c0" title="Azul"></div>
-<div class="sw" data-idx="2" data-cor-label="Rosa" data-img="img/portfolio/Chaveiros3.jpg" style="background:#ec407a" title="Rosa"></div>
-</div>
-</div>
-<div class="produto-body">
-<span class="produto-cat">Chaveiros</span>
-<h3>Chaveiro Letra</h3>
-<p class="produto-desc">Chaveiro 3D em PLA com letra em relevo e acabamento liso. Tamanho aproximado de 5cm.</p>
-<div class="produto-cor"><span class="mini-swatch" style="background:#d32f2f"></span> Vermelho</div>
-<div class="produto-preco">R$ 14,90 <small>· unidade</small></div>
-<button class="btn-comprar" onclick="addCarrinho('p6','Chaveiro Letra','R$ 14,90','14.90')">
-<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>
-Adicionar</button>
-</div>
-</div>
+  <div class="loja-carregando">Carregando produtos…</div>
 </div>
 <div class="sem-resultado" id="semResultado" style="display:none;">
 <h3>Nenhum produto encontrado</h3>
@@ -579,7 +441,7 @@ function pNome(id){var p=document.querySelector('.produto[data-id="'+id+'"]');re
 function produtoInfo(id){
 var p=document.querySelector('.produto[data-id="'+id+'"]');
 if(!p)return null;
-return {nome:p.getAttribute('data-nome'),img:p.querySelector('.variante-track img').getAttribute('src')};
+return {nome:p.getAttribute('data-nome'),img:(p.querySelector('.variante-track img')||{getAttribute:function(){return '';}}).getAttribute('src')};
 }
 function addCarrinho(id,nome,precoLabel,precoNum){
 var info=produtoInfo(id);
@@ -919,13 +781,142 @@ window.open('https://wa.me/5521966594803?text='+encodeURIComponent(msg),'_blank'
 }
 function abrirModal(){document.getElementById('modalOverlay').classList.add('open');}
 function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');pedidoAtual=null;entregaSel='retirada';cupomAtivo=null;}
+
+/* ================= LOJA DINÂMICA (API) ================= */
+var API_LOJA = 'https://meu3dlabs-backend.onrender.com/api';
+var WHATSAPP_LOJA = '5521966594803';
+var produtosLoja = [];
+
+function escL(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function precoLabel(v){v=parseFloat(v)||0;return v.toFixed(2).replace('.',',');}
+function badgeProduto(q){
+  q=parseInt(q)||0;
+  if(q<=0)return '<span class="badge esgotado">Sem estoque</span>';
+  if(q<=3)return '<span class="badge ultimas">Últimas '+q+' un.</span>';
+  return '<span class="badge estoque">Em estoque</span>';
+}
+function bindVariantes(card){
+  var sw=card.querySelector('.variantes-lista');
+  if(!sw)return;
+  var track=card.querySelector('.variante-track');
+  var swatches=sw.querySelectorAll('.sw');
+  function atualizar(idx){
+    track.style.transform='translateX(-'+idx*100+'%)';
+    swatches.forEach(function(s){s.classList.toggle('ativo',parseInt(s.getAttribute('data-idx'))===idx);});
+    var ativo=swatches[idx];
+    if(ativo){
+      card.setAttribute('data-cor-label',ativo.getAttribute('data-cor-label'));
+      var corEl=card.querySelector('.produto-cor');
+      if(corEl){
+        var mini=corEl.querySelector('.mini-swatch');
+        if(mini)mini.style.background=ativo.style.background||'#ccc';
+        corEl.childNodes.forEach(function(n){if(n.nodeType===3)n.textContent=' '+ativo.getAttribute('data-cor-label');});
+      }
+    }
+  }
+  swatches.forEach(function(s){s.addEventListener('click',function(e){e.stopPropagation();atualizar(parseInt(s.getAttribute('data-idx')));});});
+  if(window.matchMedia('(pointer: coarse)').matches){
+    var toque=0;
+    card.addEventListener('click',function(e){
+      if(e.target.closest('.btn-comprar')||e.target.closest('.btn-pedir'))return;
+      if(!e.target.closest('.variantes-lista')){
+        toque++;
+        if(toque===1){sw.classList.add('show');setTimeout(function(){toque=0;},3000);}
+      }
+    });
+    document.addEventListener('click',function(e){if(!e.target.closest(card))sw.classList.remove('show');});
+  }
+}
+function renderProdutos(lista){
+  var grid=document.getElementById('lojaGrid');
+  grid.innerHTML='';
+  if(!lista.length){
+    grid.innerHTML='<div class="sem-resultado" style="display:block;"><h3>Nenhum produto encontrado</h3><p>Nossa vitrine está sendo preparada. Volte em breve!</p></div>';
+    document.getElementById('semResultado').style.display='none';
+    return;
+  }
+  lista.forEach(function(p){
+    var estoque=parseInt(p.estoque)||0;
+    var esgotado=estoque<=0;
+    var imgs=p.imagens||[];
+    var cores=p.cores||[];
+    var precoN=parseFloat(p.preco)||0;
+    var plabel='R$ '+precoLabel(precoN);
+    var cat=(p.categoria||'outros').toLowerCase();
+    var card=document.createElement('div');
+    card.className='produto'+(esgotado?' esgotado':'');
+    card.setAttribute('data-cat',cat);
+    card.setAttribute('data-estoque',estoque<=0?'zero':(estoque<=3?'ultimas':'estoque'));
+    card.setAttribute('data-preco',precoN);
+    card.setAttribute('data-nome',p.nome);
+    card.setAttribute('data-id',p.slug);
+    var html='<div class="produto-img">'+badgeProduto(estoque);
+    if(imgs.length){
+      html+='<div class="variante-track">';
+      imgs.forEach(function(u){html+='<div class="variante-slide"><img src="'+u+'" alt="'+escL(p.nome)+'" loading="lazy"></div>';});
+      html+='</div>';
+      if(imgs.length>1){
+        html+='<div class="variantes-lista"><span class="vl-label">Cores:</span>';
+        imgs.forEach(function(u,i){
+          var corLabel=cores[i]||('Cor '+(i+1));
+          var fundo=(cores[i]||'').indexOf('#')===0?cores[i]:'#ccc';
+          html+='<div class="sw'+(i===0?' ativo':'')+'" data-idx="'+i+'" data-cor-label="'+escL(corLabel)+'" data-img="'+u+'" style="background:'+fundo+'" title="'+escL(corLabel)+'"></div>';
+        });
+        html+='</div>';
+      }
+    }else{
+      html+='<div class="variante-track"><div class="variante-slide" style="font-size:42px;color:#b9c2d2;">📦</div></div>';
+    }
+    html+='</div><div class="produto-body">';
+    html+='<span class="produto-cat">'+escL(cat.charAt(0).toUpperCase()+cat.slice(1))+'</span>';
+    html+='<h3>'+escL(p.nome)+'</h3>';
+    if(p.descricao)html+='<p class="produto-desc">'+escL(p.descricao)+'</p>';
+    if(cores.length)html+='<div class="produto-cor"><span class="mini-swatch" style="background:'+((cores[0]||'').indexOf('#')===0?cores[0]:'#ccc')+'"></span> '+escL(cores[0]||'')+'</div>';
+    html+='<div class="produto-preco">'+plabel+' <small>· unidade</small></div>';
+    if(esgotado){
+      html+='<button class="btn-pedir" onclick="pedirPeca(\''+p.slug+'\')">🛠️ Pedir esta peça</button>';
+    }else{
+      html+='<button class="btn-comprar" onclick="addCarrinho(\''+p.slug+'\',\''+escL(p.nome).replace(/'/g,"\'")+'\',\''+plabel+'\',\''+precoN+'\')">'
+      +'<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>'
+      +'Adicionar</button>';
+    }
+    html+='</div>';
+    card.innerHTML=html;
+    grid.appendChild(card);
+    bindVariantes(card);
+  });
+}
+function pedirPeca(slug){
+  var p=produtosLoja.find(function(x){return x.slug===slug;});
+  if(!p)return;
+  var msg='Olá! 😊 Vi a peça "'+p.nome+'" na loja e ela está sem estoque no momento. Gostaria de saber quando estará disponível (ou encomendar uma).';
+  window.open('https://wa.me/'+WHATSAPP_LOJA+'?text='+encodeURIComponent(msg),'_blank');
+}
+function carregarProdutos(){
+  var grid=document.getElementById('lojaGrid');
+  grid.innerHTML='<div class="loja-carregando">Carregando produtos…</div>';
+  fetch(API_LOJA+'/loja/produtos')
+  .then(function(r){return r.json();})
+  .then(function(t){
+    produtosLoja=(t.produtos||t)||[];
+    if(!Array.isArray(produtosLoja))produtosLoja=[];
+    renderProdutos(produtosLoja);
+    qtdPorCategoria();
+    aplicarFiltros();
+    atualizarCarrinhoUI();
+  })
+  .catch(function(){
+    grid.innerHTML='<div class="loja-carregando">Erro ao carregar a loja. Tente novamente em instantes.</div>';
+  });
+}
+
 /* ================= FILTROS ================= */
 var categoriaAtiva='todos';
 function qtdPorCategoria(){
 var prods=document.querySelectorAll('.produto');
-var qtds={todos:prods.length,chaveiros:0,religiosos:0,decoracao:0,miniaturas:0};
+var qtds={todos:prods.length,chaveiros:0,religiosos:0,decoracao:0,miniaturas:0,outros:0};
 prods.forEach(function(p){var c=p.getAttribute('data-cat');qtds[c]=(qtds[c]||0)+1;});
-var mapa={todos:'qtdTodos',chaveiros:'qtdChaveiros',religiosos:'qtdReligiosos',decoracao:'qtdDecoracao',miniaturas:'qtdMiniaturas'};
+var mapa={todos:'qtdTodos',chaveiros:'qtdChaveiros',religiosos:'qtdReligiosos',decoracao:'qtdDecoracao',miniaturas:'qtdMiniaturas',outros:'qtdOutros'};
 for(var k in mapa){var el=document.getElementById(mapa[k]);if(el)el.textContent='('+qtds[k]+')';}
 }
 function selecionarCategoria(btn){
@@ -946,7 +937,7 @@ var visiveis=0;
 prods.forEach(function(p){
 var ok=true;
 if(categoriaAtiva!=='todos'&&p.getAttribute('data-cat')!==categoriaAtiva)ok=false;
-if(ok&&disp.indexOf(p.getAttribute('data-estoque'))===-1)ok=false;
+if(ok&&p.getAttribute('data-estoque')!=='zero'&&disp.indexOf(p.getAttribute('data-estoque'))===-1)ok=false;
 if(ok){
 var preco=parseFloat(p.getAttribute('data-preco'));
 var faixaOk=false;
@@ -981,9 +972,7 @@ aplicarFiltros();
 }
 function abrirFiltros(){document.getElementById('sidebar').classList.add('open');document.getElementById('filtroOverlay').classList.add('open');}
 function fecharFiltros(){document.getElementById('sidebar').classList.remove('open');document.getElementById('filtroOverlay').classList.remove('open');}
-qtdPorCategoria();
-aplicarFiltros();
-atualizarCarrinhoUI();
+carregarProdutos();
 </script>
 </body>
 </html>
