@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Acompanhar pedido | Meu 3D Labs</title>
-<meta name="description" content="Acompanhe o status do seu pedido na Meu 3D Labs: recebido, orçamento, produção, pronto e entregue. Informe o número do pedido.">
+<meta name="description" content="Acompanhe o status do seu pedido na Meu 3D Labs: loja pronta entrega ou encomenda sob medida.">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Acompanhar pedido | Meu 3D Labs">
@@ -27,7 +27,6 @@ gtag('config','G-NZTH0ZSLV0');
 header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
 .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:64px 0 56px;text-align:center;}.hero h1{font-size:clamp(28px,4vw,40px);line-height:1.2;margin-bottom:12px;font-weight:800;letter-spacing:-.5px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:16px;color:rgba(255,255,255,.9);max-width:560px;margin:0 auto;}
 section{padding:40px 0;}
-/* ===== BUSCA ===== */
 .busca-card{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-md);padding:30px;text-align:center;margin-top:-40px;position:relative;z-index:5;}
 .busca-card h2{font-size:18px;color:var(--navy);font-weight:800;margin-bottom:6px;}
 .busca-card .bc-sub{font-size:13.5px;color:var(--gray);margin-bottom:20px;}
@@ -39,7 +38,6 @@ section{padding:40px 0;}
 .busca-msg.erro{color:var(--red);}
 .busca-msg.ok{color:var(--green-dark);}
 .busca-msg.carregando{color:var(--navy);}
-/* ===== CARD DO PEDIDO ===== */
 .status-box{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-md);padding:30px;margin-top:22px;display:none;animation:fadeIn .4s ease;}
 .status-box.show{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
@@ -50,7 +48,6 @@ section{padding:40px 0;}
 .status-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);color:var(--green-dark);font-weight:700;font-size:13px;padding:8px 16px;border-radius:30px;}
 .status-pill::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green-dark);animation:pulse 1.6s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
-/* ===== TIMELINE ===== */
 .timeline{display:flex;flex-direction:column;gap:0;margin:8px 0 4px;}
 .tl-step{display:flex;gap:16px;position:relative;padding-bottom:26px;}
 .tl-step:last-child{padding-bottom:0;}
@@ -67,7 +64,6 @@ section{padding:40px 0;}
 .tl-info .data-status{font-size:12px;color:var(--orange);font-weight:600;margin-top:3px;display:none;}
 .tl-step.feito .tl-info .data-status,.tl-step.ativo .tl-info .data-status{display:block;}
 .tl-step.pendente .tl-info{opacity:.55;}
-/* ===== RESUMO / DETALHES ===== */
 .resumo{margin-top:24px;background:var(--light);border:1px solid var(--border);border-radius:12px;padding:20px 22px;display:none;}
 .resumo.show{display:block;}
 .resumo h4{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gray);margin-bottom:12px;}
@@ -77,7 +73,6 @@ section{padding:40px 0;}
 .resumo-item .ri-valor{font-weight:700;color:var(--navy);text-align:right;}
 .resumo-total{display:flex;justify-content:space-between;font-weight:800;color:var(--navy);font-size:16px;padding:14px 0 0;border-top:2px solid var(--border);margin-top:6px;}
 .resumo-total .valor{color:var(--orange);}
-/* ===== AVISO / AÇÕES ===== */
 .acoes{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;}
 .acoes .btn{flex:1;min-width:220px;text-align:center;}
 .aviso{background:rgba(242,101,34,.07);border-left:4px solid var(--orange);border-radius:0 10px 10px 0;padding:14px 18px;margin-top:10px;font-size:13px;color:#7a3a12;line-height:1.6;}
@@ -104,7 +99,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 <section class="hero">
 <div class="container">
 <h1>Acompanhe seu <span>pedido</span></h1>
-<p>Informe o número do pedido e veja em qual etapa ele está, do recebimento à entrega.</p>
+<p>Informe o número do pedido e veja em qual etapa ele está, da loja ou da encomenda sob medida.</p>
 </div>
 </section>
 
@@ -112,9 +107,9 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 <div class="container-narrow">
 <div class="busca-card">
 <h2>Digite o número do pedido</h2>
-<p class="bc-sub">Exemplo: M3D-2026-019. Você encontra o número na conversa do WhatsApp.</p>
+<p class="bc-sub">Exemplo: M3D-000001 ou M3D-2026-019. Você encontra o número na conversa do WhatsApp.</p>
 <div class="busca-linha">
-<input type="text" id="inputPedido" placeholder="M3D-XXXX-XXX" maxlength="15" autocomplete="off" onkeydown="if(event.key==='Enter')buscarPedido()">
+<input type="text" id="inputPedido" placeholder="M3D-XXXXXX" maxlength="15" autocomplete="off" onkeydown="if(event.key==='Enter')buscarPedido()">
 <button class="btn" onclick="buscarPedido()">Verificar</button>
 </div>
 <div class="busca-msg" id="buscaMsg"></div>
@@ -123,37 +118,12 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 <div class="status-box" id="statusBox">
 
 <div class="status-top">
-<div class="status-num"><span class="hash">#</span><span id="sNumero">M3D-0000-000</span><small id="sCliente" style="display:none;"></small></div>
+<div class="status-num"><span class="hash">#</span><span id="sNumero">M3D-000000</span><small id="sCliente" style="display:none;"></small></div>
 <div class="status-pill" id="statusPill">Consultando…</div>
 </div>
 
 <h4 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:18px;">Status do pedido</h4>
-<div class="timeline" id="timeline">
-<div class="tl-step" data-step="0">
-<div class="tl-dot">1</div>
-<div class="tl-info"><strong>Recebido</strong><span>Recebemos seu pedido e vamos analisar.</span><span class="data-status"></span></div>
-</div>
-<div class="tl-step" data-step="1">
-<div class="tl-dot">2</div>
-<div class="tl-info"><strong>Orçamento</strong><span>Enviamos o orçamento com prazo e valor.</span><span class="data-status"></span></div>
-</div>
-<div class="tl-step" data-step="2">
-<div class="tl-dot">3</div>
-<div class="tl-info"><strong>Aprovado</strong><span>Orçamento aprovado e produção confirmada.</span><span class="data-status"></span></div>
-</div>
-<div class="tl-step" data-step="3">
-<div class="tl-dot">4</div>
-<div class="tl-info"><strong>Em produção</strong><span>Sua peça está sendo impressa.</span><span class="data-status"></span></div>
-</div>
-<div class="tl-step" data-step="4">
-<div class="tl-dot">5</div>
-<div class="tl-info"><strong>Pronto</strong><span>Pedido finalizado, pronto para entrega.</span><span class="data-status"></span></div>
-</div>
-<div class="tl-step" data-step="5">
-<div class="tl-dot">6</div>
-<div class="tl-info"><strong>Entregue</strong><span>Pedido entregue. Obrigado pela compra!</span><span class="data-status"></span></div>
-</div>
-</div>
+<div class="timeline" id="timeline"></div>
 
 <div class="resumo" id="detalhesBox">
 <h4>Detalhes do pedido</h4>
@@ -197,32 +167,80 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 </footer>
 
 <script>
-/* ================================================================
-   CONFIG DO BACKEND
-   API: https://meu3dlabs-backend.onrender.com/api/orcamentos/pedido/{codigo}
-   Formato real da resposta: {"pedido_id":"M3D-2026-019","status":"entregue",
-   "tipo_peca":"Impressão 3D","created_at":"2026-09-10T18:43:41.696Z"}
-   ================================================================ */
-var API_BASE='https://meu3dlabs-backend.onrender.com/api/orcamentos/pedido/';
-
-/* Mapeia o status retornado pela API para a etapa da linha do tempo */
-function mapearStatus(valor){
-var v=String(valor||'').toLowerCase().trim();
-if(['entregue','entregue','finalizado','concluido','concluída','concluído'].indexOf(v)>-1)return 5;
-if(['pronto','pronto_entrega','pronto_para_entrega','aguardando_entrega','para_entrega'].indexOf(v)>-1)return 4;
-if(['producao','em_producao','impressao','imprimindo','em_produção','produção'].indexOf(v)>-1)return 3;
-if(['aprovado','aprovacao','confirmado','em_andamento','aprovada','aprovação'].indexOf(v)>-1)return 2;
-if(['orcamento','orcado','orcamento_enviado','aguardando_aprovacao','orçamento','orçado'].indexOf(v)>-1)return 1;
-return 0; /* recebido (padrão) */
-}
+var API_LOJA='https://meu3dlabs-backend.onrender.com/api/loja/pedidos/';
+var API_ORC='https://meu3dlabs-backend.onrender.com/api/orcamentos/pedido/';
 
 function normalizar(v){return String(v||'').toUpperCase().replace(/\s+/g,'').replace(/[^A-Z0-9\-]/g,'');}
+
+function fmt(v){
+var n=parseFloat(v);
+if(isNaN(n))return '—';
+return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+}
 
 function fmtData(v){
 if(!v)return '';
 var d=new Date(v);
 if(isNaN(d.getTime()))return String(v);
 return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+/* Status da loja (pronta entrega): feito, pago, saiu, entregue */
+function mapearLoja(v){
+var s=String(v||'').toLowerCase().trim();
+if(['entregue','finalizado','concluido'].indexOf(s)>-1)return 3;
+if(['saiu','enviado','saiu_para_entrega','em_transporte'].indexOf(s)>-1)return 2;
+if(['pago','pagamento_confirmado','confirmado','aprovado'].indexOf(s)>-1)return 1;
+return 0;
+}
+
+/* Status da encomenda (orcamento): recebido, orcamento, aprovado, producao, pronto, entregue */
+function mapearOrc(v){
+var s=String(v||'').toLowerCase().trim();
+if(['entregue','entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 5;
+if(['pronto','pronto_entrega','pronto_para_entrega','aguardando_entrega','para_entrega'].indexOf(s)>-1)return 4;
+if(['producao','em_producao','impressao','imprimindo','em_produção','produção'].indexOf(s)>-1)return 3;
+if(['aprovado','aprovacao','confirmado','em_andamento','aprovada','aprovação'].indexOf(s)>-1)return 2;
+if(['orcamento','orcado','orcamento_enviado','aguardando_aprovacao','orçamento','orçado'].indexOf(s)>-1)return 1;
+return 0;
+}
+
+function etiquetaEntrega(e){
+var s=String(e||'').toLowerCase();
+if(s.indexOf('uber')>-1)return 'Entrega por aplicativo';
+if(s.indexOf('correio')>-1)return 'Envio pelos Correios';
+if(s.indexOf('retirada')>-1)return 'Retirada na loja';
+return s||'Retirada na loja';
+}
+
+function montarTimeline(tipo,status){
+var passos;
+if(tipo==='loja'){
+passos=[
+{t:'Pedido feito',d:'Recebemos seu pedido e estamos processando.'},
+{t:'Pago',d:'Pagamento confirmado, preparando sua peça.'},
+{t:'Saiu para entrega',d:'Seu pedido está a caminho de você.'},
+{t:'Entregue',d:'Pedido entregue. Obrigado pela compra!'}
+];
+}else{
+passos=[
+{t:'Recebido',d:'Recebemos seu pedido e vamos analisar.'},
+{t:'Orçamento',d:'Enviamos o orçamento com prazo e valor.'},
+{t:'Aprovado',d:'Orçamento aprovado e produção confirmada.'},
+{t:'Em produção',d:'Sua peça está sendo impressa.'},
+{t:'Pronto',d:'Pedido finalizado, pronto para entrega.'},
+{t:'Entregue',d:'Pedido entregue. Obrigado pela compra!'}
+];
+}
+var html='';
+passos.forEach(function(p,idx){
+var cls=idx<status?'feito':(idx===status?'ativo':'pendente');
+html+='<div class="tl-step '+cls+'" data-step="'+idx+'">'
++'<div class="tl-dot">'+(idx+1)+'</div>'
++'<div class="tl-info"><strong>'+p.t+'</strong><span>'+p.d+'</span>'
++'<span class="data-status">✓ '+(status>=idx?p.t:'')+'</span></div></div>';
+});
+document.getElementById('timeline').innerHTML=html;
 }
 
 function buscarPedido(){
@@ -234,7 +252,7 @@ msg.textContent='';
 
 if(!alvo){
 msg.className='busca-msg erro';
-msg.textContent='Digite o número do pedido (ex: M3D-2026-019).';
+msg.textContent='Digite o número do pedido (ex: M3D-000001).';
 return;
 }
 
@@ -242,62 +260,105 @@ document.getElementById('statusBox').classList.remove('show');
 msg.className='busca-msg carregando';
 msg.textContent='Consultando seu pedido…';
 
-fetch(API_BASE+encodeURIComponent(alvo))
-.then(function(resp){
-if(resp.status===404){throw {tipo:'nao_encontrado'};}
-if(!resp.ok){throw {tipo:'servidor'};}
-return resp.json();
+/* Tenta primeiro a loja (M3D-XXXXXX); se não achar, tenta encomenda (M3D-AAAA-NNN) */
+fetch(API_LOJA+encodeURIComponent(alvo))
+.then(function(r){
+if(r.status===404){return fetch(API_ORC+encodeURIComponent(alvo));}
+if(!r.ok){throw {tipo:'servidor'};}
+return Promise.all([Promise.resolve(r),Promise.resolve('loja')]);
 })
-.then(function(dados){exibirPedido(dados,alvo);msg.className='busca-msg ok';msg.textContent='Pedido encontrado!';})
+.then(function(par){
+var resp=par[0],tipo=par[1]||'loja';
+if(!tipo&&resp===undefined){return;}
+return resp.json().then(function(json){return {json:json,tipo:tipo};});
+})
 .catch(function(err){
+if(err&&err.tipo==='servidor'){
 document.getElementById('statusBox').classList.remove('show');
-if(err&&err.tipo==='nao_encontrado'){
-msg.className='busca-msg erro';
-msg.textContent='Pedido não encontrado. Confira o número ou fale com a gente no WhatsApp.';
-}else{
 msg.className='busca-msg erro';
 msg.textContent='Não foi possível consultar agora. Tente novamente em instantes ou chame no WhatsApp.';
 }
 });
+
+fetch(API_LOJA+encodeURIComponent(alvo))
+.then(function(r){
+if(r.status===404){
+return fetch(API_ORC+encodeURIComponent(alvo)).then(function(r2){
+if(r2.status===404){return null;}
+if(!r2.ok){throw {tipo:'servidor'};}
+return r2.json().then(function(j){return {dados:j,tipo:'encomenda'};});
+});
+}
+if(!r.ok){throw {tipo:'servidor'};}
+return r.json().then(function(j){return {dados:j,tipo:'loja'};});
+})
+.then(function(res){
+if(!res){
+document.getElementById('statusBox').classList.remove('show');
+msg.className='busca-msg erro';
+msg.textContent='Pedido não encontrado. Confira o número ou fale com a gente no WhatsApp.';
+return;
+}
+exibirPedido(res.dados,res.tipo,alvo);
+msg.className='busca-msg ok';
+msg.textContent='Pedido encontrado!';
+})
+.catch(function(err){
+document.getElementById('statusBox').classList.remove('show');
+msg.className='busca-msg erro';
+msg.textContent='Não foi possível consultar agora. Tente novamente em instantes ou chame no WhatsApp.';
+});
 }
 
-function exibirPedido(dados,alvo){
-/* Formato real do backend: pedido_id, status, tipo_peca, created_at */
-var pedido=(dados&&dados.pedido)?dados.pedido:(dados&&dados.dados)?dados.dados:dados||{};
-var numero=pedido.pedido_id||pedido.numero||pedido.id||dados.pedido_id||dados.numero||alvo;
-var status=mapearStatus(pedido.status||pedido.estado||pedido.etapa||dados.status||dados.estado||0);
-var nomeCli=pedido.cliente||pedido.nome||pedido.nome_cliente||pedido.nomeCliente||pedido.cliente_nome||pedido.contato||dados.cliente||dados.nome||'';
-var tipo=pedido.tipo_peca||pedido.tipo||dados.tipo_peca||'';
-var criado=pedido.created_at||pedido.data||pedido.criadoEm||dados.created_at||'';
+function exibirPedido(dados,tipo,alvo){
+var numero=dados.pedido_id||dados.numero||dados.id||alvo;
+var nomeCli=dados.nome_cliente||dados.cliente||dados.nome||'';
+var status=(tipo==='loja')?mapearLoja(dados.status):mapearOrc(dados.status||dados.estado||dados.etapa);
+var nomes=(tipo==='loja')?['Pedido feito','Pago','Saiu para entrega','Entregue']:['Recebido','Orçamento','Aprovado','Em produção','Pronto','Entregue'];
 
 document.getElementById('sNumero').textContent=numero;
 var elCli=document.getElementById('sCliente');
 if(nomeCli){elCli.textContent='Cliente: '+nomeCli;elCli.style.display='';}
 else{elCli.textContent='';elCli.style.display='none';}
 
-var nomesEtapa=['Recebido','Orçamento','Aprovado','Em produção','Pronto','Entregue'];
-document.getElementById('statusPill').textContent=nomesEtapa[status]||'Recebido';
+document.getElementById('statusPill').textContent=nomes[status]||nomes[0];
+montarTimeline(tipo,status);
 
-document.querySelectorAll('.tl-step').forEach(function(st){
-var idx=parseInt(st.getAttribute('data-step'));
-st.classList.toggle('feito',idx<=status);
-st.classList.toggle('ativo',idx===status);
-st.classList.toggle('pendente',idx>status);
-var dataEl=st.querySelector('.data-status');
-if(dataEl)dataEl.textContent='✓ '+(nomesEtapa[idx]||'');
-});
-
-/* Detalhes disponíveis no backend (tipo de peça + data) */
 var detBox=document.getElementById('detalhesBox');
-var detHtml='';
-if(tipo){
-detHtml+='<div class="resumo-item"><span class="ri-nome">Tipo de peça</span><span class="ri-valor">'+tipo+'</span></div>';
+var html='';
+
+if(tipo==='loja'){
+var itens=dados.itens||[];
+var subtotal=parseFloat(dados.subtotal)||0;
+var desconto=parseFloat(dados.desconto)||0;
+itens.forEach(function(item){
+var qtd=item.qtd||item.quantidade||item.quant||1;
+var nome=item.nome||item.produto||item.descricao||'Item';
+var preco=parseFloat(item.preco||item.valor||0);
+html+='<div class="resumo-item"><span class="ri-nome">'+qtd+'x '+nome+(item.cor?' ('+item.cor+')':'')+'</span><span class="ri-valor">'+fmt(preco*qtd)+'</span></div>';
+});
+if(dados.cupom){
+html+='<div class="resumo-item"><span class="ri-nome">Cupom '+dados.cupom+'</span><span class="ri-valor">-'+fmt(desconto)+'</span></div>';
 }
-if(criado){
-detHtml+='<div class="resumo-item"><span class="ri-nome">Pedido feito em</span><span class="ri-valor">'+fmtData(criado)+'</span></div>';
+if(subtotal>0&&(desconto>0||dados.cupom)){
+html+='<div class="resumo-item"><span class="ri-nome">Subtotal</span><span class="ri-valor">'+fmt(subtotal)+'</span></div>';
 }
-if(detHtml){
-document.getElementById('detalhesItens').innerHTML=detHtml;
+html+='<div class="resumo-total"><span>Total</span><span class="valor">'+fmt(dados.total||subtotal-desconto)+'</span></div>';
+html+='<div class="resumo-item" style="border-top:1px dashed rgba(15,30,61,.15);margin-top:8px;padding-top:10px;"><span class="ri-nome">Entrega</span><span class="ri-valor">'+etiquetaEntrega(dados.entrega)+'</span></div>';
+if(dados.nota){
+html+='<div class="resumo-item"><span class="ri-nome">Observações</span><span class="ri-valor">'+dados.nota+'</span></div>';
+}
+}else{
+if(dados.tipo_peca){
+html+='<div class="resumo-item"><span class="ri-nome">Tipo de peça</span><span class="ri-valor">'+dados.tipo_peca+'</span></div>';
+}
+}
+if(dados.created_at||dados.data){
+html+='<div class="resumo-item"><span class="ri-nome">Pedido feito em</span><span class="ri-valor">'+fmtData(dados.created_at||dados.data)+'</span></div>';
+}
+
+if(html){
+document.getElementById('detalhesItens').innerHTML=html;
 detBox.classList.add('show');
 }else{
 detBox.classList.remove('show');
@@ -310,7 +371,7 @@ btnZap.textContent='Falar no WhatsApp · Pedido #'+numero;
 document.getElementById('statusBox').classList.add('show');
 }
 
-/* ===== PREENCHIMENTO AUTOMÁTICO (vindo do botão da loja) ===== */
+/* Preenchimento automático via ?numero= (botão da loja) */
 (function(){
 var params=new URLSearchParams(window.location.search);
 var num=params.get('numero');

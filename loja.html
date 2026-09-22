@@ -175,6 +175,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 .nota-field:focus{outline:2px solid var(--orange);outline-offset:1px;}
 .btn-finalizar{width:100%;background:var(--orange);color:#fff;border:none;padding:15px;border-radius:10px;font-weight:800;font-size:16px;cursor:pointer;transition:.2s;margin-top:20px;}
 .btn-finalizar:hover{background:var(--orange-2);}
+.btn-finalizar:disabled{opacity:.6;cursor:wait;}
 /* ===== PEDIDO GERADO ===== */
 .pedido-ok{text-align:center;padding:0;}
 .pedido-ok .ok-icon{width:64px;height:64px;border-radius:50%;background:rgba(37,211,102,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:30px;}
@@ -237,7 +238,6 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 </section>
 <section>
 <div class="container loja-layout">
-
 <aside class="sidebar" id="sidebar">
 <div class="sidebar-mobile-top">
 <span class="titulo">Filtros</span>
@@ -273,7 +273,6 @@ Filtros
 </div>
 </div>
 </aside>
-
 <div class="loja-main">
 <div class="barra-lojas">
 <span class="contagem"><strong id="contagem">0</strong> produtos encontrados</span>
@@ -297,9 +296,7 @@ Carrinho
 </button>
 </div>
 </div>
-
 <div class="loja-grid" id="lojaGrid">
-
 <div class="produto" data-cat="chaveiros" data-estoque="estoque" data-preco="19.90" data-nome="Chaveiro Cogumelo" data-id="p1">
 <div class="produto-img">
 <span class="badge estoque">Em estoque</span>
@@ -324,7 +321,6 @@ Carrinho
 Adicionar</button>
 </div>
 </div>
-
 <div class="produto" data-cat="chaveiros" data-estoque="estoque" data-preco="24.90" data-nome="Chaveiro Personalizado com Nome" data-id="p2">
 <div class="produto-img">
 <span class="badge estoque">Em estoque</span>
@@ -342,7 +338,6 @@ Adicionar</button>
 Adicionar</button>
 </div>
 </div>
-
 <div class="produto" data-cat="religiosos" data-estoque="estoque" data-preco="49.90" data-nome="Estátua Nossa Senhora" data-id="p3">
 <div class="produto-img">
 <span class="badge estoque">Em estoque</span>
@@ -367,7 +362,6 @@ Adicionar</button>
 Adicionar</button>
 </div>
 </div>
-
 <div class="produto" data-cat="decoracao" data-estoque="ultimas" data-preco="59.90" data-nome="Elefantes Decorativos" data-id="p4">
 <div class="produto-img">
 <span class="badge ultimas">Últimas unidades</span>
@@ -385,7 +379,6 @@ Adicionar</button>
 Adicionar</button>
 </div>
 </div>
-
 <div class="produto" data-cat="miniaturas" data-estoque="estoque" data-preco="39.90" data-nome="Miniatura de Personagem" data-id="p5">
 <div class="produto-img">
 <span class="badge estoque">Em estoque</span>
@@ -403,7 +396,6 @@ Adicionar</button>
 Adicionar</button>
 </div>
 </div>
-
 <div class="produto" data-cat="chaveiros" data-estoque="estoque" data-preco="14.90" data-nome="Chaveiro Letra" data-id="p6">
 <div class="produto-img">
 <span class="badge estoque">Em estoque</span>
@@ -430,14 +422,11 @@ Adicionar</button>
 Adicionar</button>
 </div>
 </div>
-
 </div>
-
 <div class="sem-resultado" id="semResultado" style="display:none;">
 <h3>Nenhum produto encontrado</h3>
 <p>Tente remover algum filtro para ver mais resultados.</p>
 </div>
-
 </div>
 </div>
 </section>
@@ -511,6 +500,7 @@ Adicionar</button>
 <div class="filtro-overlay" id="filtroOverlay" onclick="fecharFiltros()"></div>
 <script>
 /* ================= ESTADO ================= */
+var API_PEDIDOS='https://meu3dlabs-backend.onrender.com/api/loja/pedidos';
 var carrinho=[];
 try{carrinho=JSON.parse(localStorage.getItem('m3d_carrinho')||'[]');}catch(e){carrinho=[];}
 var pedidoAtual=null;
@@ -524,7 +514,6 @@ var CUPONS={
  'M3D5': {tipo:'fixo', valor:5}
  */
 };
-
 /* ================= VARIANTES ================= */
 document.querySelectorAll('.produto').forEach(function(produto){
 var sw=produto.querySelector('.variantes-lista');
@@ -568,7 +557,6 @@ if(!e.target.closest(produto)){sw.classList.remove('show');}
 });
 }
 });
-
 /* ================= CARRINHO ================= */
 function pNome(id){var p=document.querySelector('.produto[data-id="'+id+'"]');return p?p.querySelector('.variantes-lista'):null;}
 function produtoInfo(id){
@@ -648,7 +636,6 @@ document.getElementById('cartTotal').textContent=fmt(totalCarrinho());
 }
 function abrirCarrinho(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
 function fecharCarrinho(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
-
 /* ================= CHECKOUT ================= */
 function abrirCheckout(){
 if(totalCarrinho()<=0)return;
@@ -705,7 +692,6 @@ document.querySelectorAll('.entrega-op').forEach(function(o){o.classList.remove(
 el.classList.add('sel');
 el.querySelector('input').checked=true;
 }
-
 /* ================= CUPOM ================= */
 function aplicarCupom(){
 var input=document.getElementById('cupomInput');
@@ -766,8 +752,8 @@ box.parentElement.insertBefore(d,box);
 }
 }
 }
-
 /* ================= PEDIDO ================= */
+function arred(v){return Math.round(v*100)/100;}
 function gerarPedido(){
 var erroBox=document.getElementById('erroBox');
 var inputNome=document.getElementById('cliNome');
@@ -791,11 +777,45 @@ erroBox.classList.add('show');
 if(inputFone)inputFone.classList.add('erro');
 return;
 }
-var numero='M3D-'+String(Math.floor(100000+Math.random()*900000));
-var itens=carrinho.map(function(i){return {nome:i.nome,cor:i.cor,qtd:i.qtd,precoLabel:i.precoLabel,precoNum:i.precoNum};});
-pedidoAtual={numero:numero,itens:itens,total:totalFinal(),subtotal:totalCarrinho(),cupom:cupomAtivo,entrega:entregaSel,nota:nota,nome:nome,fone:fone,optin:optin};
+var btn=document.querySelector('.btn-finalizar');
+if(btn){btn.disabled=true;btn.textContent='Gerando pedido...';}
+var numeroLocal='M3D-'+String(Math.floor(100000+Math.random()*900000));
+var itens=carrinho.map(function(i){return {nome:i.nome,cor:i.cor||'',qtd:i.qtd,preco:i.precoNum};});
+var payload={
+nome_cliente:nome,
+whatsapp:fone,
+itens:itens,
+subtotal:arred(totalCarrinho()),
+cupom:cupomAtivo?cupomAtivo.codigo:null,
+desconto:cupomAtivo?arred(cupomAtivo.desc):0,
+total:arred(totalFinal()),
+entrega:entregaSel,
+nota:nota||null,
+optin:optin
+};
+function montarPedido(numero,registrado){
+return {numero:numero,itens:itens,total:totalFinal(),subtotal:totalCarrinho(),cupom:cupomAtivo,entrega:entregaSel,nota:nota,nome:nome,fone:fone,optin:optin,registrado:registrado};
+}
+function mostrarPronto(){
+if(btn){btn.disabled=false;}
 document.getElementById('modalTitulo').textContent='Pedido gerado';
 document.getElementById('modalBody').innerHTML=etapaPedido(pedidoAtual);
+}
+fetch(API_PEDIDOS,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify(payload)
+})
+.then(function(r){return r.json().then(function(d){return {ok:r.ok,dados:d};});})
+.then(function(res){
+if(!res.ok)throw new Error('api');
+pedidoAtual=montarPedido((res.dados&&res.dados.pedido_id)?res.dados.pedido_id:numeroLocal,true);
+mostrarPronto();
+})
+.catch(function(){
+pedidoAtual=montarPedido(numeroLocal,false);
+mostrarPronto();
+});
 }
 function entregaTexto(e){
 if(e==='retirada')return 'Retirada em Nilópolis/RJ';
@@ -818,7 +838,7 @@ var html='<div class="pedido-ok">'
 +'<div class="rc-secao">'
 +'<div class="rc-titulo">Itens</div>';
 p.itens.forEach(function(i){
-html+='<div class="rc-linha"><span>'+i.qtd+'x '+i.nome+(i.cor?' <em>('+i.cor+')</em>':'')+'</span><strong>'+fmt(i.precoNum*i.qtd)+'</strong></div>';
+html+='<div class="rc-linha"><span>'+i.qtd+'x '+i.nome+(i.cor?' <em>('+i.cor+')</em>':'')+'</span><strong>'+fmt(i.preco*i.qtd)+'</strong></div>';
 });
 html+='</div>'
 +'<div class="rc-secao">'
@@ -837,8 +857,11 @@ if(p.optin){
 html+='<div class="rc-linha"><span>Novidades</span><strong>Aceitou receber ofertas</strong></div>';
 }
 html+='</div>'
-+'</div>'
-+'<button class="btn-wa" onclick="enviarWhats()"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"/></svg>Enviar pedido no WhatsApp</button>'
++'</div>';
+if(!p.registrado){
+html+='<div class="entrega-aviso" style="margin:0 0 14px;text-align:left;">⚠️ Não foi possível registrar o pedido automaticamente agora. Guarde o número e envie pelo WhatsApp normalmente, confirmamos por lá.</div>';
+}
+html+='<button class="btn-wa" onclick="enviarWhats()"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"/></svg>Enviar pedido no WhatsApp</button>'
 +'<button class="btn-voltar" onclick="abrirCheckout()">← Voltar e ajustar</button>'
 +'</div>';
 return html;
@@ -852,7 +875,7 @@ linhas.push('📱 WhatsApp: '+p.fone);
 linhas.push('');
 linhas.push('Itens:');
 p.itens.forEach(function(i){
-linhas.push('- '+i.qtd+'x '+i.nome+(i.cor?' ('+i.cor+')':'')+' — '+fmt(i.precoNum*i.qtd));
+linhas.push('- '+i.qtd+'x '+i.nome+(i.cor?' ('+i.cor+')':'')+' — '+fmt(i.preco*i.qtd));
 });
 linhas.push('');
 if(p.cupom){linhas.push('Cupom '+p.cupom.codigo+': -'+fmt(p.cupom.desc));}
@@ -868,7 +891,6 @@ window.open('https://wa.me/5521966594803?text='+encodeURIComponent(msg),'_blank'
 }
 function abrirModal(){document.getElementById('modalOverlay').classList.add('open');}
 function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');pedidoAtual=null;entregaSel='retirada';cupomAtivo=null;}
-
 /* ================= FILTROS ================= */
 var categoriaAtiva='todos';
 function qtdPorCategoria(){
@@ -931,7 +953,6 @@ aplicarFiltros();
 }
 function abrirFiltros(){document.getElementById('sidebar').classList.add('open');document.getElementById('filtroOverlay').classList.add('open');}
 function fecharFiltros(){document.getElementById('sidebar').classList.remove('open');document.getElementById('filtroOverlay').classList.remove('open');}
-
 qtdPorCategoria();
 aplicarFiltros();
 atualizarCarrinhoUI();

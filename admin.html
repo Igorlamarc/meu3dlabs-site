@@ -24,13 +24,19 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .logout-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;transition:.2s;}
 .logout-btn:hover{background:rgba(255,255,255,.2);}
 main{max-width:1200px;margin:0 auto;padding:30px 20px 60px;}
-.top-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:24px;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:20px;}
 .top-bar h1{font-size:24px;color:var(--navy);font-weight:800;}
 .top-bar .actions{display:flex;gap:10px;align-items:center;}
 .refresh-btn{background:var(--navy);color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:600;cursor:pointer;font-size:14px;transition:.2s;display:inline-flex;align-items:center;gap:8px;}
 .refresh-btn:hover{background:var(--navy-2);}
 .refresh-btn:disabled{opacity:.5;cursor:wait;}
 .last-update{font-size:12px;color:var(--gray);}
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.tab-btn{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);color:var(--gray);padding:10px 20px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s;font-family:inherit;}
+.tab-btn:hover{border-color:var(--orange);color:var(--navy);}
+.tab-btn.active{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(15,30,61,.2);}
+.tab-btn .tab-count{background:rgba(255,255,255,.2);border-radius:20px;padding:1px 8px;font-size:12px;font-weight:700;}
+.tab-btn:not(.active) .tab-count{background:var(--light);color:var(--gray);}
 .notify-banner{display:none;align-items:center;gap:12px;background:linear-gradient(135deg,#25a858,#1f9e4e);color:#fff;border-radius:12px;padding:16px 20px;margin-bottom:20px;box-shadow:0 6px 20px rgba(37,168,88,.3);animation:slideDown .4s ease;}
 .notify-banner.show{display:flex;}
 .notify-banner .nb-icon{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
@@ -78,6 +84,10 @@ tbody tr.row-novo:hover{background:#e6f7ee;}
 .td-desc small{display:block;color:var(--gray);margin-top:4px;font-size:12px;}
 .td-desc a{color:var(--blue);font-weight:600;text-decoration:underline;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle;}
 .td-desc .desc-text{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;line-clamp:2;}
+.td-desc .item-linha{display:block;padding:2px 0;color:#3d4856;}
+.td-desc .item-nome{font-weight:600;color:var(--navy);}
+.td-desc .total-loja{display:block;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);font-weight:800;color:var(--orange);font-size:14px;}
+.td-desc .entrega-loja{display:block;font-size:12px;color:var(--gray);margin-top:2px;}
 .td-date{white-space:nowrap;color:var(--gray);font-size:12px;}
 .status-pill{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;}
 .status-novo{background:#e7f1ff;color:#1f6feb;}
@@ -87,6 +97,9 @@ tbody tr.row-novo:hover{background:#e6f7ee;}
 .status-pronto{background:#e0f2fe;color:#075985;}
 .status-entregue{background:#e9ecef;color:#495057;}
 .status-cancelado{background:#fde8e8;color:#b91c1c;}
+.status-feito{background:#e7f1ff;color:#1f6feb;}
+.status-pago{background:#fef3c7;color:#92600a;}
+.status-saiu{background:#f3e8ff;color:#6b21a8;}
 .status-select{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;background:var(--white);cursor:pointer;}
 .status-select:focus{outline:none;border-color:var(--orange);}
 .del-btn{display:inline-flex;align-items:center;gap:5px;margin-top:6px;background:#e74c3c;color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;transition:.2s;cursor:pointer;border:none;}
@@ -161,11 +174,15 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 </header>
 <main id="mainContent">
 <div class="top-bar">
-<h1>📋 Pedidos de orçamento</h1>
+<h1 id="tituloPainel">📋 Encomendas</h1>
 <div class="actions">
 <span class="last-update" id="lastUpdate"></span>
 <button class="refresh-btn" id="refreshBtn" onclick="carregarPedidos()">🔄 Atualizar</button>
 </div>
+</div>
+<div class="tabs" id="tabs">
+<button class="tab-btn active" id="tab-orc" onclick="mudarAba('orcamentos')">📋 Encomendas <span class="tab-count" id="countOrc">0</span></button>
+<button class="tab-btn" id="tab-loja" onclick="mudarAba('loja')">🛍️ Loja <span class="tab-count" id="countLoja">0</span></button>
 </div>
 <div class="error-box" id="errorBox"></div>
 <div class="notify-banner" id="notifyBanner">
@@ -182,20 +199,11 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 <span class="icon">🔍</span>
 <input type="text" id="buscaInput" placeholder="Buscar por nome, contato, descrição ou ID..." oninput="aplicarFiltros()">
 </div>
-<select class="filter-select" id="statusFilter" onchange="aplicarFiltros()">
-<option value="">Todos os status</option>
-<option value="novo">Novo</option>
-<option value="orcamento">Em orçamento</option>
-<option value="aprovado">Aprovado</option>
-<option value="producao">Em produção</option>
-<option value="pronto">Pronto</option>
-<option value="entregue">Entregue</option>
-<option value="cancelado">Cancelado</option>
-</select>
+<select class="filter-select" id="statusFilter" onchange="aplicarFiltros()"></select>
 </div>
 <div class="table-wrap">
 <table>
-<thead>
+<thead id="tabelaHead">
 <tr>
 <th>ID</th>
 <th>Cliente</th>
@@ -228,8 +236,10 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 <div class="sb-copied" id="sbCopiado">Mensagem copiada!</div>
 <script>
 var API_URL = 'https://meu3dlabs-backend.onrender.com/api';
-var pedidos = [];
+var orcamentos = [];
+var lojaPedidos = [];
 var token = sessionStorage.getItem('m3d_admin_token');
+var tipoAtivo = 'orcamentos';
 var novosIds = [];
 if (token) {
   document.getElementById('loginOverlay').style.display = 'none';
@@ -276,21 +286,31 @@ function iniciar() {
   carregarPedidos();
   setInterval(carregarPedidosSilencioso, 30000);
 }
+function getListaAtiva() {
+  return tipoAtivo === 'loja' ? lojaPedidos : orcamentos;
+}
 function carregarPedidos() {
   var btn = document.getElementById('refreshBtn');
   btn.disabled = true;
-  document.getElementById('tabelaBody').innerHTML = '<tr class="loading-row"><td colspan="6"><div class="spinner"></div><br>Carregando pedidos...</td></tr>';
-  fetch(API_URL + '/orcamentos', {
-    headers: { 'Authorization': 'Bearer ' + token }
-  })
-  .then(function(res) {
-    if (res.status === 401) { sair(); throw new Error('Sessão expirada'); }
-    if (!res.ok) throw new Error('Erro ' + res.status);
-    return res.json();
-  })
-  .then(function(dados) {
-    pedidos = Array.isArray(dados) ? dados : [];
-    ordenarPorChegada();
+  var body = document.getElementById('tabelaBody');
+  body.innerHTML = '<tr class="loading-row"><td colspan="6"><div class="spinner"></div><br>Carregando pedidos...</td></tr>';
+  var h1 = { 'Authorization': 'Bearer ' + token };
+  Promise.all([
+    fetch(API_URL + '/orcamentos', { headers: h1 }).then(function(res) {
+      if (res.status === 401) { sair(); throw new Error('Sessão expirada'); }
+      if (!res.ok) throw new Error('Erro ' + res.status);
+      return res.json();
+    }),
+    fetch(API_URL + '/loja/pedidos', { headers: h1 }).then(function(res) {
+      if (res.status === 401) { sair(); throw new Error('Sessão expirada'); }
+      if (!res.ok) throw new Error('Erro ' + res.status);
+      return res.json();
+    })
+  ])
+  .then(function(resultados) {
+    orcamentos = Array.isArray(resultados[0]) ? resultados[0] : [];
+    lojaPedidos = Array.isArray(resultados[1]) ? resultados[1] : [];
+    ordenarListas();
     detectarNovos();
     renderizar();
     btn.disabled = false;
@@ -300,42 +320,77 @@ function carregarPedidos() {
   })
   .catch(function(err) {
     btn.disabled = false;
-    document.getElementById('tabelaBody').innerHTML = '<tr class="loading-row"><td colspan="6">⚠️ Não foi possível carregar os pedidos.</td></tr>';
+    body.innerHTML = '<tr class="loading-row"><td colspan="6">⚠️ Não foi possível carregar os pedidos.</td></tr>';
     var box = document.getElementById('errorBox');
     box.textContent = 'Erro ao conectar com a API: ' + err.message + '. Verifique se o backend no Render está online e tente novamente.';
     box.classList.add('show');
   });
 }
 function carregarPedidosSilencioso() {
-  fetch(API_URL + '/orcamentos', {
-    headers: { 'Authorization': 'Bearer ' + token }
-  })
-  .then(function(res) { return res.json(); })
-  .then(function(dados) {
-    pedidos = Array.isArray(dados) ? dados : [];
-    ordenarPorChegada();
+  var h1 = { 'Authorization': 'Bearer ' + token };
+  Promise.all([
+    fetch(API_URL + '/orcamentos', { headers: h1 }).then(function(r) { return r.json(); }),
+    fetch(API_URL + '/loja/pedidos', { headers: h1 }).then(function(r) { return r.json(); })
+  ])
+  .then(function(resultados) {
+    orcamentos = Array.isArray(resultados[0]) ? resultados[0] : [];
+    lojaPedidos = Array.isArray(resultados[1]) ? resultados[1] : [];
+    ordenarListas();
     detectarNovos();
     renderizar();
   })
   .catch(function() {});
 }
-function ordenarPorChegada() {
-  pedidos.sort(function(a, b) {
+function ordenarListas() {
+  orcamentos.sort(function(a, b) {
+    var ta = a.created_at ? new Date(a.created_at).getTime() : 0;
+    var tb = b.created_at ? new Date(b.created_at).getTime() : 0;
+    return ta - tb;
+  });
+  lojaPedidos.sort(function(a, b) {
     var ta = a.created_at ? new Date(a.created_at).getTime() : 0;
     var tb = b.created_at ? new Date(b.created_at).getTime() : 0;
     return ta - tb;
   });
 }
+function mudarAba(tipo) {
+  tipoAtivo = tipo;
+  document.getElementById('tab-orc').classList.toggle('active', tipo === 'orcamentos');
+  document.getElementById('tab-loja').classList.toggle('active', tipo === 'loja');
+  document.getElementById('tituloPainel').textContent = tipo === 'loja' ? '🛍️ Pedidos da loja' : '📋 Pedidos de orçamento';
+  document.getElementById('buscaInput').value = '';
+  document.getElementById('statusFilter').value = '';
+  montarFiltroStatus();
+  montarThead();
+  renderizar();
+}
+function montarFiltroStatus() {
+  var sel = document.getElementById('statusFilter');
+  sel.innerHTML = '<option value="">Todos os status</option>';
+  opcoesTodas().forEach(function(item) {
+    sel.innerHTML += '<option value="' + item[0] + '">' + item[1] + '</option>';
+  });
+}
+function montarThead() {
+  var head = document.getElementById('tabelaHead');
+  if (tipoAtivo === 'loja') {
+    head.innerHTML = '<tr><th>ID</th><th>Cliente</th><th>Contato</th><th>Itens</th><th>Recebido em</th><th>Status</th></tr>';
+  } else {
+    head.innerHTML = '<tr><th>ID</th><th>Cliente</th><th>Contato</th><th>Descrição</th><th>Recebido em</th><th>Status</th></tr>';
+  }
+}
 function detectarNovos() {
+  var chave = tipoAtivo === 'loja' ? 'm3d_vistos_loja' : 'm3d_vistos';
   var vistos = [];
-  try { vistos = JSON.parse(localStorage.getItem('m3d_vistos') || '[]'); } catch(e) { vistos = []; }
-  var idsAtuais = pedidos.map(function(p) { return String(p.id); });
+  try { vistos = JSON.parse(localStorage.getItem(chave) || '[]'); } catch(e) { vistos = []; }
+  var lista = getListaAtiva();
+  var idsAtuais = lista.map(function(p) { return String(p.id); });
   novosIds = idsAtuais.filter(function(id) { return vistos.indexOf(id) === -1; });
   if (novosIds.length > 0) {
     tocarAlerta();
     mostrarBanner(novosIds.length);
   }
-  localStorage.setItem('m3d_vistos', JSON.stringify(idsAtuais));
+  localStorage.setItem(chave, JSON.stringify(idsAtuais));
 }
 function tocarAlerta() {
   try {
@@ -380,21 +435,37 @@ function renderizar() {
   aplicarFiltros();
 }
 function renderizarStats() {
-  var total = pedidos.length;
-  var novos = contarStatus('novo');
-  var orcamento = contarStatus('orcamento') + contarStatus('aprovado');
-  var producao = contarStatus('producao') + contarStatus('pronto');
-  var entregues = contarStatus('entregue');
   var grid = document.getElementById('statsGrid');
-  grid.innerHTML =
-    '<div class="stat-card orange"><div class="stat-label">Total de pedidos</div><div class="stat-value">' + total + '</div></div>' +
-    '<div class="stat-card blue"><div class="stat-label">Novos</div><div class="stat-value">' + novos + '</div><div class="stat-detail">Aguardando orçamento</div></div>' +
-    '<div class="stat-card yellow"><div class="stat-label">Em orçamento</div><div class="stat-value">' + orcamento + '</div></div>' +
-    '<div class="stat-card purple"><div class="stat-label">Em produção</div><div class="stat-value">' + producao + '</div></div>' +
-    '<div class="stat-card green"><div class="stat-label">Entregues</div><div class="stat-value">' + entregues + '</div></div>';
+  document.getElementById('countOrc').textContent = orcamentos.length;
+  document.getElementById('countLoja').textContent = lojaPedidos.length;
+  if (tipoAtivo === 'loja') {
+    var total = lojaPedidos.length;
+    var feitos = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'feito'; }).length;
+    var pagos = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'pago'; }).length;
+    var saidas = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'saiu'; }).length;
+    var entregues = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'entregue'; }).length;
+    grid.innerHTML =
+      '<div class="stat-card orange"><div class="stat-label">Total na loja</div><div class="stat-value">' + total + '</div></div>' +
+      '<div class="stat-card blue"><div class="stat-label">Pedido feito</div><div class="stat-value">' + feitos + '</div><div class="stat-detail">Aguardando pagamento</div></div>' +
+      '<div class="stat-card yellow"><div class="stat-label">Pago</div><div class="stat-value">' + pagos + '</div><div class="stat-detail">Em preparação</div></div>' +
+      '<div class="stat-card purple"><div class="stat-label">Saiu</div><div class="stat-value">' + saidas + '</div></div>' +
+      '<div class="stat-card green"><div class="stat-label">Entregues</div><div class="stat-value">' + entregues + '</div></div>';
+  } else {
+    var total = orcamentos.length;
+    var novos = contarStatus('novo');
+    var orcamento = contarStatus('orcamento') + contarStatus('aprovado');
+    var producao = contarStatus('producao') + contarStatus('pronto');
+    var entregues = contarStatus('entregue');
+    grid.innerHTML =
+      '<div class="stat-card orange"><div class="stat-label">Total de pedidos</div><div class="stat-value">' + total + '</div></div>' +
+      '<div class="stat-card blue"><div class="stat-label">Novos</div><div class="stat-value">' + novos + '</div><div class="stat-detail">Aguardando orçamento</div></div>' +
+      '<div class="stat-card yellow"><div class="stat-label">Em orçamento</div><div class="stat-value">' + orcamento + '</div></div>' +
+      '<div class="stat-card purple"><div class="stat-label">Em produção</div><div class="stat-value">' + producao + '</div></div>' +
+      '<div class="stat-card green"><div class="stat-label">Entregues</div><div class="stat-value">' + entregues + '</div></div>';
+  }
 }
 function contarStatus(status) {
-  return pedidos.filter(function(p) { return (p.status || 'novo') === status; }).length;
+  return orcamentos.filter(function(p) { return (p.status || 'novo') === status; }).length;
 }
 function montarDescricao(texto) {
   if (!texto) return '<span style="color:var(--gray)">—</span>';
@@ -419,6 +490,40 @@ function montarDescricao(texto) {
   }
   return html;
 }
+function montarItensLoja(p) {
+  var itens = p.itens || [];
+  if (!itens.length) return '<span style="color:var(--gray)">—</span>';
+  var html = '';
+  itens.forEach(function(item) {
+    var qtd = item.qtd || item.quantidade || item.quant || 1;
+    var nome = item.nome || item.produto || item.descricao || 'Item';
+    var preco = parseFloat(item.preco || item.valor || 0);
+    var cor = item.cor ? ' (' + item.cor + ')' : '';
+    var totalItem = preco * qtd;
+    html += '<span class="item-linha"><span class="item-nome">' + escapar(String(qtd) + 'x ' + nome + cor) + '</span> · ' + fmtMoeda(totalItem) + '</span>';
+  });
+  if (p.cupom && parseFloat(p.desconto) > 0) {
+    html += '<span class="item-linha" style="color:var(--gray);">Cupom ' + escapar(p.cupom) + ': -' + fmtMoeda(p.desconto) + '</span>';
+  }
+  html += '<span class="total-loja">Total: ' + fmtMoeda(p.total || (parseFloat(p.subtotal) - parseFloat(p.desconto))) + '</span>';
+  html += '<span class="entrega-loja">' + etiquetaEntrega(p.entrega) + '</span>';
+  if (p.nota) {
+    html += '<small style="display:block;margin-top:4px;color:var(--gray);font-size:11px;">Obs: ' + escapar(p.nota) + '</small>';
+  }
+  return html;
+}
+function fmtMoeda(v) {
+  var n = parseFloat(v);
+  if (isNaN(n)) return 'R$ 0';
+  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+function etiquetaEntrega(e) {
+  var s = String(e || '').toLowerCase();
+  if (s.indexOf('uber') > -1) return 'Entrega por aplicativo';
+  if (s.indexOf('correio') > -1) return 'Envio pelos Correios';
+  if (s.indexOf('retirada') > -1) return 'Retirada na loja';
+  return s || 'Retirada na loja';
+}
 function montarLinkWhatsApp(contato) {
   if (!contato) return '';
   var digitos = contato.replace(/\D/g, '');
@@ -432,13 +537,17 @@ function aplicarFiltros() {
   var busca = document.getElementById('buscaInput').value.toLowerCase().trim();
   var filtroStatus = document.getElementById('statusFilter').value;
   var body = document.getElementById('tabelaBody');
-  var filtrados = pedidos.filter(function(p) {
-    if (filtroStatus && (p.status || 'novo') !== filtroStatus) return false;
+  var lista = getListaAtiva();
+  var filtrados = lista.filter(function(p) {
+    if (filtroStatus && (p.status || statusPadrao()) !== filtroStatus) return false;
     if (!busca) return true;
-    var texto = [
-      p.id, p.nome_cliente, p.email, p.whatsapp, p.descricao_peca, p.pedido_id, p.tipo_peca
-    ].filter(Boolean).join(' ').toLowerCase();
-    return texto.indexOf(busca) !== -1;
+    var texto = [];
+    if (tipoAtivo === 'loja') {
+      texto = [p.id, p.pedido_id, p.nome_cliente, p.whatsapp, p.entrega, p.nota, JSON.stringify(p.itens || [])];
+    } else {
+      texto = [p.id, p.nome_cliente, p.email, p.whatsapp, p.descricao_peca, p.pedido_id, p.tipo_peca];
+    }
+    return texto.filter(Boolean).join(' ').toLowerCase().indexOf(busca) !== -1;
   });
   if (filtrados.length === 0) {
     body.innerHTML = '<tr class="loading-row"><td colspan="6"><div class="big">📭</div><p>Nenhum pedido encontrado' + (busca || filtroStatus ? ' com esses filtros' : ' ainda') + '.</p></td></tr>';
@@ -446,28 +555,29 @@ function aplicarFiltros() {
   }
   var html = '';
   filtrados.forEach(function(p) {
-    var status = p.status || 'novo';
+    var status = p.status || statusPadrao();
     var statusLabel = traduzirStatus(status);
     var data = formatarData(p.created_at);
     var idExibido = p.pedido_id || ('#' + p.id);
     var contato = p.whatsapp || p.email || '—';
-    var descricao = p.descricao_peca || '';
-    var extra = [];
-    if (p.tipo_peca) extra.push(p.tipo_peca);
-    if (p.quantidade) extra.push('Qtd: ' + p.quantidade);
-    if (p.orcamento_estimado) extra.push('Orç. ref.: ' + p.orcamento_estimado);
-    var descHtml = montarDescricao(descricao);
     var ehNovo = novosIds.indexOf(String(p.id)) !== -1;
     var waLink = montarLinkWhatsApp(p.whatsapp || p.email);
     var waBtn = waLink ? '<a class="wa-link" href="' + waLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>WhatsApp</a>' : '';
-    var delBtn = status === 'cancelado'
+    var delBtn = status === 'cancelado' || status === 'entregue'
       ? '<div style="margin-top:6px;"><button class="del-btn" data-id="' + p.id + '" onclick="excluirPedido(' + p.id + ')"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Excluir</button></div>'
       : '';
+    var detalhes = tipoAtivo === 'loja' ? montarItensLoja(p) : montarDescricao(p.descricao_peca || '');
+    var extra = [];
+    if (tipoAtivo !== 'loja') {
+      if (p.tipo_peca) extra.push(p.tipo_peca);
+      if (p.quantidade) extra.push('Qtd: ' + p.quantidade);
+      if (p.orcamento_estimado) extra.push('Orç. ref.: ' + p.orcamento_estimado);
+    }
     html += '<tr' + (ehNovo ? ' class="row-novo"' : '') + '>' +
       '<td class="td-id">' + idExibido + (ehNovo ? '<span class="novo-badge">Novo</span>' : '') + '</td>' +
       '<td><div class="td-client">' + escapar(p.nome_cliente || '—') + '</div></td>' +
       '<td class="td-contact">' + escapar(contato) + waBtn + '</td>' +
-      '<td class="td-desc">' + descHtml +
+      '<td class="td-desc">' + detalhes +
         (extra.length ? '<small>' + escapar(extra.join(' · ')) + '</small>' : '') +
       '</td>' +
       '<td class="td-date">' + data + '</td>' +
@@ -484,8 +594,19 @@ function aplicarFiltros() {
   });
   body.innerHTML = html;
 }
-function opcoesStatus(atual) {
-  var lista = [
+function statusPadrao() {
+  return tipoAtivo === 'loja' ? 'feito' : 'novo';
+}
+function opcoesTodas() {
+  if (tipoAtivo === 'loja') {
+    return [
+      ['feito', 'Pedido feito'],
+      ['pago', 'Pago'],
+      ['saiu', 'Saiu para entrega'],
+      ['entregue', 'Entregue']
+    ];
+  }
+  return [
     ['novo', 'Novo'],
     ['orcamento', 'Em orçamento'],
     ['aprovado', 'Aprovado'],
@@ -494,20 +615,24 @@ function opcoesStatus(atual) {
     ['entregue', 'Entregue'],
     ['cancelado', 'Cancelado']
   ];
-  return lista.map(function(item) {
+}
+function opcoesStatus(atual) {
+  return opcoesTodas().map(function(item) {
     return '<option value="' + item[0] + '"' + (item[0] === atual ? ' selected' : '') + '>' + item[1] + '</option>';
   }).join('');
 }
 function traduzirStatus(s) {
-  var map = {
-    novo: 'Novo',
-    orcamento: 'Em orçamento',
-    aprovado: 'Aprovado',
-    producao: 'Em produção',
-    pronto: 'Pronto',
-    entregue: 'Entregue',
-    cancelado: 'Cancelado'
-  };
+  var map = tipoAtivo === 'loja'
+    ? { feito: 'Pedido feito', pago: 'Pago', saiu: 'Saiu para entrega', entregue: 'Entregue' }
+    : {
+        novo: 'Novo',
+        orcamento: 'Em orçamento',
+        aprovado: 'Aprovado',
+        producao: 'Em produção',
+        pronto: 'Pronto',
+        entregue: 'Entregue',
+        cancelado: 'Cancelado'
+      };
   return map[s] || s;
 }
 function formatarData(iso) {
@@ -526,12 +651,13 @@ function escapar(texto) {
   return div.innerHTML;
 }
 function excluirPedido(id) {
-  var p = pedidos.find(function(x) { return x.id === id; });
+  var p = getListaAtiva().find(function(x) { return x.id === id; });
   var ref = p && p.pedido_id ? p.pedido_id : ('#' + id);
   if (!confirm('Excluir o pedido ' + ref + '?\n\nEsta ação não pode ser desfeita.')) return;
   var btn = document.querySelector('.del-btn[data-id="' + id + '"]');
   if (btn) { btn.disabled = true; btn.textContent = 'Excluindo...'; }
-  fetch(API_URL + '/orcamentos/' + id, {
+  var endpoint = tipoAtivo === 'loja' ? '/loja/pedidos/' : '/orcamentos/';
+  fetch(API_URL + endpoint + id, {
     method: 'DELETE',
     headers: { 'Authorization': 'Bearer ' + token }
   })
@@ -541,7 +667,11 @@ function excluirPedido(id) {
     return res.json();
   })
   .then(function() {
-    pedidos = pedidos.filter(function(x) { return x.id !== id; });
+    if (tipoAtivo === 'loja') {
+      lojaPedidos = lojaPedidos.filter(function(x) { return x.id !== id; });
+    } else {
+      orcamentos = orcamentos.filter(function(x) { return x.id !== id; });
+    }
     renderizar();
   })
   .catch(function(err) {
@@ -550,12 +680,13 @@ function excluirPedido(id) {
   });
 }
 function mudarStatus(id, novoStatus) {
-  var p = pedidos.find(function(x) { return x.id === id; });
+  var p = getListaAtiva().find(function(x) { return x.id === id; });
   var nome = p ? (p.nome_cliente || '') : '';
   var pedidoRef = p && p.pedido_id ? p.pedido_id : ('#' + id);
   var contato = p ? (p.whatsapp || p.email || '') : '';
-  var statusAnterior = p ? (p.status || 'novo') : '';
-  fetch(API_URL + '/orcamentos/' + id, {
+  var statusAnterior = p ? (p.status || statusPadrao()) : '';
+  var endpoint = tipoAtivo === 'loja' ? '/loja/pedidos/' : '/orcamentos/';
+  fetch(API_URL + endpoint + id, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -583,6 +714,14 @@ function mudarStatus(id, novoStatus) {
 var mensagemAtual = '';
 function montarMensagemStatus(nome, id, status) {
   var primeiroNome = (nome || '').trim().split(' ')[0] || 'Cliente';
+  if (tipoAtivo === 'loja') {
+    var mapLoja = {
+      pago: 'Olá, *' + primeiroNome + '*! Recebemos a confirmação do pagamento do pedido *' + id + '* 🎉\nAgora é só aguardar, vamos preparar tudo com capricho. Qualquer dúvida, é só chamar!',
+      saiu: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* saiu para entrega! 🚚\nFique de olho: em breve ele chega até você.',
+      entregue: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi entregue. Obrigado pela preferência! ⭐\nSe precisar de algo, ou quiser encomendar uma nova peça, é só chamar!'
+    };
+    return mapLoja[status] || '';
+  }
   var map = {
     orcamento: 'Olá, *' + primeiroNome + '*! Recebemos seu pedido *' + id + '* ✅\nJá estamos preparando o orçamento e retornamos em breve aqui mesmo, pelo WhatsApp. Fica de olho!',
     aprovado: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi aprovado. 🎉\nEm breve iniciamos a produção. Qualquer dúvida, é só chamar!',
