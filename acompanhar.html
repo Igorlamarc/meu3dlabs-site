@@ -47,6 +47,8 @@ section{padding:40px 0;}
 .status-num small{display:block;font-size:12px;font-weight:500;color:var(--gray);margin-top:3px;}
 .status-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);color:var(--green-dark);font-weight:700;font-size:13px;padding:8px 16px;border-radius:30px;}
 .status-pill::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green-dark);animation:pulse 1.6s infinite;}
+.status-pill.cancelado{background:#fde8e8;border-color:rgba(185,28,28,.3);color:#b91c1c;}
+.status-pill.cancelado::before{background:#b91c1c;animation:none;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
 .timeline{display:flex;flex-direction:column;gap:0;margin:8px 0 4px;}
 .tl-step{display:flex;gap:16px;position:relative;padding-bottom:26px;}
@@ -64,6 +66,9 @@ section{padding:40px 0;}
 .tl-info .data-status{font-size:12px;color:var(--orange);font-weight:600;margin-top:3px;display:none;}
 .tl-step.feito .tl-info .data-status,.tl-step.ativo .tl-info .data-status{display:block;}
 .tl-step.pendente .tl-info{opacity:.55;}
+.cancel-box{background:#fde8e8;border:1px solid rgba(185,28,28,.25);border-radius:12px;padding:22px 24px;text-align:center;margin:8px 0 4px;}
+.cancel-box strong{display:block;font-size:16px;color:#b91c1c;margin-bottom:6px;}
+.cancel-box span{font-size:13.5px;color:#7a3a3a;line-height:1.6;display:block;}
 .resumo{margin-top:24px;background:var(--light);border:1px solid var(--border);border-radius:12px;padding:20px 22px;display:none;}
 .resumo.show{display:block;}
 .resumo h4{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gray);margin-bottom:12px;}
@@ -188,7 +193,8 @@ return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric
 /* Status da loja (pronta entrega): feito, pago, saiu, entregue */
 function mapearLoja(v){
 var s=String(v||'').toLowerCase().trim();
-if(['entregue','finalizado','concluido'].indexOf(s)>-1)return 3;
+if(s==='cancelado'||s==='cancelada')return -1;
+if(['entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 3;
 if(['saiu','enviado','saiu_para_entrega','em_transporte'].indexOf(s)>-1)return 2;
 if(['pago','pagamento_confirmado','confirmado','aprovado'].indexOf(s)>-1)return 1;
 return 0;
@@ -197,7 +203,8 @@ return 0;
 /* Status da encomenda (orcamento): recebido, orcamento, aprovado, producao, pronto, entregue */
 function mapearOrc(v){
 var s=String(v||'').toLowerCase().trim();
-if(['entregue','entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 5;
+if(s==='cancelado'||s==='cancelada')return -1;
+if(['entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 5;
 if(['pronto','pronto_entrega','pronto_para_entrega','aguardando_entrega','para_entrega'].indexOf(s)>-1)return 4;
 if(['producao','em_producao','impressao','imprimindo','em_produção','produção'].indexOf(s)>-1)return 3;
 if(['aprovado','aprovacao','confirmado','em_andamento','aprovada','aprovação'].indexOf(s)>-1)return 2;
@@ -260,36 +267,17 @@ document.getElementById('statusBox').classList.remove('show');
 msg.className='busca-msg carregando';
 msg.textContent='Consultando seu pedido…';
 
-/* Tenta primeiro a loja (M3D-XXXXXX); se não achar, tenta encomenda (M3D-AAAA-NNN) */
-fetch(API_LOJA+encodeURIComponent(alvo))
-.then(function(r){
-if(r.status===404){return fetch(API_ORC+encodeURIComponent(alvo));}
-if(!r.ok){throw {tipo:'servidor'};}
-return Promise.all([Promise.resolve(r),Promise.resolve('loja')]);
-})
-.then(function(par){
-var resp=par[0],tipo=par[1]||'loja';
-if(!tipo&&resp===undefined){return;}
-return resp.json().then(function(json){return {json:json,tipo:tipo};});
-})
-.catch(function(err){
-if(err&&err.tipo==='servidor'){
-document.getElementById('statusBox').classList.remove('show');
-msg.className='busca-msg erro';
-msg.textContent='Não foi possível consultar agora. Tente novamente em instantes ou chame no WhatsApp.';
-}
-});
-
+/* Tenta a loja (M3D-XXXXXX); se não achar, tenta a encomenda (M3D-AAAA-NNN) */
 fetch(API_LOJA+encodeURIComponent(alvo))
 .then(function(r){
 if(r.status===404){
 return fetch(API_ORC+encodeURIComponent(alvo)).then(function(r2){
-if(r2.status===404){return null;}
-if(!r2.ok){throw {tipo:'servidor'};}
+if(r2.status===404)return null;
+if(!r2.ok)throw {tipo:'servidor'};
 return r2.json().then(function(j){return {dados:j,tipo:'encomenda'};});
 });
 }
-if(!r.ok){throw {tipo:'servidor'};}
+if(!r.ok)throw {tipo:'servidor'};
 return r.json().then(function(j){return {dados:j,tipo:'loja'};});
 })
 .then(function(res){
@@ -313,7 +301,9 @@ msg.textContent='Não foi possível consultar agora. Tente novamente em instante
 function exibirPedido(dados,tipo,alvo){
 var numero=dados.pedido_id||dados.numero||dados.id||alvo;
 var nomeCli=dados.nome_cliente||dados.cliente||dados.nome||'';
-var status=(tipo==='loja')?mapearLoja(dados.status):mapearOrc(dados.status||dados.estado||dados.etapa);
+var sRaw=String(dados.status||dados.estado||dados.etapa||'').toLowerCase().trim();
+var cancelado=(sRaw==='cancelado'||sRaw==='cancelada');
+var status=cancelado?-1:((tipo==='loja')?mapearLoja(dados.status):mapearOrc(dados.status||dados.estado||dados.etapa));
 var nomes=(tipo==='loja')?['Pedido feito','Pago','Saiu para entrega','Entregue']:['Recebido','Orçamento','Aprovado','Em produção','Pronto','Entregue'];
 
 document.getElementById('sNumero').textContent=numero;
@@ -321,8 +311,18 @@ var elCli=document.getElementById('sCliente');
 if(nomeCli){elCli.textContent='Cliente: '+nomeCli;elCli.style.display='';}
 else{elCli.textContent='';elCli.style.display='none';}
 
-document.getElementById('statusPill').textContent=nomes[status]||nomes[0];
+var pill=document.getElementById('statusPill');
+if(cancelado){
+pill.textContent='Cancelado';
+pill.classList.add('cancelado');
+document.getElementById('timeline').innerHTML=
+'<div class="cancel-box"><strong>Este pedido foi cancelado.</strong>'
++'<span>Se você já fez o pagamento ou quer entender o que aconteceu, chame a gente no WhatsApp que resolvemos rapidinho.</span></div>';
+}else{
+pill.classList.remove('cancelado');
+pill.textContent=nomes[status]||nomes[0];
 montarTimeline(tipo,status);
+}
 
 var detBox=document.getElementById('detalhesBox');
 var html='';

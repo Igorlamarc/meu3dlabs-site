@@ -603,7 +603,8 @@ function opcoesTodas() {
       ['feito', 'Pedido feito'],
       ['pago', 'Pago'],
       ['saiu', 'Saiu para entrega'],
-      ['entregue', 'Entregue']
+      ['entregue', 'Entregue'],
+      ['cancelado', 'Cancelado']
     ];
   }
   return [
@@ -623,7 +624,7 @@ function opcoesStatus(atual) {
 }
 function traduzirStatus(s) {
   var map = tipoAtivo === 'loja'
-    ? { feito: 'Pedido feito', pago: 'Pago', saiu: 'Saiu para entrega', entregue: 'Entregue' }
+    ? { feito: 'Pedido feito', pago: 'Pago', saiu: 'Saiu para entrega', entregue: 'Entregue', cancelado: 'Cancelado' }
     : {
         novo: 'Novo',
         orcamento: 'Em orçamento',
@@ -718,7 +719,8 @@ function montarMensagemStatus(nome, id, status) {
     var mapLoja = {
       pago: 'Olá, *' + primeiroNome + '*! Recebemos a confirmação do pagamento do pedido *' + id + '* 🎉\nAgora é só aguardar, vamos preparar tudo com capricho. Qualquer dúvida, é só chamar!',
       saiu: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* saiu para entrega! 🚚\nFique de olho: em breve ele chega até você.',
-      entregue: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi entregue. Obrigado pela preferência! ⭐\nSe precisar de algo, ou quiser encomendar uma nova peça, é só chamar!'
+      entregue: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi entregue. Obrigado pela preferência! ⭐\nSe precisar de algo, ou quiser encomendar uma nova peça, é só chamar!',
+      cancelado: 'Olá, *' + primeiroNome + '*! Uma atualização sobre o pedido *' + id + '*: ele foi cancelado.\nSe quiser refazer o pedido, ajustar algo ou tirar qualquer dúvida, é só nos chamar — vamos adorar te atender! 💛'
     };
     return mapLoja[status] || '';
   }
