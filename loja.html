@@ -213,10 +213,12 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 @media(max-width:480px){.campos-grid{grid-template-columns:1fr;}}
 
 /* ===== LOJA DINÂMICA VIA API ===== */
-.produto.esgotado{opacity:.55;filter:grayscale(.18);}
+.produto.esgotado{background:#f7f8fa;}
+.produto.esgotado .produto-img img{opacity:.6;filter:grayscale(.3);}
+.produto.esgotado .produto-preco{opacity:.65;}
 .badge.esgotado{background:rgba(192,57,43,.9);color:#fff;}
-.btn-pedir{display:flex;align-items:center;justify-content:center;gap:8px;background:#fde8e5;color:#c0392b;border:1px solid #f5c6c0;width:100%;padding:11px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s;}
-.btn-pedir:hover{background:#f5c6c0;}
+.btn-pedir{display:flex;align-items:center;justify-content:center;gap:8px;background:#c0392b;color:#fff;border:none;width:100%;padding:11px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s;box-shadow:0 3px 8px rgba(192,57,43,.3);}
+.btn-pedir:hover{background:#d8503f;}
 .loja-carregando{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray);}
 
 </style>
@@ -257,6 +259,10 @@ Filtros
 <button class="cat-btn" data-cat="religiosos" onclick="selecionarCategoria(this)">Religiosos <span class="qtd" id="qtdReligiosos"></span></button>
 <button class="cat-btn" data-cat="decoracao" onclick="selecionarCategoria(this)">Decoração <span class="qtd" id="qtdDecoracao"></span></button>
 <button class="cat-btn" data-cat="miniaturas" onclick="selecionarCategoria(this)">Miniaturas <span class="qtd" id="qtdMiniaturas"></span></button>
+<button class="cat-btn" data-cat="colecionaveis" onclick="selecionarCategoria(this)">Colecionáveis <span class="qtd" id="qtdColecionaveis"></span></button>
+<button class="cat-btn" data-cat="articulados" onclick="selecionarCategoria(this)">Articulados <span class="qtd" id="qtdArticulados"></span></button>
+<button class="cat-btn" data-cat="sensoriais" onclick="selecionarCategoria(this)">Sensoriais <span class="qtd" id="qtdSensoriais"></span></button>
+<button class="cat-btn" data-cat="utilitarios" onclick="selecionarCategoria(this)">Utilitários <span class="qtd" id="qtdUtilitarios"></span></button>
 <button class="cat-btn" data-cat="outros" onclick="selecionarCategoria(this)">Outros <span class="qtd" id="qtdOutros"></span></button>
 </div>
 </div>
@@ -273,6 +279,7 @@ Filtros
 <label class="check-item"><input type="checkbox" value="ate25" checked onchange="aplicarFiltros()"> Até R$ 25</label>
 <label class="check-item"><input type="checkbox" value="25a50" checked onchange="aplicarFiltros()"> R$ 25 a R$ 50</label>
 <label class="check-item"><input type="checkbox" value="50a100" checked onchange="aplicarFiltros()"> R$ 50 a R$ 100</label>
+<label class="check-item"><input type="checkbox" value="mais100" checked onchange="aplicarFiltros()"> Acima de R$ 100</label>
 </div>
 </div>
 </aside>
@@ -789,6 +796,27 @@ var produtosLoja = [];
 
 function escL(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function precoLabel(v){v=parseFloat(v)||0;return v.toFixed(2).replace('.',',');}
+function labelCategoria(cat){
+  var labels={chaveiros:'Chaveiros',religiosos:'Religiosos',decoracao:'Decoração',miniaturas:'Miniaturas',colecionaveis:'Colecionáveis',articulados:'Articulados',sensoriais:'Sensoriais',utilitarios:'Utilitários',outros:'Outros'};
+  return labels[cat]||cat.charAt(0).toUpperCase()+cat.slice(1);
+}
+function corHex(nome){
+  if(!nome)return '#ccc';
+  nome=String(nome).toLowerCase().replace(/[^a-z0-9]/g,'');
+  if(nome.indexOf('#')===0)return nome;
+  var mapa={
+    preto:'#000000',black:'#000000',branco:'#ffffff',white:'#ffffff',
+    cinza:'#9e9e9e',gray:'#9e9e9e',prata:'#c0c0c0',prateado:'#c0c0c0',silver:'#c0c0c0',
+    vermelho:'#d32f2f',red:'#d32f2f',rosa:'#f48fb1',pink:'#f48fb1',
+    laranja:'#f26522',orange:'#f26522',marrom:'#795548',brown:'#795548',
+    amarelo:'#fbc02d',yellow:'#fbc02d',dourado:'#d4af37',ouro:'#d4af37',gold:'#d4af37',
+    verde:'#2e7d32',green:'#2e7d32',verdeclaro:'#8bc34a',lightgreen:'#8bc34a',
+    azul:'#1565c0',blue:'#1565c0',azulclaro:'#42a5f5',lightblue:'#42a5f5',azulmarinho:'#0d3b66',
+    roxo:'#7b1fa2',purple:'#7b1fa2',violeta:'#9c27b0',lilas:'#ce93d8',
+    bege:'#d6c6a8',beige:'#d6c6a8',creme:'#f5ecd9',turquesa:'#00bcd4',transparente:'#ffffff'
+  };
+  return mapa[nome]||'#ccc';
+}
 function badgeProduto(q){
   q=parseInt(q)||0;
   if(q<=0)return '<span class="badge esgotado">Sem estoque</span>';
@@ -828,6 +856,11 @@ function bindVariantes(card){
   }
 }
 function renderProdutos(lista){
+  lista=lista.slice().sort(function(a,b){
+    var esgA=(parseInt(a.estoque)||0)<=0?1:0;
+    var esgB=(parseInt(b.estoque)||0)<=0?1:0;
+    return esgA-esgB;
+  });
   var grid=document.getElementById('lojaGrid');
   grid.innerHTML='';
   if(!lista.length){
@@ -859,7 +892,7 @@ function renderProdutos(lista){
         html+='<div class="variantes-lista"><span class="vl-label">Cores:</span>';
         imgs.forEach(function(u,i){
           var corLabel=cores[i]||('Cor '+(i+1));
-          var fundo=(cores[i]||'').indexOf('#')===0?cores[i]:'#ccc';
+          var fundo=corHex(cores[i]);
           html+='<div class="sw'+(i===0?' ativo':'')+'" data-idx="'+i+'" data-cor-label="'+escL(corLabel)+'" data-img="'+u+'" style="background:'+fundo+'" title="'+escL(corLabel)+'"></div>';
         });
         html+='</div>';
@@ -868,10 +901,10 @@ function renderProdutos(lista){
       html+='<div class="variante-track"><div class="variante-slide" style="font-size:42px;color:#b9c2d2;">📦</div></div>';
     }
     html+='</div><div class="produto-body">';
-    html+='<span class="produto-cat">'+escL(cat.charAt(0).toUpperCase()+cat.slice(1))+'</span>';
+    html+='<span class="produto-cat">'+escL(labelCategoria(cat))+'</span>';
     html+='<h3>'+escL(p.nome)+'</h3>';
     if(p.descricao)html+='<p class="produto-desc">'+escL(p.descricao)+'</p>';
-    if(cores.length)html+='<div class="produto-cor"><span class="mini-swatch" style="background:'+((cores[0]||'').indexOf('#')===0?cores[0]:'#ccc')+'"></span> '+escL(cores[0]||'')+'</div>';
+    if(cores.length)html+='<div class="produto-cor"><span class="mini-swatch" style="background:'+corHex(cores[0])+'"></span> '+escL(cores[0]||'')+'</div>';
     html+='<div class="produto-preco">'+plabel+' <small>· unidade</small></div>';
     if(esgotado){
       html+='<button class="btn-pedir" onclick="pedirPeca(\''+p.slug+'\')">🛠️ Pedir esta peça</button>';
@@ -914,9 +947,9 @@ function carregarProdutos(){
 var categoriaAtiva='todos';
 function qtdPorCategoria(){
 var prods=document.querySelectorAll('.produto');
-var qtds={todos:prods.length,chaveiros:0,religiosos:0,decoracao:0,miniaturas:0,outros:0};
+var qtds={todos:prods.length,chaveiros:0,religiosos:0,decoracao:0,miniaturas:0,colecionaveis:0,articulados:0,sensoriais:0,utilitarios:0,outros:0};
 prods.forEach(function(p){var c=p.getAttribute('data-cat');qtds[c]=(qtds[c]||0)+1;});
-var mapa={todos:'qtdTodos',chaveiros:'qtdChaveiros',religiosos:'qtdReligiosos',decoracao:'qtdDecoracao',miniaturas:'qtdMiniaturas',outros:'qtdOutros'};
+var mapa={todos:'qtdTodos',chaveiros:'qtdChaveiros',religiosos:'qtdReligiosos',decoracao:'qtdDecoracao',miniaturas:'qtdMiniaturas',colecionaveis:'qtdColecionaveis',articulados:'qtdArticulados',sensoriais:'qtdSensoriais',utilitarios:'qtdUtilitarios',outros:'qtdOutros'};
 for(var k in mapa){var el=document.getElementById(mapa[k]);if(el)el.textContent='('+qtds[k]+')';}
 }
 function selecionarCategoria(btn){
@@ -930,7 +963,7 @@ var disp=[];
 var precos=[];
 document.querySelectorAll('.check-item input').forEach(function(el){
 if(el.checked&&(el.value==='estoque'||el.value==='ultimas'))disp.push(el.value);
-if(el.checked&&(el.value==='ate25'||el.value==='25a50'||el.value==='50a100'))precos.push(el.value);
+if(el.checked&&(el.value==='ate25'||el.value==='25a50'||el.value==='50a100'||el.value==='mais100'))precos.push(el.value);
 });
 var prods=document.querySelectorAll('.produto');
 var visiveis=0;
@@ -938,12 +971,13 @@ prods.forEach(function(p){
 var ok=true;
 if(categoriaAtiva!=='todos'&&p.getAttribute('data-cat')!==categoriaAtiva)ok=false;
 if(ok&&p.getAttribute('data-estoque')!=='zero'&&disp.indexOf(p.getAttribute('data-estoque'))===-1)ok=false;
-if(ok){
+if(ok&&precos.length>0){
 var preco=parseFloat(p.getAttribute('data-preco'));
 var faixaOk=false;
 if(precos.indexOf('ate25')>-1&&preco<=25)faixaOk=true;
 if(precos.indexOf('25a50')>-1&&preco>25&&preco<=50)faixaOk=true;
 if(precos.indexOf('50a100')>-1&&preco>50&&preco<=100)faixaOk=true;
+if(precos.indexOf('mais100')>-1&&preco>100)faixaOk=true;
 if(!faixaOk)ok=false;
 }
 if(ok){p.style.display='';visiveis++;}else{p.style.display='none';}
