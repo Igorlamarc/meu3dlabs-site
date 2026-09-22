@@ -9,15 +9,20 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294f;}
 .hidden{display:none !important;}
-/* LOGIN */
-#telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f1e3d,#1d3a6b);}
-.login-box{background:#fff;border-radius:14px;padding:32px;width:100%;max-width:360px;box-shadow:0 12px 40px rgba(0,0,0,.25);}
-.login-box h1{font-size:22px;margin-bottom:4px;}
-.login-box p{color:#667;font-size:13px;margin-bottom:20px;}
-.login-box input{width:100%;padding:12px;border:1px solid #dde3ee;border-radius:8px;margin-bottom:12px;font-size:15px;}
-.login-box button{width:100%;padding:13px;background:#f26522;border:none;border-radius:8px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
-.login-box button:hover{background:#ff8a3d;}
-.login-err{color:#d33;font-size:13px;margin-bottom:10px;display:none;}
+/* LOGIN (padrão admin) */
+#telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f1e3d 0%,#16294f 100%);padding:20px;}
+.login-box{background:#fff;border-radius:18px;padding:44px 36px 36px;width:100%;max-width:400px;box-shadow:0 24px 70px rgba(0,0,0,.35);position:relative;text-align:center;}
+.login-back{position:absolute;top:18px;left:22px;font-size:13px;color:#4a5161;text-decoration:none;transition:.2s;}
+.login-back:hover{color:#f26522;}
+.login-icon{width:66px;height:66px;border-radius:50%;background:#eef1f6;display:flex;align-items:center;justify-content:center;margin:26px auto 16px;font-size:30px;}
+.login-box h1{font-size:20px;color:#0f1e3d;margin-bottom:6px;font-weight:800;}
+.login-box p{color:#4a5161;font-size:13.5px;margin-bottom:24px;line-height:1.5;}
+.login-box input{width:100%;padding:14px 16px;border:2px solid #f26522;border-radius:10px;font-size:14px;outline:none;font-family:inherit;box-sizing:border-box;transition:.2s;color:#0f1e3d;}
+.login-box input:focus{box-shadow:0 0 0 3px rgba(242,101,34,.18);}
+.login-box input::placeholder{color:#9aa4b8;}
+.login-box button{width:100%;margin-top:14px;padding:14px;background:#f26522;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;}
+.login-box button:hover{background:#d9551a;}
+.login-err{color:#c0392b;font-size:13px;margin-bottom:12px;display:none;text-align:center;}
 /* TOPO */
 .topo{background:#0f1e3d;color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
 .topo h1{font-size:19px;}
@@ -82,17 +87,17 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
 </style>
 </head>
 <body>
-
 <div id="telaLogin">
   <div class="login-box">
-    <h1>Admin <span style="color:#f26522">Loja</span></h1>
-    <p>Painel de produtos da loja</p>
+    <a class="login-back" href="login.html">← Voltar</a>
+    <div class="login-icon">🔒</div>
+    <h1>Área restrita</h1>
+    <p>Digite a senha para acessar o painel da loja.</p>
     <div class="login-err" id="loginErr">Senha incorreta</div>
-    <input type="password" id="senha" placeholder="Senha do admin" onkeydown="if(event.key==='Enter')fazerLogin()">
+    <input type="password" id="senha" placeholder="Senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()">
     <button onclick="fazerLogin()">Entrar</button>
   </div>
 </div>
-
 <div id="painel" class="hidden">
   <div class="topo">
     <h1>Meu 3D <span>Labs</span> — Admin Loja</h1>
@@ -113,7 +118,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
     </div>
   </div>
 </div>
-
 <script>
 const API = 'https://meu3dlabs-backend.onrender.com/api';
 const CATEGORIAS = ['chaveiros','religiosos','decoracao','miniaturas','colecionaveis','articulados','sensoriais','utilitarios','outros'];
@@ -121,7 +125,6 @@ let token = localStorage.getItem('m3d_token') || '';
 let produtos = [];
 let editandoId = null;
 let imagensTemp = [];
-
 async function api(path, opts, body){
   const conf = { method: opts || 'GET', headers: {} };
   if(token) conf.headers['Authorization'] = 'Bearer ' + token;
@@ -134,7 +137,6 @@ async function api(path, opts, body){
   if(!r.ok){ throw new Error(t.error || 'Erro na requisição'); }
   return t;
 }
-
 function fazerLogin(){
   const senha = document.getElementById('senha').value.trim();
   if(!senha) return;
@@ -158,7 +160,6 @@ function fazerLogin(){
     document.getElementById('loginErr').style.display = 'block';
   });
 }
-
 function sair(){
   token = '';
   localStorage.removeItem('m3d_token');
@@ -167,13 +168,11 @@ function sair(){
   document.getElementById('painel').classList.add('hidden');
   document.getElementById('telaLogin').classList.remove('hidden');
 }
-
 function entrar(){
   document.getElementById('telaLogin').classList.add('hidden');
   document.getElementById('painel').classList.remove('hidden');
   carregar();
 }
-
 async function carregar(){
   const g = document.getElementById('grade');
   g.innerHTML = '<div class="carregando">Carregando produtos...</div>';
@@ -191,14 +190,12 @@ async function carregar(){
     }
   }
 }
-
 function badgeEstoque(q){
   q = parseInt(q) || 0;
   if(q <= 0) return '<span class="badge zero">Sem estoque</span>';
   if(q <= 3) return '<span class="badge ult">Últimas ' + q + ' un.</span>';
   return '<span class="badge ok">Em estoque (' + q + ')</span>';
 }
-
 function render(){
   const g = document.getElementById('grade');
   document.getElementById('vazio').classList.toggle('hidden', produtos.length > 0);
@@ -223,7 +220,6 @@ function render(){
     g.appendChild(card);
   });
 }
-
 function esc(s){
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => (
     {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
@@ -233,7 +229,6 @@ function fmt(n){
   n = parseFloat(n) || 0;
   return n.toFixed(2).replace('.', ',');
 }
-
 function abrirForm(id){
   editandoId = id || null;
   imagensTemp = [];
@@ -276,14 +271,12 @@ function abrirForm(id){
     renderPreview();
   }
 }
-
 function fecharForm(){
   document.getElementById('formArea').innerHTML = '';
   document.getElementById('tituloLista').textContent = 'Produtos da loja';
   editandoId = null;
   imagensTemp = [];
 }
-
 async function enviarFotos(input){
   const arquivos = Array.from(input.files || []);
   if(!arquivos.length) return;
@@ -308,7 +301,6 @@ async function enviarFotos(input){
   input.value = '';
   renderPreview();
 }
-
 function renderPreview(){
   const pr = document.getElementById('preview');
   pr.innerHTML = '';
@@ -319,19 +311,16 @@ function renderPreview(){
     pr.appendChild(d);
   });
 }
-
 function removerImg(i){
   imagensTemp.splice(i, 1);
   renderPreview();
 }
-
 function mostrarMsg(txt, ok){
   const m = document.getElementById('subMsg');
   m.className = 'sub-msg ' + (ok ? 'ok' : 'erro');
   m.textContent = txt;
   setTimeout(() => { m.className = 'sub-msg'; m.textContent = ''; }, 4000);
 }
-
 async function salvarProduto(){
   const nome = document.getElementById('fNome').value.trim();
   if(!nome){ mostrarMsg('Digite o nome do produto.', false); return; }
@@ -359,7 +348,6 @@ async function salvarProduto(){
     mostrarMsg('Erro ao salvar: ' + e.message, false);
   }
 }
-
 async function excluirProduto(id){
   const p = produtos.find(x => x.id === id);
   if(!confirm('Excluir o produto "' + (p ? p.nome : '') + '"? Essa ação não pode ser desfeita.')) return;
@@ -370,7 +358,6 @@ async function excluirProduto(id){
     alert('Erro ao excluir: ' + e.message);
   }
 }
-
 if(token) entrar();
 </script>
 </body>
