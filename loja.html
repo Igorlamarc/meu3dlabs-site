@@ -790,10 +790,19 @@ optin:optin
 function montarPedido(numero,registrado){
 return {numero:numero,itens:itens,total:totalFinal(),subtotal:totalCarrinho(),cupom:cupomAtivo,entrega:entregaSel,nota:nota,nome:nome,fone:fone,optin:optin,registrado:registrado};
 }
+function limparCarrinhoAposPedido(){
+  carrinho = [];
+  salvarCarrinho();
+  cupomAtivo = null;
+  atualizarCarrinhoUI();
+}
 function mostrarPronto(){
-if(btn){btn.disabled=false;}
-document.getElementById('modalTitulo').textContent='Pedido gerado';
-document.getElementById('modalBody').innerHTML=etapaPedido(pedidoAtual);
+  if(btn){btn.disabled=false;}
+  if(pedidoAtual && pedidoAtual.registrado){
+    limparCarrinhoAposPedido();
+  }
+  document.getElementById('modalTitulo').textContent='Pedido gerado';
+  document.getElementById('modalBody').innerHTML=etapaPedido(pedidoAtual);
 }
 fetch(API_PEDIDOS,{
 method:'POST',
