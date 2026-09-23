@@ -176,6 +176,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 <div class="top-bar">
 <h1 id="tituloPainel">📋 Encomendas</h1>
 <div class="actions">
+  <button class="refresh-btn" style="background:#1d8a4f;" onclick="exportarCSV()">⬇️ Exportar CSV</button>
 <span class="last-update" id="lastUpdate"></span>
 <button class="refresh-btn" id="refreshBtn" onclick="carregarPedidos()">🔄 Atualizar</button>
 </div>
@@ -199,6 +200,8 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 <span class="icon">🔍</span>
 <input type="text" id="buscaInput" placeholder="Buscar por nome, contato, descrição ou ID..." oninput="aplicarFiltros()">
 </div>
+<input type="date" id="filtroInicio" class="filter-select" onchange="aplicarFiltros()" title="De (data)">
+<input type="date" id="filtroFim" class="filter-select" onchange="aplicarFiltros()" title="Até (data)">
 <select class="filter-select" id="statusFilter" onchange="aplicarFiltros()"></select>
 </div>
 <div class="table-wrap">
@@ -536,10 +539,17 @@ function montarLinkWhatsApp(contato) {
 function aplicarFiltros() {
   var busca = document.getElementById('buscaInput').value.toLowerCase().trim();
   var filtroStatus = document.getElementById('statusFilter').value;
+    var dtIni = document.getElementById('filtroInicio').value;
+  var dtFim = document.getElementById('filtroFim').value;
   var body = document.getElementById('tabelaBody');
   var lista = getListaAtiva();
-  var filtrados = lista.filter(function(p) {
+   var filtrados = lista.filter(function(p) {
     if (filtroStatus && (p.status || statusPadrao()) !== filtroStatus) return false;
+    if (dtIni || dtFim) {
+      var ts = p.created_at ? new Date(p.created_at).getTime() : 0;
+      if (dtIni && ts < new Date(dtIni + 'T00:00:00').getTime()) return false;
+      if (dtFim && ts > new Date(dtFim + 'T23:59:59').getTime()) return false;
+    }
     if (!busca) return true;
     var texto = [];
     if (tipoAtivo === 'loja') {
@@ -594,6 +604,47 @@ function aplicarFiltros() {
   });
   body.innerHTML = html;
 }
+
+function csvEscape(v){v=String(v==null?'':v);return '"'+v.replace(/"/g,'""')+'"';}
+function exportarCSV(){
+  var lista=getListaAtiva();
+  var busca=document.getElementById('buscaInput').value.toLowerCase().trim();
+  var filtroStatus=document.getElementById('statusFilter').value;
+  var dtIni=document.getElementById('filtroInicio').value;
+  var dtFim=document.getElementById('filtroFim').value;
+  var filtrados=lista.filter(function(p){
+    if(filtroStatus&&(p.status||statusPadrao())!==filtroStatus)return false;
+    if(dtIni||dtFim){
+      var ts=p.created_at?new Date(p.created_at).getTime():0;
+      if(dtIni&&ts<new Date(dtIni+'T00:00:00').getTime())return false;
+      if(dtFim&&ts>new Date(dtFim+'T23:59:59').getTime())return false;
+    }
+    if(!busca)return true;
+    var texto=tipoAtivo==='loja'?[p.id,p.pedido_id,p.nome_cliente,p.whatsapp,p.entrega,p.nota,JSON.stringify(p.itens||[])]:[p.id,p.nome_cliente,p.email,p.whatsapp,p.descricao_peca,p.pedido_id,p.tipo_peca];
+    return texto.filter(Boolean).join(' ').toLowerCase().indexOf(busca)!==-1;
+  });
+  if(!filtrados.length){alert('Nenhum pedido para exportar com os filtros atuais.');return;}
+  var linhas;
+  if(tipoAtivo==='loja'){
+    linhas=[['ID','Pedido','Cliente','WhatsApp','Itens','Total','Entrega','Endereco','Horario','Status','Data']];
+    filtrados.forEach(function(p){
+      var itens=(p.itens||[]).map(function(i){return (i.qtd||1)+'x '+(i.nome||'')+(i.cor?' ('+i.cor+')':'');}).join(' | ');
+      linhas.push([p.id,p.pedido_id||'',p.nome_cliente||'',p.whatsapp||'',itens,p.total!=null?p.total:p.subtotal,p.entrega||'',p.endereco||'',p.horario||'',p.status||'',p.created_at||'']);
+    });
+  }else{
+    linhas=[['ID','Pedido','Cliente','WhatsApp','Email','Servico','Qtd','Descricao','Urgencia','Prazo','Status','Data']];
+    filtrados.forEach(function(p){
+      linhas.push([p.id,p.pedido_id||'',p.nome_cliente||'',p.whatsapp||'',p.email||'',p.tipo_peca||'',p.quantidade||'',(p.descricao_peca||'').split('|')[0].trim(),p.urgencia||'',p.prazo_desejado||'',p.status||'',p.created_at||'']);
+    });
+  }
+  var csv=linhas.map(function(r){return r.map(csvEscape).join(';');}).join('\r\n');
+  var blob=new Blob(["\uFEFF"+csv],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=(tipoAtivo==='loja'?'pedidos-loja':'encomendas')+'-'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
 function statusPadrao() {
   return tipoAtivo === 'loja' ? 'feito' : 'novo';
 }

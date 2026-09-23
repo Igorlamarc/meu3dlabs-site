@@ -88,6 +88,10 @@ section{padding:40px 0;}
 .ajuda-card p{font-size:14px;color:var(--gray);line-height:1.6;margin-bottom:22px;}
 footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
 @media(max-width:620px){.busca-linha{flex-direction:column;}.busca-linha .btn{width:100%;}.status-box{padding:22px;}.tl-dot{width:36px;height:36px;font-size:13px;}.tl-step::before{left:17px;}}
+
+.btn-copiar{margin-left:10px;display:inline-flex;align-items:center;gap:5px;background:var(--light);border:1px solid var(--border);color:var(--navy);font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer;transition:.2s;vertical-align:middle;}
+.btn-copiar:hover{border-color:var(--orange);color:var(--orange);}
+
 </style>
 </head>
 <body>
@@ -123,7 +127,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 <div class="status-box" id="statusBox">
 
 <div class="status-top">
-<div class="status-num"><span class="hash">#</span><span id="sNumero">M3D-000000</span><small id="sCliente" style="display:none;"></small></div>
+<div class="status-num"><span class="hash">#</span><span id="sNumero">M3D-000000</span><button class="btn-copiar" onclick="copiarNumero()" title="Copiar número do pedido">📋 Copiar</button><small id="sCliente" style="display:none;"></small></div>
 <div class="status-pill" id="statusPill">Consultando…</div>
 </div>
 
@@ -370,6 +374,15 @@ btnZap.textContent='Falar no WhatsApp · Pedido #'+numero;
 
 document.getElementById('statusBox').classList.add('show');
 }
+
+function copiarNumero(){
+  var n=document.getElementById('sNumero').textContent.trim();
+  if(!n)return;
+  function ok(){var m=document.getElementById('buscaMsg');m.className='busca-msg ok';m.textContent='Número do pedido copiado!';}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(n).then(ok).catch(function(){fbCopia(n);ok();});}
+  else{fbCopia(n);ok();}
+}
+function fbCopia(t){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
 
 /* Preenchimento automático via ?numero= (botão da loja) */
 (function(){

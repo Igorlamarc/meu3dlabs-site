@@ -56,8 +56,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
 .badge.ok{background:#e3f5ec;color:#1d8a4f;}
 .badge.ult{background:#fff4d6;color:#b07d00;}
 .badge.zero{background:#fde8e5;color:#c0392b;}
-.card .acoes{display:flex;gap:8px;padding:10px 12px;border-top:1px solid #eef1f6;}
-.card .acoes button{flex:1;padding:8px;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;}
+.card .acoes{display:flex;gap:6px;padding:10px 12px;border-top:1px solid #eef1f6;}
+.card .acoes button{flex:1;padding:7px 4px;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;}
 /* SELECÃO PARA MESCLAR */
 .sel-check{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid #f26522;color:#f26522;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:.15s;box-shadow:0 2px 6px rgba(15,30,61,.2);}
 .sel-check:hover{transform:scale(1.1);}
@@ -237,6 +237,7 @@ function render(){
       '<div class="acoes">' + (mesclando
         ? '<div style="flex:1;text-align:center;color:#8a94a8;font-size:12px;padding:6px;">Clique na bolinha para selecionar</div>'
         : '<button style="background:#0f1e3d;color:#fff" onclick="abrirForm(\'' + p.id + '\')">Editar</button>' +
+          '<button style="background:#eef1f6;color:#0f1e3d" onclick="abrirForm(\'' + p.id + '\',true)">Duplicar</button>' +
           '<button style="background:#fde8e5;color:#c0392b" onclick="excluirProduto(\'' + p.id + '\')">Excluir</button>'
       ) + '</div>';
     g.appendChild(card);
@@ -251,15 +252,17 @@ function fmt(n){
   n = parseFloat(n) || 0;
   return n.toFixed(2).replace('.', ',');
 }
-function abrirForm(id){
-  editandoId = id || null;
+function abrirForm(id, duplicar){
+  editandoId = (id && !duplicar) ? id : null;
   imagensTemp = [];
   const p = id ? produtos.find(x => x.id === id) : null;
+  const ehDup = !!(id && duplicar && p);
   const fa = document.getElementById('formArea');
-  document.getElementById('tituloLista').textContent = p ? 'Editando: ' + p.nome : 'Novo produto';
+  document.getElementById('tituloLista').textContent = ehDup ? ('Duplicando: ' + p.nome) : (p ? 'Editando: ' + p.nome : 'Novo produto');
   fa.innerHTML =
     '<div class="form-wrap">' +
-      '<h3>' + (p ? '✏️ Editar produto' : '➕ Postar novo produto') + '</h3>' +
+      '<h3>' + (ehDup ? '📄 Duplicar produto' : (p ? '✏️ Editar produto' : '➕ Postar novo produto')) + '</h3>' +
+      (ehDup ? '<p style="font-size:13px;color:#7a5c00;background:#fff4d6;padding:10px 12px;border-radius:8px;margin:-8px 0 16px;">Cópia de <b>' + esc(p.nome) + '</b>. Altere o nome, a cor ou a foto e clique em Salvar. O produto original não é alterado.</p>' : '') +
       '<div class="campos">' +
         '<div class="campo full"><label>Nome do produto *</label><input id="fNome" placeholder="Ex.: Chaveiro personalizado" value="' + (p ? esc(p.nome) : '') + '"></div>' +
         '<div class="campo full"><label>Descrição</label><textarea id="fDesc" placeholder="Detalhes, material, tamanho...">' + (p ? esc(p.descricao || '') : '') + '</textarea></div>' +
