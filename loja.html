@@ -1138,7 +1138,7 @@ var produtoSel=null;
 function mostrarToast(msg){var t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2600);}
 function fallbackCopy(txt){var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
 function compartilharProduto(slug){
-  var url=window.location.origin+window.location.pathname+'?produto='+encodeURIComponent(slug);
+  var url='https://meu3dlabs-backend.onrender.com/produto/'+encodeURIComponent(slug);
   function ok(){mostrarToast('🔗 Link copiado! Envie no WhatsApp ou Instagram.');}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(ok).catch(function(){fallbackCopy(url);ok();});}
   else{fallbackCopy(url);ok();}
