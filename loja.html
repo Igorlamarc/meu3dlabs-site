@@ -15,6 +15,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZTH0ZSLV0"></script>
 <script>
 window.dataLayer=window.dataLayer||[];
@@ -25,12 +28,12 @@ gtag('config','G-NZTH0ZSLV0');
 <style>
 
 :root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);--green:#25d366;}
-*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;scroll-padding-top:90px;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1200px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;scroll-padding-top:90px;overflow-x:hidden;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1200px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}
 header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
 .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:48px 0;text-align:center;}.hero h1{font-size:clamp(26px,4vw,38px);line-height:1.2;margin-bottom:10px;font-weight:800;letter-spacing:-.5px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:16px;color:rgba(255,255,255,.92);max-width:640px;margin:0 auto;}
 section{padding:46px 0;}
-.loja-layout{display:flex;gap:32px;align-items:flex-start;}
-.sidebar{width:250px;flex-shrink:0;position:sticky;top:90px;display:flex;flex-direction:column;gap:26px;}
+.loja-layout{display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;}
+.sidebar{width:250px;max-width:100%;flex-shrink:0;position:sticky;top:90px;display:flex;flex-direction:column;gap:26px;}
 .sidebar-titulo{display:flex;align-items:center;justify-content:space-between;font-size:16px;font-weight:800;color:var(--navy);padding-bottom:10px;border-bottom:2px solid var(--navy);}
 .sidebar-titulo .limpar{font-size:12px;font-weight:600;color:var(--orange);cursor:pointer;background:none;border:none;}
 .sidebar-titulo .limpar:hover{text-decoration:underline;}
@@ -77,9 +80,9 @@ section{padding:46px 0;}
 .sw:hover{transform:scale(1.2);}
 .sw.ativo{box-shadow:0 0 0 2px var(--orange);}
 .produto-body{padding:18px 18px 20px;display:flex;flex-direction:column;flex:1;}
-.produto-cat{font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
-.produto-body h3{font-size:16px;color:var(--navy);font-weight:700;margin-bottom:6px;line-height:1.3;}
-.produto-desc{font-size:13px;color:var(--gray);line-height:1.55;flex:1;margin-bottom:12px;}
+.produto-cat{font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:#8a94a8;margin-bottom:4px;}
+.produto-body h3{font-size:17px;color:var(--navy);font-weight:700;margin-bottom:6px;line-height:1.3;}
+.produto-desc{font-size:13px;color:var(--gray);line-height:1.55;flex:1;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .produto-cor{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray);margin-bottom:10px;}
 .produto-cor .mini-swatch{width:14px;height:14px;border-radius:50%;border:1px solid var(--border);display:inline-block;background-size:cover;background-position:center;}
 .produto-preco{font-size:21px;font-weight:800;color:var(--navy);margin-bottom:14px;}.produto-preco small{font-size:12px;color:var(--gray);font-weight:500;}
@@ -209,7 +212,7 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 .sidebar-mobile-top .fechar{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:none;font-size:16px;cursor:pointer;color:var(--navy);}
 .btn-filtros{display:inline-flex;}
 }
-@media(max-width:620px){.loja-grid{grid-template-columns:1fr;}.cf-grid{grid-template-columns:1fr;}}
+@media(max-width:620px){.loja-grid{grid-template-columns:repeat(2,1fr);}.cf-grid{grid-template-columns:1fr;}}
 @media(max-width:480px){.campos-grid{grid-template-columns:1fr;}}
 
 /* ===== LOJA DINÂMICA VIA API ===== */
@@ -220,6 +223,50 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 .btn-pedir{display:flex;align-items:center;justify-content:center;gap:8px;background:#c0392b;color:#fff;border:none;width:100%;padding:11px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:.2s;box-shadow:0 3px 8px rgba(192,57,43,.3);}
 .btn-pedir:hover{background:#d8503f;}
 .loja-carregando{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--gray);}
+
+@media(max-width:620px){
+  .loja-grid{gap:10px;}
+  .produto-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .produto-body{padding:10px 12px 14px;}
+  .produto-body h3{font-size:14px;}
+  .produto-preco{font-size:17px;}
+}
+
+/* Ajuste universal contra vazamento lateral */
+img,video,iframe,table{max-width:100%;}
+img{height:auto;}
+.produto,.loja-grid,.cf-grid{min-width:0;}
+.produto-body h3,.produto-desc,.produto-preco{overflow-wrap:break-word;word-break:break-word;}
+
+/* Horário de retirada */
+.hor-op{display:flex;gap:12px;border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:.15s;align-items:flex-start;}
+.hor-op:hover{border-color:var(--orange);}
+.hor-op.sel{border-color:var(--orange);background:rgba(242,101,34,.05);box-shadow:0 0 0 1px var(--orange);}
+.hor-op input{margin-top:3px;accent-color:var(--orange);}
+
+/* ===== RODAPÉ LOJA ===== */
+.loja-footer{margin-top:0;background:#0f1e3d;color:rgba(255,255,255,.75);padding:36px 20px 24px;}
+.loja-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;}
+.loja-footer h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:12px;}
+.loja-footer p,.loja-footer a{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;display:block;}
+.loja-footer a:hover{color:#ff8a3d;}
+.loja-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px;text-align:center;font-size:12px;color:rgba(255,255,255,.45);}
+
+.wa-float{position:fixed;bottom:24px;right:24px;width:60px;height:60px;background:#25d366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:300;transition:.25s;}
+.wa-float:hover{transform:scale(1.12);}
+.wa-float svg{width:32px;height:32px;fill:#fff;}
+
+/* Busca na loja */
+.busca-loja{flex:1;min-width:190px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;color:var(--navy);}
+.busca-loja:focus{outline:2px solid var(--orange);outline-offset:1px;border-color:var(--orange);}
+
+.btn-limpar-topo{display:inline-flex;align-items:center;gap:6px;margin-bottom:14px;background:var(--light-2);border:1px solid var(--border);color:var(--navy);font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:30px;cursor:pointer;transition:.2s;}
+.btn-limpar-topo:hover{border-color:var(--orange);color:var(--orange);}
+
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray);margin-bottom:16px;}
+.breadcrumb a{color:var(--navy);font-weight:600;transition:.2s;}
+.breadcrumb a:hover{color:var(--orange);}
+.bc-sep{color:#b9c2d2;}
 
 </style>
 </head>
@@ -284,8 +331,10 @@ Filtros
 </div>
 </aside>
 <div class="loja-main">
+<nav class="breadcrumb"><a href="index.html">Início</a><span class="bc-sep">›</span><span>Loja</span></nav>
 <div class="barra-lojas">
 <span class="contagem"><strong id="contagem">0</strong> produtos encontrados</span>
+<input type="text" class="busca-loja" id="buscaLoja" placeholder="🔍 Buscar por nome..." oninput="buscarProdutos()">
 <div class="barra-direita">
 <button class="btn-filtros" onclick="abrirFiltros()">
 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v2H3zM7 11h10v2H7zM11 17h2v2h-2z"/></svg>
@@ -305,6 +354,7 @@ Carrinho
 <span class="carrinho-badge" id="carrinhoBadge">0</span>
 </button>
 </div>
+<button class="btn-limpar-topo" id="btnLimparTopo" style="display:none;" onclick="limparFiltros()">✕ Limpar filtros</button>
 </div>
 <div class="loja-grid" id="lojaGrid">
   <div class="loja-carregando">Carregando produtos…</div>
@@ -312,6 +362,7 @@ Carrinho
 <div class="sem-resultado" id="semResultado" style="display:none;">
 <h3>Nenhum produto encontrado</h3>
 <p>Tente remover algum filtro para ver mais resultados.</p>
+<button class="btn" style="margin-top:16px;" onclick="limparFiltros()">Limpar todos os filtros</button>
 </div>
 </div>
 </div>
@@ -343,19 +394,6 @@ Carrinho
 <a class="btn" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20N%C3%A3o%20achei%20o%20que%20procuro%20na%20loja.%20Quero%20um%20or%C3%A7amento%20sob%20medida.">Pedir peça sob medida</a>
 </div>
 </section>
-<footer>
-<div class="container">
-<div class="footer-bottom">
-<p>© 2026 Meu 3D Labs · Todos os direitos reservados</p>
-<div class="footer-links">
-<a href="index.html">Início</a>
-<a href="blog.html">Blog</a>
-<a href="avaliacoes.html">Avaliações</a>
-<a href="enviar-projeto.html">Orçamento</a>
-</div>
-</div>
-</div>
-</footer>
 <div class="cart-overlay" id="cartOverlay" onclick="fecharCarrinho()"></div>
 <div class="cart-drawer" id="cartDrawer">
 <div class="cart-header">
@@ -391,6 +429,8 @@ var carrinho=[];
 try{carrinho=JSON.parse(localStorage.getItem('m3d_carrinho')||'[]');}catch(e){carrinho=[];}
 var pedidoAtual=null;
 var entregaSel='retirada';
+var horarioSel='manha';
+var TAXA_NOTURNO=10;
 var cupomAtivo=null;
 var clienteDados={nome:'',fone:''};
 /* ================= CUPONS (estrutura pronta) ================= */
@@ -491,7 +531,7 @@ var t=0;carrinho.forEach(function(i){t+=i.precoNum*i.qtd;});return t;
 }
 function fmt(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
 function cupomDesconto(){return cupomAtivo?cupomAtivo.desc:0;}
-function totalFinal(){var t=totalCarrinho()-cupomDesconto();return t<0?0:t;}
+function totalFinal(){var t=totalCarrinho()-cupomDesconto()+(horarioSel==='noturno'?TAXA_NOTURNO:0);return t<0?0:t;}
 function atualizarCarrinhoUI(){
 var n=0;carrinho.forEach(function(i){n+=i.qtd;});
 var badge=document.getElementById('carrinhoBadge');
@@ -556,6 +596,28 @@ html+='<div class="entrega-opcoes">'
 +'<div class="entrega-op'+(entregaSel==='correios'?' sel':'')+'" onclick="selEntrega(\'correios\',this)"><input type="radio" name="entrega" '+(entregaSel==='correios'?'checked':'')+'><div><div class="eo-titulo">Outro estado (Correios)</div><div class="eo-desc">Enviamos pelos Correios: <strong>consultamos o frete e o prazo antes de confirmar</strong>.</div></div></div>'
 +'</div>';
 html+='<div class="entrega-aviso">📦 <strong>Importante:</strong> fora do Rio de Janeiro, o pedido só é confirmado após o cálculo do frete e do prazo de envio. Vamos te passar o valor antes de qualquer pagamento.</div>';
+html+='<div class="etapa-titulo">Forma de pagamento</div>';
+html+='<div class="entrega-opcoes">'
++'<div class="entrega-op sel"><input type="radio" name="pagamento" checked><div><div class="eo-titulo">PIX</div><div class="eo-desc">QR code e chave na confirmação do pedido. Envie o comprovante no WhatsApp.</div></div></div>'
++'</div>';
+html+='<div id="horarioBlock" style="display:'+(entregaSel==='retirada'?'block':'none')+';">'
++'<div class="etapa-titulo">Horário preferido de retirada</div>'
++'<div class="entrega-opcoes">'
++'<div class="hor-op sel" onclick="selHorario(\'manha\',this)"><input type="radio" name="horario" checked><div><div class="eo-titulo">Manhã (09h às 12h)</div><div class="eo-desc">Sem custo adicional.</div></div></div>'
++'<div class="hor-op" onclick="selHorario(\'tarde\',this)"><input type="radio" name="horario"><div><div class="eo-titulo">Tarde (14h às 17h)</div><div class="eo-desc">Sem custo adicional.</div></div></div>'
++'<div class="hor-op" onclick="selHorario(\'noturno\',this)"><input type="radio" name="horario"><div><div class="eo-titulo">Noturno (19h às 22h) <b style="color:#f26522;">+ R$ 10,00</b></div><div class="eo-desc">Mediante disponibilidade, taxa de horário estendido.</div></div></div>'
++'</div></div>';
+html+='<div id="enderecoBlock" style="display:'+(entregaSel==='correios'?'block':'none')+';">'
++'<div class="etapa-titulo">Endereço de entrega (Correios)</div>'
++'<div class="campos-grid">'
++'<div class="campo"><label>CEP <span>*</span></label><input type="text" id="cliCep" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)"></div>'
++'<div class="campo"><label>Cidade / UF <span>*</span></label><input type="text" id="cliCidade" placeholder="Cidade - UF"></div>'
++'<div class="campo full"><label>Rua / Endereço <span>*</span></label><input type="text" id="cliRua" placeholder="Rua, avenida..."></div>'
++'<div class="campo"><label>Número <span>*</span></label><input type="text" id="cliNumero" placeholder="Nº"></div>'
++'<div class="campo"><label>Bairro <span>*</span></label><input type="text" id="cliBairro" placeholder="Bairro"></div>'
++'<div class="campo full"><label>Complemento (opcional)</label><input type="text" id="cliComp" placeholder="Apto, bloco, referência..."></div>'
++'</div></div>';
+html+='<label class="check-item optin" style="margin-top:14px;"><input type="checkbox" id="cliConfirma"> Confirmo que meus dados, itens e endereço estão corretos <span style="color:#c0392b;">*</span></label>';
 html+='<div class="etapa-titulo">Observações (opcional)</div>';
 html+='<textarea class="nota-field" id="notaPedido" placeholder="Ex: prefiro retirar à tarde, presente, combinar outra cor..."></textarea>';
 html+='<button class="btn-finalizar" onclick="gerarPedido()">Gerar meu pedido</button>';
@@ -579,6 +641,23 @@ entregaSel=v;
 document.querySelectorAll('.entrega-op').forEach(function(o){o.classList.remove('sel');});
 el.classList.add('sel');
 el.querySelector('input').checked=true;
+var eb=document.getElementById('enderecoBlock');
+if(eb)eb.style.display=(v==='correios')?'block':'none';
+var hb=document.getElementById('horarioBlock');
+if(hb)hb.style.display=(v==='retirada')?'block':'none';
+}
+function mascaraCep(el){
+var d=el.value.replace(/\D/g,'').slice(0,8);
+var v=d;
+if(d.length>5)v=d.slice(0,5)+'-'+d.slice(5);
+el.value=v;
+}
+function selHorario(v,el){
+horarioSel=v;
+document.querySelectorAll('.hor-op').forEach(function(o){o.classList.remove('sel');});
+el.classList.add('sel');
+el.querySelector('input').checked=true;
+atualizarTotalResumo();
 }
 /* ================= CUPOM ================= */
 function aplicarCupom(){
@@ -630,6 +709,16 @@ function atualizarTotalResumo(){
 var el=document.querySelector('.resumo-total .valor');
 if(el)el.textContent=fmt(totalFinal());
 document.querySelectorAll('.resumo-item.desc').forEach(function(l){l.remove();});
+document.querySelectorAll('.resumo-item.taxa').forEach(function(l){l.remove();});
+if(horarioSel==='noturno'){
+var boxt=document.querySelector('.resumo-total');
+if(boxt){
+var linhat=document.createElement('div');
+linhat.className='resumo-item taxa';
+linhat.innerHTML='<span class="ri-nome">Taxa horário noturno</span><span style="color:#f26522;font-weight:700;">+'+fmt(TAXA_NOTURNO)+'</span>';
+boxt.parentElement.insertBefore(linhat,boxt);
+}
+}
 if(cupomAtivo){
 var box=document.querySelector('.resumo-total');
 if(box){
@@ -665,6 +754,27 @@ erroBox.classList.add('show');
 if(inputFone)inputFone.classList.add('erro');
 return;
 }
+var confirma=document.getElementById('cliConfirma')?document.getElementById('cliConfirma').checked:false;
+if(!confirma){
+erroBox.textContent='Marque a confirmação de que seus dados estão corretos para gerar o pedido.';
+erroBox.classList.add('show');
+return;
+}
+var endereco='';
+if(entregaSel==='correios'){
+var cep=document.getElementById('cliCep')?document.getElementById('cliCep').value.trim():'';
+var cidade=document.getElementById('cliCidade')?document.getElementById('cliCidade').value.trim():'';
+var rua=document.getElementById('cliRua')?document.getElementById('cliRua').value.trim():'';
+var num=document.getElementById('cliNumero')?document.getElementById('cliNumero').value.trim():'';
+var bairro=document.getElementById('cliBairro')?document.getElementById('cliBairro').value.trim():'';
+var comp=document.getElementById('cliComp')?document.getElementById('cliComp').value.trim():'';
+if(!cep||!cidade||!rua||!num||!bairro){
+erroBox.textContent='Preencha o endereço completo (CEP, rua, número, bairro e cidade) para envio pelos Correios.';
+erroBox.classList.add('show');
+return;
+}
+endereco=rua+', '+num+' - '+bairro+' - '+cidade+' - CEP '+cep+(comp?' ('+comp+')':'');
+}
 var btn=document.querySelector('.btn-finalizar');
 if(btn){btn.disabled=true;btn.textContent='Gerando pedido...';}
 var numeroLocal='M3D-'+String(Math.floor(100000+Math.random()*900000));
@@ -678,11 +788,14 @@ cupom:cupomAtivo?cupomAtivo.codigo:null,
 desconto:cupomAtivo?arred(cupomAtivo.desc):0,
 total:arred(totalFinal()),
 entrega:entregaSel,
+endereco:endereco||null,
+pagamento:'pix',
+horario:entregaSel==='retirada'?horarioSel:null,
 nota:nota||null,
 optin:optin
 };
 function montarPedido(numero,registrado){
-return {numero:numero,itens:itens,total:totalFinal(),subtotal:totalCarrinho(),cupom:cupomAtivo,entrega:entregaSel,nota:nota,nome:nome,fone:fone,optin:optin,registrado:registrado};
+return {numero:numero,itens:itens,total:totalFinal(),subtotal:totalCarrinho(),cupom:cupomAtivo,entrega:entregaSel,endereco:endereco||'',pagamento:'pix',horario:entregaSel==='retirada'?horarioSel:null,nota:nota,nome:nome,fone:fone,optin:optin,registrado:registrado};
 }
 function limparCarrinhoAposPedido(){
   carrinho = [];
@@ -697,6 +810,7 @@ function mostrarPronto(){
   }
   document.getElementById('modalTitulo').textContent='Pedido gerado';
   document.getElementById('modalBody').innerHTML=etapaPedido(pedidoAtual);
+  mostrarPix(pedidoAtual.total);
 }
 fetch(API_PEDIDOS,{
 method:'POST',
@@ -747,6 +861,13 @@ html+='<div class="rc-linha rc-total"><span>Total</span><strong>'+fmt(p.total)+'
 +'</div>'
 +'<div class="rc-secao">'
 +'<div class="rc-linha"><span>Entrega</span><strong>'+entregaTexto(p.entrega)+'</strong></div>';
+if(p.entrega==='retirada'&&p.horario){
+html+='<div class="rc-linha"><span>Horário de retirada</span><strong>'+(p.horario==='noturno'?'Noturno (19h às 22h) + R$ 10,00':(p.horario==='tarde'?'Tarde (14h às 17h)':'Manhã (09h às 12h)'))+'</strong></div>';
+}
+html+='<div class="rc-linha"><span>Pagamento</span><strong>PIX</strong></div>';
+if(p.endereco){
+html+='<div class="rc-linha"><span>Endereço</span><strong>'+String(p.endereco).replace(/</g,'&lt;')+'</strong></div>';
+}
 if(p.nota){
 html+='<div class="rc-linha"><span>Observação</span><strong>'+p.nota+'</strong></div>';
 }
@@ -779,6 +900,10 @@ if(p.cupom){linhas.push('Cupom '+p.cupom.codigo+': -'+fmt(p.cupom.desc));}
 linhas.push('Subtotal: '+fmt(p.subtotal));
 linhas.push('Total: '+fmt(p.total));
 linhas.push('Entrega: '+entregaTexto(p.entrega));
+if(p.entrega==='retirada'&&p.horario){linhas.push('Horário de retirada: '+(p.horario==='noturno'?'Noturno (19h-22h) + R$ 10,00':(p.horario==='tarde'?'Tarde (14h-17h)':'Manhã (09h-12h)')));}
+if(p.endereco){linhas.push('Endereço: '+p.endereco);}
+linhas.push('Pagamento: PIX');
+linhas.push('Comprovante do PIX será enviado junto');
 if(p.nota){linhas.push('Observação: '+p.nota);}
 if(p.optin){linhas.push('Cliente aceitou receber novidades pelo WhatsApp');}
 linhas.push('');
@@ -787,11 +912,66 @@ var msg=linhas.join('\n');
 window.open('https://wa.me/5521966594803?text='+encodeURIComponent(msg),'_blank');
 }
 function abrirModal(){document.getElementById('modalOverlay').classList.add('open');}
-function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');pedidoAtual=null;entregaSel='retirada';cupomAtivo=null;}
+function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');pedidoAtual=null;entregaSel='retirada';horarioSel='manha';cupomAtivo=null;}
 
 /* ================= LOJA DINÂMICA (API) ================= */
 var API_LOJA = 'https://meu3dlabs-backend.onrender.com/api';
 var WHATSAPP_LOJA = '5521966594803';
+/* ===== PIX ===== */
+var CHAVE_PIX = '+5521980284930';
+var NOME_PIX = 'MEU3DLABS';
+var CIDADE_PIX = 'NILOPOLIS';
+function pLen(s){ s = String(s); return String(s.length).padStart(2,'0'); }
+function pCampo(id, v){ v = String(v); return id + pLen(v) + v; }
+function crc16(str){
+  var crc = 0xFFFF;
+  for(var i = 0; i < str.length; i++){
+    crc ^= str.charCodeAt(i) << 8;
+    for(var j = 0; j < 8; j++){
+      crc = (crc & 0x8000) ? ((crc << 1) ^ 0x1021) : (crc << 1);
+      crc &= 0xFFFF;
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4,'0');
+}
+function montarPix(valor){
+  var txid = 'MEU3D' + Date.now().toString().slice(-8);
+  var v = parseFloat(String(valor == null ? '' : valor).replace('R$','').trim().replace(',', '.'));
+  if(isNaN(v)) v = 0;
+  var mai = pCampo('00','br.gov.bcb.pix') + pCampo('01', CHAVE_PIX);
+  var payload = '000201' + pCampo('26', mai) + '52040000' + '5303986';
+  if(v > 0) payload += pCampo('54', v.toFixed(2));
+  payload += '5802BR' + pCampo('59', NOME_PIX) + pCampo('60', CIDADE_PIX);
+  payload += pCampo('62', pCampo('05', txid));
+  return payload + '6304' + crc16(payload + '6304');
+}
+function copiarPix(){
+  var c = document.getElementById('pixCopiaECola');
+  if(!c) return;
+  c.select(); c.setSelectionRange(0, 99999);
+  if(navigator.clipboard) navigator.clipboard.writeText(c.value).catch(function(){});
+}
+function mostrarPix(valor){
+  var box = document.getElementById('pixArea');
+  if(!box){
+    box = document.createElement('div');
+    box.id = 'pixArea';
+    box.style.cssText = 'text-align:center;margin:16px 0;padding:16px;border:2px dashed #f26522;border-radius:12px;background:#fff8f4;';
+    document.getElementById('modalBody').appendChild(box);
+  }
+  var pix = montarPix(valor);
+  box.innerHTML =
+    '<h4 style="margin:0 0 4px;color:#0f1e3d;">💰 Pagamento via PIX</h4>' +
+    '<p style="font-size:13px;color:#4a5161;margin:0 0 12px;">Pague e envie o comprovante no WhatsApp junto com o nº do pedido.</p>' +
+    '<div id="pixQr" style="display:flex;justify-content:center;margin-bottom:10px;"></div>' +
+    '<p style="font-size:12.5px;color:#4a5161;margin:0 0 4px;">Valor: <b style="color:#0f1e3d;">' + fmt(valor) + '</b></p>' +
+    '<p style="font-size:12.5px;color:#4a5161;margin:0 0 8px;">Chave PIX: <b>21980284930</b></p>' +
+    '<textarea readonly id="pixCopiaECola" style="width:100%;font-size:11px;color:#555;border:1px solid #ddd;border-radius:8px;padding:8px;box-sizing:border-box;resize:none;" rows="3"></textarea>' +
+    '<br><button type="button" onclick="copiarPix()" style="margin-top:8px;background:#f26522;color:#fff;border:none;padding:9px 18px;border-radius:8px;font-weight:700;cursor:pointer;">📋 Copiar código PIX</button>';
+  document.getElementById('pixCopiaECola').value = pix;
+  if(window.QRCode){ new QRCode(document.getElementById('pixQr'), { text: pix, width: 200, height: 200 }); }
+  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 var produtosLoja = [];
 
 function escL(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -857,6 +1037,9 @@ function bindVariantes(card){
 }
 function renderProdutos(lista){
   lista=lista.slice().sort(function(a,b){
+    var dA=a.destaque?0:1;
+    var dB=b.destaque?0:1;
+    if(dA!==dB)return dA-dB;
     var esgA=(parseInt(a.estoque)||0)<=0?1:0;
     var esgB=(parseInt(b.estoque)||0)<=0?1:0;
     return esgA-esgB;
@@ -945,6 +1128,8 @@ function carregarProdutos(){
 
 /* ================= FILTROS ================= */
 var categoriaAtiva='todos';
+var buscaAtiva='';
+function buscarProdutos(){buscaAtiva=document.getElementById('buscaLoja').value.trim().toLowerCase();aplicarFiltros();}
 function qtdPorCategoria(){
 var prods=document.querySelectorAll('.produto');
 var qtds={todos:prods.length,chaveiros:0,religiosos:0,decoracao:0,miniaturas:0,colecionaveis:0,articulados:0,sensoriais:0,utilitarios:0,outros:0};
@@ -971,6 +1156,7 @@ prods.forEach(function(p){
 var ok=true;
 if(categoriaAtiva!=='todos'&&p.getAttribute('data-cat')!==categoriaAtiva)ok=false;
 if(ok&&p.getAttribute('data-estoque')!=='zero'&&disp.indexOf(p.getAttribute('data-estoque'))===-1)ok=false;
+if(ok&&buscaAtiva&&(p.getAttribute('data-nome')||'').toLowerCase().indexOf(buscaAtiva)===-1)ok=false;
 if(ok&&precos.length>0){
 var preco=parseFloat(p.getAttribute('data-preco'));
 var faixaOk=false;
@@ -983,6 +1169,9 @@ if(!faixaOk)ok=false;
 if(ok){p.style.display='';visiveis++;}else{p.style.display='none';}
 });
 document.getElementById('contagem').textContent=visiveis;
+var temFiltro=buscaAtiva||categoriaAtiva!=='todos'||document.querySelector('.check-item input:not(:checked)');
+var bt=document.getElementById('btnLimparTopo');
+if(bt)bt.style.display=temFiltro?'inline-flex':'none';
 document.getElementById('semResultado').style.display=(visiveis===0)?'block':'none';
 }
 function aplicarOrdem(){
@@ -998,6 +1187,8 @@ return 0;
 prods.forEach(function(p){grid.appendChild(p);});
 }
 function limparFiltros(){
+  buscaAtiva='';
+var bi=document.getElementById('buscaLoja');if(bi)bi.value='';
 categoriaAtiva='todos';
 document.querySelectorAll('.cat-btn').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-cat')==='todos');});
 document.querySelectorAll('.check-item input').forEach(function(el){el.checked=true;});
@@ -1008,5 +1199,31 @@ function abrirFiltros(){document.getElementById('sidebar').classList.add('open')
 function fecharFiltros(){document.getElementById('sidebar').classList.remove('open');document.getElementById('filtroOverlay').classList.remove('open');}
 carregarProdutos();
 </script>
+
+<footer class="loja-footer">
+  <div class="footer-inner">
+    <div>
+      <h4>Meu 3D Labs</h4>
+      <p>Impressão 3D personalizada, peças exclusivas e assistência técnica Creality em Nilópolis/RJ.</p>
+    </div>
+    <div>
+      <h4>Navegação</h4>
+      <a href="index.html">🏠 Início</a>
+      <a href="acompanhar.html">📦 Acompanhar pedido</a>
+      <a href="avaliacoes.html">⭐ Avaliações</a>
+    </div>
+    <div>
+      <h4>Atendimento</h4>
+      <a href="https://wa.me/5521966594803" target="_blank">💬 WhatsApp (21) 96659-4803</a>
+      <p>Nilópolis · Rio de Janeiro · RJ</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Meu 3D Labs · Todos os direitos reservados</div>
+</footer>
+
+<a class="wa-float" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Vim%20da%20loja%20e%20tenho%20uma%20d%C3%BAvida." target="_blank" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>
+</a>
+
 </body>
 </html>

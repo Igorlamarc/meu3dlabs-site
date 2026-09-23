@@ -44,7 +44,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
 .btn-cinza:hover{background:#a4adc0;}
 /* GRADE DE PRODUTOS */
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}
-.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(15,30,61,.08);display:flex;flex-direction:column;}
+.card{position:relative;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(15,30,61,.08);display:flex;flex-direction:column;}
 .card .foto{height:170px;background:#eef1f6;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .card .foto img{width:100%;height:100%;object-fit:cover;}
 .card .foto .sem-foto{color:#9aa4b8;font-size:13px;text-align:center;padding:10px;}
@@ -58,6 +58,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
 .badge.zero{background:#fde8e5;color:#c0392b;}
 .card .acoes{display:flex;gap:8px;padding:10px 12px;border-top:1px solid #eef1f6;}
 .card .acoes button{flex:1;padding:8px;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;}
+/* SELECÃO PARA MESCLAR */
+.sel-check{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid #f26522;color:#f26522;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:.15s;box-shadow:0 2px 6px rgba(15,30,61,.2);}
+.sel-check:hover{transform:scale(1.1);}
 /* FORMULÁRIO */
 .form-wrap{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 10px rgba(15,30,61,.08);margin-bottom:22px;}
 .form-wrap h3{margin-bottom:16px;font-size:17px;}
@@ -106,10 +109,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
   <div class="conteudo">
     <div class="barra-acoes">
       <h2 id="tituloLista">Produtos da loja</h2>
-      <button class="btn btn-laranja" onclick="abrirForm()">+ Novo produto</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-cinza" id="btnMesclar" onclick="toggleMesclar()">🔗 Mesclar produtos</button>
+        <button class="btn btn-laranja" onclick="abrirForm()">+ Novo produto</button>
+      </div>
     </div>
     <div id="msgAviso" style="background:#fff4d6;color:#7a5c00;padding:12px;border-radius:10px;font-size:13px;margin-bottom:16px;">
       ⚠️ Este painel é <b>privado</b> — não crie link para ele no menu público do site. A loja pública continua exibindo apenas produtos com <b>Ativo</b> marcado.
+    </div>
+    <div id="barraMesclar" class="hidden" style="background:#fff;border:1px dashed #f26522;border-radius:10px;padding:12px 16px;margin-bottom:16px;align-items:center;gap:12px;flex-wrap:wrap;">
+      <span style="font-size:14px;font-weight:700;color:#0f1e3d;">🔗 Mesclar selecionados <span id="ctSel">(0)</span></span>
+      <span style="font-size:13px;color:#4a5670;">Principal:</span>
+      <select id="selPrincipal" style="padding:8px;border:1px solid #dde3ee;border-radius:8px;font-size:13px;min-width:200px;"></select>
+      <button class="btn btn-verde" style="padding:8px 16px;font-size:13px;" onclick="mesclarSelecionados()">Mesclar</button>
+      <button class="btn btn-cinza" style="padding:8px 16px;font-size:13px;" onclick="toggleMesclar()">Cancelar</button>
     </div>
     <div id="formArea"></div>
     <div id="grade" class="grade"></div>
@@ -125,6 +138,8 @@ let token = localStorage.getItem('m3d_token') || '';
 let produtos = [];
 let editandoId = null;
 let imagensTemp = [];
+let mesclando = false;
+let selecionados = [];
 async function api(path, opts, body){
   const conf = { method: opts || 'GET', headers: {} };
   if(token) conf.headers['Authorization'] = 'Bearer ' + token;
@@ -205,7 +220,13 @@ function render(){
     const img = (p.imagens && p.imagens.length) ? p.imagens[0] : null;
     const card = document.createElement('div');
     card.className = 'card';
-    card.innerHTML =
+    let selHtml = '';
+    const marcado = selecionados.indexOf(p.id) !== -1;
+    if(mesclando){
+      card.style.outline = marcado ? '2px solid #f26522' : '1px solid #dde3ee';
+      selHtml = '<div class="sel-check" style="' + (marcado ? 'background:#f26522;color:#fff;' : '') + '" onclick="toggleSel(\'' + p.id + '\', event)">' + (marcado ? '✓' : '') + '</div>';
+    }
+    card.innerHTML = selHtml +
       '<div class="foto">' + (img ? '<img src="' + img + '" loading="lazy">' : '<div class="sem-foto">Sem foto<br>adicione no produto</div>') + '</div>' +
       '<div class="info">' +
         '<div class="nome">' + esc(p.nome) + (p.destaque ? ' ⭐' : '') + '</div>' +
@@ -213,10 +234,11 @@ function render(){
         '<div class="preco">R$ ' + fmt(p.preco) + '</div>' +
         badgeEstoque(p.estoque) +
       '</div>' +
-      '<div class="acoes">' +
-        '<button style="background:#0f1e3d;color:#fff" onclick="abrirForm(\'' + p.id + '\')">Editar</button>' +
-        '<button style="background:#fde8e5;color:#c0392b" onclick="excluirProduto(\'' + p.id + '\')">Excluir</button>' +
-      '</div>';
+      '<div class="acoes">' + (mesclando
+        ? '<div style="flex:1;text-align:center;color:#8a94a8;font-size:12px;padding:6px;">Clique na bolinha para selecionar</div>'
+        : '<button style="background:#0f1e3d;color:#fff" onclick="abrirForm(\'' + p.id + '\')">Editar</button>' +
+          '<button style="background:#fde8e5;color:#c0392b" onclick="excluirProduto(\'' + p.id + '\')">Excluir</button>'
+      ) + '</div>';
     g.appendChild(card);
   });
 }
@@ -277,8 +299,8 @@ function fecharForm(){
   editandoId = null;
   imagensTemp = [];
 }
-async function enviarFotos(input){
-  const arquivos = Array.from(input.files || []);
+async function enviarFotos(fonte){
+  const arquivos = fonte && fonte.files ? Array.from(fonte.files) : Array.from(fonte || []);
   if(!arquivos.length) return;
   const msg = document.getElementById('subMsg');
   for(const arq of arquivos){
@@ -298,7 +320,7 @@ async function enviarFotos(input){
       mostrarMsg('Erro no upload: ' + e.message + '. Se persistir, verifique o bucket "produtos" no Supabase.', false);
     }
   }
-  input.value = '';
+  if(fonte && fonte.value !== undefined) fonte.value = '';
   renderPreview();
 }
 function renderPreview(){
@@ -358,6 +380,114 @@ async function excluirProduto(id){
     alert('Erro ao excluir: ' + e.message);
   }
 }
+/* ===== MESCLAR PRODUTOS ===== */
+function toggleMesclar(){
+  mesclando = !mesclando;
+  selecionados = [];
+  document.getElementById('formArea').innerHTML = '';
+  editandoId = null;
+  imagensTemp = [];
+  if(mesclando){
+    document.getElementById('tituloLista').textContent = 'Selecione os produtos para mesclar';
+    document.getElementById('btnMesclar').textContent = '✕ Cancelar';
+    document.getElementById('barraMesclar').classList.remove('hidden');
+  }else{
+    document.getElementById('tituloLista').textContent = 'Produtos da loja';
+    document.getElementById('btnMesclar').textContent = '🔗 Mesclar produtos';
+    document.getElementById('barraMesclar').classList.add('hidden');
+  }
+  atualizarBarraMesclar();
+  render();
+}
+function toggleSel(id, ev){
+  if(ev) ev.stopPropagation();
+  const i = selecionados.indexOf(id);
+  if(i === -1) selecionados.push(id); else selecionados.splice(i, 1);
+  atualizarBarraMesclar();
+  render();
+}
+function atualizarBarraMesclar(){
+  const sel = document.getElementById('selPrincipal');
+  const ct = document.getElementById('ctSel');
+  if(!sel) return;
+  ct.textContent = '(' + selecionados.length + ')';
+  sel.innerHTML = '';
+  selecionados.forEach(id => {
+    const p = produtos.find(x => x.id === id);
+    if(p){
+      const o = document.createElement('option');
+      o.value = id;
+      o.textContent = p.nome + (p.cores && p.cores.length ? '  ·  ' + p.cores.join(', ') : '');
+      sel.appendChild(o);
+    }
+  });
+}
+async function mesclarSelecionados(){
+  if(selecionados.length < 2){
+    alert('Selecione pelo menos 2 produtos para mesclar.');
+    return;
+  }
+  const sel = document.getElementById('selPrincipal');
+  const principalId = sel.value;
+  const principal = produtos.find(x => x.id === principalId);
+  if(!principal){ alert('Selecione o produto principal.'); return; }
+  const secundarios = selecionados.filter(id => id !== principalId)
+    .map(id => produtos.find(x => x.id === id)).filter(Boolean);
+  if(!secundarios.length){
+    alert('Selecione pelo menos 2 produtos diferentes.');
+    return;
+  }
+  if(!confirm('Mesclar ' + (secundarios.length + 1) + ' produtos em "' + principal.nome + '"?\n\nFotos e cores serão unidas no produto principal, o estoque será somado e os demais produtos serão excluídos.')) return;
+  let imagens = (principal.imagens || []).slice();
+  let cores = (principal.cores || []).slice();
+  secundarios.forEach(s => {
+    (s.imagens || []).forEach(u => { if(imagens.indexOf(u) === -1) imagens.push(u); });
+    (s.cores || []).forEach(c => { if(cores.indexOf(c) === -1) cores.push(c); });
+  });
+  const dados = {
+    nome: principal.nome,
+    descricao: principal.descricao || '',
+    preco: principal.preco,
+    estoque: (parseInt(principal.estoque) || 0) + secundarios.reduce((a, s) => a + (parseInt(s.estoque) || 0), 0),
+    categoria: principal.categoria || 'outros',
+    cores: cores,
+    imagens: imagens,
+    destaque: principal.destaque || false,
+    ativo: principal.ativo
+  };
+  try{
+    await api('/loja/produtos/' + principalId, 'PUT', dados);
+    for(const s of secundarios){
+      await api('/loja/produtos/' + s.id, 'DELETE');
+    }
+    mesclando = false;
+    selecionados = [];
+    document.getElementById('btnMesclar').textContent = '🔗 Mesclar produtos';
+    document.getElementById('barraMesclar').classList.add('hidden');
+    document.getElementById('tituloLista').textContent = 'Produtos da loja';
+    await carregar();
+    mostrarMsg('Produtos mesclados em "' + principal.nome + '"!', true);
+  }catch(e){
+    alert('Erro ao mesclar: ' + e.message);
+  }
+}
+/* ===== ARRASTAR E SOLTAR FOTOS ===== */
+document.addEventListener('dragover', function(e){
+  var area = e.target.closest('.upload-area');
+  if(area){ e.preventDefault(); area.style.borderColor = '#f26522'; area.style.background = '#fff8f4'; }
+});
+document.addEventListener('dragleave', function(e){
+  var area = e.target.closest('.upload-area');
+  if(area){ area.style.borderColor = '#c6cfdd'; area.style.background = ''; }
+});
+document.addEventListener('drop', function(e){
+  var area = e.target.closest('.upload-area');
+  if(!area) return;
+  e.preventDefault(); e.stopPropagation();
+  area.style.borderColor = '#c6cfdd'; area.style.background = '';
+  var files = e.dataTransfer && e.dataTransfer.files;
+  if(files && files.length) enviarFotos(files);
+});
 if(token) entrar();
 </script>
 </body>
