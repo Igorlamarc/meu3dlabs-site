@@ -40,7 +40,27 @@ section{padding:64px 0;}h2{font-size:28px;color:var(--navy);margin-bottom:10px;f
 footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
 @media(max-width:760px){.cards-grid,.steps{grid-template-columns:1fr 1fr;}.avaliacoes{grid-template-columns:1fr;}}
 @media(max-width:520px){.cards-grid,.steps{grid-template-columns:1fr;}.hero-chips{gap:8px;}}
+
+/* ===== RODAPÉ PADRÃO ===== */
+.site-footer{background:#0a1428;color:rgba(255,255,255,.75);padding:40px 20px 24px;}
+.site-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;}
+.site-footer h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:12px;}
+.site-footer p,.site-footer a{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;display:block;}
+.site-footer a:hover{color:#ff8a3d;}
+.site-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px;text-align:center;font-size:12px;color:rgba(255,255,255,.45);}
+
+/* ===== Anti-vazamento mobile ===== */
+html,body{overflow-x:hidden;max-width:100%;}
+img,video,svg,iframe{max-width:100%;height:auto;}
+
 </style>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Meu 3D Labs | Consultoria Técnica para Impressoras 3D Creality">
+<meta property="og:description" content="Impressão 3D personalizada em Nilópolis/RJ. Peças exclusivas, assistência Creality e consultoria.">
+<meta property="og:image" content="https://meu3dlabs.com.br/img/logo/logo.png">
+<meta property="og:site_name" content="Meu 3D Labs">
+
 </head>
 <body>
 <header>
@@ -167,5 +187,28 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 <script>
 function toggleFaq(el){var item=el.parentElement;var isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(f){f.classList.remove('open');});if(!isOpen){item.classList.add('open');}}
 </script>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <h4>Meu 3D Labs</h4>
+      <p>Impressão 3D personalizada, peças exclusivas e assistência técnica Creality em Nilópolis/RJ.</p>
+    </div>
+    <div>
+      <h4>Navegação</h4>
+      <a href="index.html">🏠 Início</a>
+      <a href="loja.html">🛒 Loja</a>
+      <a href="acompanhar.html">📦 Acompanhar pedido</a>
+      <a href="avaliacoes.html">⭐ Avaliações</a>
+    </div>
+    <div>
+      <h4>Atendimento</h4>
+      <a href="https://wa.me/5521966594803" target="_blank">💬 WhatsApp (21) 96659-4803</a>
+      <p>Nilópolis · Rio de Janeiro · RJ</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Meu 3D Labs · Todos os direitos reservados</div>
+</footer>
+
 </body>
 </html>
