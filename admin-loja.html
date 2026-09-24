@@ -9,7 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294f;}
 .hidden{display:none !important;}
-/* LOGIN (padrão admin) */
+/* LOGIN */
 #telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f1e3d 0%,#16294f 100%);padding:20px;}
 .login-box{background:#fff;border-radius:18px;padding:44px 36px 36px;width:100%;max-width:400px;box-shadow:0 24px 70px rgba(0,0,0,.35);position:relative;text-align:center;}
 .login-back{position:absolute;top:18px;left:22px;font-size:13px;color:#4a5161;text-decoration:none;transition:.2s;}
@@ -22,6 +22,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
 .login-box input::placeholder{color:#9aa4b8;}
 .login-box button{width:100%;margin-top:14px;padding:14px;background:#f26522;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;}
 .login-box button:hover{background:#d9551a;}
+.login-box button:disabled{opacity:.6;cursor:wait;}
 .login-err{color:#c0392b;font-size:13px;margin-bottom:12px;display:none;text-align:center;}
 /* TOPO */
 .topo{background:#0f1e3d;color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
@@ -30,10 +31,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
 .topo .sair{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;padding:7px 14px;border-radius:7px;cursor:pointer;font-size:13px;}
 /* CONTEÚDO */
 .conteudo{max-width:1100px;margin:0 auto;padding:22px;}
-.barra-acoes{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
+.barra-acoes{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;}
 .barra-acoes h2{font-size:18px;}
 .btn{background:#0f1e3d;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;}
 .btn:hover{background:#1d3a6b;}
+.btn:disabled{opacity:.5;cursor:wait;}
 .btn-laranja{background:#f26522;}
 .btn-laranja:hover{background:#ff8a3d;}
 .btn-verde{background:#1d8a4f;}
@@ -42,7 +44,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
 .btn-vermelho:hover{background:#d8503f;}
 .btn-cinza{background:#8a94a8;}
 .btn-cinza:hover{background:#a4adc0;}
-/* GRADE DE PRODUTOS */
+/* RESUMO */
+.resumo{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.resumo-item{background:#fff;border:1px solid #e3e8ef;border-radius:10px;padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;}
+.resumo-item .num{font-weight:800;font-size:18px;color:#0f1e3d;}
+.resumo-item .rot{color:#4a5161;}
+.resumo-item .num-verde{color:#1d8a4f;}
+.resumo-item .num-vermelho{color:#c0392b;}
+.resumo-item .num-laranja{color:#f26522;}
+/* GRADE */
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}
 .card{position:relative;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(15,30,61,.08);display:flex;flex-direction:column;}
 .card .foto{height:170px;background:#eef1f6;display:flex;align-items:center;justify-content:center;overflow:hidden;}
@@ -58,9 +68,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
 .badge.zero{background:#fde8e5;color:#c0392b;}
 .card .acoes{display:flex;gap:6px;padding:10px 12px;border-top:1px solid #eef1f6;}
 .card .acoes button{flex:1;padding:7px 4px;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;}
-/* SELECÃO PARA MESCLAR */
+/* SELEÇÃO PARA MESCLAR */
 .sel-check{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid #f26522;color:#f26522;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:.15s;box-shadow:0 2px 6px rgba(15,30,61,.2);}
 .sel-check:hover{transform:scale(1.1);}
+/* FILTRO CATEGORIA */
+.filtro-cat{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.filtro-cat button{padding:6px 14px;border:1px solid #dde3ee;border-radius:20px;background:#fff;color:#4a5161;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;}
+.filtro-cat button:hover{border-color:#f26522;color:#f26522;}
+.filtro-cat button.ativo{background:#0f1e3d;border-color:#0f1e3d;color:#fff;}
 /* FORMULÁRIO */
 .form-wrap{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 10px rgba(15,30,61,.08);margin-bottom:22px;}
 .form-wrap h3{margin-bottom:16px;font-size:17px;}
@@ -71,6 +86,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
 .campo input,.campo select,.campo textarea{padding:10px;border:1px solid #dde3ee;border-radius:8px;font-size:14px;font-family:inherit;}
 .campo textarea{resize:vertical;min-height:70px;}
 .campo input[type=checkbox]{width:auto;align-self:flex-start;}
+.slug-preview{font-size:11px;color:#8a94a8;margin-top:3px;word-break:break-all;}
 /* UPLOAD */
 .upload-area{border:2px dashed #c6cfdd;border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:.2s;margin-top:6px;}
 .upload-area:hover{border-color:#f26522;background:#fff8f4;}
@@ -98,7 +114,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
     <p>Digite a senha para acessar o painel da loja.</p>
     <div class="login-err" id="loginErr">Senha incorreta</div>
     <input type="password" id="senha" placeholder="Senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()">
-    <button onclick="fazerLogin()">Entrar</button>
+    <button id="btnLogin" onclick="fazerLogin()">Entrar</button>
   </div>
 </div>
 <div id="painel" class="hidden">
@@ -110,13 +126,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294
     <div class="barra-acoes">
       <h2 id="tituloLista">Produtos da loja</h2>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <button class="btn btn-cinza" id="btnMesclar" onclick="toggleMesclar()">🔗 Mesclar produtos</button>
+        <button class="btn btn-cinza" id="btnMesclar" onclick="toggleMesclar()">🔗 Mesclar</button>
         <button class="btn btn-laranja" onclick="abrirForm()">+ Novo produto</button>
       </div>
     </div>
-    <div id="msgAviso" style="background:#fff4d6;color:#7a5c00;padding:12px;border-radius:10px;font-size:13px;margin-bottom:16px;">
-      ⚠️ Este painel é <b>privado</b> — não crie link para ele no menu público do site. A loja pública continua exibindo apenas produtos com <b>Ativo</b> marcado.
+    <div id="msgAviso" style="background:#fff4d6;color:#7a5c00;padding:12px;border-radius:10px;font-size:13px;margin-bottom:12px;">
+      ⚠️ Este painel é <b>privado</b> — não crie link para ele no menu público. A loja exibe apenas produtos com <b>Ativo</b> marcado.
     </div>
+    <div id="resumo" class="resumo"></div>
+    <div id="filtroCat" class="filtro-cat"></div>
     <div id="barraMesclar" class="hidden" style="background:#fff;border:1px dashed #f26522;border-radius:10px;padding:12px 16px;margin-bottom:16px;align-items:center;gap:12px;flex-wrap:wrap;">
       <span style="font-size:14px;font-weight:700;color:#0f1e3d;">🔗 Mesclar selecionados <span id="ctSel">(0)</span></span>
       <span style="font-size:13px;color:#4a5670;">Principal:</span>
@@ -140,6 +158,10 @@ let editandoId = null;
 let imagensTemp = [];
 let mesclando = false;
 let selecionados = [];
+let filtroCategoria = '';
+
+function gerarSlug(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80)||'';}
+
 async function api(path, opts, body){
   const conf = { method: opts || 'GET', headers: {} };
   if(token) conf.headers['Authorization'] = 'Bearer ' + token;
@@ -152,9 +174,12 @@ async function api(path, opts, body){
   if(!r.ok){ throw new Error(t.error || 'Erro na requisição'); }
   return t;
 }
+
 function fazerLogin(){
   const senha = document.getElementById('senha').value.trim();
   if(!senha) return;
+  const btn = document.getElementById('btnLogin');
+  btn.disabled = true; btn.textContent = 'Entrando...';
   fetch(API + '/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -164,6 +189,7 @@ function fazerLogin(){
   .then(({ok, t}) => {
     if(!ok || !t.token){
       document.getElementById('loginErr').style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Entrar';
       return;
     }
     token = t.token;
@@ -173,8 +199,10 @@ function fazerLogin(){
   .catch(() => {
     document.getElementById('loginErr').textContent = 'Erro de conexão com o servidor';
     document.getElementById('loginErr').style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Entrar';
   });
 }
+
 function sair(){
   token = '';
   localStorage.removeItem('m3d_token');
@@ -183,11 +211,13 @@ function sair(){
   document.getElementById('painel').classList.add('hidden');
   document.getElementById('telaLogin').classList.remove('hidden');
 }
+
 function entrar(){
   document.getElementById('telaLogin').classList.add('hidden');
   document.getElementById('painel').classList.remove('hidden');
   carregar();
 }
+
 async function carregar(){
   const g = document.getElementById('grade');
   g.innerHTML = '<div class="carregando">Carregando produtos...</div>';
@@ -205,18 +235,62 @@ async function carregar(){
     }
   }
 }
+
 function badgeEstoque(q){
   q = parseInt(q) || 0;
   if(q <= 0) return '<span class="badge zero">Sem estoque</span>';
   if(q <= 3) return '<span class="badge ult">Últimas ' + q + ' un.</span>';
   return '<span class="badge ok">Em estoque (' + q + ')</span>';
 }
+
+function renderResumo(){
+  const r = document.getElementById('resumo');
+  const total = produtos.length;
+  const ativos = produtos.filter(p => p.ativo).length;
+  const inativos = total - ativos;
+  const semEstoque = produtos.filter(p => !(parseInt(p.estoque) > 0)).length;
+  r.innerHTML =
+    '<div class="resumo-item"><span class="num">' + total + '</span><span class="rot">total</span></div>' +
+    '<div class="resumo-item"><span class="num num-verde">' + ativos + '</span><span class="rot">ativos na loja</span></div>' +
+    (inativos ? '<div class="resumo-item"><span class="num num-laranja">' + inativos + '</span><span class="rot">inativos</span></div>' : '') +
+    (semEstoque ? '<div class="resumo-item"><span class="num num-vermelho">' + semEstoque + '</span><span class="rot">sem estoque</span></div>' : '');
+}
+
+function renderFiltroCat(){
+  const f = document.getElementById('filtroCat');
+  let html = '<button class="' + (filtroCategoria === '' ? 'ativo' : '') + '" onclick="filtrarCat(\'\')">Todas</button>';
+  CATEGORIAS.forEach(c => {
+    const qtd = produtos.filter(p => p.categoria === c).length;
+    if(qtd) html += '<button class="' + (filtroCategoria === c ? 'ativo' : '') + '" onclick="filtrarCat(\'' + c + '\')">' + c.charAt(0).toUpperCase() + c.slice(1) + ' (' + qtd + ')</button>';
+  });
+  f.innerHTML = html;
+}
+
+function filtrarCat(cat){
+  filtroCategoria = cat;
+  renderFiltroCat();
+  renderGrade();
+}
+
 function render(){
+  renderResumo();
+  renderFiltroCat();
+  renderGrade();
+}
+
+function renderGrade(){
   const g = document.getElementById('grade');
   document.getElementById('vazio').classList.toggle('hidden', produtos.length > 0);
   g.innerHTML = '';
-  if(!produtos.length){ g.innerHTML = ''; return; }
-  produtos.forEach(p => {
+  if(!produtos.length) return;
+  let lista = produtos.slice();
+  if(filtroCategoria) lista = lista.filter(p => p.categoria === filtroCategoria);
+  lista.sort((a, b) => {
+    if(a.destaque && !b.destaque) return -1;
+    if(!a.destaque && b.destaque) return 1;
+    return (a.nome || '').localeCompare(b.nome || '');
+  });
+  lista.forEach(p => {
     const img = (p.imagens && p.imagens.length) ? p.imagens[0] : null;
     const card = document.createElement('div');
     card.className = 'card';
@@ -227,7 +301,7 @@ function render(){
       selHtml = '<div class="sel-check" style="' + (marcado ? 'background:#f26522;color:#fff;' : '') + '" onclick="toggleSel(\'' + p.id + '\', event)">' + (marcado ? '✓' : '') + '</div>';
     }
     card.innerHTML = selHtml +
-      '<div class="foto">' + (img ? '<img src="' + img + '" loading="lazy">' : '<div class="sem-foto">Sem foto<br>adicione no produto</div>') + '</div>' +
+      '<div class="foto">' + (img ? '<img src="' + img + '" loading="lazy">' : '<div class="sem-foto">📷 Sem foto<br>adicione no produto</div>') + '</div>' +
       '<div class="info">' +
         '<div class="nome">' + esc(p.nome) + (p.destaque ? ' ⭐' : '') + '</div>' +
         '<div class="cat">' + esc(p.categoria || 'outros') + (p.ativo ? '' : ' · <b style="color:#c0392b">inativo</b>') + '</div>' +
@@ -243,15 +317,18 @@ function render(){
     g.appendChild(card);
   });
 }
+
 function esc(s){
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => (
     {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
   ));
 }
+
 function fmt(n){
   n = parseFloat(n) || 0;
   return n.toFixed(2).replace('.', ',');
 }
+
 function abrirForm(id, duplicar){
   editandoId = (id && !duplicar) ? id : null;
   imagensTemp = [];
@@ -259,12 +336,14 @@ function abrirForm(id, duplicar){
   const ehDup = !!(id && duplicar && p);
   const fa = document.getElementById('formArea');
   document.getElementById('tituloLista').textContent = ehDup ? ('Duplicando: ' + p.nome) : (p ? 'Editando: ' + p.nome : 'Novo produto');
+  const slugAtual = p ? gerarSlug(p.nome) : '';
   fa.innerHTML =
     '<div class="form-wrap">' +
       '<h3>' + (ehDup ? '📄 Duplicar produto' : (p ? '✏️ Editar produto' : '➕ Postar novo produto')) + '</h3>' +
-      (ehDup ? '<p style="font-size:13px;color:#7a5c00;background:#fff4d6;padding:10px 12px;border-radius:8px;margin:-8px 0 16px;">Cópia de <b>' + esc(p.nome) + '</b>. Altere o nome, a cor ou a foto e clique em Salvar. O produto original não é alterado.</p>' : '') +
+      (ehDup ? '<p style="font-size:13px;color:#7a5c00;background:#fff4d6;padding:10px 12px;border-radius:8px;margin:-8px 0 16px;">Cópia de <b>' + esc(p.nome) + '</b>. Altere o nome, a cor ou a foto e clique em Salvar. O original não é alterado.</p>' : '') +
       '<div class="campos">' +
         '<div class="campo full"><label>Nome do produto *</label><input id="fNome" placeholder="Ex.: Chaveiro personalizado" value="' + (p ? esc(p.nome) : '') + '"></div>' +
+        '<div class="campo full"><div class="slug-preview" id="slugPreview">🔗 Slug: <span id="slugTexto">' + (slugAtual || 'será gerado do nome') + '</span></div></div>' +
         '<div class="campo full"><label>Descrição</label><textarea id="fDesc" placeholder="Detalhes, material, tamanho...">' + (p ? esc(p.descricao || '') : '') + '</textarea></div>' +
         '<div class="campo"><label>Preço (R$)</label><input id="fPreco" type="number" step="0.01" min="0" placeholder="0,00" value="' + (p ? p.preco : '') + '"></div>' +
         '<div class="campo"><label>Estoque (unidades)</label><input id="fEstoque" type="number" min="0" step="1" placeholder="0 = sem estoque" value="' + (p ? p.estoque : 0) + '"></div>' +
@@ -284,7 +363,7 @@ function abrirForm(id, duplicar){
         '<div class="campo"><label><input type="checkbox" id="fAtivo"' + (p === null || p.ativo ? ' checked' : '') + '> Ativo na loja</label></div>' +
       '</div>' +
       '<div class="form-acoes">' +
-        '<button class="btn btn-verde" onclick="salvarProduto()">💾 Salvar produto</button>' +
+        '<button class="btn btn-verde" id="btnSalvar" onclick="salvarProduto()">💾 Salvar produto</button>' +
         '<button class="btn btn-cinza" onclick="fecharForm()">Cancelar</button>' +
       '</div>' +
       '<div class="sub-msg" id="subMsg"></div>' +
@@ -295,13 +374,23 @@ function abrirForm(id, duplicar){
     imagensTemp = iv.slice();
     renderPreview();
   }
+  // Atualiza slug ao digitar nome
+  document.getElementById('fNome').addEventListener('input', atualizarSlugPreview);
 }
+
+function atualizarSlugPreview(){
+  const nome = document.getElementById('fNome').value.trim();
+  const sp = document.getElementById('slugTexto');
+  if(sp) sp.textContent = gerarSlug(nome) || 'digite o nome';
+}
+
 function fecharForm(){
   document.getElementById('formArea').innerHTML = '';
   document.getElementById('tituloLista').textContent = 'Produtos da loja';
   editandoId = null;
   imagensTemp = [];
 }
+
 async function enviarFotos(fonte){
   const arquivos = fonte && fonte.files ? Array.from(fonte.files) : Array.from(fonte || []);
   if(!arquivos.length) return;
@@ -326,6 +415,7 @@ async function enviarFotos(fonte){
   if(fonte && fonte.value !== undefined) fonte.value = '';
   renderPreview();
 }
+
 function renderPreview(){
   const pr = document.getElementById('preview');
   pr.innerHTML = '';
@@ -336,21 +426,27 @@ function renderPreview(){
     pr.appendChild(d);
   });
 }
+
 function removerImg(i){
   imagensTemp.splice(i, 1);
   renderPreview();
 }
+
 function mostrarMsg(txt, ok){
   const m = document.getElementById('subMsg');
   m.className = 'sub-msg ' + (ok ? 'ok' : 'erro');
   m.textContent = txt;
   setTimeout(() => { m.className = 'sub-msg'; m.textContent = ''; }, 4000);
 }
+
 async function salvarProduto(){
   const nome = document.getElementById('fNome').value.trim();
   if(!nome){ mostrarMsg('Digite o nome do produto.', false); return; }
+  const btn = document.getElementById('btnSalvar');
+  btn.disabled = true; btn.textContent = 'Salvando...';
   const dados = {
     nome: nome,
+    slug: gerarSlug(nome),
     descricao: document.getElementById('fDesc').value.trim(),
     preco: parseFloat(document.getElementById('fPreco').value) || 0,
     estoque: parseInt(document.getElementById('fEstoque').value) || 0,
@@ -372,7 +468,9 @@ async function salvarProduto(){
   }catch(e){
     mostrarMsg('Erro ao salvar: ' + e.message, false);
   }
+  btn.disabled = false; btn.textContent = '💾 Salvar produto';
 }
+
 async function excluirProduto(id){
   const p = produtos.find(x => x.id === id);
   if(!confirm('Excluir o produto "' + (p ? p.nome : '') + '"? Essa ação não pode ser desfeita.')) return;
@@ -383,7 +481,8 @@ async function excluirProduto(id){
     alert('Erro ao excluir: ' + e.message);
   }
 }
-/* ===== MESCLAR PRODUTOS ===== */
+
+/* ===== MESCLAR ===== */
 function toggleMesclar(){
   mesclando = !mesclando;
   selecionados = [];
@@ -396,19 +495,21 @@ function toggleMesclar(){
     document.getElementById('barraMesclar').classList.remove('hidden');
   }else{
     document.getElementById('tituloLista').textContent = 'Produtos da loja';
-    document.getElementById('btnMesclar').textContent = '🔗 Mesclar produtos';
+    document.getElementById('btnMesclar').textContent = '🔗 Mesclar';
     document.getElementById('barraMesclar').classList.add('hidden');
   }
   atualizarBarraMesclar();
-  render();
+  renderGrade();
 }
+
 function toggleSel(id, ev){
   if(ev) ev.stopPropagation();
   const i = selecionados.indexOf(id);
   if(i === -1) selecionados.push(id); else selecionados.splice(i, 1);
   atualizarBarraMesclar();
-  render();
+  renderGrade();
 }
+
 function atualizarBarraMesclar(){
   const sel = document.getElementById('selPrincipal');
   const ct = document.getElementById('ctSel');
@@ -425,6 +526,7 @@ function atualizarBarraMesclar(){
     }
   });
 }
+
 async function mesclarSelecionados(){
   if(selecionados.length < 2){
     alert('Selecione pelo menos 2 produtos para mesclar.');
@@ -449,6 +551,7 @@ async function mesclarSelecionados(){
   });
   const dados = {
     nome: principal.nome,
+    slug: gerarSlug(principal.nome),
     descricao: principal.descricao || '',
     preco: principal.preco,
     estoque: (parseInt(principal.estoque) || 0) + secundarios.reduce((a, s) => a + (parseInt(s.estoque) || 0), 0),
@@ -465,7 +568,7 @@ async function mesclarSelecionados(){
     }
     mesclando = false;
     selecionados = [];
-    document.getElementById('btnMesclar').textContent = '🔗 Mesclar produtos';
+    document.getElementById('btnMesclar').textContent = '🔗 Mesclar';
     document.getElementById('barraMesclar').classList.add('hidden');
     document.getElementById('tituloLista').textContent = 'Produtos da loja';
     await carregar();
@@ -474,7 +577,8 @@ async function mesclarSelecionados(){
     alert('Erro ao mesclar: ' + e.message);
   }
 }
-/* ===== ARRASTAR E SOLTAR FOTOS ===== */
+
+/* ===== DRAG & DROP ===== */
 document.addEventListener('dragover', function(e){
   var area = e.target.closest('.upload-area');
   if(area){ e.preventDefault(); area.style.borderColor = '#f26522'; area.style.background = '#fff8f4'; }

@@ -447,8 +447,10 @@ function renderizarStats() {
     var pagos = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'pago'; }).length;
     var saidas = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'saiu'; }).length;
     var entregues = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'entregue'; }).length;
+        var faturamento = lojaPedidos.filter(function(p){return p.status!=='cancelado'&&p.status!=='feito';}).reduce(function(a,p){return a+parseFloat(p.total||p.subtotal||0);},0);
     grid.innerHTML =
       '<div class="stat-card orange"><div class="stat-label">Total na loja</div><div class="stat-value">' + total + '</div></div>' +
+      '<div class="stat-card green"><div class="stat-label">Faturamento</div><div class="stat-value" style="font-size:20px;">' + fmtMoeda(faturamento) + '</div><div class="stat-detail">Pedidos ativos</div></div>' +
       '<div class="stat-card blue"><div class="stat-label">Pedido feito</div><div class="stat-value">' + feitos + '</div><div class="stat-detail">Aguardando pagamento</div></div>' +
       '<div class="stat-card yellow"><div class="stat-label">Pago</div><div class="stat-value">' + pagos + '</div><div class="stat-detail">Em preparação</div></div>' +
       '<div class="stat-card purple"><div class="stat-label">Saiu</div><div class="stat-value">' + saidas + '</div></div>' +
