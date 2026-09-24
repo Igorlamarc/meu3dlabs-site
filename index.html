@@ -240,6 +240,45 @@ footer{padding-bottom:100px;}
 html,body{overflow-x:hidden;max-width:100%;}
 img,video,svg,iframe{max-width:100%;height:auto;}
 
+/* ===== CORREÇÃO OVERFLOW MOBILE (GLOBAL) ===== */
+html,body{overflow-x:hidden;max-width:100%;}
+*,*::before,*::after{box-sizing:border-box;}
+@media(max-width:620px){
+  .container,.conteudo,[class*="grid"],[class*="cards"],[class*="valores"]{width:100% !important;max-width:100% !important;grid-template-columns:1fr !important;}
+  [class*="card"]{min-width:0 !important;max-width:100% !important;}
+}
+
+/* ===== FIX MOBILE: cards de valores (Modelagem, TI/Web, Ads...) ===== */
+html,body{overflow-x:hidden;max-width:100%;}
+*,*::before,*::after{box-sizing:border-box;}
+[class*="sobre"] [class*="grid"],
+[class*="valores"],
+[class*="about"] [class*="grid"],
+[class*="equipe"] [class*="grid"],
+[class*="time"] [class*="grid"]{
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr)) !important;
+  gap:12px;
+}
+[class*="sobre"] [class*="card"],
+[class*="valores"] [class*="card"],
+[class*="about"] [class*="card"],
+[class*="equipe"] [class*="card"],
+[class*="time"] [class*="card"]{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+}
+@media(max-width:480px){
+  [class*="sobre"] [class*="grid"],
+  [class*="valores"],
+  [class*="about"] [class*="grid"],
+  [class*="equipe"] [class*="grid"],
+  [class*="time"] [class*="grid"]{
+    grid-template-columns:1fr !important;
+  }
+}
+
 </style>
 
 <script type="application/ld+json">

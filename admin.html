@@ -145,6 +145,35 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 .status-box .btn-wa:hover{background:#1fb959;}
 .sb-copied{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:500;opacity:0;pointer-events:none;transition:.3s;box-shadow:0 6px 20px rgba(0,0,0,.25);}
 .sb-copied.show{opacity:1;}
+
+/* ===== BALÃO VER DETALHES ===== */
+.ver-mais-btn{display:inline-block;margin-top:6px;background:var(--navy);color:#fff;border:none;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:.2s;}
+.ver-mais-btn:hover{background:var(--navy-2);}
+.ver-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,40,.6);backdrop-filter:blur(2px);z-index:999;align-items:center;justify-content:center;padding:20px;}
+.ver-overlay.show{display:flex;}
+.ver-modal{background:#fff;border-radius:16px;width:min(560px,100%);max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(10,20,40,.4);position:relative;padding:26px 24px;animation:slideDown .3s ease;}
+.ver-modal .vm-close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--light);cursor:pointer;font-size:15px;color:var(--gray);display:flex;align-items:center;justify-content:center;transition:.2s;}
+.ver-modal .vm-close:hover{background:var(--navy);color:#fff;}
+.ver-modal h3{font-size:17px;color:var(--navy);font-weight:800;margin-bottom:4px;padding-right:40px;}
+.ver-modal .vm-meta{font-size:12px;color:var(--gray);margin-bottom:14px;}
+.ver-modal .vm-rotulo{font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+.ver-modal .vm-texto{background:var(--light);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:14px;color:#1c2430;line-height:1.6;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow-y:auto;}
+.ver-modal .vm-acoes{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.ver-modal .vm-acoes button,.ver-modal .vm-acoes a{flex:1;min-width:140px;text-align:center;padding:11px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;text-decoration:none;transition:.2s;}
+.vm-copiar{background:var(--navy);color:#fff;}
+.vm-copiar:hover{background:var(--navy-2);}
+.vm-wa{background:#25d366;color:#fff;}
+.vm-wa:hover{background:#1fb959;}
+
+.status-em-analise{background:#fff1e6;color:#b3541e;}
+
+/* ===== BALÃO FORMATADO ===== */
+.ver-modal .vm-lista{display:flex;flex-direction:column;gap:6px;}
+.ver-modal .vm-campo{display:flex;flex-wrap:wrap;gap:4px 8px;padding:8px 10px;background:var(--light);border:1px solid var(--border);border-radius:8px;font-size:13.5px;line-height:1.5;}
+.ver-modal .vm-rot{font-weight:700;color:var(--navy);min-width:150px;}
+.ver-modal .vm-valor{color:#1c2430;word-break:break-word;flex:1;}
+.ver-modal .vm-pendente{color:#b3541e;font-style:italic;background:#fff1e6;padding:1px 10px;border-radius:12px;font-size:12px;font-weight:600;}
+
 </style>
 </head>
 <body>
@@ -585,12 +614,24 @@ function aplicarFiltros() {
       if (p.quantidade) extra.push('Qtd: ' + p.quantidade);
       if (p.orcamento_estimado) extra.push('Orç. ref.: ' + p.orcamento_estimado);
     }
+    var verTitulo = (tipoAtivo === 'loja' ? 'Pedido da loja' : 'Encomenda') + ' ' + idExibido;
+    var verMeta = (p.nome_cliente || 'Cliente') + ' · ' + data;
+    var verTemp = tipoAtivo === 'loja' ? montarTextoCompletoLoja(p) : montarTextoCompletoEncomenda(p);
+    var verTxt = typeof verTemp === 'string' ? verTemp : verTemp.txt;
+    var verHtml = typeof verTemp === 'string' ? escapar(verTemp).replace(/\n/g, '<br>') : verTemp.html;
+    var badgeServico = '';
+    if (tipoAtivo !== 'loja') {
+      var svTxt = rotuloServico(p.servico || p.tipo_servico || p.tipo_peca || p.tipo || '');
+      if (svTxt) badgeServico = '<div style="margin:4px 0 2px;">' + svTxt + '</div>';
+    }
+    var verBtn = montarBotaoVerMais(verTitulo, verMeta, verTxt, verHtml, waLink);
     html += '<tr' + (ehNovo ? ' class="row-novo"' : '') + '>' +
       '<td class="td-id">' + idExibido + (ehNovo ? '<span class="novo-badge">Novo</span>' : '') + '</td>' +
       '<td><div class="td-client">' + escapar(p.nome_cliente || '—') + '</div></td>' +
       '<td class="td-contact">' + escapar(contato) + waBtn + '</td>' +
       '<td class="td-desc">' + detalhes +
         (extra.length ? '<small>' + escapar(extra.join(' · ')) + '</small>' : '') +
+        badgeServico + verBtn +
       '</td>' +
       '<td class="td-date">' + data + '</td>' +
       '<td>' +
@@ -647,6 +688,137 @@ function exportarCSV(){
   document.body.appendChild(a);a.click();document.body.removeChild(a);
 }
 
+/* ===== VER DETALHES (mensagem completa) ===== */
+var verDados = { texto: '' };
+var verCache = [];
+var verSeq = 0;
+function montarBotaoVerMais(titulo, meta, texto, html, wa){
+  verCache[verSeq] = {
+    t: titulo == null ? '' : String(titulo),
+    m: meta == null ? '' : String(meta),
+    x: texto == null ? '' : String(texto),
+    h: html || '',
+    w: wa || ''
+  };
+  var i = verSeq;
+  verSeq++;
+  return '<button type="button" class="ver-mais-btn" onclick="abrirVerMais(' + i + ')">Ver detalhes</button>';
+}
+
+function rotuloServico(s){
+  s = String(s == null ? '' : s).toLowerCase().trim();
+  if (!s || s === 'null') return '';
+  if (s.indexOf('consult') !== -1) return '🎓 Consultoria 3D';
+  if (s.indexOf('assist') !== -1 || s.indexOf('manut') !== -1) return '🔧 Assistência Creality';
+  if (s.indexOf('outros') !== -1) return 'Outros';
+  return '🖨️ Impressão 3D';
+}
+function normalizarData(d){
+  if (d == null) return null;
+  d = String(d).trim();
+  if (!d || d === 'null' || d === 'undefined') return null;
+  var m = d.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return m[3] + '/' + m[2] + '/' + m[1];
+  return d;
+}
+function camposEncomenda(p){
+  p = p || {};
+  function pega(sources){
+    for (var i = 0; i < sources.length; i++){
+      if (sources[i] != null && String(sources[i]).trim() !== '') return String(sources[i]).trim();
+    }
+    return null;
+  }
+  function v(d){
+    if (d === null || d === undefined) return 'Pendente';
+    d = String(d).trim();
+    return (d === '' || d === 'null' || d === 'undefined') ? 'Pendente' : d;
+  }
+  var servico = rotuloServico(pega([p.servico, p.tipo_servico, p.servico_escolhido, p.tipo_peca, p.tipo])) || '🖨️ Impressão 3D';
+  var desc = pega([p.descricao_peca, p.descricao, p.observacoes, p.nota, p.mensagem]) || '';
+  var descMain = desc.split('|')[0].trim();
+  var linksExtra = [];
+  var partes = desc.split('|');
+  for (var i = 1; i < partes.length; i++){
+    var x = partes[i].trim();
+    if (x.indexOf('Links:') === 0 || x.indexOf('links:') === 0){
+      x.replace(/^links?:/i, '').split(',').forEach(function(u){ u = u.trim(); if (u) linksExtra.push(u); });
+    }
+  }
+  return [
+    ['Serviço solicitado', servico],
+    ['Nome do cliente', v(pega([p.nome_cliente, p.nome, p.cliente]))],
+    ['WhatsApp / Telefone', v(pega([p.whatsapp, p.telefone, p.celular, p.contato]))],
+    ['E-mail', v(pega([p.email]))],
+    ['Quantidade (peças)', v(pega([p.quantidade, p.qtd, p.pecas]))],
+    ['O que quer criar', v(descMain)],
+    ['Prazo desejado', v(normalizarData(pega([p.prazo_desejado, p.prazo, p.prazo_entrega, p.data_entrega])))],
+    ['Nível de urgência', v(pega([p.urgencia, p.nivel_urgencia, p.urgente]))],
+    ['Links de referência', v(linksExtra.length ? linksExtra.join(', ') : pega([p.links, p.links_referencia, p.referencias]))],
+    ['Nº do pedido', v(pega([p.pedido_id, p.numero_pedido, p.n_pedido, p.codigo]))]
+  ];
+}
+function montarTextoCompletoEncomenda(p){
+  var campos = camposEncomenda(p);
+  var html = '<div class="vm-lista">';
+  campos.forEach(function(c){
+    var pend = c[1] === 'Pendente';
+    html += '<div class="vm-campo"><span class="vm-rot">' + escapar(c[0]) + '</span>' +
+            (pend ? '<span class="vm-pendente">Pendente</span>' : '<span class="vm-valor">' + escapar(c[1]) + '</span>') + '</div>';
+  });
+  html += '</div>';
+  var txt = campos.map(function(c){ return c[0] + ': ' + c[1]; }).join('\n');
+  return { html: html, txt: txt };
+}
+
+function montarTextoCompletoLoja(p){
+  var linhas = [];
+  (p.itens || []).forEach(function(item){
+    var qtd = item.qtd || item.quantidade || item.quant || 1;
+    var nome = item.nome || item.produto || item.descricao || 'Item';
+    var preco = parseFloat(item.preco || item.valor || 0);
+    var cor = item.cor ? ' (' + item.cor + ')' : '';
+    linhas.push(qtd + 'x ' + nome + cor + ' — ' + fmtMoeda(preco * qtd));
+  });
+  if (!linhas.length) linhas.push('Itens: Pendente');
+  if (p.cupom && parseFloat(p.desconto) > 0) linhas.push('Cupom ' + p.cupom + ': -' + fmtMoeda(p.desconto));
+  linhas.push('Total: ' + fmtMoeda(p.total || (parseFloat(p.subtotal) - parseFloat(p.desconto))));
+  linhas.push('Entrega: ' + (etiquetaEntrega(p.entrega) || 'Pendente'));
+  linhas.push('Endereço: ' + (p.endereco || 'Pendente'));
+  linhas.push('Horário: ' + (p.horario || 'Pendente'));
+  linhas.push('Observações: ' + (p.nota || 'Pendente'));
+  return linhas.join('\n');
+}
+function abrirVerMais(i){
+  var d = verCache[i] || {};
+  verDados.texto = d.x || '';
+  document.getElementById('vmTitulo').textContent = d.t || '';
+  document.getElementById('vmMeta').textContent = d.m || '';
+  var el = document.getElementById('vmTexto');
+  if (d.h) { el.innerHTML = d.h; }
+  else { el.textContent = verDados.texto || '(sem mensagem)'; }
+  var link = document.getElementById('vmWa');
+  if (d.w) { link.href = d.w; link.style.display = ''; }
+  else { link.style.display = 'none'; }
+  document.getElementById('verOverlay').classList.add('show');
+}
+function fecharVerMais(){
+  document.getElementById('verOverlay').classList.remove('show');
+}
+function copiarVerMais(){
+  var t = verDados.texto || '';
+  function ok(){ var el = document.getElementById('vmTexto'); var ant = el.style.background; el.style.background = '#e3f5ec'; setTimeout(function(){ el.style.background = ant; }, 900); }
+  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).then(ok).catch(function(){ fbCopia(t); ok(); }); }
+  else { fbCopia(t); ok(); }
+}
+function fbCopia(t){
+  var ta = document.createElement('textarea');
+  ta.value = t; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape') fecharVerMais(); });
+
 function statusPadrao() {
   return tipoAtivo === 'loja' ? 'feito' : 'novo';
 }
@@ -662,6 +834,7 @@ function opcoesTodas() {
   }
   return [
     ['novo', 'Novo'],
+    ['em-analise', 'Em análise'],
     ['orcamento', 'Em orçamento'],
     ['aprovado', 'Aprovado'],
     ['producao', 'Em produção'],
@@ -680,6 +853,7 @@ function traduzirStatus(s) {
     ? { feito: 'Pedido feito', pago: 'Pago', saiu: 'Saiu para entrega', entregue: 'Entregue', cancelado: 'Cancelado' }
     : {
         novo: 'Novo',
+        'em-analise': 'Em análise',
         orcamento: 'Em orçamento',
         aprovado: 'Aprovado',
         producao: 'Em produção',
@@ -778,6 +952,7 @@ function montarMensagemStatus(nome, id, status) {
     return mapLoja[status] || '';
   }
   var map = {
+    'em-analise': 'Olá, *' + primeiroNome + '*! Recebemos seu pedido *' + id + '* ✅\nEle já está em análise pela nossa equipe. Assim que tivermos o orçamento, retornamos aqui pelo WhatsApp. Fica de olho!',
     orcamento: 'Olá, *' + primeiroNome + '*! Recebemos seu pedido *' + id + '* ✅\nJá estamos preparando o orçamento e retornamos em breve aqui mesmo, pelo WhatsApp. Fica de olho!',
     aprovado: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi aprovado. 🎉\nEm breve iniciamos a produção. Qualquer dúvida, é só chamar!',
     producao: 'Olá, *' + primeiroNome + '*! Boa notícia: seu pedido *' + id + '* entrou em produção! 🖨️\nSe surgir qualquer dúvida, é só chamar a gente por aqui.',
@@ -824,5 +999,20 @@ function fecharBalcao() {
   document.getElementById('statusOverlay').classList.remove('show');
 }
 </script>
+
+<div class="ver-overlay" id="verOverlay" onclick="if(event.target===this)fecharVerMais()">
+  <div class="ver-modal">
+    <button class="vm-close" onclick="fecharVerMais()" aria-label="Fechar">✕</button>
+    <h3 id="vmTitulo"></h3>
+    <div class="vm-meta" id="vmMeta"></div>
+<div class="vm-rotulo">Dados do pedido</div>
+    <div class="vm-texto" id="vmTexto"></div>
+    <div class="vm-acoes">
+      <button class="vm-copiar" onclick="copiarVerMais()">📋 Copiar mensagem</button>
+      <a class="vm-wa" id="vmWa" href="#" target="_blank" rel="noopener">💬 Responder no WhatsApp</a>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
