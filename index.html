@@ -279,6 +279,13 @@ html,body{overflow-x:hidden;max-width:100%;}
   }
 }
 
+/* ===== MOBILE: header fixo + mascote mini no hero ===== */
+.mascote-mini{display:none;}
+@media(max-width:768px){
+header{position:sticky;top:0;z-index:100;}
+.mascote-mini{display:block;width:62px;height:auto;margin:-8px 6px 8px auto;pointer-events:none;user-select:none;}
+}
+
 </style>
 
 <script type="application/ld+json">
@@ -343,6 +350,7 @@ html,body{overflow-x:hidden;max-width:100%;}
     <div class="hero-mascote"><img src="img/avaliacoes/boneco.png" alt="Mascote Meu 3D Labs"></div>
 <div class="container hero-grid">
 <div>
+  <img class="mascote-mini" src="img/mascote.png" alt="Mascote Meu 3D Labs">
 <span class="hero-badge">📍 Nilópolis / RJ · Atendimento online</span>
 <h1>Peças 3D <span>personalizadas</span> com qualidade e precisão</h1>
 <p>Do projeto à peça pronta: miniaturas, decorações, chaveiros, itens religiosos e soluções sob medida, com design exclusivo e acabamento profissional.</p>

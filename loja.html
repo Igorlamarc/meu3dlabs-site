@@ -1562,6 +1562,41 @@ setInterval(fnSyncCartFloat,700);
 });
 </script>
 
+<script>
+(function(){
+  var cart=document.getElementById('cartFloat');
+  if(!cart)return;
+  var css=document.createElement('style');
+  css.textContent='.cart-float.fn-dim{opacity:.12;filter:blur(3px);pointer-events:none;transform:scale(.92);transition:opacity .25s,filter .25s,transform .25s;}';
+  document.head.appendChild(css);
+  var aberto=false;
+  function modalVisivel(){
+    var els=document.querySelectorAll('[id*="modal" i],[class*="modal" i]');
+    for(var i=0;i<els.length;i++){
+      var e=els[i];
+      if(cart.contains(e))continue;
+      var cs=getComputedStyle(e);
+      if(cs.display==='none'||cs.visibility==='hidden'||parseFloat(cs.opacity)<.05)continue;
+      var r=e.getBoundingClientRect();
+      if(r.width>0&&r.height>0)return true;
+    }
+    return false;
+  }
+  function aplica(){
+    if(window.innerWidth>768){if(aberto){aberto=false;cart.classList.remove('fn-dim');}return;}
+    var m=modalVisivel();
+    if(m===aberto)return;
+    aberto=m;
+    cart.classList.toggle('fn-dim',m);
+  }
+  var mo=new MutationObserver(function(){aplica();});
+  mo.observe(document.body,{attributes:true,childList:true,subtree:true,attributeFilter:['class','style']});
+  window.addEventListener('resize',aplica);
+  setInterval(aplica,500);
+  aplica();
+})();
+</script>
+
 <div class="produto-overlay" id="produtoOverlay">
   <div class="produto-modal">
     <button class="pm-close" onclick="fecharModalProduto()" aria-label="Fechar">✕</button>
