@@ -1570,22 +1570,33 @@ setInterval(fnSyncCartFloat,700);
   css.textContent='.cart-float.fn-dim{opacity:.12;filter:blur(3px);pointer-events:none;transform:scale(.92);transition:opacity .25s,filter .25s,transform .25s;}';
   document.head.appendChild(css);
   var ref=null;
+  function efetivamenteVisivel(e){
+    var el=e;
+    while(el&&el!==document.body){
+      var cs=getComputedStyle(el);
+      if(cs.display==='none'||cs.visibility==='hidden')return false;
+      if(parseFloat(cs.opacity)<.05)return false;
+      el=el.parentElement;
+    }
+    var r=e.getBoundingClientRect();
+    if(r.width<10||r.height<10)return false;
+    if(r.bottom<=0||r.top>=window.innerHeight||r.right<=0||r.left>=window.innerWidth)return false;
+    return true;
+  }
   function achouModal(){
     var els=document.querySelectorAll('[id*="modal" i],[class*="modal" i],[class*="overlay" i],[class*="detalhe" i]');
     var vw=window.innerWidth,vh=window.innerHeight;
     for(var i=0;i<els.length;i++){
       var e=els[i];
       if(cart.contains(e))continue;
-      var cs=getComputedStyle(e);
-      if(cs.display==='none'||cs.visibility==='hidden'||parseFloat(cs.opacity)<.05)continue;
       var r=e.getBoundingClientRect();
-      if(r.width<10||r.height<10)continue;
-      if(r.bottom<0||r.top>vh||r.right<0||r.left>vw)continue;
-      if(r.width<vw*.6&&r.height<vh*.6)continue;
+      if(r.width<vw*.6||r.height<vh*.6)continue;
+      if(!efetivamenteVisivel(e))continue;
       return e;
     }
     return null;
   }
+  function limpa(){ref=null;cart.classList.remove('fn-dim');}
   document.addEventListener('click',function(ev){
     if(window.innerWidth>768)return;
     var card=ev.target.closest('.produto');
@@ -1593,15 +1604,12 @@ setInterval(fnSyncCartFloat,700);
     setTimeout(function(){
       var m=achouModal();
       if(m){ref=m;cart.classList.add('fn-dim');}
+      else if(ref&&!efetivamenteVisivel(ref))limpa();
     },400);
   },true);
   setInterval(function(){
     if(!ref)return;
-    var cs=getComputedStyle(ref);
-    var r=ref.getBoundingClientRect();
-    if(cs.display==='none'||cs.visibility==='hidden'||parseFloat(cs.opacity)<.05||r.width<10||r.height<10){
-      ref=null;cart.classList.remove('fn-dim');
-    }
+    if(!efetivamenteVisivel(ref))limpa();
   },300);
 })();
 </script>
