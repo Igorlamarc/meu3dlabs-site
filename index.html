@@ -282,9 +282,9 @@ html,body{overflow-x:hidden;max-width:100%;}
 /* ===== MOBILE: header fixo + mascote mini no hero ===== */
 .mascote-mini{display:none;}
 @media(max-width:768px){
-header{position:sticky;top:0;z-index:100;}
+header{position:fixed;top:0;left:0;right:0;width:100%;z-index:100;}
 .hero{position:relative;}
-.mascote-mini{display:block;position:absolute;top:4px;right:10px;width:62px;height:auto;margin:0;z-index:1;pointer-events:none;user-select:none;}
+.mascote-mini{display:block;position:fixed;top:3px;right:8px;width:64px;height:auto;margin:0;z-index:101;pointer-events:none;user-select:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));}
 }
 
 </style>
@@ -1042,6 +1042,19 @@ function aceitarCookies(){localStorage.setItem('m3d_cookies_aceitos','sim');cook
     grid.innerHTML=html;
     document.getElementById('destaquesLoja').style.display='block';
   }).catch(function(){});
+})();
+</script>
+
+<script>
+(function(){
+  var h=document.querySelector('header');
+  function ajusta(){
+    if(window.innerWidth<=768&&h){document.body.style.paddingTop=h.offsetHeight+'px';}
+    else{document.body.style.paddingTop='';}
+  }
+  ajusta();
+  window.addEventListener('resize',ajusta);
+  window.addEventListener('load',ajusta);
 })();
 </script>
 
