@@ -67,7 +67,8 @@ section{padding:46px 0;}
 .produto:hover{box-shadow:var(--shadow-md);transform:translateY(-4px);border-color:var(--orange);}
 .produto-img{position:relative;background:#f0f2f7;aspect-ratio:1/1;overflow:hidden;}
 .produto-img .variante-track{display:flex;width:100%;height:100%;transition:transform .4s ease;}
-.produto-img .variante-slide{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.produto-img .variante-slide{flex:0 0 100%;height:100%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.produto-img .variante-slide img{pointer-events:none;user-select:none;}
 .produto-img .variante-slide img{width:100%;height:100%;object-fit:contain;display:block;}
 .badge{position:absolute;top:12px;left:12px;font-size:11px;font-weight:700;letter-spacing:.3px;padding:5px 12px;border-radius:20px;z-index:2;}
 .badge.estoque{background:rgba(37,211,102,.92);color:#0b4d2a;}
@@ -182,6 +183,8 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 .pedido-numero span{color:var(--orange-2);}
 .btn-acompanhar{display:inline-block;background:var(--orange);color:#fff;padding:11px 24px;border-radius:8px;font-weight:700;font-size:14px;transition:.2s;margin-bottom:20px;}
 .btn-acompanhar:hover{background:var(--orange-2);transform:translateY(-1px);}
+.btn-copiar-codigo{display:inline-flex;align-items:center;gap:6px;margin-left:12px;background:var(--light,#f5f7fa);border:1.5px solid #e3e8ef;color:#0f1e3d;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;vertical-align:middle;}
+.btn-copiar-codigo:hover{border-color:#f26522;color:#f26522;}
 .resumo-clean{text-align:left;background:var(--light);border:1px solid var(--border);border-radius:12px;padding:6px 18px;margin-bottom:18px;}
 .rc-secao{padding:14px 0;border-bottom:1px solid var(--border);}
 .rc-secao:last-child{border-bottom:none;}
@@ -627,8 +630,8 @@ html+='<div class="etapa-titulo">Forma de pagamento</div>';
 html+='<div class="entrega-opcoes">'
 +'<div class="entrega-op sel"><input type="radio" name="pagamento" checked><div><div class="eo-titulo">PIX</div><div class="eo-desc">QR code e chave na confirmação do pedido. Envie o comprovante no WhatsApp.</div></div></div>'
 +'</div>';
-html+='<div id="horarioBlock" style="display:'+(entregaSel==='retirada'?'block':'none')+';">'
-+'<div class="etapa-titulo">Horário preferido de retirada</div>'
+html+='<div id="horarioBlock" style="display:'+(entregaSel==='correios'?'none':'block')+';">'
++'<div class="etapa-titulo">Horário preferido de retirada ou envio</div>'
 +'<div class="entrega-opcoes">'
 +'<div class="hor-op sel" onclick="selHorario(\'manha\',this)"><input type="radio" name="horario" checked><div><div class="eo-titulo">Manhã (09h às 12h)</div><div class="eo-desc">Sem custo adicional.</div></div></div>'
 +'<div class="hor-op" onclick="selHorario(\'tarde\',this)"><input type="radio" name="horario"><div><div class="eo-titulo">Tarde (14h às 17h)</div><div class="eo-desc">Sem custo adicional.</div></div></div>'
@@ -671,7 +674,7 @@ el.querySelector('input').checked=true;
 var eb=document.getElementById('enderecoBlock');
 if(eb)eb.style.display=(v==='correios')?'block':'none';
 var hb=document.getElementById('horarioBlock');
-if(hb)hb.style.display=(v==='retirada')?'block':'none';
+if(hb)hb.style.display=(v==='correios')?'none':'block';
 }
 function mascaraCep(el){
 var d=el.value.replace(/\D/g,'').slice(0,8);
@@ -865,9 +868,8 @@ function etapaPedido(p){
 var html='<div class="pedido-ok">'
 +'<div class="ok-icon">✅</div>'
 +'<h3>Pedido gerado com sucesso!</h3>'
-+'<p>Guarde o número abaixo. Você pode acompanhar o status a qualquer momento.</p>'
-+'<div class="pedido-numero"><span>#</span>'+p.numero+'</div>'
-+'<a class="btn-acompanhar" href="acompanhar.html?numero='+p.numero+'">Acompanhar meu pedido</a>'
++'<p>Guarde o número abaixo e envie no WhatsApp para confirmar.</p>'
++'<div class="pedido-numero"><span>#</span>'+p.numero+'<button class="btn-copiar-codigo" onclick="copiarCodigoPedido(\''+p.numero+'\')">📋 Copiar código</button></div>'
 +'<div class="resumo-clean">'
 +'<div class="rc-secao">'
 +'<div class="rc-titulo">Seus dados</div>'
@@ -889,8 +891,8 @@ html+='<div class="rc-linha rc-total"><span>Total</span><strong>'+fmt(p.total)+'
 +'</div>'
 +'<div class="rc-secao">'
 +'<div class="rc-linha"><span>Entrega</span><strong>'+entregaTexto(p.entrega)+'</strong></div>';
-if(p.entrega==='retirada'&&p.horario){
-html+='<div class="rc-linha"><span>Horário de retirada</span><strong>'+(p.horario==='noturno'?'Noturno (19h às 22h) + R$ 10,00':(p.horario==='tarde'?'Tarde (14h às 17h)':'Manhã (09h às 12h)'))+'</strong></div>';
+if(p.entrega!=='correios'&&p.horario){
+html+='<div class="rc-linha"><span>Horário preferido</span><strong>'+(p.horario==='noturno'?'Noturno (19h às 22h) + R$ 10,00':(p.horario==='tarde'?'Tarde (14h às 17h)':'Manhã (09h às 12h)'))+'</strong></div>';
 }
 html+='<div class="rc-linha"><span>Pagamento</span><strong>PIX</strong></div>';
 if(p.endereco){
@@ -907,7 +909,7 @@ html+='</div>'
 if(!p.registrado){
 html+='<div class="entrega-aviso" style="margin:0 0 14px;text-align:left;">⚠️ Não foi possível registrar o pedido automaticamente agora. Guarde o número e envie pelo WhatsApp normalmente, confirmamos por lá.</div>';
 }
-html+='<button class="btn-wa" onclick="enviarWhats()"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"/></svg>Enviar pedido no WhatsApp</button>'
+html+='<button class="btn-wa" onclick="enviarWhats()"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"/></svg>Enviar pedido / comprovante no WhatsApp</button>'
 +'<button class="btn-voltar" onclick="abrirCheckout()">← Voltar e ajustar</button>'
 +'</div>';
 return html;
@@ -1094,11 +1096,13 @@ function renderProdutos(lista){
     card.setAttribute('data-preco',precoN);
     card.setAttribute('data-nome',p.nome);
     card.setAttribute('data-id',p.slug);
-    var html='<div class="produto-img">'+badgeProduto(estoque);
+  var emPromoFoto=p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<precoN;
+var pctFoto=emPromoFoto?Math.round((1-parseFloat(p.precoPromo)/precoN)*100):0;
+var html='<div class="produto-img">'+badgeProduto(estoque)+(emPromoFoto?'<span style="position:absolute;top:10px;right:10px;background:#c0392b;color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;z-index:4;box-shadow:0 3px 8px rgba(0,0,0,.25);">-'+pctFoto+'%</span>':'');
     if(imgs.length){
       html+='<div class="variante-track">';
         html+='<button class="btn-shr" onclick="compartilharProduto(\''+p.slug+'\')" title="Compartilhar">🔗</button>';
-      imgs.forEach(function(u){html+='<div class="variante-slide"><img src="'+u+'" alt="'+escL(p.nome)+'" loading="lazy"></div>';});
+    imgs.forEach(function(u,i){html+='<div class="variante-slide" style="cursor:pointer;" onclick="event.stopPropagation();abrirModalProduto(\''+p.slug+'\')"><img src="'+u+'" alt="'+escL(p.nome)+'" loading="lazy"></div>';});
       html+='</div>';
       if(imgs.length>1){
         html+='<div class="variantes-lista"><span class="vl-label">Cores:</span>';
@@ -1117,7 +1121,8 @@ function renderProdutos(lista){
     html+='<h3 style="cursor:pointer;" onclick="abrirModalProduto(\''+p.slug+'\')">'+escL(p.nome)+'</h3>';
     if(p.descricao)html+='<p class="produto-desc">'+escL(p.descricao)+'</p>';
     if(cores.length)html+='<div class="produto-cor"><span class="mini-swatch" style="background:'+corHex(cores[0])+'"></span> '+escL(cores[0]||'')+'</div>';
-    html+='<div class="produto-preco">'+plabel+' <small>· unidade</small></div>';
+    var emPromo=p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<precoN;
+if(emPromo){var pct=Math.round((1-parseFloat(p.precoPromo)/precoN)*100);html+='<div class="produto-preco"><span style="text-decoration:line-through;color:#8a94a8;font-size:13px;font-weight:600;">R$ '+precoLabel(precoN)+'</span> <span style="color:#c0392b;font-weight:800;">R$ '+precoLabel(parseFloat(p.precoPromo))+'</span> <span style="background:#c0392b;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:12px;">-'+pct+'%</span></div>';}else{html+='<div class="produto-preco">'+plabel+' <small>· unidade</small></div>';}
     if(esgotado){
       html+='<button class="btn-pedir" onclick="pedirPeca(\''+p.slug+'\')">🔔 Avise-me quando chegar</button>';
     }else{
@@ -1176,7 +1181,8 @@ function abrirModalProduto(slug){
     }
     html+='</div>';
   }
-  html+='<div class="pm-preco">'+plabel+' <small>· unidade</small></div>';
+  var pMod=(p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<parseFloat(p.preco));
+if(pMod){html+='<div class="pm-preco"><span style="text-decoration:line-through;color:#8a94a8;font-weight:600;font-size:14px;">R$ '+precoLabel(parseFloat(p.preco))+'</span> <span style="color:#c0392b;font-weight:800;">R$ '+precoLabel(parseFloat(p.precoPromo))+'</span> <small>· unidade</small></div>';}else{html+='<div class="pm-preco">'+plabel+' <small>· unidade</small></div>';}
   if(esgotado){html+='<button class="btn-pedir" onclick="pedirPeca(\''+p.slug+'\')">🔔 Avise-me quando chegar</button>';}
   else{html+='<button class="btn-comprar" onclick="addCarrinho(\''+p.slug+'\',\''+escL(p.nome).replace(/'/g,"\'")+'\',\''+plabel+'\',\''+parseFloat(p.preco)+'\')">🛒 Adicionar ao carrinho</button>';}
   html+='</div>';
@@ -1276,6 +1282,18 @@ aplicarFiltros();
 function abrirFiltros(){document.getElementById('sidebar').classList.add('open');document.getElementById('filtroOverlay').classList.add('open');}
 function fecharFiltros(){document.getElementById('sidebar').classList.remove('open');document.getElementById('filtroOverlay').classList.remove('open');}
 carregarProdutos();
+function copiarCodigoPedido(num){
+  var t='Meu pedido na Meu 3D Labs: #'+num;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){alert('Código copiado! 📋');});
+  }else{
+    var ta=document.createElement('textarea');
+    ta.value=t;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');alert('Código copiado! 📋');}catch(e){}
+    document.body.removeChild(ta);
+  }
+}
+
 </script>
 
 <footer class="loja-footer">
