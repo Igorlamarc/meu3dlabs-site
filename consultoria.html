@@ -28,7 +28,21 @@ gtag('config','G-NZTH0ZSLV0');
 header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
 .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:64px 0 0;text-align:center;}.hero .container{padding-bottom:0;}.hero h1{font-size:clamp(28px,4.5vw,42px);line-height:1.2;margin-bottom:12px;font-weight:800;letter-spacing:-.5px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:17px;color:rgba(255,255,255,.92);max-width:640px;margin:0 auto 22px;}
 .hero-chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:34px;}.chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:7px 16px;border-radius:30px;font-size:13px;font-weight:600;}
-.banner-wrap{max-width:900px;margin:0 auto;border-radius:18px;overflow:hidden;border:2px solid rgba(255,255,255,.16);box-shadow:0 24px 70px rgba(0,0,0,.35);}.banner-wrap img{width:100%;display:block;}
+/* ===== CARROSSEL DE BANNERS ===== */
+.banner-carousel{position:relative;max-width:900px;margin:0 auto;border-radius:18px;overflow:hidden;border:2px solid rgba(255,255,255,.16);box-shadow:0 24px 70px rgba(0,0,0,.35);touch-action:pan-y;}
+.bn-slides{display:flex;transition:transform .55s cubic-bezier(.4,0,.2,1);}
+.bn-slide{flex:0 0 100%;min-width:100%;}
+.bn-slide img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;}
+.bn-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(15,30,61,.55);color:#fff;border:none;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:.25s;backdrop-filter:blur(4px);z-index:3;}
+.banner-carousel:hover .bn-arrow,.banner-carousel:focus-within .bn-arrow{opacity:1;}
+.bn-arrow:hover{background:var(--orange);}
+.bn-prev{left:12px;}.bn-next{right:12px;}
+.bn-dots{position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:8px;z-index:3;}
+.bn-dot{width:9px;height:9px;border-radius:8px;background:rgba(255,255,255,.45);border:none;cursor:pointer;transition:.3s;padding:0;}
+.bn-dot.ativo{background:var(--orange-2);width:26px;}
+.hero-benefits{display:flex;justify-content:center;align-items:center;gap:12px 28px;flex-wrap:wrap;margin:26px auto 0;}
+.hb-item{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.92);font-size:13.5px;font-weight:600;}
+.hb-item span{font-size:17px;}
 section{padding:64px 0;}h2{font-size:28px;color:var(--navy);margin-bottom:10px;font-weight:800;letter-spacing:-.4px;}.subtitle{color:var(--gray);max-width:620px;margin-bottom:34px;font-size:15px;}
 .cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:var(--shadow-sm);transition:.25s;}.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--orange);}.card .ic{font-size:28px;margin-bottom:10px;}.card h3{font-size:16px;color:var(--navy);margin-bottom:6px;font-weight:700;}.card p{font-size:13.5px;color:var(--gray);line-height:1.55;}
 .list-check{list-style:none;max-width:640px;}.list-check li{position:relative;padding:10px 0 10px 34px;border-bottom:1px solid var(--border);font-size:15px;color:#3d4856;}.list-check li::before{content:'✓';position:absolute;left:0;top:10px;width:24px;height:24px;background:rgba(37,211,102,.15);color:#0f7a44;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
@@ -38,9 +52,8 @@ section{padding:64px 0;}h2{font-size:28px;color:var(--navy);margin-bottom:10px;f
 .faq-item{background:var(--light);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}.faq-q{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;font-weight:600;color:var(--navy);font-size:15px;user-select:none;}.faq-q::after{content:'+';font-size:22px;color:var(--orange);transition:transform .3s;flex-shrink:0;margin-left:12px;}.faq-item.open .faq-q::after{transform:rotate(45deg);}.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;padding:0 20px;}.faq-item.open .faq-a{max-height:400px;padding:0 20px 18px;}.faq-a p{color:var(--gray);font-size:14.5px;line-height:1.6;}.faq-a strong{color:var(--navy);}
 .cta-final{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;text-align:center;}.cta-final h2{color:#fff;}.cta-final p{color:rgba(255,255,255,.88);max-width:560px;margin:0 auto 26px;font-size:15px;}.cta-final .btn{font-size:17px;padding:16px 36px;}
 footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
-@media(max-width:760px){.cards-grid,.steps{grid-template-columns:1fr 1fr;}.avaliacoes{grid-template-columns:1fr;}}
+@media(max-width:760px){.cards-grid,.steps{grid-template-columns:1fr 1fr;}.avaliacoes{grid-template-columns:1fr;}.bn-arrow{opacity:1;width:36px;height:36px;font-size:18px;}.hero-benefits{gap:10px 16px;}.hb-item{font-size:12.5px;}}
 @media(max-width:520px){.cards-grid,.steps{grid-template-columns:1fr;}.hero-chips{gap:8px;}}
-
 /* ===== RODAPÉ PADRÃO ===== */
 .site-footer{background:#0a1428;color:rgba(255,255,255,.75);padding:40px 20px 24px;}
 .site-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;}
@@ -48,19 +61,15 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 .site-footer p,.site-footer a{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;display:block;}
 .site-footer a:hover{color:#ff8a3d;}
 .site-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px;text-align:center;font-size:12px;color:rgba(255,255,255,.45);}
-
 /* ===== Anti-vazamento mobile ===== */
 html,body{overflow-x:hidden;max-width:100%;}
 img,video,svg,iframe{max-width:100%;height:auto;}
-
 </style>
-
 <meta property="og:type" content="website">
 <meta property="og:title" content="Meu 3D Labs | Consultoria Técnica para Impressoras 3D Creality">
 <meta property="og:description" content="Impressão 3D personalizada em Nilópolis/RJ. Peças exclusivas, assistência Creality e consultoria.">
 <meta property="og:image" content="https://meu3dlabs.com.br/img/logo/logo.png">
 <meta property="og:site_name" content="Meu 3D Labs">
-
 </head>
 <body>
 <header>
@@ -84,7 +93,21 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 </div>
 </div>
 <div class="container">
-<div class="banner-wrap"><img src="img/consultorias/banner-servicos.png" alt="Assistência online e consultoria especializada Meu 3D Labs"></div>
+<div class="banner-carousel" id="bnc" aria-roledescription="carrossel">
+<div class="bn-slides" id="bncTrack">
+<div class="bn-slide"><img src="img/consultorias/banner-servicos.png" alt="Assistência online e consultoria especializada Meu 3D Labs"></div>
+<div class="bn-slide"><img src="img/consultorias/banner-servicos2.png" alt="Formas de pagamento, retirada local em Nilópolis e entrega para todo o Brasil"></div>
+</div>
+<button class="bn-arrow bn-prev" onclick="bnGo(-1)" aria-label="Banner anterior">‹</button>
+<button class="bn-arrow bn-next" onclick="bnGo(1)" aria-label="Próximo banner">›</button>
+<div class="bn-dots" id="bncDots"></div>
+</div>
+<div class="hero-benefits">
+<div class="hb-item"><span>🎯</span>Foco 100% no seu nível</div>
+<div class="hb-item"><span>🕒</span>Agende no seu horário</div>
+<div class="hb-item"><span>💬</span>Tire dúvidas pelo WhatsApp</div>
+<div class="hb-item"><span>⭐</span>Atendimento 5 estrelas no Google</div>
+</div>
 </div>
 </section>
 <section>
@@ -163,7 +186,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Onde acontece a sessão?</div><div class="faq-a"><p>Por <strong>videochamada</strong> (WhatsApp ou outra plataforma combinada). Você acompanha da sua máquina, com a minha orientação em tempo real.</p></div></div>
 <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">E se eu precisar de mais de uma sessão?</div><div class="faq-a"><p>Sem problema. A consultoria é cobrada por hora e você pode agendar novas sessões quando quiser, sempre com valor informado antes.</p></div></div>
 </div>
-</div>
 </section>
 <section class="cta-final">
 <div class="container">
@@ -186,8 +208,39 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 </footer>
 <script>
 function toggleFaq(el){var item=el.parentElement;var isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(f){f.classList.remove('open');});if(!isOpen){item.classList.add('open');}}
+/* ===== CARROSSEL DE BANNERS ===== */
+var bnIdx=0,bnTotal=0,bnTimer=null;
+function bnRender(){document.getElementById('bncTrack').style.transform='translateX(-'+bnIdx*100+'%)';document.querySelectorAll('.bn-dot').forEach(function(d,i){d.classList.toggle('ativo',i===bnIdx);});}
+function bnGo(d){bnIdx=(bnIdx+d+bnTotal)%bnTotal;bnRender();bnReinicia();}
+function bnIr(i){bnIdx=i;bnRender();bnReinicia();}
+function bnAuto(){bnTimer=setInterval(function(){bnIdx=(bnIdx+1)%bnTotal;bnRender();},5000);}
+function bnReinicia(){clearInterval(bnTimer);bnAuto();}
+(function(){
+var car=document.getElementById('bnc');
+if(!car)return;
+bnTotal=car.querySelectorAll('.bn-slide').length;
+var dots=document.getElementById('bncDots');
+for(var i=0;i<bnTotal;i++){
+var b=document.createElement('button');
+b.className='bn-dot'+(i===0?' ativo':'');
+b.setAttribute('data-i',i);
+b.setAttribute('aria-label','Ir para o banner '+(i+1));
+b.onclick=function(){bnIr(parseInt(this.getAttribute('data-i')));};
+dots.appendChild(b);
+}
+var x0=null;
+car.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;clearInterval(bnTimer);},{passive:true});
+car.addEventListener('touchend',function(e){
+if(x0===null)return;
+var dx=e.changedTouches[0].clientX-x0;
+if(Math.abs(dx)>40){bnIdx=(bnIdx+(dx<0?1:-1)+bnTotal)%bnTotal;bnRender();}
+bnReinicia();x0=null;
+},{passive:true});
+car.addEventListener('mouseenter',function(){clearInterval(bnTimer);});
+car.addEventListener('mouseleave',function(){bnReinicia();});
+bnAuto();
+})();
 </script>
-
 <footer class="site-footer">
   <div class="footer-inner">
     <div>
@@ -209,6 +262,5 @@ function toggleFaq(el){var item=el.parentElement;var isOpen=item.classList.conta
   </div>
   <div class="footer-bottom">© 2026 Meu 3D Labs · Todos os direitos reservados</div>
 </footer>
-
 </body>
 </html>
