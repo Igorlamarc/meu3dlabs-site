@@ -1569,31 +1569,40 @@ setInterval(fnSyncCartFloat,700);
   var css=document.createElement('style');
   css.textContent='.cart-float.fn-dim{opacity:.12;filter:blur(3px);pointer-events:none;transform:scale(.92);transition:opacity .25s,filter .25s,transform .25s;}';
   document.head.appendChild(css);
-  var aberto=false;
-  function modalVisivel(){
-    var els=document.querySelectorAll('[id*="modal" i],[class*="modal" i]');
+  var ref=null;
+  function achouModal(){
+    var els=document.querySelectorAll('[id*="modal" i],[class*="modal" i],[class*="overlay" i],[class*="detalhe" i]');
+    var vw=window.innerWidth,vh=window.innerHeight;
     for(var i=0;i<els.length;i++){
       var e=els[i];
       if(cart.contains(e))continue;
       var cs=getComputedStyle(e);
       if(cs.display==='none'||cs.visibility==='hidden'||parseFloat(cs.opacity)<.05)continue;
       var r=e.getBoundingClientRect();
-      if(r.width>0&&r.height>0)return true;
+      if(r.width<10||r.height<10)continue;
+      if(r.bottom<0||r.top>vh||r.right<0||r.left>vw)continue;
+      if(r.width<vw*.6&&r.height<vh*.6)continue;
+      return e;
     }
-    return false;
+    return null;
   }
-  function aplica(){
-    if(window.innerWidth>768){if(aberto){aberto=false;cart.classList.remove('fn-dim');}return;}
-    var m=modalVisivel();
-    if(m===aberto)return;
-    aberto=m;
-    cart.classList.toggle('fn-dim',m);
-  }
-  var mo=new MutationObserver(function(){aplica();});
-  mo.observe(document.body,{attributes:true,childList:true,subtree:true,attributeFilter:['class','style']});
-  window.addEventListener('resize',aplica);
-  setInterval(aplica,500);
-  aplica();
+  document.addEventListener('click',function(ev){
+    if(window.innerWidth>768)return;
+    var card=ev.target.closest('.produto');
+    if(!card)return;
+    setTimeout(function(){
+      var m=achouModal();
+      if(m){ref=m;cart.classList.add('fn-dim');}
+    },400);
+  },true);
+  setInterval(function(){
+    if(!ref)return;
+    var cs=getComputedStyle(ref);
+    var r=ref.getBoundingClientRect();
+    if(cs.display==='none'||cs.visibility==='hidden'||parseFloat(cs.opacity)<.05||r.width<10||r.height<10){
+      ref=null;cart.classList.remove('fn-dim');
+    }
+  },300);
 })();
 </script>
 
