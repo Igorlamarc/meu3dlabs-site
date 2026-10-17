@@ -1,5 +1,4 @@
 /* ===== Meu 3D Labs — loja/login: Firebase e-mail/senha (cadastro 2 etapas + CEP + aniversário), Google, perfil (Firestore) e painel Minha conta ===== */
-
 (function(){
   var firebaseConfig={
     /* SE DER "api-key-not-valid": apague a chave abaixo e cole a copiada do Google Cloud > Credenciais > Exibir chave */
@@ -15,7 +14,8 @@
   var auth=firebase.auth();
   var db=(typeof firebase.firestore==='function')?firebase.firestore():null;
   auth.languageCode='pt-BR';
-  console.info('✅ loja-login: versão com cupom secreto (liberado só na verificação) carregada');
+  var API_BASE='https://meu3dlabs-backend.onrender.com/api';
+  console.info('✅ loja-login: e-mail de verificação com a marca da loja (via backend) carregado');
   var mesesN=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   /* ---------- CSS do módulo ---------- */
   var css=document.createElement('style');
@@ -35,7 +35,7 @@
   '.m3l-card input{width:100%;box-sizing:border-box;padding:12px 14px;border:1.5px solid #e2e6ee;border-radius:10px;background:#f8f9fc;font-size:.92rem;margin-bottom:10px;font-family:inherit;transition:border-color .15s,background .15s;color:#0f1e3d;}' +
   '.m3l-card input::placeholder{color:#9aa3b2;}' +
   '.m3l-card input:focus{outline:none;border-color:#f26522;background:#fff;box-shadow:0 0 0 3px rgba(242,101,34,.12);}' +
-  '.m3l-card select{width:100%;box-sizing:border-box;padding:12px 10px;border:1.5px solid #e2e6ee;border-radius:10px;background:#f8f9fc;font-size:.92rem;margin-bottom:10px;font-family:inherit;color:#0f1e3d;}' +
+  '.m3l-card select{width:100%;box-sizing:border-box;padding:12px 10px;border:1.5px solid #e2e6ee;border-radius:10px;background:#f8f9fc;font-size:.92rem;margin-bottom:10px;color:#0f1e3d;font-family:inherit;}' +
   '.m3l-card select:focus{outline:none;border-color:#f26522;background:#fff;}' +
   '.m3l-linha2{display:flex;gap:8px;}' +
   '.m3l-linha2 input{flex:1;min-width:0;}' +
@@ -187,12 +187,6 @@
   '<div class="m3l-verbar-txt">Para liberar seu cupom de <b>10% de desconto</b> na primeira compra, confirme o e-mail que enviamos para <b id="m3lVerbarEmail">—</b>. Assim que confirmar, o cupom aparece na hora. Cheque também a caixa de spam.</div>' +
   '<div class="m3l-verbtns"><button type="button" class="m3l-verbtn esc" id="m3lVerReenviar">Reenviar e-mail</button><button type="button" class="m3l-verbtn ok" id="m3lVerOk">Já confirmei ✅</button></div>';
   document.body.appendChild(verbar);
-  function urlConfirmacao(){
-    if(location.protocol==='http:'||location.protocol==='https:'){
-      return {url:location.origin+'/verificar-email.html'};
-    }
-    return {};
-  }
   function emailVerificado(){
     var cu=auth.currentUser;
     return !cu?true:!!cu.emailVerified;
@@ -207,7 +201,24 @@
       verbar.classList.remove('show');
     }
   }
-  /* ---------- Reenvio com contagem regressiva + fallback automático ---------- */
+  /* ---------- E-mail de verificação com a marca (via backend) ---------- */
+  function pedirEmailVerificacaoBackend(){
+    var cu=auth.currentUser;
+    if(!cu||!cu.email)return Promise.reject({code:'sem-usuario'});
+    return cu.getIdToken(true).then(function(tok){
+      return fetch(API_BASE+'/auth/enviar-verificacao',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({idToken:tok})
+      }).then(function(r){
+        return r.json().catch(function(){return {};}).then(function(d){
+          if(!r.ok)throw {code:'backend-erro',status:r.status,detalhe:(d&&d.error)||''};
+          return d;
+        });
+      });
+    });
+  }
+  /* ---------- Reenvio com contagem regressiva ---------- */
   var COOLDOWN_REENVIO=60;
   function iniciarCooldown(btn){
     var rest=COOLDOWN_REENVIO;
@@ -243,25 +254,16 @@
       if(aoConcluir)aoConcluir();
       setTimeout(function(){iniciarCooldown(btn);},1800);
     }
-    function falha(e){
-      var cod=(e&&e.code)||'erro-desconhecido';
-      console.warn('loja-login: falha no reenvio do e-mail de confirmação',cod,e&&e.message);
-      var eUri=cod.indexOf('continue-uri')!==-1||cod==='auth/operation-not-allowed';
-      if(eUri){
-        /* Domínio do link de retorno não autorizado → envia com o link padrão do Firebase */
-        cu.sendEmailVerification().then(function(){
-          ok();
-        }).catch(function(e2){
-          console.warn('loja-login: reenvio simples também falhou',(e2&&e2.code)||'erro-desconhecido');
-          btn.disabled=false;btn.textContent=t;
-          falhaReenvioAlerta((e2&&e2.code)||'erro-desconhecido');
-        });
-        return;
-      }
+    function falhaFirebase(e){
+      console.warn('loja-login: reenvio padrão do Firebase também falhou',(e&&e.code)||'');
       btn.disabled=false;btn.textContent=t;
-      falhaReenvioAlerta(cod);
+      falhaReenvioAlerta((e&&e.code)||'erro-desconhecido');
     }
-    cu.sendEmailVerification(urlConfirmacao()).then(ok).catch(falha);
+    /* 1ª opção: backend com a marca Meu 3D Labs. Se cair, usa o envio padrão do Firebase como segurança. */
+    pedirEmailVerificacaoBackend().then(ok).catch(function(e){
+      console.warn('loja-login: backend falhou no reenvio — tentando envio padrão do Firebase',(e&&e.code)||'');
+      cu.sendEmailVerification().then(ok).catch(falhaFirebase);
+    });
   }
   $('m3lVerReenviar').onclick=function(){reenviarConfirmacao(this);};
   $('m3lVerOk').onclick=function(){
@@ -707,9 +709,12 @@
     function falha(e){erro(traduzErro(e));g.disabled=false;g.textContent=t;}
     auth.createUserWithEmailAndPassword(upEmail,senha)
       .then(function(cred){
-        cred.user.sendEmailVerification(urlConfirmacao()).catch(function(e){
-          var cod=(e&&e.code)||'erro-desconhecido';
-          console.warn('loja-login: envio com retorno falhou — tentando envio simples',cod);
+        /* E-mail de verificação com a marca Meu 3D Labs (via backend).
+           Se o backend não responder, cai no envio padrão do Firebase — nada quebra. */
+        pedirEmailVerificacaoBackend().then(function(){
+          console.info('loja-login: e-mail de verificação enviado com a marca Meu 3D Labs');
+        }).catch(function(e){
+          console.warn('loja-login: backend falhou — usando envio padrão do Firebase',(e&&e.code)||'');
           cred.user.sendEmailVerification().catch(function(e2){
             console.warn('loja-login: e-mail de confirmação não enviado',(e2&&e2.code)||'erro-desconhecido');
             var vb=document.getElementById('m3lVerbar');
