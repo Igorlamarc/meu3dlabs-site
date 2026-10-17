@@ -8,16 +8,43 @@ var entregaSel='retirada';
 var horarioSel='manha';
 var TAXA_NOTURNO=10;
 var cupomAtivo=null;
-var clienteDados={nome:'',fone:''};
+var clienteDados={nome:'',fone:'',endereco:null};
 /* ===== Integração com o login (loja-login.js): sincroniza dados do cliente logado ===== */
+function formatarFoneM3l(d){
+  d=String(d||'').replace(/\D/g,'').slice(0,11);
+  var v='';
+  if(d.length>0)v='('+d.slice(0,2);
+  if(d.length>2)v+=') '+d.slice(2,7);
+  if(d.length>6)v+='-'+d.slice(7,11);
+  return v;
+}
 document.addEventListener('m3l-user-changed',function(ev){
   var u=ev&&ev.detail;
-  if(u&&u.nome&&u.nome.trim()&&clienteDados.nome.trim()===''){clienteDados.nome=u.nome.trim();}
+  if(!u)return;
+  if(u.nome&&String(u.nome).trim()&&clienteDados.nome.trim()===''){clienteDados.nome=String(u.nome).trim();}
+  if(u.fone&&String(u.fone).trim()&&clienteDados.fone.trim()===''){clienteDados.fone=formatarFoneM3l(u.fone);}
+  if(u.endereco){
+    if(!clienteDados.endereco)clienteDados.endereco={};
+    ['cep','rua','numero','comp','bairro','cidade','uf'].forEach(function(k){
+      var v=(u.endereco[k]!==undefined)?String(u.endereco[k]).trim():'';
+      if(v&&!String(clienteDados.endereco[k]||'').trim()){clienteDados.endereco[k]=v;}
+    });
+  }
 });
 function m3lClienteLogado(){return (window.m3lUser&&window.m3lUser.email)?window.m3lUser:null;}
+/* ===== Retomar checkout automaticamente após cadastro pelo convite ===== */
+var m3lRetomarCheckout=false;
+document.addEventListener('m3l-user-changed',function(ev){
+  var u=ev&&ev.detail;
+  if(m3lRetomarCheckout&&u&&u.email){
+    m3lRetomarCheckout=false;
+    abrirCheckout();
+  }
+});
 /* ================= CUPONS (estrutura pronta) ================= */
 var CUPONS={
- /* Formato para ativar cupons futuramente (sem precisar mexer na estrutura):
+ 'PRIMEIRACOMPRA10': {tipo:'porcentagem', valor:10}
+ /* Formato para adicionar outros cupons (sem precisar mexer na estrutura):
  'BEMVINDO10': {tipo:'porcentagem', valor:10},
  'M3D5': {tipo:'fixo', valor:5}
  */
@@ -138,7 +165,10 @@ if(mudou)salvarCarrinho();
 }
 function fmt(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
 function cupomDesconto(){return cupomAtivo?cupomAtivo.desc:0;}
-function totalFinal(){var t=totalCarrinho()-cupomDesconto()+(horarioSel==='noturno'?TAXA_NOTURNO:0);return t<0?0:t;}
+/* ===== Desconto PIX (5% automático) ===== */
+function totalAntesPix(){var t=totalCarrinho()-cupomDesconto();return t<0?0:t;}
+function descontoPix(){var t=totalAntesPix();return t>0?Math.round(t*0.05*100)/100:0;}
+function totalFinal(){var t=totalCarrinho()-cupomDesconto()-descontoPix()+(horarioSel==='noturno'?TAXA_NOTURNO:0);return t<0?0:t;}
 function atualizarCarrinhoUI(){
 migrarPromoItens();
 var n=0;carrinho.forEach(function(i){n+=i.qtd;});
@@ -186,6 +216,16 @@ d.textContent='🎉 Você economiza '+fmt(dp)+' na promoção';
 var ct=footer.querySelector('.cart-total');
 if(ct)footer.insertBefore(d,ct);else footer.appendChild(d);
 }
+var pn=document.getElementById('cartPixNota');
+if(pn)pn.remove();
+if(footer){
+var pnx=document.createElement('div');
+pnx.id='cartPixNota';
+pnx.style.cssText='text-align:right;font-size:11.5px;color:#0f7a44;font-weight:600;margin:0 16px 6px;';
+pnx.textContent='💚 Pagando no PIX: 5% de desconto no checkout';
+var ct2=footer.querySelector('.cart-total');
+if(ct2)footer.insertBefore(pnx,ct2);else footer.appendChild(pnx);
+}
 }
 /* ===== Botões flutuantes: somem quando carrinho ou modal abrem ===== */
 function floatsOcultar(){
@@ -207,10 +247,15 @@ document.getElementById('cartOverlay').classList.remove('open');
 floatsMostrar();
 }
 /* ================= CHECKOUT ================= */
+var m3lSemCadastro=false;
 function abrirCheckout(){
 if(totalCarrinho()<=0)return;
 fecharCarrinho();
 var u=m3lClienteLogado();
+if(!u&&!m3lSemCadastro){
+mostrarConviteCadastro();
+return;
+}
 if(u&&u.nome&&u.nome.trim()&&clienteDados.nome.trim()===''){clienteDados.nome=u.nome.trim();}
 document.getElementById('modalTitulo').textContent='Finalizar pedido';
 document.getElementById('modalBody').innerHTML=etapaResumo();
@@ -218,16 +263,47 @@ restaurarCupomUI();
 abrirModal();
 if(window.gtag)gtag('event','begin_checkout',{currency:'BRL',value:totalFinal()});
 }
+/* ===== Convite para cadastrar antes do checkout (visitante sem conta) ===== */
+function mostrarConviteCadastro(){
+document.getElementById('modalTitulo').textContent='🎁 Cadastre-se e ganhe 10% OFF';
+document.getElementById('modalBody').innerHTML=
+'<div style="text-align:center;padding:6px 0 2px;">'
++'<div style="font-size:44px;margin-bottom:8px;">🎁</div>'
++'<h3 style="margin:0 0 6px;color:#0f1e3d;font-size:1.1rem;font-weight:800;line-height:1.35;">Crie sua conta e ganhe 10% de desconto na primeira compra</h3>'
++'<p style="color:#4a5161;font-size:13.5px;line-height:1.5;margin:0 0 14px;">Cadastre-se grátis e use seu <strong style="color:#f26522;">cupom exclusivo de primeira compra</strong>. Seus dados ficam salvos: o próximo pedido sai em segundos, com nome, WhatsApp e endereço preenchidos automaticamente.</p>'
++'<div style="background:#fff8f4;border:1.5px dashed #f2b28f;border-radius:12px;padding:12px;margin:0 0 16px;font-size:14px;color:#5a4a3d;">'
++'🎟️ Cupom: <strong style="letter-spacing:1px;color:#c0392b;">PRIMEIRACOMPRA10</strong><br>'
++'<span style="font-size:12.5px;">10% de desconto · vale uma única vez · já vem preenchido no checkout</span>'
++'</div>'
++'<button type="button" onclick="criarContaDoConvite()" style="width:100%;box-sizing:border-box;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#f26522,#e05512);color:#fff;font-weight:800;font-size:.95rem;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(242,101,34,.35);margin-bottom:10px;">✨ Criar conta e continuar comprando</button>'
++'<button type="button" onclick="continuarSemCadastro()" style="width:100%;box-sizing:border-box;padding:12px;border:1.5px solid #e2e6ee;border-radius:10px;background:#fff;color:#0f1e3d;font-weight:700;font-size:.9rem;cursor:pointer;font-family:inherit;">Continuar sem cadastro</button>'
++'<p style="font-size:11.5px;color:#8a94a8;margin:10px 0 0;">O cupom é exclusivo para clientes cadastrados: vale uma única vez.</p>'
++'</div>';
+abrirModal();
+}
+function criarContaDoConvite(){
+fecharModal();
+m3lRetomarCheckout=true;
+window.m3lCupomSugerido='PRIMEIRACOMPRA10';
+if(window.m3lAbrirCadastro){window.m3lAbrirCadastro();}
+}
+function continuarSemCadastro(){
+m3lSemCadastro=true;
+window.m3lCupomSugerido=null;
+abrirCheckout();
+}
 function etapaResumo(){
 var html='';
 html+='<div class="erro-box" id="erroBox"></div>';
+var end=clienteDados.endereco||{};
+var ciduf=((end.cidade||'')+(end.uf?(' - '+end.uf):''));
 var u=m3lClienteLogado();
 if(u){
-html+='<div style="display:flex;align-items:center;gap:6px;background:#eaf6ee;border:1px solid #cbe5d2;border-radius:10px;padding:10px 12px;font-size:13px;color:#186a35;margin-bottom:12px;">✅ Conectado como <strong>'+u.email+'</strong>'+(clienteDados.nome.trim()?' · seu nome já está preenchido':'')+'</div>';
+html+='<div style="display:flex;align-items:center;gap:6px;background:#eaf6ee;border:1px solid #cbe5d2;border-radius:10px;padding:10px 12px;font-size:13px;color:#186a35;margin-bottom:12px;">✅ Conectado como <strong>'+u.email+'</strong>'+((clienteDados.nome.trim()&&clienteDados.fone.trim())?' · nome e WhatsApp já preenchidos':(clienteDados.nome.trim()?' · seu nome já está preenchido':''))+'</div>';
 }
 html+='<div class="etapa-titulo">Seus dados</div>';
 html+='<div class="campos-grid">'
-+'<div class="campo"><label>Nome completo <span>*</span></label><input type="text" id="cliNome" placeholder="Seu nome" autocomplete="name" value="'+clienteDados.nome.replace(/"/g,'&quot;')+'" oninput="guardarNome(this)"></div>'
++'<div class="campo"><label>Nome e sobrenome <span>*</span></label><input type="text" id="cliNome" placeholder="Nome e sobrenome" autocomplete="name" value="'+clienteDados.nome.replace(/"/g,'&quot;')+'" oninput="guardarNome(this)"></div>'
 +'<div class="campo"><label>Celular / WhatsApp <span>*</span></label><input type="tel" id="cliFone" placeholder="(21) 99999-9999" maxlength="16" autocomplete="tel" value="'+clienteDados.fone.replace(/"/g,'&quot;')+'" oninput="guardarFone(this)"></div>'
 +'</div>';
 html+='<label class="check-item optin"><input type="checkbox" id="cliOptin"> Quero receber novidades e peças em estoque pelo WhatsApp</label>';
@@ -246,7 +322,7 @@ html+='<div class="resumo-item promo-linha"><span class="ri-nome">Desconto de pr
 }
 html+='<div class="resumo-total"><span>Total</span><span class="valor">'+fmt(totalFinal())+'</span></div>';
 html+='<div class="etapa-titulo">Cupom de desconto</div>';
-html+='<div class="cupom-linha"><input type="text" id="cupomInput" placeholder="Digite seu cupom"><button class="btn-aplicar" onclick="aplicarCupom()">Aplicar</button></div>';
+html+='<div class="cupom-linha"><input type="text" id="cupomInput" placeholder="Digite seu cupom" autocomplete="off" value="'+(window.m3lCupomSugerido?String(window.m3lCupomSugerido).replace(/"/g,'&quot;'):'')+'"><button class="btn-aplicar" onclick="aplicarCupom()">Aplicar</button></div>';
 html+='<div class="cupom-msg" id="cupomMsg"></div>';
 html+='<div class="etapa-titulo">Forma de entrega</div>';
 html+='<div class="entrega-opcoes">'
@@ -257,7 +333,7 @@ html+='<div class="entrega-opcoes">'
 html+='<div class="entrega-aviso">📦 <strong>Importante:</strong> fora do Rio de Janeiro, o pedido só é confirmado após o cálculo do frete e do prazo de envio. Vamos te passar o valor antes de qualquer pagamento.</div>';
 html+='<div class="etapa-titulo">Forma de pagamento</div>';
 html+='<div class="entrega-opcoes">'
-+'<div class="entrega-op sel"><input type="radio" name="pagamento" checked><div><div class="eo-titulo">PIX</div><div class="eo-desc">QR code e chave na confirmação do pedido. Envie o comprovante no WhatsApp.</div></div></div>'
++'<div class="entrega-op sel"><input type="radio" name="pagamento" checked><div><div class="eo-titulo">PIX</div><div class="eo-desc"><strong>5% de desconto</strong> pagando no PIX — aplicado automaticamente no total. Envie o comprovante no WhatsApp.</div></div></div>'
 +'</div>';
 html+='<div id="horarioBlock" style="display:'+(entregaSel==='correios'?'none':'block')+';">'
 +'<div class="etapa-titulo">Horário preferido de retirada ou envio</div>'
@@ -268,13 +344,14 @@ html+='<div id="horarioBlock" style="display:'+(entregaSel==='correios'?'none':'
 +'</div></div>';
 html+='<div id="enderecoBlock" style="display:'+(entregaSel==='correios'?'block':'none')+';">'
 +'<div class="etapa-titulo">Endereço de entrega (Correios)</div>'
++(end.cep?'<div style="font-size:12px;color:#0f7a44;font-weight:600;margin:-6px 0 8px;">✅ Preenchido do seu cadastro — confira antes de enviar</div>':'')
 +'<div class="campos-grid">'
-+'<div class="campo"><label>CEP <span>*</span></label><input type="text" id="cliCep" placeholder="00000-000" maxlength="9" oninput="mascaraCep(this)"></div>'
-+'<div class="campo"><label>Cidade / UF <span>*</span></label><input type="text" id="cliCidade" placeholder="Cidade - UF"></div>'
-+'<div class="campo full"><label>Rua / Endereço <span>*</span></label><input type="text" id="cliRua" placeholder="Rua, avenida..."></div>'
-+'<div class="campo"><label>Número <span>*</span></label><input type="text" id="cliNumero" placeholder="Nº"></div>'
-+'<div class="campo"><label>Bairro <span>*</span></label><input type="text" id="cliBairro" placeholder="Bairro"></div>'
-+'<div class="campo full"><label>Complemento (opcional)</label><input type="text" id="cliComp" placeholder="Apto, bloco, referência..."></div>'
++'<div class="campo"><label>CEP <span>*</span></label><input type="text" id="cliCep" placeholder="00000-000" maxlength="9" value="'+String(end.cep||'').replace(/"/g,'&quot;')+'" oninput="mascaraCep(this)"></div>'
++'<div class="campo"><label>Cidade / UF <span>*</span></label><input type="text" id="cliCidade" placeholder="Cidade - UF" value="'+ciduf.replace(/"/g,'&quot;')+'"></div>'
++'<div class="campo full"><label>Rua / Endereço <span>*</span></label><input type="text" id="cliRua" placeholder="Rua, avenida..." value="'+String(end.rua||'').replace(/"/g,'&quot;')+'"></div>'
++'<div class="campo"><label>Número <span>*</span></label><input type="text" id="cliNumero" placeholder="Nº" value="'+String(end.numero||'').replace(/"/g,'&quot;')+'"></div>'
++'<div class="campo"><label>Bairro <span>*</span></label><input type="text" id="cliBairro" placeholder="Bairro" value="'+String(end.bairro||'').replace(/"/g,'&quot;')+'"></div>'
++'<div class="campo full"><label>Complemento (opcional)</label><input type="text" id="cliComp" placeholder="Apto, bloco, referência..." value="'+String(end.comp||'').replace(/"/g,'&quot;')+'"></div>'
 +'</div></div>';
 html+='<label class="check-item optin" style="margin-top:14px;"><input type="checkbox" id="cliConfirma"> Confirmo que meus dados, itens e endereço estão corretos <span style="color:#c0392b;">*</span></label>';
 html+='<div class="etapa-titulo">Observações (opcional)</div>';
@@ -321,6 +398,14 @@ if(inp)inp.checked=true;
 atualizarTotalResumo();
 }
 /* ================= CUPOM ================= */
+function cuponsUsados(){
+try{var l=JSON.parse(localStorage.getItem('m3l_cupons_usados')||'[]');return Array.isArray(l)?l:[];}catch(e){return [];}
+}
+function marcarCupomUsado(cod){
+if(!cod)return;
+var l=cuponsUsados();
+if(l.indexOf(cod)===-1){l.push(cod);localStorage.setItem('m3l_cupons_usados',JSON.stringify(l));}
+}
 function aplicarCupom(){
 var input=document.getElementById('cupomInput');
 var msg=document.getElementById('cupomMsg');
@@ -336,6 +421,20 @@ msg.textContent='Cupom não encontrado. Você ainda pode finalizar normalmente.'
 atualizarTotalResumo();
 return;
 }
+if(codigo==='PRIMEIRACOMPRA10'&&!m3lClienteLogado()){
+cupomAtivo=null;
+msg.className='cupom-msg erro';
+msg.textContent='🎟️ O cupom de primeira compra é exclusivo para clientes cadastrados — crie sua conta para usar.';
+atualizarTotalResumo();
+return;
+}
+if(cuponsUsados().indexOf(codigo)>-1){
+cupomAtivo=null;
+msg.className='cupom-msg erro';
+msg.textContent='Este cupom já foi utilizado — ele vale uma única vez. Confira nossos outros cupons!';
+atualizarTotalResumo();
+return;
+}
 var c=CUPONS[codigo];
 var desconto=c.tipo==='porcentagem'?totalCarrinho()*c.valor/100:Math.min(c.valor,totalCarrinho());
 cupomAtivo={codigo:codigo,desc:desconto};
@@ -343,6 +442,26 @@ msg.className='cupom-msg ok';
 msg.textContent='Cupom aplicado com sucesso!';
 criarChipCupom();
 atualizarTotalResumo();
+}
+
+/* ===== Trava do cupom: campo cinza + botão vira Remover ===== */
+function travarCampoCupom(travar){
+var inp=document.getElementById('cupomInput');
+var btn=document.querySelector('.btn-aplicar');
+if(inp){inp.disabled=travar;inp.style.background=travar?'#f0f2f6':'';inp.style.color=travar?'#9aa3b2':'';inp.style.cursor=travar?'not-allowed':'';}
+if(btn){
+if(travar){
+btn.textContent='Remover';
+btn.onclick=removerCupom;
+btn.style.opacity='';
+btn.style.cursor='pointer';
+}else{
+btn.textContent='Aplicar';
+btn.onclick=aplicarCupom;
+btn.style.opacity='';
+btn.style.cursor='';
+}
+}
 }
 function criarChipCupom(){
 if(!cupomAtivo||document.getElementById('cupomAplicado'))return;
@@ -353,6 +472,7 @@ chip.className='cupom-aplicado';
 chip.id='cupomAplicado';
 chip.innerHTML='🎟️ '+cupomAtivo.codigo+' · -'+fmt(cupomAtivo.desc)+' <button onclick="removerCupom()" title="Remover cupom">✕</button>';
 linha.parentElement.appendChild(chip);
+travarCampoCupom(true);
 }
 function removerCupom(){
 cupomAtivo=null;
@@ -360,6 +480,9 @@ var chip=document.getElementById('cupomAplicado');
 if(chip)chip.remove();
 var msg=document.getElementById('cupomMsg');
 if(msg){msg.className='cupom-msg';msg.textContent='';}
+var inp=document.getElementById('cupomInput');
+if(inp)inp.value='';
+travarCampoCupom(false);
 atualizarTotalResumo();
 }
 function restaurarCupomUI(){
@@ -389,6 +512,15 @@ d.innerHTML='<span class="ri-nome">Cupom '+cupomAtivo.codigo+'</span><span style
 box.parentElement.insertBefore(d,box);
 }
 }
+if(descontoPix()>0){
+var boxp=document.querySelector('.resumo-total');
+if(boxp){
+var dpix=document.createElement('div');
+dpix.className='resumo-item desc';
+dpix.innerHTML='<span class="ri-nome">Desconto PIX (5%)</span><span style="color:#0f7a44;font-weight:700;">-'+fmt(descontoPix())+'</span>';
+boxp.parentElement.insertBefore(dpix,boxp);
+}
+}
 }
 /* ================= PEDIDO ================= */
 function arred(v){return Math.round(v*100)/100;}
@@ -404,7 +536,7 @@ erroBox.classList.remove('show');erroBox.textContent='';
 if(inputNome)inputNome.classList.remove('erro');
 if(inputFone)inputFone.classList.remove('erro');
 if(nome.length<3){
-erroBox.textContent='Informe seu nome completo para gerar o pedido.';
+erroBox.textContent='Informe seu nome e sobrenome para gerar o pedido.';
 erroBox.classList.add('show');
 if(inputNome)inputNome.classList.add('erro');
 return;
@@ -422,6 +554,7 @@ erroBox.classList.add('show');
 return;
 }
 var endereco='';
+var endObj=null;
 if(entregaSel==='correios'){
 var cep=document.getElementById('cliCep')?document.getElementById('cliCep').value.trim():'';
 var cidade=document.getElementById('cliCidade')?document.getElementById('cliCidade').value.trim():'';
@@ -434,20 +567,26 @@ erroBox.textContent='Preencha o endereço completo (CEP, rua, número, bairro e 
 erroBox.classList.add('show');
 return;
 }
+var cidufPartes=cidade.split(' - ');
+var cid=(cidufPartes[0]||'').trim();
+var ufP=(cidufPartes[1]||'').trim();
 endereco=rua+', '+num+' - '+bairro+' - '+cidade+' - CEP '+cep+(comp?' ('+comp+')':'');
+endObj={cep:cep.replace(/\D/g,''),rua:rua,numero:num,comp:comp,bairro:bairro,cidade:cid,uf:ufP};
 }
 var btn=document.querySelector('.btn-finalizar');
 if(btn){btn.disabled=true;btn.textContent='Gerando pedido...';}
 var numeroLocal='M3D-'+String(Math.floor(100000+Math.random()*900000));
 var itens=carrinho.map(function(i){return {nome:i.nome,cor:i.cor||'',qtd:i.qtd,preco:i.precoNum};});
-var itensExib=carrinho.map(function(i){return {nome:i.nome,cor:i.cor||'',qtd:i.qtd,preco:i.precoNum,cheio:(i.precoOriginal&&i.precoOriginal>i.precoNum)?i.precoOriginal:i.precoNum};});
+var itensExib=carrinho.map(function(i){return {nome:i.nome,cor:i.cor||'',qtd:i.qtd,preco:i.precoNum,cheio:(i.precoOriginal&&i.precoOriginal>i.precoNum)?i.precoOriginal:i.precoNum,img:i.img||''};});
 var payload={
 nome_cliente:nome,
 whatsapp:fone,
+email:(m3lClienteLogado()?m3lClienteLogado().email:null),
 itens:itens,
 subtotal:arred(totalCarrinho()),
 cupom:cupomAtivo?cupomAtivo.codigo:null,
 desconto:cupomAtivo?arred(cupomAtivo.desc):0,
+desconto_pix:descontoPix(),
 total:arred(totalFinal()),
 entrega:entregaSel,
 endereco:endereco||null,
@@ -458,7 +597,7 @@ optin:optin
 };
 function montarPedido(numero,registrado){
 var ul=m3lClienteLogado();
-return {numero:numero,itens:itensExib,total:totalFinal(),subtotal:totalCarrinho(),cheio:totalCheio(),descPromo:descontoPromo(),cupom:cupomAtivo,entrega:entregaSel,endereco:endereco||'',pagamento:'pix',horario:entregaSel==='retirada'?horarioSel:null,nota:nota,nome:nome,fone:fone,email:(ul?ul.email:''),optin:optin,registrado:registrado};
+return {numero:numero,itens:itensExib,total:totalFinal(),subtotal:totalCarrinho(),cheio:totalCheio(),descPromo:descontoPromo(),descPix:descontoPix(),cupom:cupomAtivo,entrega:entregaSel,endereco:endereco||'',pagamento:'pix',horario:entregaSel==='retirada'?horarioSel:null,nota:nota,nome:nome,fone:fone,email:(ul?ul.email:''),optin:optin,registrado:registrado};
 }
 function limparCarrinhoAposPedido(){
   carrinho = [];
@@ -466,9 +605,33 @@ function limparCarrinhoAposPedido(){
   cupomAtivo = null;
   atualizarCarrinhoUI();
 }
+/* ===== Histórico do cliente: guarda o pedido em "Meus pedidos" (painel da conta) ===== */
+function salvarMeuPedido(p){
+  try{
+    var lista=JSON.parse(localStorage.getItem('m3l_pedidos')||'[]');
+    if(!Array.isArray(lista))lista=[];
+    lista=lista.filter(function(x){return x.numero!==p.numero;});
+    lista.push({
+      numero:p.numero,
+      data:new Date().toISOString(),
+      total:p.total,
+      registrado:!!p.registrado,
+      itens:(p.itens||[]).map(function(i){return {nome:i.nome,cor:i.cor||'',qtd:i.qtd,img:i.img||''};})
+    });
+    if(lista.length>20)lista=lista.slice(-20);
+    localStorage.setItem('m3l_pedidos',JSON.stringify(lista));
+  }catch(e){}
+}
 function mostrarPronto(){
   if(btn){btn.disabled=false;}
+  salvarMeuPedido(pedidoAtual);
   if(pedidoAtual && pedidoAtual.registrado){
+    if(cupomAtivo){marcarCupomUsado(cupomAtivo.codigo);}
+    if(window.m3lSalvarPerfil&&m3lClienteLogado()){
+      var pd={whatsapp:fone};
+      if(endObj){pd.cep=endObj.cep;pd.rua=endObj.rua;pd.numero=endObj.numero;pd.complemento=endObj.comp||'';pd.bairro=endObj.bairro;pd.cidade=endObj.cidade;if(endObj.uf)pd.uf=endObj.uf;}
+      try{window.m3lSalvarPerfil(pd);}catch(e){}
+    }
     limparCarrinhoAposPedido();
     if(window.gtag){gtag('event','purchase',{currency:'BRL',value:pedidoAtual.total,transaction_id:pedidoAtual.numero,items:(pedidoAtual.itens||[]).map(function(i){return {item_name:i.nome,item_variant:i.cor||'',price:i.preco,quantity:i.qtd};})});}
   }
@@ -528,6 +691,9 @@ html+='<div class="rc-linha"><span>Desconto de promoção</span><strong style="c
 if(p.cupom){
 html+='<div class="rc-linha"><span>Cupom '+p.cupom.codigo+'</span><strong class="rc-desconto">-'+fmt(p.cupom.desc)+'</strong></div>';
 }
+if(p.descPix>0){
+html+='<div class="rc-linha"><span>Desconto PIX (5%)</span><strong style="color:#0f7a44;">-'+fmt(p.descPix)+'</strong></div>';
+}
 html+='<div class="rc-linha rc-total"><span>Total</span><strong>'+fmt(p.total)+'</strong></div>'
 +'</div>'
 +'<div class="rc-secao">'
@@ -571,6 +737,7 @@ linhas.push('');
 linhas.push('Subtotal: '+fmt(p.cheio));
 if(p.descPromo>0){linhas.push('Desconto de promoção: -'+fmt(p.descPromo));}
 if(p.cupom){linhas.push('Cupom '+p.cupom.codigo+': -'+fmt(p.cupom.desc));}
+if(p.descPix>0){linhas.push('Desconto PIX (5%): -'+fmt(p.descPix));}
 linhas.push('Total: '+fmt(p.total));
 linhas.push('Entrega: '+entregaTexto(p.entrega));
 if(p.entrega==='retirada'&&p.horario){linhas.push('Horário de retirada: '+(p.horario==='noturno'?'Noturno (19h-22h) + R$ 10,00':(p.horario==='tarde'?'Tarde (14h-17h)':'Manhã (09h-12h)')));}
@@ -585,7 +752,7 @@ var msg=linhas.join('\n');
 window.open('https://wa.me/5521966594803?text='+encodeURIComponent(msg),'_blank');
 }
 function abrirModal(){document.getElementById('modalOverlay').classList.add('open');floatsOcultar();}
-function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');floatsMostrar();pedidoAtual=null;entregaSel='retirada';horarioSel='manha';cupomAtivo=null;}
+function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');floatsMostrar();pedidoAtual=null;entregaSel='retirada';horarioSel='manha';cupomAtivo=null;m3lSemCadastro=false;}
 /* ================= LOJA DINÂMICA (API) ================= */
 var API_LOJA = 'https://meu3dlabs-backend.onrender.com/api';
 var WHATSAPP_LOJA = '5521966594803';
