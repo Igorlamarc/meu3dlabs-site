@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmação de e-mail · Meu 3D Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',system-ui,Arial,sans-serif;background:linear-gradient(135deg,#0f1e3d 0%,#16294f 60%,#1d3a6b 100%);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.card{background:#fff;border-radius:18px;max-width:420px;width:100%;padding:36px 30px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35);}
+.marca{font-weight:800;font-size:1.3rem;color:#0f1e3d;letter-spacing:-.5px;margin-bottom:24px;}
+.marca span{color:#f26522;}
+.ico{font-size:3rem;margin-bottom:14px;}
+h1{font-size:1.25rem;color:#0f1e3d;font-weight:800;margin-bottom:8px;}
+p{font-size:.9rem;color:#5a6472;line-height:1.6;margin-bottom:6px;}
+.cupom-box{margin:18px 0 4px;border:2px dashed #f26522;border-radius:12px;padding:14px 12px;background:#fff8f4;}
+.cupom-label{font-size:.72rem;font-weight:800;color:#f26522;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+.cupom-cod{font-size:1.35rem;font-weight:800;color:#0f1e3d;letter-spacing:1px;margin-bottom:4px;user-select:all;}
+.cupom-desc{font-size:.8rem;color:#5a6472;}
+.btn{display:block;width:100%;background:linear-gradient(135deg,#f26522,#e05512);color:#fff;font-weight:800;font-size:.95rem;padding:13px 20px;border-radius:10px;text-decoration:none;margin-top:16px;box-shadow:0 4px 12px rgba(242,101,34,.35);transition:transform .15s,box-shadow .15s;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(242,101,34,.45);}
+.nota{font-size:.75rem;color:#8a94a8;margin-top:10px;}
+.rodape{color:rgba(255,255,255,.55);font-size:.72rem;margin-top:22px;text-align:center;}
+.oculto{display:none;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="marca">Meu<span>3D</span>Labs</div>
+  <div id="vProcessando">
+    <div class="ico">⏳</div>
+    <h1>Confirmando seu e-mail…</h1>
+    <p>Só um instante, estamos ativando sua conta.</p>
+  </div>
+  <div id="vSucesso" class="oculto">
+    <div class="ico">✅</div>
+    <h1>E-mail confirmado!</h1>
+    <p>Sua conta está <b>ativa</b>. Aproveite seu cupom de primeira compra:</p>
+    <div class="cupom-box">
+      <div class="cupom-label">🎁 Cupom de primeira compra</div>
+      <div class="cupom-cod" id="m3lCupomCod">MEUPRIMEIRO3D10</div>
+      <div class="cupom-desc">10% de desconto na primeira compra</div>
+    </div>
+    <a class="btn" id="btnCopiar" href="loja.html?verificado=1">Copiar cupom e voltar para a loja</a>
+  </div>
+  <div id="vJaConfirmado" class="oculto">
+    <div class="ico">✅</div>
+    <h1>E-mail já confirmado</h1>
+    <p>Este link já foi utilizado antes — mas fique tranquilo, sua conta já está ativa.</p>
+    <a class="btn" id="btnLoja2" href="loja.html?verificado=1">Voltar para a loja</a>
+  </div>
+  <div id="vErro" class="oculto">
+    <div class="ico">⚠️</div>
+    <h1>Não foi possível confirmar agora</h1>
+    <p>O link pode ter expirado. Volte à loja e clique em <b>Reenviar e-mail</b> para receber um novo.</p>
+    <a class="btn" id="btnLoja3" href="loja.html?verificado=1">Voltar para a loja</a>
+  </div>
+</div>
+<div class="rodape">Meu 3D Labs · Impressão 3D personalizada · Nilópolis — RJ</div>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script>
+(function(){
+  var firebaseConfig={
+    apiKey:"AIzaSyAZwBSpyU9KAsrvqjVaFIShbdhoPu-C11s",
+    authDomain:"meu3dlabs-loja.firebaseapp.com",
+    projectId:"meu3dlabs-loja",
+    storageBucket:"meu3dlabs-loja.firebasestorage.app",
+    messagingSenderId:"429562795244",
+    appId:"1:429562795244:web:d9d54e2b30941ab8eb81c9"
+  };
+  var CUPOM='MEUPRIMEIRO3D10';
+  var q=new URLSearchParams(location.search);
+  var oobCode=q.get('oobCode');
+  var destino='loja.html?verificado=1';
+  function mostrar(id){
+    ['vProcessando','vSucesso','vJaConfirmado','vErro'].forEach(function(x){
+      var e=document.getElementById(x);
+      if(e)e.classList.add('oculto');
+    });
+    var alvo=document.getElementById(id);
+    if(alvo)alvo.classList.remove('oculto');
+  }
+  var btnCopiar=document.getElementById('btnCopiar');
+  if(btnCopiar){
+    btnCopiar.addEventListener('click',function(ev){
+      ev.preventDefault();
+      if(btnCopiar.dataset.enviado)return;
+      btnCopiar.dataset.enviado='1';
+      var cod=document.getElementById('m3lCupomCod').textContent.trim();
+      function irAposCopia(){
+        btnCopiar.textContent='Cupom copiado! ✅';
+        setTimeout(function(){location.href=destino;},900);
+      }
+      function fallbackCopia(){
+        var ta=document.createElement('textarea');
+        ta.value=cod;
+        ta.style.position='fixed';ta.style.opacity='0';
+        document.body.appendChild(ta);
+        ta.select();
+        try{document.execCommand('copy');irAposCopia();}
+        catch(e){location.href=destino;}
+        document.body.removeChild(ta);
+      }
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(cod).then(irAposCopia).catch(fallbackCopia);
+      }else{
+        fallbackCopia();
+      }
+    });
+  }
+  if(typeof firebase==='undefined'){mostrar('vErro');return;}
+  try{firebase.initializeApp(firebaseConfig);}catch(e){}
+  if(oobCode){
+    firebase.auth().applyActionCode(oobCode).then(function(){
+      var cu=firebase.auth().currentUser;
+      return cu?cu.reload():null;
+    }).then(function(){
+      mostrar('vSucesso');
+    }).catch(function(e){
+      var cod=(e&&e.code)||'';
+      if(cod==='auth/invalid-action-code'||cod==='auth/expired-action-code'){
+        mostrar('vJaConfirmado');
+      }else{
+        mostrar('vErro');
+      }
+    });
+  }else{
+    mostrar('vSucesso');
+  }
+})();
+</script>
+</body>
+</html>

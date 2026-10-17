@@ -43,7 +43,7 @@ document.addEventListener('m3l-user-changed',function(ev){
 });
 /* ================= CUPONS (estrutura pronta) ================= */
 var CUPONS={
- 'PRIMEIRACOMPRA10': {tipo:'porcentagem', valor:10}
+ 'MEUPRIMEIRO3D10': {tipo:'porcentagem', valor:10}
  /* Formato para adicionar outros cupons (sem precisar mexer na estrutura):
  'BEMVINDO10': {tipo:'porcentagem', valor:10},
  'M3D5': {tipo:'fixo', valor:5}
@@ -270,21 +270,16 @@ document.getElementById('modalBody').innerHTML=
 '<div style="text-align:center;padding:6px 0 2px;">'
 +'<div style="font-size:44px;margin-bottom:8px;">🎁</div>'
 +'<h3 style="margin:0 0 6px;color:#0f1e3d;font-size:1.1rem;font-weight:800;line-height:1.35;">Crie sua conta e ganhe 10% de desconto na primeira compra</h3>'
-+'<p style="color:#4a5161;font-size:13.5px;line-height:1.5;margin:0 0 14px;">Cadastre-se grátis e use seu <strong style="color:#f26522;">cupom exclusivo de primeira compra</strong>. Seus dados ficam salvos: o próximo pedido sai em segundos, com nome, WhatsApp e endereço preenchidos automaticamente.</p>'
-+'<div style="background:#fff8f4;border:1.5px dashed #f2b28f;border-radius:12px;padding:12px;margin:0 0 16px;font-size:14px;color:#5a4a3d;">'
-+'🎟️ Cupom: <strong style="letter-spacing:1px;color:#c0392b;">PRIMEIRACOMPRA10</strong><br>'
-+'<span style="font-size:12.5px;">10% de desconto · vale uma única vez · já vem preenchido no checkout</span>'
-+'</div>'
++'<p style="color:#4a5161;font-size:13.5px;line-height:1.5;margin:0 0 14px;">É grátis e leva 1 minuto. Depois de criar sua conta, <strong>confirme o e-mail</strong> que enviamos e seu <strong style="color:#f26522;">cupom exclusivo de 10%</strong> é liberado na hora — direto na tela de confirmação.</p>'
 +'<button type="button" onclick="criarContaDoConvite()" style="width:100%;box-sizing:border-box;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#f26522,#e05512);color:#fff;font-weight:800;font-size:.95rem;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(242,101,34,.35);margin-bottom:10px;">✨ Criar conta e continuar comprando</button>'
 +'<button type="button" onclick="continuarSemCadastro()" style="width:100%;box-sizing:border-box;padding:12px;border:1.5px solid #e2e6ee;border-radius:10px;background:#fff;color:#0f1e3d;font-weight:700;font-size:.9rem;cursor:pointer;font-family:inherit;">Continuar sem cadastro</button>'
-+'<p style="font-size:11.5px;color:#8a94a8;margin:10px 0 0;">O cupom é exclusivo para clientes cadastrados: vale uma única vez.</p>'
++'<p style="font-size:11.5px;color:#8a94a8;margin:10px 0 0;">O cupom de 10% é exclusivo para clientes cadastrados: liberado após a confirmação do e-mail e vale uma única vez.</p>'
 +'</div>';
 abrirModal();
 }
 function criarContaDoConvite(){
 fecharModal();
 m3lRetomarCheckout=true;
-window.m3lCupomSugerido='PRIMEIRACOMPRA10';
 if(window.m3lAbrirCadastro){window.m3lAbrirCadastro();}
 }
 function continuarSemCadastro(){
@@ -399,8 +394,7 @@ atualizarTotalResumo();
 }
 /* ================= CUPOM ================= */
 function cuponsUsados(){
-try{var l=JSON.parse(localStorage.getItem('m3l_cupons_usados')||'[]');return Array.isArray(l)?l:[];}catch(e){return [];}
-}
+try{var l=JSON.parse(localStorage.getItem('m3l_cupons_usados')||'[]');return Array.isArray(l)?l:[];}catch(e){return [];}}
 function marcarCupomUsado(cod){
 if(!cod)return;
 var l=cuponsUsados();
@@ -421,7 +415,7 @@ msg.textContent='Cupom não encontrado. Você ainda pode finalizar normalmente.'
 atualizarTotalResumo();
 return;
 }
-if(codigo==='PRIMEIRACOMPRA10'&&!m3lClienteLogado()){
+if(codigo==='MEUPRIMEIRO3D10'&&!m3lClienteLogado()){
 cupomAtivo=null;
 msg.className='cupom-msg erro';
 msg.textContent='🎟️ O cupom de primeira compra é exclusivo para clientes cadastrados — crie sua conta para usar.';
@@ -431,7 +425,7 @@ return;
 if(cuponsUsados().indexOf(codigo)>-1){
 cupomAtivo=null;
 msg.className='cupom-msg erro';
-msg.textContent='Este cupom já foi utilizado — ele vale uma única vez. Confira nossos outros cupons!';
+msg.textContent='Este cupom já foi utilizado — ele vale uma única vez.';
 atualizarTotalResumo();
 return;
 }
@@ -443,7 +437,6 @@ msg.textContent='Cupom aplicado com sucesso!';
 criarChipCupom();
 atualizarTotalResumo();
 }
-
 /* ===== Trava do cupom: campo cinza + botão vira Remover ===== */
 function travarCampoCupom(travar){
 var inp=document.getElementById('cupomInput');

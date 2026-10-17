@@ -1,4 +1,5 @@
 /* ===== Meu 3D Labs — loja/login: Firebase e-mail/senha (cadastro 2 etapas + CEP + aniversário), Google, perfil (Firestore) e painel Minha conta ===== */
+
 (function(){
   var firebaseConfig={
     /* SE DER "api-key-not-valid": apague a chave abaixo e cole a copiada do Google Cloud > Credenciais > Exibir chave */
@@ -13,8 +14,9 @@
   firebase.initializeApp(firebaseConfig);
   var auth=firebase.auth();
   var db=(typeof firebase.firestore==='function')?firebase.firestore():null;
+  auth.languageCode='pt-BR';
+  console.info('✅ loja-login: versão com cupom secreto (liberado só na verificação) carregada');
   var mesesN=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-
   /* ---------- CSS do módulo ---------- */
   var css=document.createElement('style');
   css.textContent=
@@ -93,12 +95,23 @@
   '.m3l-rastrear:hover{background:#1a2f57;}' +
   '.m3l-vazio{text-align:center;padding:22px 10px;color:#5a6472;font-size:.86rem;line-height:1.5;}' +
   '.m3l-vazio .ico{font-size:2rem;margin-bottom:6px;}' +
-  '@media(max-width:820px){.header-inner .m3l-login-btn{padding:7px 13px;font-size:.78rem;}}';
+  '.m3l-ver-ok{color:#186a35;font-weight:800;}' +
+  '.m3l-ver-pen{color:#b26a00;font-weight:800;}' +
+  '.m3l-verbar{position:fixed;left:14px;bottom:14px;z-index:99996;background:#fff;border:1.5px solid #f2b28f;border-radius:14px;box-shadow:0 12px 32px rgba(15,30,61,.28);padding:14px 16px;max-width:320px;box-sizing:border-box;display:none;animation:m3lPop .3s ease;}' +
+  '.m3l-verbar.show{display:block;}' +
+  '.m3l-verbar strong{display:block;color:#0f1e3d;font-size:.92rem;margin-bottom:4px;}' +
+  '.m3l-verbar-txt{color:#5a6472;font-size:.8rem;line-height:1.45;}' +
+  '.m3l-verbar-txt b{color:#0f1e3d;word-break:break-all;}' +
+  '.m3l-verbtns{display:flex;gap:8px;margin-top:10px;}' +
+  '.m3l-verbtn{flex:1;padding:9px 10px;border:none;border-radius:8px;font-weight:800;font-size:.78rem;cursor:pointer;font-family:inherit;transition:transform .15s,background .15s;}' +
+  '.m3l-verbtn:disabled{opacity:.6;cursor:default;}' +
+  '.m3l-verbtn.esc{background:#0f1e3d;color:#fff;}' +
+  '.m3l-verbtn.ok{background:#eaf6ee;color:#186a35;border:1.5px solid #cbe5d2;}' +
+  '@media(max-width:820px){.header-inner .m3l-login-btn{padding:7px 13px;font-size:.78rem;}.m3l-verbar{left:10px;right:10px;max-width:none;bottom:10px;}}';
   document.head.appendChild(css);
-
   /* ---------- Botão no header ---------- */
   var btn=document.createElement('button');
-  btn.type='button';btn.className='m3l-login-btn';btn.id='m3lLoginBtn';btn.textContent='Entrar / Cadastrar';;
+  btn.type='button';btn.className='m3l-login-btn';btn.id='m3lLoginBtn';btn.textContent='Entrar / Cadastrar';
   var host=document.querySelector('.header-inner');
   if(host){
     host.appendChild(btn);
@@ -107,7 +120,6 @@
     if(header){header.appendChild(btn);}
     else{btn.style.cssText+='position:fixed;top:10px;right:10px;z-index:99999;';document.body.appendChild(btn);}
   }
-
   /* ---------- Modal ---------- */
   var ov=document.createElement('div');
   ov.className='m3l-ov';ov.id='m3lLoginOv';
@@ -119,13 +131,13 @@
   '<div class="m3l-tabs"><button type="button" class="m3l-tab on" id="tabIn">Entrar</button><button type="button" class="m3l-tab" id="tabUp">Criar conta</button></div>' +
   '<div class="m3l-err" id="m3lErr"></div>' +
   '<div id="paneIn">' +
-  '<input type="email" id="m3lEmailIn" placeholder="E-mail" autocomplete="email">' +
+  '<input type="email" id="m3lEmailIn" name="email" placeholder="E-mail" autocomplete="username">' +
   '<div class="m3l-pw"><input type="password" id="m3lSenhaIn" placeholder="Senha" autocomplete="current-password"><button type="button" class="m3l-eye" data-alvo="m3lSenhaIn" aria-label="Mostrar senha">👁</button></div>' +
   '<button type="button" class="m3l-go" id="m3lGoIn">Entrar</button>' +
   '</div>' +
   '<div id="paneUp1" style="display:none">' +
   '<div class="m3l-step">Etapa 1 de 2 · comece pelo seu e-mail</div>' +
-  '<input type="email" id="m3lEmailUp" placeholder="E-mail" autocomplete="email">' +
+  '<input type="email" id="m3lEmailUp" name="email" placeholder="E-mail" autocomplete="email">' +
   '<button type="button" class="m3l-go" id="m3lNext">Continuar</button>' +
   '</div>' +
   '<div id="paneUp2" style="display:none">' +
@@ -161,14 +173,108 @@
   '</div>' +
   '</div>';
   document.body.appendChild(ov);
-
   var $=function(id){return document.getElementById(id);};
   var modo='in';
   var upEmail='';
   var cepTimer=null;
   var abaPanel='dados';
   var perfilCache=null;
-
+  /* ---------- Aviso de confirmação de e-mail ---------- */
+  var verbar=document.createElement('div');
+  verbar.className='m3l-verbar';verbar.id='m3lVerbar';
+  verbar.innerHTML=
+  '<strong>📧 Confirme seu e-mail</strong>' +
+  '<div class="m3l-verbar-txt">Para liberar seu cupom de <b>10% de desconto</b> na primeira compra, confirme o e-mail que enviamos para <b id="m3lVerbarEmail">—</b>. Assim que confirmar, o cupom aparece na hora. Cheque também a caixa de spam.</div>' +
+  '<div class="m3l-verbtns"><button type="button" class="m3l-verbtn esc" id="m3lVerReenviar">Reenviar e-mail</button><button type="button" class="m3l-verbtn ok" id="m3lVerOk">Já confirmei ✅</button></div>';
+  document.body.appendChild(verbar);
+  function urlConfirmacao(){
+    if(location.protocol==='http:'||location.protocol==='https:'){
+      return {url:location.origin+'/verificar-email.html'};
+    }
+    return {};
+  }
+  function emailVerificado(){
+    var cu=auth.currentUser;
+    return !cu?true:!!cu.emailVerified;
+  }
+  function checarVerif(){
+    var cu=auth.currentUser;
+    if(cu&&!cu.emailVerified){
+      var em=$('m3lVerbarEmail');
+      if(em)em.textContent=cu.email||'—';
+      verbar.classList.add('show');
+    }else{
+      verbar.classList.remove('show');
+    }
+  }
+  /* ---------- Reenvio com contagem regressiva + fallback automático ---------- */
+  var COOLDOWN_REENVIO=60;
+  function iniciarCooldown(btn){
+    var rest=COOLDOWN_REENVIO;
+    btn.dataset.rotulo=btn.dataset.rotulo||btn.textContent;
+    clearInterval(btn._m3lCd);
+    btn.disabled=true;
+    var tick=function(){
+      if(rest<=0){
+        clearInterval(btn._m3lCd);
+        btn.disabled=false;
+        btn.textContent=btn.dataset.rotulo;
+        return;
+      }
+      btn.textContent='Aguarde '+rest+'s ⏳';
+      rest--;
+    };
+    tick();
+    btn._m3lCd=setInterval(tick,1000);
+  }
+  function falhaReenvioAlerta(cod){
+    var m={'auth/too-many-requests':'⚠️ Limite de envios para este e-mail atingido (proteção do Google). Aguarde cerca de 1 hora e clique em Reenviar novamente.'};
+    alert(m[cod]||'Não foi possível reenviar agora ('+cod+'). Tente novamente em alguns minutos.');
+  }
+  function reenviarConfirmacao(btn,aoConcluir){
+    var cu=auth.currentUser;
+    if(!cu||cu.emailVerified)return;
+    if(btn.disabled)return;
+    var t=btn.dataset.rotulo||btn.textContent;
+    btn.dataset.rotulo=t;
+    btn.disabled=true;btn.textContent='Enviando...';
+    function ok(){
+      btn.textContent='Enviado ✅';
+      if(aoConcluir)aoConcluir();
+      setTimeout(function(){iniciarCooldown(btn);},1800);
+    }
+    function falha(e){
+      var cod=(e&&e.code)||'erro-desconhecido';
+      console.warn('loja-login: falha no reenvio do e-mail de confirmação',cod,e&&e.message);
+      var eUri=cod.indexOf('continue-uri')!==-1||cod==='auth/operation-not-allowed';
+      if(eUri){
+        /* Domínio do link de retorno não autorizado → envia com o link padrão do Firebase */
+        cu.sendEmailVerification().then(function(){
+          ok();
+        }).catch(function(e2){
+          console.warn('loja-login: reenvio simples também falhou',(e2&&e2.code)||'erro-desconhecido');
+          btn.disabled=false;btn.textContent=t;
+          falhaReenvioAlerta((e2&&e2.code)||'erro-desconhecido');
+        });
+        return;
+      }
+      btn.disabled=false;btn.textContent=t;
+      falhaReenvioAlerta(cod);
+    }
+    cu.sendEmailVerification(urlConfirmacao()).then(ok).catch(falha);
+  }
+  $('m3lVerReenviar').onclick=function(){reenviarConfirmacao(this);};
+  $('m3lVerOk').onclick=function(){
+    var b=this;b.disabled=true;var t=b.textContent;b.textContent='Verificando...';
+    var cu=auth.currentUser;
+    if(!cu){b.disabled=false;b.textContent=t;return;}
+    cu.reload().then(function(){
+      var ok=!!(auth.currentUser&&auth.currentUser.emailVerified);
+      b.disabled=false;b.textContent=t;
+      if(ok){verbar.classList.remove('show');atualizarBotao(auth.currentUser);}
+      else{b.textContent='Ainda pendente — confira o e-mail';setTimeout(function(){b.textContent='Já confirmei ✅';},3000);}
+    }).catch(function(){b.disabled=false;b.textContent=t;});
+  };
   function erro(msg){
     var e=$('m3lErr');
     if(msg){e.textContent=msg;e.classList.add('show');}else{e.classList.remove('show');}
@@ -225,7 +331,6 @@
     if(dia>diasMax[mes-1])return 'Dia '+dia+' não existe em '+mesesN[mes-1]+'. Confira a data.';
     return '';
   }
-
   function setModo(m){
     modo=m;
     $('tabIn').classList.toggle('on',m==='in');
@@ -234,16 +339,17 @@
       $('paneIn').style.display='block';
       $('paneUp1').style.display='none';
       $('paneUp2').style.display='none';
+      $('m3lSub').textContent='Acesse sua conta para comprar mais rápido.';
     }else{
       $('paneIn').style.display='none';
       $('paneUp1').style.display='block';
       $('paneUp2').style.display='none';
+      $('m3lSub').textContent='Cadastre-se grátis e, confirmando seu e-mail, ganhe 10% de desconto na primeira compra.';
     }
     erro('');
   }
   $('tabIn').onclick=function(){setModo('in');};
   $('tabUp').onclick=function(){setModo('up');};
-
   /* ---------- Etapa 1: verificar e-mail ---------- */
   function irEtapa2(){
     $('m3lStep2').textContent='Etapa 2 de 2 · complete seu cadastro ('+upEmail+')';
@@ -276,7 +382,6 @@
     if(upEmail)$('m3lEmailUp').value=upEmail;
     erro('');
   };
-
   /* ---------- CEP via ViaCEP (cadastro) ---------- */
   $('m3lCep').addEventListener('input',function(){
     mascaraCepM3l(this);
@@ -304,7 +409,6 @@
       var h=$('m3lCepHint');h.textContent='Não conseguimos consultar o CEP agora — o endereço pode ser preenchido no checkout.';h.style.display='block';
     });
   }
-
   /* ---------- Olhinho mostrar/ocultar senha ---------- */
   Array.prototype.forEach.call(document.querySelectorAll('#m3lLoginOv .m3l-eye'),function(olho){
     olho.onclick=function(){
@@ -316,7 +420,6 @@
       inp.focus();
     };
   });
-
   function abreModal(){
     if(window.m3lUser){
       $('m3lTitulo').textContent='Minha conta';
@@ -337,12 +440,10 @@
     }
   }
   function fechaModal(){ov.classList.remove('open');}
-
   btn.onclick=abreModal;
   $('m3lClose').onclick=fechaModal;
   ov.addEventListener('click',function(ev){if(ev.target===ov)fechaModal();});
   document.addEventListener('keydown',function(ev){if(ev.key==='Escape')fechaModal();});
-
   /* ================= PAINEL MINHA CONTA ================= */
   function renderHead(){
     var u=window.m3lUser||{};
@@ -362,11 +463,12 @@
   }
   $('ptabDados').onclick=function(){perr('');setAba('dados');};
   $('ptabPedidos').onclick=function(){perr('');setAba('pedidos');};
-
   function renderDados(){
     perr('');
     var u=window.m3lUser||{};
     var p=perfilCache||{};
+    var cuAuth=auth.currentUser;
+    var emailConf=!!(cuAuth&&cuAuth.emailVerified);
     var temEnd=!!(p.cep||p.rua);
     var vEnd='Não informado';
     if(temEnd){
@@ -377,7 +479,7 @@
     var vAniv=(p.nascimentoDia&&p.nascimentoMes)?(p.nascimentoDia+' de '+mesesN[p.nascimentoMes-1]):'—';
     var html='<div class="m3l-dados">'
     +'<div class="m3l-dado"><span>Nome</span><div class="v">'+(p.nome||u.nome||'—')+'</div></div>'
-    +'<div class="m3l-dado"><span>E-mail</span><div class="v">'+(u.email||'—')+'</div></div>'
+    +'<div class="m3l-dado"><span>E-mail</span><div class="v">'+(u.email||'—')+(emailConf?' <span class="m3l-ver-ok">✅ confirmado</span>':' <span class="m3l-ver-pen">⏳ pendente</span>')+'</div></div>'
     +'<div class="m3l-dado"><span>WhatsApp</span><div class="v">'+(p.whatsapp?formatarFoneLoja(p.whatsapp):'—')+'</div></div>'
     +'<div class="m3l-dado"><span>🎂 Aniversário</span><div class="v">'+vAniv+'</div></div>'
     +'<div class="m3l-dado"><span>Endereço</span><div class="v">'+vEnd+'</div></div>'
@@ -385,18 +487,20 @@
     var ehSenha=false;
     try{ehSenha=!!(auth.currentUser&&auth.currentUser.providerData.some(function(x){return x.providerId==='password';}));}catch(e){}
     html+='<button type="button" class="m3l-acao" id="m3lBtnEdit">✏️ Editar meus dados</button>';
+    if(!emailConf){html+='<button type="button" class="m3l-acao" id="m3lBtnVerif">📧 Reenviar e-mail de confirmação</button>';}
     if(ehSenha){html+='<button type="button" class="m3l-acao" id="m3lBtnSenha">🔑 Trocar senha</button>';}
     else{html+='<div class="m3l-gnote">Conta Google — a senha é gerenciada pelo Google.</div>';}
     html+='<button type="button" class="m3l-acao sair" id="m3lSair">Sair da conta</button>';
     $('pPainelDados').innerHTML=html;
     $('m3lBtnEdit').onclick=renderEdicao;
+    var bvf=$('m3lBtnVerif');
+    if(bvf)bvf.onclick=function(){reenviarConfirmacao(this,function(){pok('📬 Enviamos o e-mail de confirmação para '+(u.email||'')+'. Confira a caixa de entrada e o spam.');});};
     var bs=$('m3lBtnSenha');
     if(bs)bs.onclick=trocarSenha;
     $('m3lSair').onclick=function(){
       auth.signOut().then(fechaModal).catch(function(e){perr('Não foi possível sair — tente novamente.');});
     };
   }
-
   /* ---------- Editar dados ---------- */
   function renderEdicao(){
     perr('');
@@ -485,7 +589,6 @@
       perr('Não foi possível salvar: '+((e&&e.message)?e.message:'tente novamente.'));
     });
   }
-
   /* ---------- Trocar senha (link por e-mail) ---------- */
   function trocarSenha(){
     perr('');
@@ -506,7 +609,6 @@
       perr(m[e&&e.code]||'Não foi possível enviar agora — tente novamente.');
     });
   }
-
   /* ---------- Meus pedidos ---------- */
   function renderPedidos(){
     perr('');
@@ -537,7 +639,6 @@
     html+='<a class="m3l-rastrear" href="acompanhar.html">🔗 Rastrear pedido</a>';
     $('pPainelPedidos').innerHTML=html;
   }
-
   /* ---------- Tradução de erros ---------- */
   function traduzErro(e){
     var m={
@@ -559,7 +660,6 @@
     };
     return m[e&&e.code]||'Não foi possível entrar: '+(e&&e.message?e.message:'erro desconhecido');
   }
-
   /* ---------- Entrar ---------- */
   function goIn(){
     erro('');
@@ -574,13 +674,11 @@
   $('m3lGoIn').onclick=goIn;
   $('m3lEmailIn').addEventListener('keydown',function(ev){if(ev.key==='Enter')goIn();});
   $('m3lSenhaIn').addEventListener('keydown',function(ev){if(ev.key==='Enter')goIn();});
-
   /* ---------- Perfil no Firestore ---------- */
   function salvarPerfil(uid,dados){
     if(!db||!uid)return Promise.resolve();
     return db.collection('clientes').doc(uid).set(dados,{merge:true}).catch(function(e){console.warn('loja-login: perfil não salvo',e);});
   }
-
   /* ---------- Etapa 2: criar conta ---------- */
   function criar(){
     erro('');
@@ -608,7 +706,21 @@
     var g=$('m3lGoUp');g.disabled=true;var t=g.textContent;g.textContent='Criando conta...';
     function falha(e){erro(traduzErro(e));g.disabled=false;g.textContent=t;}
     auth.createUserWithEmailAndPassword(upEmail,senha)
-      .then(function(cred){return cred.user.updateProfile({displayName:nome}).then(function(){return cred;});})
+      .then(function(cred){
+        cred.user.sendEmailVerification(urlConfirmacao()).catch(function(e){
+          var cod=(e&&e.code)||'erro-desconhecido';
+          console.warn('loja-login: envio com retorno falhou — tentando envio simples',cod);
+          cred.user.sendEmailVerification().catch(function(e2){
+            console.warn('loja-login: e-mail de confirmação não enviado',(e2&&e2.code)||'erro-desconhecido');
+            var vb=document.getElementById('m3lVerbar');
+            if(vb){
+              var txt=vb.querySelector('.m3l-verbar-txt');
+              if(txt)txt.innerHTML='⚠️ Não conseguimos enviar o e-mail de confirmação agora ('+((e2&&e2.code)||'erro')+'). Use o botão <b>Reenviar</b> em alguns minutos.';
+            }
+          });
+        });
+        return cred.user.updateProfile({displayName:nome}).then(function(){return cred;});
+      })
       .then(function(cred){
         var dados={nome:nome,email:upEmail,whatsapp:fone,nascimentoDia:nascDia,nascimentoMes:nascMes,cep:cep,rua:ruaV,numero:'',complemento:'',bairro:bairroV,cidade:cidadeV,uf:ufV};
         perfilCache={nome:nome,whatsapp:fone,nascimentoDia:nascDia,nascimentoMes:nascMes,cep:cep,rua:ruaV,numero:'',complemento:'',bairro:bairroV,cidade:cidadeV,uf:ufV};
@@ -622,7 +734,6 @@
   $('m3lSenha2').addEventListener('keydown',function(ev){if(ev.key==='Enter')criar();});
   $('m3lFone').addEventListener('input',function(){mascaraFoneM3l(this);});
   $('m3lFone').addEventListener('keydown',function(ev){if(ev.key==='Enter')criar();});
-
   /* ---------- Login com Google ---------- */
   $('m3lGoogle').onclick=function(){
     erro('');
@@ -633,7 +744,6 @@
       .catch(function(e){erro(traduzErro(e));})
       .then(function(){gBtn.disabled=false;});
   };
-
   /* ---------- Estado da sessão + perfil ---------- */
   function aplicarPerfilLocal(dados){
     if(!window.m3lUser)window.m3lUser={uid:null,nome:'',email:'',fone:'',endereco:null};
@@ -652,6 +762,7 @@
     if(!u){perfilCache=null;abaPanel='dados';}
     try{document.dispatchEvent(new CustomEvent('m3l-user-changed',{detail:window.m3lUser}));}catch(e){}
     atualizarBotao(u);
+    checarVerif();
     if(u&&db){
       db.collection('clientes').doc(u.uid).get().then(function(snap){
         if(!snap.exists||!window.m3lUser)return;
@@ -700,4 +811,58 @@
       if(mudou){try{document.dispatchEvent(new CustomEvent('m3l-user-changed',{detail:window.m3lUser}));}catch(e){}}
     }).catch(function(e){console.warn('loja-login: perfil não salvo',e);});
   };
+  /* ---------- Bloqueio: checkout e cupom até confirmar o e-mail ---------- */
+  window.m3lEmailVerificado=emailVerificado;
+  (function guardaCheckout(){
+    var tent=0;
+    (function tenta(){
+      var orig=window.abrirCheckout;
+      if(typeof orig==='function'){
+        window.abrirCheckout=function(){
+          var cu=auth.currentUser;
+          if(cu&&!cu.emailVerified){checarVerif();return;}
+          return orig.apply(this,arguments);
+        };
+        return;
+      }
+      if(++tent<40)setTimeout(tenta,300);
+    })();
+  })();
+  /* ---------- Retorno da confirmação: aviso na loja ---------- */
+  if(location.search.indexOf('verificado=1')!==-1){
+    try{history.replaceState(null,'',location.pathname);}catch(e){}
+    var tent2=0;
+    (function tentaToast(){
+      var t=document.getElementById('toast');
+      if(t){
+        t.textContent='✅ E-mail confirmado! Sua conta está ativa e seu cupom de 10% liberado.';
+        t.classList.add('show');
+        setTimeout(function(){t.classList.remove('show');},5000);
+      }else if(++tent2<40){setTimeout(tentaToast,250);}
+    })();
+  }
+  (function guardaCupom(){
+    var tent=0;
+    (function tenta(){
+      var orig=window.aplicarCupom;
+      if(typeof orig==='function'){
+        window.aplicarCupom=function(){
+          var cu=auth.currentUser;
+          if(cu&&!cu.emailVerified){
+            var inp=document.querySelector('.cupom-linha input');
+            var v=inp?(inp.value||'').trim().toUpperCase():'';
+            if(v==='MEUPRIMEIRO3D10'){
+              checarVerif();
+              var msg=document.querySelector('.cupom-msg');
+              if(msg){msg.textContent='Confirme seu e-mail para resgatar seu cupom de 10% de desconto.';msg.className='cupom-msg erro';}
+              return;
+            }
+          }
+          return orig.apply(this,arguments);
+        };
+        return;
+      }
+      if(++tent<40)setTimeout(tenta,300);
+    })();
+  })();
 })();
