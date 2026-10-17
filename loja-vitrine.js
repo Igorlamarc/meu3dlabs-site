@@ -1,7 +1,5 @@
 /* ===== Meu 3D Labs — loja/vitrine: produtos, modal, compartilhar, filtros e flutuantes ===== */
-
 var produtosLoja = [];
-
 function escL(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function precoLabel(v){v=parseFloat(v)||0;return v.toFixed(2).replace('.',',');}
 function labelCategoria(cat){
@@ -85,17 +83,20 @@ function renderProdutos(lista){
     var imgs=p.imagens||[];
     var cores=p.cores||[];
     var precoN=parseFloat(p.preco)||0;
-    var plabel='R$ '+precoLabel(precoN);
+    var emPromo=p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<precoN;
+    var precoVenda=emPromo?parseFloat(p.precoPromo):precoN;
+    var plabel='R$ '+precoLabel(precoVenda);
+    var precoOrigArg=emPromo?precoN:'';
     var cat=(p.categoria||'outros').toLowerCase();
     var card=document.createElement('div');
     card.className='produto'+(esgotado?' esgotado':'');
     card.setAttribute('data-cat',cat);
     card.setAttribute('data-estoque',estoque<=0?'zero':(estoque<=3?'ultimas':'estoque'));
     card.setAttribute('data-qtde',estoque);
-    card.setAttribute('data-preco',precoN);
+    card.setAttribute('data-preco',precoVenda);
     card.setAttribute('data-nome',p.nome);
     card.setAttribute('data-id',p.slug);
-  var emPromoFoto=p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<precoN;
+  var emPromoFoto=emPromo;
 var pctFoto=emPromoFoto?Math.round((1-parseFloat(p.precoPromo)/precoN)*100):0;
 card.setAttribute('data-promo',emPromoFoto?'1':'0');
 var html='<div class="produto-img">'+badgeProduto(estoque)+(emPromoFoto?'<span style="position:absolute;top:56px;right:10px;background:#c0392b;color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;z-index:4;box-shadow:0 3px 8px rgba(0,0,0,.25);">-'+pctFoto+'%</span>':'');
@@ -121,12 +122,11 @@ var html='<div class="produto-img">'+badgeProduto(estoque)+(emPromoFoto?'<span s
     html+='<h3 style="cursor:pointer;" onclick="abrirModalProduto(\''+p.slug+'\')">'+escL(p.nome)+'</h3>';
     if(p.descricao)html+='<p class="produto-desc">'+escL(p.descricao)+'</p>';
     if(cores.length)html+='<div class="produto-cor"><span class="mini-swatch" style="background:'+corHex(cores[0])+'"></span> '+escL(cores[0]||'')+'</div>';
-    var emPromo=p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<precoN;
-if(emPromo){var pct=Math.round((1-parseFloat(p.precoPromo)/precoN)*100);html+='<div class="produto-preco"><span style="text-decoration:line-through;color:#8a94a8;font-size:13px;font-weight:600;">R$ '+precoLabel(precoN)+'</span> <span style="color:#c0392b;font-weight:800;">R$ '+precoLabel(parseFloat(p.precoPromo))+'</span> <span style="background:#c0392b;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:12px;">-'+pct+'%</span></div>';}else{html+='<div class="produto-preco">'+plabel+' <small>· unidade</small></div>';}
+    if(emPromo){var pct=Math.round((1-parseFloat(p.precoPromo)/precoN)*100);html+='<div class="produto-preco"><span style="text-decoration:line-through;color:#8a94a8;font-size:13px;font-weight:600;">R$ '+precoLabel(precoN)+'</span> <span style="color:#c0392b;font-weight:800;">R$ '+precoLabel(parseFloat(p.precoPromo))+'</span> <span style="background:#c0392b;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:12px;">-'+pct+'%</span></div>';}else{html+='<div class="produto-preco">'+plabel+' <small>· unidade</small></div>';}
     if(esgotado){
       html+='<button class="btn-pedir" onclick="pedirPeca(\''+p.slug+'\')">🔔 Avise-me quando chegar</button>';
     }else{
-      html+='<button class="btn-comprar" onclick="addCarrinho(\''+p.slug+'\',\''+escL(p.nome).replace(/'/g,"\'")+'\',\''+plabel+'\',\''+precoN+'\')">'
+      html+='<button class="btn-comprar" onclick="addCarrinho(\''+p.slug+'\',\''+escL(p.nome).replace(/'/g,"\'")+'\',\''+plabel+'\',\''+precoVenda+'\',\''+precoOrigArg+'\')">'
       +'<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7.2 14.6l.1-.1L8.1 12h9.4c.7 0 1.3-.4 1.6-1L22 5H6.2l-.9-2H2v2h2l2.6 6.5L5.5 13c-.3.7-.3 1.5 0 2.2.4.9 1.3 1.5 2.3 1.5h11v-2H8.1c-.5 0-.9-.5-.9-1z"/></svg>'
       +'Adicionar</button>';
     }
@@ -142,7 +142,6 @@ function pedirPeca(slug){
   var msg='Olá! 😊 Vi a peça "'+p.nome+'" na loja e ela está sem estoque no momento. Gostaria de saber quando estará disponível (ou encomendar uma).';
   window.open('https://wa.me/'+WHATSAPP_LOJA+'?text='+encodeURIComponent(msg),'_blank');
 }
-
 var produtoSel=null;
 function mostrarToast(msg){var t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2600);}
 function fallbackCopy(txt){var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
@@ -165,7 +164,11 @@ function abrirModalProduto(slug){
   produtoSel=p;
   var imgs=p.imagens||[];var cores=p.cores||[];
   var esgotado=(parseInt(p.estoque)||0)<=0;
-  var plabel='R$ '+precoLabel(parseFloat(p.preco)||0);
+  var precoN=parseFloat(p.preco)||0;
+  var emPromo=p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<precoN;
+  var precoVenda=emPromo?parseFloat(p.precoPromo):precoN;
+  var plabel='R$ '+precoLabel(precoVenda);
+  var precoOrigArg=emPromo?precoN:'';
   var html='<div class="pm-img">';
   if(imgs.length){html+='<img src="'+imgs[0]+'" alt="'+escL(p.nome)+'">';}else{html+='<div class="pm-noimg">📦</div>';}
   html+='</div><div class="pm-info">';
@@ -181,15 +184,13 @@ function abrirModalProduto(slug){
     }
     html+='</div>';
   }
-  var pMod=(p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<parseFloat(p.preco));
-if(pMod){html+='<div class="pm-preco"><span style="text-decoration:line-through;color:#8a94a8;font-weight:600;font-size:14px;">R$ '+precoLabel(parseFloat(p.preco))+'</span> <span style="color:#c0392b;font-weight:800;">R$ '+precoLabel(parseFloat(p.precoPromo))+'</span> <small>· unidade</small></div>';}else{html+='<div class="pm-preco">'+plabel+' <small>· unidade</small></div>';}
+  if(emPromo){html+='<div class="pm-preco"><span style="text-decoration:line-through;color:#8a94a8;font-weight:600;font-size:14px;">R$ '+precoLabel(precoN)+'</span> <span style="color:#c0392b;font-weight:800;">R$ '+precoLabel(parseFloat(p.precoPromo))+'</span> <small>· unidade</small></div>';}else{html+='<div class="pm-preco">'+plabel+' <small>· unidade</small></div>';}
   if(esgotado){html+='<button class="btn-pedir" onclick="pedirPeca(\''+p.slug+'\')">🔔 Avise-me quando chegar</button>';}
-  else{html+='<button class="btn-comprar" onclick="addCarrinho(\''+p.slug+'\',\''+escL(p.nome).replace(/'/g,"\'")+'\',\''+plabel+'\',\''+parseFloat(p.preco)+'\')">🛒 Adicionar ao carrinho</button>';}
+  else{html+='<button class="btn-comprar" onclick="addCarrinho(\''+p.slug+'\',\''+escL(p.nome).replace(/'/g,"\'")+'\',\''+plabel+'\',\''+precoVenda+'\',\''+precoOrigArg+'\')">🛒 Adicionar ao carrinho</button>';}
   html+='</div>';
   document.getElementById('produtoModalBody').innerHTML=html;
   document.getElementById('produtoOverlay').classList.add('show');
 }
-
 function carregarProdutos(){
   var grid=document.getElementById('lojaGrid');
   grid.innerHTML='<div class="loja-carregando">Carregando produtos…</div>';
@@ -209,7 +210,6 @@ function carregarProdutos(){
     grid.innerHTML='<div class="loja-carregando">Erro ao carregar a loja. Tente novamente em instantes.</div>';
   });
 }
-
 /* ================= FILTROS ================= */
 var categoriaAtiva='todos';
 var buscaAtiva='';
@@ -304,8 +304,6 @@ function copiarCodigoPedido(num){
     document.body.removeChild(ta);
   }
 }
-
-
 window.flutuanteAbrir=function(){
 var sel='[onclick*="abrirCarrinho"],[onclick*="AbrirCarrinho"],[onclick*="toggleCarrinho"],[onclick*="ToggleCarrinho"],[onclick*="verCarrinho"],[onclick*="VerCarrinho"],[onclick*="openCart"],[onclick*="toggleCart"],.cart-btn,#btnCarrinho,#cartBtn,[class*="cart-btn"]';
 var alvo=document.querySelector(sel);
@@ -340,8 +338,6 @@ window.addEventListener('load',function(){
 fnSyncCartFloat();
 setInterval(fnSyncCartFloat,700);
 });
-
-
 (function(){
   var cart=document.getElementById('cartFloat');
   if(!cart)return;

@@ -1,5 +1,4 @@
 /* ===== Meu 3D Labs — loja/carrinho: estado, carrinho, checkout, cupom, pedido e PIX ===== */
-
 /* ================= ESTADO ================= */
 var API_PEDIDOS='https://meu3dlabs-backend.onrender.com/api/loja/pedidos';
 var carrinho=[];
@@ -10,6 +9,12 @@ var horarioSel='manha';
 var TAXA_NOTURNO=10;
 var cupomAtivo=null;
 var clienteDados={nome:'',fone:''};
+/* ===== Integração com o login (loja-login.js): sincroniza dados do cliente logado ===== */
+document.addEventListener('m3l-user-changed',function(ev){
+  var u=ev&&ev.detail;
+  if(u&&u.nome&&u.nome.trim()&&clienteDados.nome.trim()===''){clienteDados.nome=u.nome.trim();}
+});
+function m3lClienteLogado(){return (window.m3lUser&&window.m3lUser.email)?window.m3lUser:null;}
 /* ================= CUPONS (estrutura pronta) ================= */
 var CUPONS={
  /* Formato para ativar cupons futuramente (sem precisar mexer na estrutura):
@@ -67,7 +72,7 @@ var p=document.querySelector('.produto[data-id="'+id+'"]');
 if(!p)return null;
 return {nome:p.getAttribute('data-nome'),img:(p.querySelector('.variante-track img')||{getAttribute:function(){return '';}}).getAttribute('src')};
 }
-function addCarrinho(id,nome,precoLabel,precoNum){
+function addCarrinho(id,nome,precoLabel,precoNum,precoOriginal){
 var info=produtoInfo(id);
 var img=info?info.img:'';
 var cor='';
@@ -81,7 +86,7 @@ carrinho.forEach(function(item){
 if(item.chave===chave){item.qtd++;achou=true;}
 });
 if(!achou){
-carrinho.push({chave:chave,id:id,nome:nome,cor:cor,precoNum:parseFloat(precoNum),precoLabel:precoLabel,qtd:1,img:img});
+carrinho.push({chave:chave,id:id,nome:nome,cor:cor,precoNum:parseFloat(precoNum),precoLabel:precoLabel,qtd:1,img:img,precoOriginal:parseFloat(precoOriginal)||0});
 }
 salvarCarrinho();
 atualizarCarrinhoUI();
@@ -107,10 +112,35 @@ localStorage.setItem('m3d_carrinho',JSON.stringify(carrinho));
 function totalCarrinho(){
 var t=0;carrinho.forEach(function(i){t+=i.precoNum*i.qtd;});return t;
 }
+/* ===== Totais de promoção ===== */
+function totalCheio(){
+var t=0;carrinho.forEach(function(i){t+=(i.precoOriginal&&i.precoOriginal>i.precoNum?i.precoOriginal:i.precoNum)*i.qtd;});return t;
+}
+function descontoPromo(){
+return Math.round((totalCheio()-totalCarrinho())*100)/100;
+}
+/* ===== Migração: itens antigos do carrinho ganham dados de promoção lendo a API ===== */
+function migrarPromoItens(){
+if(typeof produtosLoja==='undefined'||!produtosLoja||!produtosLoja.length||typeof precoLabel!=='function')return;
+var mudou=false;
+carrinho.forEach(function(it){
+var p=null;
+for(var i=0;i<produtosLoja.length;i++){if(produtosLoja[i].slug===it.id){p=produtosLoja[i];break;}}
+if(!p)return;
+var cheio=parseFloat(p.preco)||0;
+var emPromo=!!p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<cheio;
+var venda=emPromo?parseFloat(p.precoPromo):cheio;
+if(it.precoNum!==venda){it.precoNum=venda;it.precoLabel='R$ '+precoLabel(venda);mudou=true;}
+var orig=emPromo?cheio:0;
+if((it.precoOriginal||0)!==orig){it.precoOriginal=orig;mudou=true;}
+});
+if(mudou)salvarCarrinho();
+}
 function fmt(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});}
 function cupomDesconto(){return cupomAtivo?cupomAtivo.desc:0;}
 function totalFinal(){var t=totalCarrinho()-cupomDesconto()+(horarioSel==='noturno'?TAXA_NOTURNO:0);return t<0?0:t;}
 function atualizarCarrinhoUI(){
+migrarPromoItens();
 var n=0;carrinho.forEach(function(i){n+=i.qtd;});
 var badge=document.getElementById('carrinhoBadge');
 badge.textContent=n;badge.classList.toggle('show',n>0);
@@ -124,11 +154,19 @@ return;
 }
 var html='';
 carrinho.forEach(function(item){
+var emPromoItem=item.precoOriginal&&item.precoOriginal>item.precoNum;
+var precoHtml=item.precoLabel;
+if(emPromoItem){
+var pctC=Math.round((1-item.precoNum/item.precoOriginal)*100);
+precoHtml='<span style="text-decoration:line-through;color:#8a94a8;font-size:12px;font-weight:600;margin-right:4px;">'+fmt(item.precoOriginal)+'</span>'
++'<span style="color:#c0392b;font-weight:800;">'+item.precoLabel+'</span>'
++' <span style="background:#c0392b;color:#fff;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:10px;">-'+pctC+'%</span>';
+}
 html+='<div class="cart-item">'
 +'<img src="'+item.img+'" alt="'+item.nome.replace(/"/g,'&quot;')+'">'
 +'<div class="ci-info">'
 +'<div class="ci-nome">'+item.nome+(item.cor?' <span style="color:var(--gray);font-weight:500;">('+item.cor+')</span>':'')+'</div>'
-+'<div class="ci-preco">'+item.precoLabel+'</div>'
++'<div class="ci-preco">'+precoHtml+'</div>'
 +'<div class="ci-qtd"><button onclick="mudarQtd(\''+item.chave+'\',-1)">−</button><span>'+item.qtd+'</span><button onclick="mudarQtd(\''+item.chave+'\',1)">+</button></div>'
 +'</div>'
 +'<button class="ci-remove" onclick="removerItem(\''+item.chave+'\')">Remover</button>'
@@ -137,13 +175,43 @@ html+='<div class="cart-item">'
 body.innerHTML=html;
 footer.style.display='block';
 document.getElementById('cartTotal').textContent=fmt(totalCarrinho());
+var dp=descontoPromo();
+var eco=document.getElementById('cartEconomia');
+if(eco)eco.remove();
+if(dp>0&&footer){
+var d=document.createElement('div');
+d.id='cartEconomia';
+d.style.cssText='text-align:right;font-size:12.5px;color:#0f7a44;font-weight:700;margin:0 16px 6px;';
+d.textContent='🎉 Você economiza '+fmt(dp)+' na promoção';
+var ct=footer.querySelector('.cart-total');
+if(ct)footer.insertBefore(d,ct);else footer.appendChild(d);
 }
-function abrirCarrinho(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');}
-function fecharCarrinho(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');}
+}
+/* ===== Botões flutuantes: somem quando carrinho ou modal abrem ===== */
+function floatsOcultar(){
+var fs=document.getElementById('floatStack');
+if(fs)fs.style.display='none';
+}
+function floatsMostrar(){
+var fs=document.getElementById('floatStack');
+if(fs)fs.style.display='';
+}
+function abrirCarrinho(){
+document.getElementById('cartDrawer').classList.add('open');
+document.getElementById('cartOverlay').classList.add('open');
+floatsOcultar();
+}
+function fecharCarrinho(){
+document.getElementById('cartDrawer').classList.remove('open');
+document.getElementById('cartOverlay').classList.remove('open');
+floatsMostrar();
+}
 /* ================= CHECKOUT ================= */
 function abrirCheckout(){
 if(totalCarrinho()<=0)return;
 fecharCarrinho();
+var u=m3lClienteLogado();
+if(u&&u.nome&&u.nome.trim()&&clienteDados.nome.trim()===''){clienteDados.nome=u.nome.trim();}
 document.getElementById('modalTitulo').textContent='Finalizar pedido';
 document.getElementById('modalBody').innerHTML=etapaResumo();
 restaurarCupomUI();
@@ -153,6 +221,10 @@ if(window.gtag)gtag('event','begin_checkout',{currency:'BRL',value:totalFinal()}
 function etapaResumo(){
 var html='';
 html+='<div class="erro-box" id="erroBox"></div>';
+var u=m3lClienteLogado();
+if(u){
+html+='<div style="display:flex;align-items:center;gap:6px;background:#eaf6ee;border:1px solid #cbe5d2;border-radius:10px;padding:10px 12px;font-size:13px;color:#186a35;margin-bottom:12px;">✅ Conectado como <strong>'+u.email+'</strong>'+(clienteDados.nome.trim()?' · seu nome já está preenchido':'')+'</div>';
+}
 html+='<div class="etapa-titulo">Seus dados</div>';
 html+='<div class="campos-grid">'
 +'<div class="campo"><label>Nome completo <span>*</span></label><input type="text" id="cliNome" placeholder="Seu nome" autocomplete="name" value="'+clienteDados.nome.replace(/"/g,'&quot;')+'" oninput="guardarNome(this)"></div>'
@@ -161,9 +233,17 @@ html+='<div class="campos-grid">'
 html+='<label class="check-item optin"><input type="checkbox" id="cliOptin"> Quero receber novidades e peças em estoque pelo WhatsApp</label>';
 html+='<div class="etapa-titulo">Seus itens</div>';
 carrinho.forEach(function(item){
-html+='<div class="resumo-item"><span class="ri-nome">'+item.qtd+'x '+item.nome+(item.cor?' <span class="ri-cor">('+item.cor+')</span>':'')+'</span><span>'+fmt(item.precoNum*item.qtd)+'</span></div>';
+var emPromoItem=item.precoOriginal&&item.precoOriginal>item.precoNum;
+var pctI=emPromoItem?Math.round((1-item.precoNum/item.precoOriginal)*100):0;
+var valorItem=emPromoItem
+?'<span style="text-decoration:line-through;color:#8a94a8;font-size:12px;font-weight:600;margin-right:4px;">'+fmt(item.precoOriginal*item.qtd)+'</span><span style="color:#c0392b;font-weight:800;">'+fmt(item.precoNum*item.qtd)+'</span><span style="background:#c0392b;color:#fff;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:10px;margin-left:6px;">-'+pctI+'%</span>'
+:fmt(item.precoNum*item.qtd);
+html+='<div class="resumo-item"><span class="ri-nome">'+item.qtd+'x '+item.nome+(item.cor?' <span class="ri-cor">('+item.cor+')</span>':'')+'</span><span>'+valorItem+'</span></div>';
 });
-html+='<div class="resumo-item"><span class="ri-nome">Subtotal</span><span>'+fmt(totalCarrinho())+'</span></div>';
+html+='<div class="resumo-item"><span class="ri-nome">Subtotal</span><span>'+fmt(totalCheio())+'</span></div>';
+if(descontoPromo()>0){
+html+='<div class="resumo-item promo-linha"><span class="ri-nome">Desconto de promoção</span><span style="color:#0f7a44;font-weight:700;">-'+fmt(descontoPromo())+'</span></div>';
+}
 html+='<div class="resumo-total"><span>Total</span><span class="valor">'+fmt(totalFinal())+'</span></div>';
 html+='<div class="etapa-titulo">Cupom de desconto</div>';
 html+='<div class="cupom-linha"><input type="text" id="cupomInput" placeholder="Digite seu cupom"><button class="btn-aplicar" onclick="aplicarCupom()">Aplicar</button></div>';
@@ -219,7 +299,8 @@ function selEntrega(v,el){
 entregaSel=v;
 document.querySelectorAll('.entrega-op').forEach(function(o){o.classList.remove('sel');});
 el.classList.add('sel');
-var inp=el.querySelector('input');inp.checked=(inp.value==='estoque'||inp.value==='ultimas'||inp.value==='zero'||inp.value==='promo');
+var inp=el.querySelector('input');
+if(inp)inp.checked=true;
 var eb=document.getElementById('enderecoBlock');
 if(eb)eb.style.display=(v==='correios')?'block':'none';
 var hb=document.getElementById('horarioBlock');
@@ -235,7 +316,8 @@ function selHorario(v,el){
 horarioSel=v;
 document.querySelectorAll('.hor-op').forEach(function(o){o.classList.remove('sel');});
 el.classList.add('sel');
-var inp=el.querySelector('input');inp.checked=(inp.value==='estoque'||inp.value==='ultimas'||inp.value==='zero'||inp.value==='promo');
+var inp=el.querySelector('input');
+if(inp)inp.checked=true;
 atualizarTotalResumo();
 }
 /* ================= CUPOM ================= */
@@ -358,6 +440,7 @@ var btn=document.querySelector('.btn-finalizar');
 if(btn){btn.disabled=true;btn.textContent='Gerando pedido...';}
 var numeroLocal='M3D-'+String(Math.floor(100000+Math.random()*900000));
 var itens=carrinho.map(function(i){return {nome:i.nome,cor:i.cor||'',qtd:i.qtd,preco:i.precoNum};});
+var itensExib=carrinho.map(function(i){return {nome:i.nome,cor:i.cor||'',qtd:i.qtd,preco:i.precoNum,cheio:(i.precoOriginal&&i.precoOriginal>i.precoNum)?i.precoOriginal:i.precoNum};});
 var payload={
 nome_cliente:nome,
 whatsapp:fone,
@@ -374,7 +457,8 @@ nota:nota||null,
 optin:optin
 };
 function montarPedido(numero,registrado){
-return {numero:numero,itens:itens,total:totalFinal(),subtotal:totalCarrinho(),cupom:cupomAtivo,entrega:entregaSel,endereco:endereco||'',pagamento:'pix',horario:entregaSel==='retirada'?horarioSel:null,nota:nota,nome:nome,fone:fone,optin:optin,registrado:registrado};
+var ul=m3lClienteLogado();
+return {numero:numero,itens:itensExib,total:totalFinal(),subtotal:totalCarrinho(),cheio:totalCheio(),descPromo:descontoPromo(),cupom:cupomAtivo,entrega:entregaSel,endereco:endereco||'',pagamento:'pix',horario:entregaSel==='retirada'?horarioSel:null,nota:nota,nome:nome,fone:fone,email:(ul?ul.email:''),optin:optin,registrado:registrado};
 }
 function limparCarrinhoAposPedido(){
   carrinho = [];
@@ -424,15 +508,23 @@ var html='<div class="pedido-ok">'
 +'<div class="rc-titulo">Seus dados</div>'
 +'<div class="rc-linha"><span>Cliente</span><strong>'+p.nome+'</strong></div>'
 +'<div class="rc-linha"><span>WhatsApp</span><strong>'+p.fone+'</strong></div>'
++(p.email?'<div class="rc-linha"><span>E-mail</span><strong>'+p.email+'</strong></div>':'')
 +'</div>'
 +'<div class="rc-secao">'
 +'<div class="rc-titulo">Itens</div>';
 p.itens.forEach(function(i){
-html+='<div class="rc-linha"><span>'+i.qtd+'x '+i.nome+(i.cor?' <em>('+i.cor+')</em>':'')+'</span><strong>'+fmt(i.preco*i.qtd)+'</strong></div>';
+var promoi=i.cheio&&i.cheio>i.preco;
+var val='<strong>'+(promoi
+?'<span style="text-decoration:line-through;color:#8a94a8;font-weight:600;font-size:12px;margin-right:6px;">'+fmt(i.cheio*i.qtd)+'</span><span style="color:#c0392b;">'+fmt(i.preco*i.qtd)+'</span>'
+:fmt(i.preco*i.qtd))+'</strong>';
+html+='<div class="rc-linha"><span>'+i.qtd+'x '+i.nome+(i.cor?' <em>('+i.cor+')</em>':'')+'</span>'+val+'</div>';
 });
 html+='</div>'
 +'<div class="rc-secao">'
-+'<div class="rc-linha"><span>Subtotal</span><strong>'+fmt(p.subtotal)+'</strong></div>';
++'<div class="rc-linha"><span>Subtotal</span><strong>'+fmt(p.cheio)+'</strong></div>';
+if(p.descPromo>0){
+html+='<div class="rc-linha"><span>Desconto de promoção</span><strong style="color:#0f7a44;">-'+fmt(p.descPromo)+'</strong></div>';
+}
 if(p.cupom){
 html+='<div class="rc-linha"><span>Cupom '+p.cupom.codigo+'</span><strong class="rc-desconto">-'+fmt(p.cupom.desc)+'</strong></div>';
 }
@@ -469,14 +561,16 @@ var p=pedidoAtual;
 var linhas=['Olá! Quero confirmar o pedido #'+p.numero+' na loja da Meu 3D Labs.',''];
 linhas.push('👤 Cliente: '+p.nome);
 linhas.push('📱 WhatsApp: '+p.fone);
+if(p.email){linhas.push('📧 E-mail: '+p.email);}
 linhas.push('');
 linhas.push('Itens:');
 p.itens.forEach(function(i){
-linhas.push('- '+i.qtd+'x '+i.nome+(i.cor?' ('+i.cor+')':'')+' — '+fmt(i.preco*i.qtd));
+linhas.push('- '+i.qtd+'x '+i.nome+(i.cor?' ('+i.cor+')':'')+' — '+fmt(i.preco*i.qtd)+(i.cheio>i.preco?' (promoção, de '+fmt(i.cheio*i.qtd)+')':''));
 });
 linhas.push('');
+linhas.push('Subtotal: '+fmt(p.cheio));
+if(p.descPromo>0){linhas.push('Desconto de promoção: -'+fmt(p.descPromo));}
 if(p.cupom){linhas.push('Cupom '+p.cupom.codigo+': -'+fmt(p.cupom.desc));}
-linhas.push('Subtotal: '+fmt(p.subtotal));
 linhas.push('Total: '+fmt(p.total));
 linhas.push('Entrega: '+entregaTexto(p.entrega));
 if(p.entrega==='retirada'&&p.horario){linhas.push('Horário de retirada: '+(p.horario==='noturno'?'Noturno (19h-22h) + R$ 10,00':(p.horario==='tarde'?'Tarde (14h-17h)':'Manhã (09h-12h)')));}
@@ -490,9 +584,8 @@ linhas.push('Número do pedido: #'+p.numero);
 var msg=linhas.join('\n');
 window.open('https://wa.me/5521966594803?text='+encodeURIComponent(msg),'_blank');
 }
-function abrirModal(){document.getElementById('modalOverlay').classList.add('open');}
-function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');pedidoAtual=null;entregaSel='retirada';horarioSel='manha';cupomAtivo=null;}
-
+function abrirModal(){document.getElementById('modalOverlay').classList.add('open');floatsOcultar();}
+function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');floatsMostrar();pedidoAtual=null;entregaSel='retirada';horarioSel='manha';cupomAtivo=null;}
 /* ================= LOJA DINÂMICA (API) ================= */
 var API_LOJA = 'https://meu3dlabs-backend.onrender.com/api';
 var WHATSAPP_LOJA = '5521966594803';
