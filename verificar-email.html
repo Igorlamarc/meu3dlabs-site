@@ -72,6 +72,22 @@ p{font-size:.9rem;color:#5a6472;line-height:1.6;margin-bottom:6px;}
     appId:"1:429562795244:web:d9d54e2b30941ab8eb81c9"
   };
   var CUPOM='MEUPRIMEIRO3D10';
+  // Avisa o backend que o e-mail foi confirmado — dispara o e-mail de agradecimento com o cupom (1 vez por usuário).
+  // O backend valida de verdade o status no Firebase, então esta chamada é só um gatilho: se falhar por qualquer
+  // motivo, nada quebra — o cupom continua aparecendo na tela igualzinho.
+  function avisarBackendConfirmado(){
+    try{
+      var cu=firebase.auth().currentUser;
+      if(!cu)return;
+      cu.getIdToken().then(function(tok){
+        return fetch('https://meu3dlabs-backend.onrender.com/api/auth/email-confirmado',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({idToken:tok})
+        });
+      }).catch(function(){});
+    }catch(e){}
+  }
   var q=new URLSearchParams(location.search);
   var oobCode=q.get('oobCode');
   var destino='loja.html?verificado=1';
@@ -119,16 +135,19 @@ p{font-size:.9rem;color:#5a6472;line-height:1.6;margin-bottom:6px;}
       return cu?cu.reload():null;
     }).then(function(){
       mostrar('vSucesso');
+      avisarBackendConfirmado();
     }).catch(function(e){
       var cod=(e&&e.code)||'';
       if(cod==='auth/invalid-action-code'||cod==='auth/expired-action-code'){
         mostrar('vJaConfirmado');
+        avisarBackendConfirmado();
       }else{
         mostrar('vErro');
       }
     });
   }else{
     mostrar('vSucesso');
+    avisarBackendConfirmado();
   }
 })();
 </script>
