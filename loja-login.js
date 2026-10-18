@@ -25,7 +25,7 @@
   '.header-inner .m3l-login-btn{margin-left:12px;}' +
   '.m3l-ov{position:fixed;inset:0;background:rgba(15,30,61,.6);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:99998;display:none;align-items:center;justify-content:center;padding:16px;}' +
   '.m3l-ov.open{display:flex;}' +
-  '.m3l-card{position:relative;background:#fff;border-radius:18px;max-width:390px;width:100%;padding:28px 26px 24px;box-shadow:0 24px 60px rgba(15,30,61,.35);max-height:92vh;overflow:auto;box-sizing:border-box;animation:m3lPop .28s cubic-bezier(.2,.9,.3,1.2);}' +
+  '.m3l-card{position:relative;background:#fff;border-radius:18px;max-width:460px;width:100%;padding:28px 26px 24px;box-shadow:0 24px 60px rgba(15,30,61,.35);max-height:92vh;overflow:auto;box-sizing:border-box;animation:m3lPop .28s cubic-bezier(.2,.9,.3,1.2);}' +
   '@keyframes m3lPop{from{opacity:0;transform:translateY(16px) scale(.96);}to{opacity:1;transform:translateY(0) scale(1);}}' +
   '.m3l-card h3{margin:0 0 6px;color:#0f1e3d;font-size:1.2rem;font-weight:800;letter-spacing:-.2px;}' +
   '.m3l-sub{margin:0 0 18px;color:#5a6472;font-size:.86rem;line-height:1.45;}' +
@@ -93,6 +93,10 @@
   '.m3l-pedido-track:hover{background:#fff8f4;}' +
   '.m3l-pedido-tentar{font-size:.78rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#f26522,#e05512);border:none;border-radius:999px;padding:8px 12px;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .15s;}' +
   '.m3l-pedido-tentar:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(242,101,34,.4);}' +
+  '.m3l-busca-pedidos{margin-bottom:10px;}' +
+  '.m3l-busca-pedidos input{margin-bottom:0;padding:10px 12px;font-size:.85rem;}' +
+  '.m3l-vermais{width:100%;box-sizing:border-box;margin-top:2px;padding:10px;border:1.5px dashed #f2b28f;border-radius:10px;background:#fff8f4;color:#f26522;font-weight:800;font-size:.84rem;cursor:pointer;font-family:inherit;transition:background .15s;}' +
+  '.m3l-vermais:hover{background:#ffece0;}' +
   '.m3l-rastrear{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;padding:11px;border-radius:10px;background:#0f1e3d;color:#fff;font-weight:800;font-size:.88rem;text-decoration:none;margin-top:4px;transition:background .15s;}' +
   '.m3l-rastrear:hover{background:#1a2f57;}' +
   '.m3l-vazio{text-align:center;padding:22px 10px;color:#5a6472;font-size:.86rem;line-height:1.5;}' +
@@ -613,18 +617,49 @@
       perr(m[e&&e.code]||'Não foi possível enviar agora — tente novamente.');
     });
   }
-  /* ---------- Meus pedidos (com status real e retomada de pagamento do cartão) ---------- */
+  /* ---------- Meus pedidos (status real, retomada de pagamento, busca e lista paginada) ---------- */
+  var pedidosCache=[],pedBusca='',pedTodos=false;
   function renderPedidos(){
     perr('');
     var lista=[];
     try{lista=JSON.parse(localStorage.getItem('m3l_pedidos')||'[]');}catch(e){lista=[];}
     if(!Array.isArray(lista))lista=[];
     lista=lista.slice().reverse();
+    pedidosCache=lista;
+    pedBusca='';
+    pedTodos=false;
+    $('pPainelPedidos').innerHTML=
+    '<div class="m3l-busca-pedidos"><input type="text" id="m3lBuscaPedido" placeholder="🔍 Buscar por nº do pedido ou item..." autocomplete="off"></div>'
+    +'<div id="m3lListaPedidos"></div>'
+    +'<button type="button" class="m3l-vermais" id="m3lVerMais" style="display:none">Ver mais pedidos ▾</button>'
+    +'<a class="m3l-rastrear" href="acompanhar.html">🔗 Rastrear pedido</a>';
+    $('m3lBuscaPedido').addEventListener('input',function(){
+      pedBusca=this.value.trim();
+      pedTodos=false;
+      pintarListaPedidos();
+    });
+    $('m3lVerMais').onclick=function(){pedTodos=true;pintarListaPedidos();};
+    pintarListaPedidos();
+  }
+  function pintarListaPedidos(){
+    var lista=pedidosCache||[];
+    var termo=(pedBusca||'').toLowerCase();
+    var filtrada=lista;
+    if(termo){
+      filtrada=lista.filter(function(p){
+        var txt='#'+String(p.numero||'')+' ';
+        (p.itens||[]).forEach(function(i){txt+=String(i.nome||i.produto||i.descricao||'')+' ';});
+        return txt.toLowerCase().indexOf(termo)!==-1;
+      });
+    }
+    var visiveis=(pedTodos||termo)?filtrada:filtrada.slice(0,3);
     var html='';
     if(!lista.length){
-      html+='<div class="m3l-vazio"><div class="ico">📦</div>Você ainda não fez pedidos por aqui.<br>Quando gerar o primeiro pedido, ele aparece nesta lista.</div>';
+      html='<div class="m3l-vazio"><div class="ico">📦</div>Você ainda não fez pedidos por aqui.<br>Quando gerar o primeiro pedido, ele aparece nesta lista.</div>';
+    }else if(!visiveis.length){
+      html='<div class="m3l-vazio"><div class="ico">🔎</div>Nenhum pedido encontrado com esse termo.<br>Tente o número (ex.: 000021) ou o nome do item.</div>';
     }else{
-      lista.forEach(function(p){
+      visiveis.forEach(function(p){
         var foto=(p.itens&&p.itens[0]&&p.itens[0].img)?p.itens[0].img:'';
         var qtdItens=0;
         if(p.itens)p.itens.forEach(function(i){qtdItens+=(i.qtd||1);});
@@ -657,8 +692,18 @@
         +'</div>';
       });
     }
-    html+='<a class="m3l-rastrear" href="acompanhar.html">🔗 Rastrear pedido</a>';
-    $('pPainelPedidos').innerHTML=html;
+    var elLista=$('m3lListaPedidos');
+    if(elLista)elLista.innerHTML=html;
+    var vm=$('m3lVerMais');
+    if(vm){
+      var restantes=filtrada.length-visiveis.length;
+      if(restantes>0&&!termo){
+        vm.style.display='block';
+        vm.textContent='Ver mais '+restantes+' pedido'+(restantes>1?'s':'')+' ▾';
+      }else{
+        vm.style.display='none';
+      }
+    }
   }
   /* ---------- Tradução de erros ---------- */
   function traduzErro(e){

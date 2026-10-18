@@ -6,12 +6,14 @@ var API_CARTAO=API_BASE_PAG+'/loja/pagamentos/cartao';
 var API_CARTAO_DIRETO=API_BASE_PAG+'/loja/pagamentos/cartao-direto';
 var API_CHAVE_PUBLICA=API_BASE_PAG+'/loja/pagamentos/chave-publica';
 /* Ambiente limpo para o iframe do Mercado Pago: o efeito de vidro fosco (backdrop-filter)
-   do overlay desenha iframes de forma defeituosa em alguns navegadores — desativado só aqui. */
+   do overlay desenha iframes de forma defeituosa em alguns navegadores — desativado só aqui.
+   Também injeta a animação do balão de ajuda (anti-abandono). */
 (function(){
   var st=document.createElement('style');
   st.id='m3lBrickAmbiente';
   st.textContent=
-  '#modalOverlay{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}';
+  '#modalOverlay{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;}' +
+  '@keyframes m3lBalaoIn{from{opacity:0;transform:translateY(16px) scale(.95);}to{opacity:1;transform:translateY(0) scale(1);}}';
   document.head.appendChild(st);
 })();
 /* ===== PIX ===== */
@@ -78,6 +80,7 @@ function mostrarPix(valor){
    montado DEPOIS que a animação de abertura do modal terminar, senão se mede errado e as
    escritas saem desalinhadas/ sobrepostas. Por isso há a espera de 450ms antes de montar. */
 var pagamentoCartaoAtual=null;
+var pagamentoEmAndamento=false;
 var chavePublicaMP=null;
 var mpInstancia=null;
 var brickCartaoController=null;
@@ -89,18 +92,24 @@ function desmontarBrickCartao(){
     brickCartaoController=null;
   }
 }
-/* Fecha o modal limpando o formulário do Mercado Pago (wrapper sobre o fecharModal do checkout) */
+/* Fecha o modal limpando o formulário do Mercado Pago (wrapper sobre o fecharModal do checkout).
+   Se o cliente fechar NO MEIO do pagamento do cartão (✕ do modal), o balão de ajuda
+   aparece logo depois — com "Voltar para o pagamento" e WhatsApp — para não perder a venda. */
 (function(){
   var fecharOriginal=window.fecharModal;
   if(typeof fecharOriginal==='function'){
     window.fecharModal=function(){
+      var estavaPagando=pagamentoEmAndamento;
       desmontarBrickCartao();
-      return fecharOriginal.apply(this,arguments);
+      var r=fecharOriginal.apply(this,arguments);
+      if(estavaPagando){ setTimeout(mostrarBalaoAjudaPagamento,350); }
+      return r;
     };
   }
 })();
 function iniciarPagamentoCartao(p){
   pagamentoCartaoAtual=p;
+  pagamentoEmAndamento=true;
   try{sessionStorage.setItem('m3l_pedido_cartao',JSON.stringify({numero:p.numero,total:p.total,registrado:true,itens:p.itens||[],forma:'cartao',pendente:false}));}catch(e){}
   document.getElementById('modalTitulo').textContent='Pagamento com cartão';
   var mb=document.getElementById('modalBody');
@@ -213,6 +222,7 @@ function processarPagamentoDireto(p,cardFormData){
 }
 function pagamentoAprovado(p,payId){
   desmontarBrickCartao();
+  pagamentoEmAndamento=false;
   try{
     var c=localStorage.getItem('m3l_cupom_pendente');
     if(c){ marcarCupomUsado(c); localStorage.removeItem('m3l_cupom_pendente'); }
@@ -231,6 +241,7 @@ function pagamentoAprovado(p,payId){
 }
 function pagamentoPendente(msg){
   desmontarBrickCartao();
+  pagamentoEmAndamento=false;
   var p=pagamentoCartaoAtual||{};
   salvarMeuPedido({numero:p.numero,total:p.total,registrado:true,forma:'cartao',pendente:true,itens:p.itens||[]});
   var mb=document.getElementById('modalBody');
@@ -346,6 +357,43 @@ function mostrarConfirmacaoCartao(pid,dados){
 }
 function waAposCartao(pid){
   var msg='Olá! Acabei de pagar'+(pid?(' o pedido #'+pid):'')+' no cartão. Podemos combinar a entrega?';
+  window.open('https://wa.me/'+WHATSAPP_LOJA+'?text='+encodeURIComponent(msg),'_blank');
+}
+/* ===== Balão de ajuda ao sair do pagamento (anti-abandono de venda) ===== */
+/* Aparece quando o cliente fecha o modal no meio do pagamento do cartão: oferece
+   voltar para o pagamento em 1 clique ou falar com o time no WhatsApp. */
+function mostrarBalaoAjudaPagamento(){
+  if(document.getElementById('m3lBalaoAjuda'))return;
+  var p=pagamentoCartaoAtual||{};
+  var ov=document.createElement('div');
+  ov.id='m3lBalaoAjuda';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(15,30,61,.45);z-index:99997;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Inter,Arial,sans-serif;';
+  ov.innerHTML=
+    '<div style="background:#fff;border-radius:16px;max-width:370px;width:100%;padding:26px 22px 20px;box-shadow:0 20px 60px rgba(15,30,61,.35);text-align:center;position:relative;animation:m3lBalaoIn .3s ease;">'
+    +'<button type="button" aria-label="Fechar" onclick="fecharBalaoAjuda()" style="position:absolute;top:10px;right:12px;background:none;border:none;font-size:1.4rem;color:#9aa3b2;cursor:pointer;line-height:1;">×</button>'
+    +'<div style="width:54px;height:54px;border-radius:50%;background:#fff8f4;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px;">🤝</div>'
+    +'<h3 style="margin:0 0 8px;color:#0f1e3d;font-size:1.08rem;font-weight:800;">Precisa de ajuda?</h3>'
+    +'<p style="font-size:13px;color:#4a5161;line-height:1.55;margin:0 0 4px;">Seu pedido <b>#'+(p.numero||'')+'</b> está salvo e esperando só o pagamento.</p>'
+    +'<p style="font-size:13px;color:#4a5161;line-height:1.55;margin:0 0 18px;">Ficou com alguma dúvida para finalizar? Chama nosso time — a gente responde rapidinho e te ajuda a concluir. 💛</p>'
+    +'<button type="button" onclick="voltarPagamentoCartao()" style="width:100%;box-sizing:border-box;background:linear-gradient(135deg,#f26522,#e05512);color:#fff;border:none;padding:12px 16px;border-radius:10px;font-weight:800;font-size:.92rem;cursor:pointer;font-family:inherit;margin-bottom:8px;box-shadow:0 4px 12px rgba(242,101,34,.35);">💳 Voltar para o pagamento</button>'
+    +'<button type="button" onclick="waAjudaPagamento()" style="width:100%;box-sizing:border-box;background:#25d366;color:#fff;border:none;padding:12px 16px;border-radius:10px;font-weight:800;font-size:.92rem;cursor:pointer;font-family:inherit;">💬 Falar com nosso time no WhatsApp</button>'
+    +'</div>';
+  ov.addEventListener('click',function(ev){ if(ev.target===ov)fecharBalaoAjuda(); });
+  document.body.appendChild(ov);
+}
+function fecharBalaoAjuda(){
+  var b=document.getElementById('m3lBalaoAjuda');
+  if(b)b.remove();
+}
+function voltarPagamentoCartao(){
+  fecharBalaoAjuda();
+  abrirModal();
+  if(pagamentoCartaoAtual){ iniciarPagamentoCartao(pagamentoCartaoAtual); }
+}
+function waAjudaPagamento(){
+  var p=pagamentoCartaoAtual||{};
+  var msg='Olá! Estou com dúvida para finalizar o pagamento do meu pedido #'+(p.numero||'')+'. Podem me ajudar?';
+  fecharBalaoAjuda();
   window.open('https://wa.me/'+WHATSAPP_LOJA+'?text='+encodeURIComponent(msg),'_blank');
 }
 /* ===== Retorno do Checkout Pro (fallback): banner de status quando o cliente volta do Mercado Pago ===== */

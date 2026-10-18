@@ -88,10 +88,8 @@ section{padding:40px 0;}
 .ajuda-card p{font-size:14px;color:var(--gray);line-height:1.6;margin-bottom:22px;}
 footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
 @media(max-width:620px){.busca-linha{flex-direction:column;}.busca-linha .btn{width:100%;}.status-box{padding:22px;}.tl-dot{width:36px;height:36px;font-size:13px;}.tl-step::before{left:17px;}}
-
 .btn-copiar{margin-left:10px;display:inline-flex;align-items:center;gap:5px;background:var(--light);border:1px solid var(--border);color:var(--navy);font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer;transition:.2s;vertical-align:middle;}
 .btn-copiar:hover{border-color:var(--orange);color:var(--orange);}
-
 /* ===== RODAPÉ PADRÃO ===== */
 .site-footer{background:#0a1428;color:rgba(255,255,255,.75);padding:40px 20px 24px;}
 .site-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;}
@@ -99,19 +97,15 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 .site-footer p,.site-footer a{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;display:block;}
 .site-footer a:hover{color:#ff8a3d;}
 .site-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px;text-align:center;font-size:12px;color:rgba(255,255,255,.45);}
-
 /* ===== Anti-vazamento mobile ===== */
 html,body{overflow-x:hidden;max-width:100%;}
-img,video,svg,iframe{max-width:100%;height:auto;}
-
+img,video{max-width:100%;height:auto;}svg,iframe{max-width:100%;}
 </style>
-
 <meta property="og:type" content="website">
 <meta property="og:title" content="Meu 3D Labs | Acompanhar Pedido">
 <meta property="og:description" content="Impressão 3D personalizada em Nilópolis/RJ. Peças exclusivas, assistência Creality e consultoria.">
 <meta property="og:image" content="https://meu3dlabs.com.br/img/logo/logo.png">
 <meta property="og:site_name" content="Meu 3D Labs">
-
 </head>
 <body>
 <header>
@@ -123,14 +117,12 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <a class="back-link" href="index.html">← Voltar ao site</a>
 </div>
 </header>
-
 <section class="hero">
 <div class="container">
 <h1>Acompanhe seu <span>pedido</span></h1>
 <p>Informe o número do pedido e veja em qual etapa ele está, da loja ou da encomenda sob medida.</p>
 </div>
 </section>
-
 <section style="padding-top:0;">
 <div class="container-narrow">
 <div class="busca-card">
@@ -142,34 +134,26 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 </div>
 <div class="busca-msg" id="buscaMsg"></div>
 </div>
-
 <div class="status-box" id="statusBox">
-
 <div class="status-top">
 <div class="status-num"><span class="hash">#</span><span id="sNumero">M3D-000000</span><button class="btn-copiar" onclick="copiarNumero()" title="Copiar número do pedido">📋 Copiar</button><small id="sCliente" style="display:none;"></small></div>
 <div class="status-pill" id="statusPill">Consultando…</div>
 </div>
-
 <h4 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:18px;">Status do pedido</h4>
 <div class="timeline" id="timeline"></div>
-
 <div class="resumo" id="detalhesBox">
 <h4>Detalhes do pedido</h4>
 <div id="detalhesItens"></div>
 </div>
-
 <div class="acoes">
 <a class="btn btn-wa" id="btnZap" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20tirar%20uma%20d%C3%BAvida%20sobre%20o%20meu%20pedido." target="_blank">Falar no WhatsApp</a>
 </div>
-
 <div class="aviso">
 <strong>Status desatualizado?</strong> As atualizações são feitas pela equipe em cada etapa. Se tiver dúvidas, chame no WhatsApp informando o número do pedido.
 </div>
-
 </div>
 </div>
 </section>
-
 <section class="ajuda">
 <div class="container-narrow">
 <div class="ajuda-card">
@@ -179,7 +163,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 </div>
 </div>
 </section>
-
 <footer>
 <div class="container">
 <div class="footer-bottom">
@@ -193,36 +176,31 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 </div>
 </div>
 </footer>
-
 <script>
 var API_LOJA='https://meu3dlabs-backend.onrender.com/api/loja/pedidos/';
 var API_ORC='https://meu3dlabs-backend.onrender.com/api/orcamentos/pedido/';
-
 function normalizar(v){return String(v||'').toUpperCase().replace(/\s+/g,'').replace(/[^A-Z0-9\-]/g,'');}
-
 function fmt(v){
 var n=parseFloat(v);
 if(isNaN(n))return '—';
 return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 }
-
 function fmtData(v){
 if(!v)return '';
 var d=new Date(v);
 if(isNaN(d.getTime()))return String(v);
 return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
-
-/* Status da loja (pronta entrega): feito, pago, saiu, entregue */
+/* Status da loja (pronta entrega): Pedido feito, Pago (Pix/Cartão), Em embalagem, Saiu, Entregue */
 function mapearLoja(v){
 var s=String(v||'').toLowerCase().trim();
 if(s==='cancelado'||s==='cancelada')return -1;
-if(['entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 3;
-if(['saiu','enviado','saiu_para_entrega','em_transporte'].indexOf(s)>-1)return 2;
-if(['pago','pagamento_confirmado','confirmado','aprovado'].indexOf(s)>-1)return 1;
+if(['entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 4;
+if(['saiu','enviado','saiu_para_entrega','em_transporte','saiu para entrega'].indexOf(s)>-1)return 3;
+if(['embalagem','em processo de embalagem','em_embalagem','embalando'].indexOf(s)>-1)return 2;
+if(['pago','pago (cartão)','pago (cartao)','pagamento_confirmado','confirmado','aprovado'].indexOf(s)>-1)return 1;
 return 0;
 }
-
 /* Status da encomenda (orcamento): recebido, orcamento, aprovado, producao, pronto, entregue */
 function mapearOrc(v){
 var s=String(v||'').toLowerCase().trim();
@@ -234,7 +212,6 @@ if(['aprovado','aprovacao','confirmado','em_andamento','aprovada','aprovação']
 if(['orcamento','orcado','orcamento_enviado','aguardando_aprovacao','orçamento','orçado'].indexOf(s)>-1)return 1;
 return 0;
 }
-
 function etiquetaEntrega(e){
 var s=String(e||'').toLowerCase();
 if(s.indexOf('uber')>-1)return 'Entrega por aplicativo';
@@ -242,13 +219,13 @@ if(s.indexOf('correio')>-1)return 'Envio pelos Correios';
 if(s.indexOf('retirada')>-1)return 'Retirada na loja';
 return s||'Retirada na loja';
 }
-
 function montarTimeline(tipo,status){
 var passos;
 if(tipo==='loja'){
 passos=[
 {t:'Pedido feito',d:'Recebemos seu pedido e estamos processando.'},
-{t:'Pago',d:'Pagamento confirmado, preparando sua peça.'},
+{t:'Pago',d:'Pagamento confirmado (Pix ou cartão).'},
+{t:'Em embalagem',d:'Sua peça está sendo preparada para envio.'},
 {t:'Saiu para entrega',d:'Seu pedido está a caminho de você.'},
 {t:'Entregue',d:'Pedido entregue. Obrigado pela compra!'}
 ];
@@ -272,24 +249,20 @@ html+='<div class="tl-step '+cls+'" data-step="'+idx+'">'
 });
 document.getElementById('timeline').innerHTML=html;
 }
-
 function buscarPedido(){
 var input=document.getElementById('inputPedido');
 var msg=document.getElementById('buscaMsg');
 var alvo=normalizar(input.value);
 msg.className='busca-msg';
 msg.textContent='';
-
 if(!alvo){
 msg.className='busca-msg erro';
 msg.textContent='Digite o número do pedido (ex: M3D-000001).';
 return;
 }
-
 document.getElementById('statusBox').classList.remove('show');
 msg.className='busca-msg carregando';
 msg.textContent='Consultando seu pedido…';
-
 /* Tenta a loja (M3D-XXXXXX); se não achar, tenta a encomenda (M3D-AAAA-NNN) */
 fetch(API_LOJA+encodeURIComponent(alvo))
 .then(function(r){
@@ -320,20 +293,17 @@ msg.className='busca-msg erro';
 msg.textContent='Não foi possível consultar agora. Tente novamente em instantes ou chame no WhatsApp.';
 });
 }
-
 function exibirPedido(dados,tipo,alvo){
 var numero=dados.pedido_id||dados.numero||dados.id||alvo;
 var nomeCli=dados.nome_cliente||dados.cliente||dados.nome||'';
 var sRaw=String(dados.status||dados.estado||dados.etapa||'').toLowerCase().trim();
 var cancelado=(sRaw==='cancelado'||sRaw==='cancelada');
 var status=cancelado?-1:((tipo==='loja')?mapearLoja(dados.status):mapearOrc(dados.status||dados.estado||dados.etapa));
-var nomes=(tipo==='loja')?['Pedido feito','Pago','Saiu para entrega','Entregue']:['Recebido','Orçamento','Aprovado','Em produção','Pronto','Entregue'];
-
+var nomes=(tipo==='loja')?['Pedido feito','Pago','Em embalagem','Saiu para entrega','Entregue']:['Recebido','Orçamento','Aprovado','Em produção','Pronto','Entregue'];
 document.getElementById('sNumero').textContent=numero;
 var elCli=document.getElementById('sCliente');
 if(nomeCli){elCli.textContent='Cliente: '+nomeCli;elCli.style.display='';}
 else{elCli.textContent='';elCli.style.display='none';}
-
 var pill=document.getElementById('statusPill');
 if(cancelado){
 pill.textContent='Cancelado';
@@ -346,10 +316,8 @@ pill.classList.remove('cancelado');
 pill.textContent=nomes[status]||nomes[0];
 montarTimeline(tipo,status);
 }
-
 var detBox=document.getElementById('detalhesBox');
 var html='';
-
 if(tipo==='loja'){
 var itens=dados.itens||[];
 var subtotal=parseFloat(dados.subtotal)||0;
@@ -379,21 +347,17 @@ html+='<div class="resumo-item"><span class="ri-nome">Tipo de peça</span><span 
 if(dados.created_at||dados.data){
 html+='<div class="resumo-item"><span class="ri-nome">Pedido feito em</span><span class="ri-valor">'+fmtData(dados.created_at||dados.data)+'</span></div>';
 }
-
 if(html){
 document.getElementById('detalhesItens').innerHTML=html;
 detBox.classList.add('show');
 }else{
 detBox.classList.remove('show');
 }
-
 var btnZap=document.getElementById('btnZap');
 btnZap.href='https://wa.me/5521966594803?text='+encodeURIComponent('Olá! Quero acompanhar o pedido #'+numero);
 btnZap.textContent='Falar no WhatsApp · Pedido #'+numero;
-
 document.getElementById('statusBox').classList.add('show');
 }
-
 function copiarNumero(){
   var n=document.getElementById('sNumero').textContent.trim();
   if(!n)return;
@@ -402,18 +366,17 @@ function copiarNumero(){
   else{fbCopia(n);ok();}
 }
 function fbCopia(t){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
-
-/* Preenchimento automático via ?numero= (botão da loja) */
+/* Preenchimento automático via URL (botão "Rastrear" do painel Minha conta ou links da loja).
+   Aceita os nomes de parâmetro numero, pedido, codigo e order — o que chegar, preenche e busca. */
 (function(){
 var params=new URLSearchParams(window.location.search);
-var num=params.get('numero');
+var num=params.get('numero')||params.get('pedido')||params.get('codigo')||params.get('order');
 if(num){
-document.getElementById('inputPedido').value=num;
+document.getElementById('inputPedido').value=String(num).replace(/#/g,'').trim();
 buscarPedido();
 }
 })();
 </script>
-
 <footer class="site-footer">
   <div class="footer-inner">
     <div>
@@ -435,6 +398,5 @@ buscarPedido();
   </div>
   <div class="footer-bottom">© 2026 Meu 3D Labs · Todos os direitos reservados</div>
 </footer>
-
 </body>
 </html>
