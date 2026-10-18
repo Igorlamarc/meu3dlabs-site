@@ -146,7 +146,6 @@ body.dark .td-desc .item-nome{color:#e6ecf7;}
 .urg-verde{background:#e6f7ee;color:#1a7f43;}
 .urg-amarelo{background:#fef3c7;color:#92600a;}
 .urg-vermelho{background:#fde8e8;color:#b3202e;}
-
 tr.tr-atrasado{box-shadow:inset 3px 0 0 var(--red);}
 tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
 .status-pill{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;}
@@ -161,6 +160,9 @@ tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
 .status-feito{background:#e7f1ff;color:#1f6feb;}
 .status-pago{background:#fef3c7;color:#92600a;}
 .status-saiu{background:#f3e8ff;color:#6b21a8;}
+.status-aguardando{background:#fff1e6;color:#b3541e;}
+.status-pagocartao{background:#e6f7ee;color:#1a7f43;border:1.5px solid #25a858;}
+.status-embalagem{background:#e0f7fa;color:#00695c;border:1.5px solid #26a69a;}
 .status-select{padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;background:var(--white);color:var(--text);cursor:pointer;}
 .status-select:focus{outline:none;border-color:var(--orange);}
 .del-btn{display:inline-flex;align-items:center;gap:5px;margin-top:6px;background:#e74c3c;color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;transition:.2s;cursor:pointer;border:none;}
@@ -387,6 +389,11 @@ body.dark .prazo-modal .pm-item strong{color:#e6ecf7;}
 </div>
 <script>
 var API_URL = 'https://meu3dlabs-backend.onrender.com/api';
+/* ⭐ LINK DE AVALIAÇÃO NO GOOGLE — cole aqui o link de avaliação da loja no Google.
+   Ele aparece no final da mensagem de "Entregue" (loja e encomendas).
+   Como pegar: no Google Business Profile da Meu 3D Labs → "Pedir avaliações" → copia o link,
+   ou no Google Maps clique com o botão direito no botão "Escrever avaliação" → Copiar link. */
+var LINK_AVALIACAO_GOOGLE = 'https://g.page/r/CcGSg0AxWsPnEAE/review';
 var orcamentos = [];
 var lojaPedidos = [];
 var token = sessionStorage.getItem('m3d_admin_token');
@@ -406,7 +413,6 @@ function buscarImgProduto(nome) {
   }
   return '';
 }
-
 /* ===== MODO ESCURO ===== */
 function toggleDark() {
   document.body.classList.toggle('dark');
@@ -514,7 +520,6 @@ function carregarProdutosLoja() {
     .catch(function() {});
 }
 carregarProdutosLoja();
-
 function carregarPedidosSilencioso() {
   var h1 = { 'Authorization': 'Bearer ' + token };
   Promise.all([
@@ -553,7 +558,6 @@ function classePrazo(p) {
   if (d <= 2) return 'amarelo';
   return 'verde';
 }
-
 function badgeUrgencia(p) {
   var u = String(p.urgencia || '').toLowerCase();
   if (!u || u === 'null') return '';
@@ -561,8 +565,6 @@ function badgeUrgencia(p) {
   if (u.indexOf('moder') !== -1 || u.indexOf('média') !== -1 || u.indexOf('media') !== -1) return '<div><span class="urg-badge urg-amarelo">● Urgência moderada</span></div>';
   return '<div><span class="urg-badge urg-verde">● Sem urgência</span></div>';
 }
-
-
 function badgePrazo(p) {
   var classe = classePrazo(p);
   if (!classe) return '<span class="prazo-none">—</span>';
@@ -574,7 +576,6 @@ function badgePrazo(p) {
   if (classe === 'amarelo') return '<span class="prazo-badge prazo-amarelo"><span class="p-dot"></span>Faltam ' + d + ' dia' + (d > 1 ? 's' : '') + '</span>';
   return '<span class="prazo-badge prazo-verde"><span class="p-dot"></span>Faltam ' + d + ' dias</span>';
 }
-
 function verificarPrazosCriticos() {
   var criticos = orcamentos.filter(function(p) {
     var c = classePrazo(p);
@@ -743,16 +744,32 @@ function renderizarStats() {
   if (tipoAtivo === 'loja') {
     chips.classList.remove('show');
     var total = lojaPedidos.length;
+    /* Aguardando pagamento: status novos do checkout (Pix e Cartão) */
+    var aguardando = lojaPedidos.filter(function(p) {
+      return String(p.status || 'feito').indexOf('Aguardando') === 0;
+    }).length;
     var feitos = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'feito'; }).length;
-    var pagos = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'pago'; }).length;
+    /* Pagos: Pago no Pix + Pago no cartão */
+    var pagos = lojaPedidos.filter(function(p) {
+      var s = p.status || 'feito';
+      return s === 'pago' || s === 'Pago (Cartão)';
+    }).length;
+    var embalagens = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'embalagem'; }).length;
     var saidas = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'saiu'; }).length;
     var entregues = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'entregue'; }).length;
-    var faturamento = lojaPedidos.filter(function(p){return p.status!=='cancelado'&&p.status!=='feito';}).reduce(function(a,p){return a+parseFloat(p.total||p.subtotal||0);},0);
+    /* Faturamento: só pagamentos confirmados (Pago no Pix, Pago no cartão, Em embalagem, Saiu, Entregue) */
+    var confirmados = lojaPedidos.filter(function(p) {
+      var s = p.status || 'feito';
+      return s === 'pago' || s === 'Pago (Cartão)' || s === 'embalagem' || s === 'saiu' || s === 'entregue';
+    });
+    var faturamento = confirmados.reduce(function(a, p) { return a + parseFloat(p.total || p.subtotal || 0); }, 0);
     grid.innerHTML =
       '<div class="stat-card orange"><div class="stat-ico">📦</div><div class="stat-label">Total na loja</div><div class="stat-value">' + total + '</div></div>' +
-      '<div class="stat-card green"><div class="stat-ico">💰</div><div class="stat-label">Faturamento</div><div class="stat-value" style="font-size:20px;">' + fmtMoeda(faturamento) + '</div><div class="stat-detail">Pedidos ativos</div></div>' +
-      '<div class="stat-card blue"><div class="stat-ico">📝</div><div class="stat-label">Pedido feito</div><div class="stat-value">' + feitos + '</div><div class="stat-detail">Aguardando pagamento</div></div>' +
-      '<div class="stat-card yellow"><div class="stat-ico">💳</div><div class="stat-label">Pago</div><div class="stat-value">' + pagos + '</div><div class="stat-detail">Em preparação</div></div>' +
+      '<div class="stat-card green"><div class="stat-ico">💰</div><div class="stat-label">Faturamento</div><div class="stat-value" style="font-size:20px;">' + fmtMoeda(faturamento) + '</div><div class="stat-detail">Pagamentos confirmados</div></div>' +
+      '<div class="stat-card yellow"><div class="stat-ico">⏳</div><div class="stat-label">Aguardando pagamento</div><div class="stat-value">' + aguardando + '</div><div class="stat-detail">Pix + Cartão pendentes</div></div>' +
+      '<div class="stat-card blue"><div class="stat-ico">📝</div><div class="stat-label">Pedido feito</div><div class="stat-value">' + feitos + '</div><div class="stat-detail">Aguardando confirmação</div></div>' +
+      '<div class="stat-card yellow"><div class="stat-ico">💰</div><div class="stat-label">Pagos</div><div class="stat-value">' + pagos + '</div><div class="stat-detail">Pix + Cartão</div></div>' +
+      '<div class="stat-card purple"><div class="stat-ico">📦</div><div class="stat-label">Em embalagem</div><div class="stat-value">' + embalagens + '</div><div class="stat-detail">Preparando o envio</div></div>' +
       '<div class="stat-card purple"><div class="stat-ico">🚚</div><div class="stat-label">Saiu</div><div class="stat-value">' + saidas + '</div></div>' +
       '<div class="stat-card green"><div class="stat-ico">✅</div><div class="stat-label">Entregues</div><div class="stat-value">' + entregues + '</div></div>';
   } else {
@@ -893,7 +910,9 @@ function aplicarFiltros() {
     var ehNovo = novosIds.indexOf(String(p.id)) !== -1;
     var waLink = montarLinkWhatsApp(p.whatsapp || p.email);
     var waBtn = waLink ? '<a class="wa-link" href="' + waLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>WhatsApp</a>' : '';
-    var delBtn = status === 'cancelado' || status === 'entregue'
+    /* Excluir liberado também para abandonos de pagamento (Aguardando...) */
+    var podeExcluir = status === 'cancelado' || status === 'entregue' || String(status).indexOf('Aguardando') === 0;
+    var delBtn = podeExcluir
       ? '<div style="margin-top:6px;"><button class="del-btn" data-id="' + p.id + '" onclick="excluirPedido(' + p.id + ')"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Excluir</button></div>'
       : '';
     var detalhes = tipoAtivo === 'loja' ? montarItensLoja(p) : montarDescricao(p.descricao_peca || '');
@@ -922,7 +941,6 @@ if (tipoAtivo === 'loja' && (p.itens || []).length) {
   if (typeof verHtml === 'string') { verHtml = imgDestaque + verHtml; } else { verHtml = { html: imgDestaque + verHtml.html, txt: verHtml.txt }; }
 }
 var verBtn = montarBotaoVerMais(verTitulo, verMeta, verTxt, verHtml, waLink);
-
     var classePrazoLinha = tipoAtivo === 'orcamentos' ? classePrazo(p) : null;
     var classeTr = classePrazoLinha === 'atrasado' ? ' class="tr-atrasado' + (ehNovo ? ' row-novo' : '') + '"' : (classePrazoLinha === 'hoje' ? ' class="tr-hoje' + (ehNovo ? ' row-novo' : '') + '"' : (ehNovo ? ' class="row-novo"' : ''));
     var celulaPrazo = tipoAtivo === 'orcamentos'
@@ -939,7 +957,7 @@ var verBtn = montarBotaoVerMais(verTitulo, verMeta, verTxt, verHtml, waLink);
       '<td class="td-date">' + data + '</td>' +
       celulaPrazo +
       '<td>' +
-        '<span class="status-pill status-' + status + '" id="pill-' + p.id + '">' + statusLabel + '</span>' +
+        '<span class="status-pill status-' + classeStatusPill(status) + '" id="pill-' + p.id + '">' + statusLabel + '</span>' +
         '<div style="margin-top:6px;">' +
           '<select class="status-select" onchange="mudarStatus(' + p.id + ', this.value)">' +
             opcoesStatus(status) +
@@ -1027,7 +1045,6 @@ function abrirRelatorioIA(){
             var tipoR = String(p.entrega || '').toLowerCase();
       if (tipoR.indexOf('correio') !== -1) linhas.push('Endereço: ' + (p.endereco || 'Pendente'));
       if (tipoR.indexOf('retirada') !== -1 || tipoR.indexOf('uber') !== -1) linhas.push('Horário: ' + (p.horario || 'Pendente'));
-
       linhas.push('Status: ' + traduzirStatus(p.status || 'feito'));
       linhas.push('Recebido em: ' + formatarData(p.created_at));
       linhas.push('');
@@ -1186,14 +1203,27 @@ document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { fech
 function statusPadrao() {
   return tipoAtivo === 'loja' ? 'feito' : 'novo';
 }
+/* Classe CSS segura da pill (status novos têm espaços e parênteses) */
+function classeStatusPill(s) {
+  if (!s) s = statusPadrao();
+  if (s === 'Pago (Cartão)') return 'pagocartao';
+  if (String(s).indexOf('Aguardando') === 0) return 'aguardando';
+  return s;
+}
 function opcoesTodas() {
   if (tipoAtivo === 'loja') {
+    /* Fluxo do pedido: Pedido feito primeiro, depois aguardando pagamento (Pix/Cartão),
+       depois pago (Pix/Cartão), embalagem, saiu, entregue. Cancelado fica no fim (operacional). */
     return [
-      ['feito', 'Pedido feito'],
-      ['pago', 'Pago'],
-      ['saiu', 'Saiu para entrega'],
-      ['entregue', 'Entregue'],
-      ['cancelado', 'Cancelado']
+      ['feito', '📝 Pedido feito'],
+      ['Aguardando pagamento (Pix)', '⏳ Aguardando pagamento (Pix)'],
+      ['Aguardando pagamento (Cartão)', '⏳ Aguardando pagamento (Cartão)'],
+      ['pago', '💰 Pago no Pix'],
+      ['Pago (Cartão)', '✅ Pago no cartão'],
+      ['embalagem', '📦 Em processo de embalagem'],
+      ['saiu', '🚚 Saiu para entrega'],
+      ['entregue', '🔵 Entregue'],
+      ['cancelado', '✕ Cancelado']
     ];
   }
   return [
@@ -1214,7 +1244,17 @@ function opcoesStatus(atual) {
 }
 function traduzirStatus(s) {
   var map = tipoAtivo === 'loja'
-    ? { feito: 'Pedido feito', pago: 'Pago', saiu: 'Saiu para entrega', entregue: '🔵 Entregue', cancelado: '✕ Cancelado' }
+    ? {
+        'Aguardando pagamento (Pix)': '⏳ Aguardando (Pix)',
+        'Aguardando pagamento (Cartão)': '⏳ Aguardando (Cartão)',
+        feito: '📝 Pedido feito',
+        pago: '💰 Pago no Pix',
+        'Pago (Cartão)': '✅ Pago no cartão',
+        embalagem: '📦 Em embalagem',
+        saiu: '🚚 Saiu para entrega',
+        entregue: '🔵 Entregue',
+        cancelado: '✕ Cancelado'
+      }
     : {
         novo: 'Novo',
         'em-analise': 'Em análise',
@@ -1304,13 +1344,29 @@ function mudarStatus(id, novoStatus) {
   });
 }
 var mensagemAtual = '';
+/* ⭐ Mensagem de pedido Entregue: agradecimento + link de avaliação no Google (se configurado) */
+function montarMensagemEntregue(primeiroNome, id) {
+  var msg = 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi entregue 🎉\n'
+    + 'Obrigado demais pela confiança — foi um prazer produzir sua peça! ⭐\n';
+  if (LINK_AVALIACAO_GOOGLE) {
+    msg += 'Se puder, deixe sua avaliação no Google — ajuda demais a nossa loja:\n' + LINK_AVALIACAO_GOOGLE + '\n';
+  }
+  msg += 'Se precisar de algo, ou quiser encomendar uma nova peça, é só chamar! 💛';
+  return msg;
+}
 function montarMensagemStatus(nome, id, status) {
   var primeiroNome = (nome || '').trim().split(' ')[0] || 'Cliente';
+  var msgEntregue = montarMensagemEntregue(primeiroNome, id);
   if (tipoAtivo === 'loja') {
     var mapLoja = {
-      pago: 'Olá, *' + primeiroNome + '*! Recebemos a confirmação do pagamento do pedido *' + id + '* 🎉\nAgora é só aguardar, vamos preparar tudo com capricho. Qualquer dúvida, é só chamar!',
+      feito: 'Olá, *' + primeiroNome + '*! Recebemos seu pedido *' + id + '* ✅\nVamos conferir tudo e combinar com você por aqui o pagamento e a entrega. Qualquer dúvida, chama!',
+      'Aguardando pagamento (Pix)': 'Olá, *' + primeiroNome + '*! Recebemos seu pedido *' + id + '* ✅\nPara concluir, realize o pagamento via PIX (5% de desconto) e envie o comprovante aqui junto com o número do pedido. Qualquer dúvida, chama!',
+      'Aguardando pagamento (Cartão)': 'Olá, *' + primeiroNome + '*! Recebemos seu pedido *' + id + '* ✅\nFalta concluir o pagamento no cartão pelo link do Mercado Pago. Você pode retomar em Minha conta > Meus pedidos, ou pedir o link aqui.',
+      pago: 'Olá, *' + primeiroNome + '*! Recebemos a confirmação do pagamento do pedido *' + id + '* via PIX 🎉\nAgora é só aguardar, vamos preparar tudo com capricho. Qualquer dúvida, é só chamar!',
+      'Pago (Cartão)': 'Olá, *' + primeiroNome + '*! Confirmamos o pagamento do pedido *' + id + '* no cartão 🎉\nAgora é só aguardar, vamos preparar tudo com capricho. Qualquer dúvida, é só chamar!',
+      embalagem: 'Olá, *' + primeiroNome + '*! Boa notícia: seu pedido *' + id + '* já está em processo de embalagem 📦\nEm breve ele sai para entrega. Qualquer dúvida, é só chamar!',
       saiu: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* saiu para entrega! 🚚\nFique de olho: em breve ele chega até você.',
-      entregue: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi entregue. Obrigado pela preferência! ⭐\nSe precisar de algo, ou quiser encomendar uma nova peça, é só chamar!',
+      entregue: msgEntregue,
       cancelado: 'Olá, *' + primeiroNome + '*! Uma atualização sobre o pedido *' + id + '*: ele foi cancelado.\nSe quiser refazer o pedido, ajustar algo ou tirar qualquer dúvida, é só nos chamar — vamos adorar te atender! 💛'
     };
     return mapLoja[status] || '';
@@ -1321,7 +1377,7 @@ function montarMensagemStatus(nome, id, status) {
     aprovado: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi aprovado. 🎉\nEm breve iniciamos a produção. Qualquer dúvida, é só chamar!',
     producao: 'Olá, *' + primeiroNome + '*! Boa notícia: seu pedido *' + id + '* entrou em produção! 🖨️\nSe surgir qualquer dúvida, é só chamar a gente por aqui.',
     pronto: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* está pronto para retirada ou envio! 🎉\nÉ só combinar com a gente o melhor jeito de receber. 😉',
-    entregue: 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi entregue. Obrigado pela preferência! ⭐\nSe precisar de algo, ou quiser encomendar uma nova peça, é só chamar!',
+    entregue: msgEntregue,
     cancelado: 'Olá, *' + primeiroNome + '*! Uma atualização sobre o pedido *' + id + '*: ele foi cancelado.\nSe quiser refazer o pedido, ajustar algo ou tirar qualquer dúvida, é só nos chamar — vamos adorar te atender! 💛'
   };
   return map[status] || '';

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Loja — Peças 3D Prontas para Entrega | Meu 3D Labs</title>
-<meta name="description" content="Compre peças 3D prontas para entrega: chaveiros, itens religiosos, decoração e miniaturas. Carrinho, cupom de desconto, pagamento via Pix, retirada em Nilópolis/RJ ou envio por Uber Flash.">
+<meta name="description" content="Compre peças 3D prontas para entrega: chaveiros, itens religiosos, decoração e miniaturas. Carrinho, cupom de desconto, pagamento via Pix ou cartão de crédito, retirada em Nilópolis/RJ ou envio por Uber Flash.">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Loja — Peças 3D Prontas para Entrega | Meu 3D Labs">
@@ -62,9 +62,9 @@
 </header>
 <div class="container benefits-bar">
 <div class="benefit-chip"><span class="benefit-icon">🚚</span><span>Entrega para todo o Brasil</span></div>
-<div class="benefit-chip"><span class="benefit-icon">💲</span><span>Pagamento via Pix · 5% de desconto</span></div>
+<div class="benefit-chip"><span class="benefit-icon">💠</span><span>Pix com 5% OFF</span></div>
+<div class="benefit-chip"><span class="benefit-icon">💳</span><span>Cartão em até 12x <small style="font-size:.72em;color:#8a94a8;font-weight:500;">(juros da operadora)</small></span></div>
 <div class="benefit-chip"><span class="benefit-icon">📦</span><span>Envio rápido no estado do RJ</span></div>
-<div class="benefit-chip"><span class="benefit-icon">⚡</span><span>Peças prontas para entrega</span></div>
 </div>
 <div class="bnr-carousel" id="bnrCarousel">
 <div class="bnr-track" id="bnrTrack">
@@ -262,6 +262,12 @@ Carrinho
 <script src="loja-base.js"></script>
 <script src="loja-carrinho.js"></script>
 <script src="loja-vitrine.js"></script>
+<!-- Checkout dividido em arquivos — a ORDEM abaixo importa: carrinho -> checkout -> pedido -> pagamento -->
+<script src="loja-checkout.js"></script>
+<script src="loja-pedido.js"></script>
+<!-- SDK do Mercado Pago (formulário de cartão embutido) -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+<script src="loja-pagamento.js"></script>
 <!-- Login de cliente (Firebase) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>

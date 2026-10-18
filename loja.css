@@ -254,7 +254,7 @@ img{height:auto;}
 @media(max-width:620px){#produtoModalBody{grid-template-columns:1fr;}.pm-img{min-height:220px;}.pm-info{padding:20px 18px 24px;}}
 /* ===== Anti-vazamento mobile ===== */
 html,body{overflow-x:hidden;max-width:100%;}
-img,video,svg,iframe{max-width:100%;height:auto;}
+img,video{max-width:100%;height:auto;}svg,iframe{max-width:100%;}
 .benefits-bar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding:10px 0;background:#fff;border-bottom:1px solid #eef1f6;}
 .benefit-chip{display:flex;align-items:center;gap:8px;background:#f4f6fb;border:1px solid #e3e8f2;border-radius:999px;padding:8px 16px;font-size:.85rem;font-weight:600;color:#0f1e3d;white-space:nowrap;}
 .benefit-icon{font-size:1rem;}
@@ -316,3 +316,9 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 .cart-float-badge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;background:#0f1e3d;color:#fff;font-size:11px;font-weight:800;border-radius:10px;border:2px solid #fff;display:flex;align-items:center;justify-content:center;transition:transform .2s;line-height:1;}
 .cart-float-badge.pop{transform:scale(1.4);}
 @media(max-width:768px){.float-stack{right:14px;bottom:14px;gap:10px;}.float-stack .wa-float{width:46px!important;height:46px!important;}.float-stack .wa-float svg{width:24px!important;}.cart-float{width:52px;height:52px;}}
+/* ===== Escudo do formulário de cartão do Mercado Pago (brick) =====
+   Ambiente neutro: impede resíduos do CSS da loja (line-height herdado, etc.)
+   de desalinharem labels e campos dentro do quadro do pagamento. */
+#m3lBrickCartao{line-height:normal;}
+#m3lBrickCartao iframe{max-width:100%;}
+#m3lBrickCartao img,#m3lBrickCartao svg{max-width:100%;height:auto;}

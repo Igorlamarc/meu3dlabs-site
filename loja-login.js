@@ -91,6 +91,8 @@
   '.m3l-pedido-st.pen{color:#b26a00;}' +
   '.m3l-pedido-track{font-size:.78rem;font-weight:800;color:#f26522;text-decoration:none;border:1.5px solid #f2b28f;border-radius:999px;padding:6px 10px;white-space:nowrap;flex-shrink:0;transition:background .15s;}' +
   '.m3l-pedido-track:hover{background:#fff8f4;}' +
+  '.m3l-pedido-tentar{font-size:.78rem;font-weight:800;color:#fff;background:linear-gradient(135deg,#f26522,#e05512);border:none;border-radius:999px;padding:8px 12px;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .15s;}' +
+  '.m3l-pedido-tentar:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(242,101,34,.4);}' +
   '.m3l-rastrear{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;padding:11px;border-radius:10px;background:#0f1e3d;color:#fff;font-weight:800;font-size:.88rem;text-decoration:none;margin-top:4px;transition:background .15s;}' +
   '.m3l-rastrear:hover{background:#1a2f57;}' +
   '.m3l-vazio{text-align:center;padding:22px 10px;color:#5a6472;font-size:.86rem;line-height:1.5;}' +
@@ -611,7 +613,7 @@
       perr(m[e&&e.code]||'Não foi possível enviar agora — tente novamente.');
     });
   }
-  /* ---------- Meus pedidos ---------- */
+  /* ---------- Meus pedidos (com status real e retomada de pagamento do cartão) ---------- */
   function renderPedidos(){
     perr('');
     var lista=[];
@@ -626,15 +628,32 @@
         var foto=(p.itens&&p.itens[0]&&p.itens[0].img)?p.itens[0].img:'';
         var qtdItens=0;
         if(p.itens)p.itens.forEach(function(i){qtdItens+=(i.qtd||1);});
-        var st=p.registrado?'✅ Confirmado':'📨 Aguardando confirmação';
+        var forma=p.forma||'pix';
+        var pendente=!!p.pendente&&!!p.registrado;
+        var st='';
+        var acao='';
+        if(forma==='cartao'&&pendente){
+          /* Cartão escolhido e pagamento não concluído: cliente pode retomar direto no Mercado Pago */
+          st='⏳ Aguardando pagamento';
+          acao='<button type="button" class="m3l-pedido-tentar" onclick="tentarPagamentoCartao(\''+p.numero+'\')">💳 Tentar pagamento</button>';
+        }else if(forma==='cartao'&&p.registrado&&!pendente){
+          st='✅ Pago no cartão';
+          acao='<a class="m3l-pedido-track" href="acompanhar.html?pedido='+encodeURIComponent(p.numero)+'">Rastrear</a>';
+        }else if(p.registrado){
+          st='✅ Confirmado';
+          acao='<a class="m3l-pedido-track" href="acompanhar.html?pedido='+encodeURIComponent(p.numero)+'">Rastrear</a>';
+        }else{
+          st='📨 Aguardando confirmação';
+          acao='<a class="m3l-pedido-track" href="acompanhar.html?pedido='+encodeURIComponent(p.numero)+'">Rastrear</a>';
+        }
         html+='<div class="m3l-pedido">'
         +'<div class="m3l-pedido-foto">'+(foto?'<img src="'+foto+'" alt="">':'📦')+'</div>'
         +'<div class="m3l-pedido-info">'
         +'<div class="m3l-pedido-num">#'+p.numero+'</div>'
         +'<div class="m3l-pedido-meta">'+dataBonita(p.data)+' · '+fmtBRL(p.total)+' · '+qtdItens+(qtdItens===1?' item':' itens')+'</div>'
-        +'<div class="m3l-pedido-st'+(p.registrado?'':' pen')+'">'+st+'</div>'
+        +'<div class="m3l-pedido-st'+(pendente||!p.registrado?' pen':'')+'">'+st+'</div>'
         +'</div>'
-        +'<a class="m3l-pedido-track" href="acompanhar.html?pedido='+encodeURIComponent(p.numero)+'">Rastrear</a>'
+        +acao
         +'</div>';
       });
     }
