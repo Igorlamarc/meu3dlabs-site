@@ -287,6 +287,41 @@ header{position:fixed;top:0;left:0;right:0;width:100%;z-index:100;}
 .mascote-mini{display:block;position:fixed;top:3px;right:8px;width:64px;height:auto;margin:0;z-index:101;pointer-events:none;user-select:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));}
 }
 
+/* ===== Ações rápidas do header (só mobile) ===== */
+.header-acoes-mobile{display:none;}
+@media(max-width:820px){
+/* Linha 1: logo à esquerda + menu à direita, enxutos */
+.header-inner{flex-wrap:nowrap;align-items:center;}
+.header-center{display:none;}
+.header-cta .btn-laranja{display:none;}
+.header-cta .btn-wa{display:none;}
+.header-cta{margin-left:auto;display:flex;align-items:center;}
+/* Linha 2: Loja + Orçamento lado a lado */
+.header-acoes-mobile{
+display:flex;gap:10px;
+max-width:520px;margin:0 auto 10px;
+padding:0 16px;box-sizing:border-box;width:100%;
+}
+.header-acoes-mobile a{
+flex:1;text-align:center;padding:12px 10px;border-radius:12px;
+font-weight:800;font-size:.9rem;text-decoration:none;white-space:nowrap;
+transition:transform .15s,box-shadow .15s;
+}
+.header-acoes-mobile a:active{transform:scale(.97);}
+.header-acoes-mobile .ham-loja{
+background:linear-gradient(135deg,#f26522,#e05512);color:#fff;
+box-shadow:0 3px 12px rgba(242,101,34,.35);
+}
+.header-acoes-mobile .ham-orc{
+background:transparent;color:#fff;border:2px solid #f26522;
+}
+}
+
+/* ===== Mascote: oculto no mobile (tampava informações); mantido no PC ===== */
+@media(max-width:820px){
+img[src*="avaliacoes/boneco"]{display:none !important;}
+}
+
 </style>
 
 <script type="application/ld+json">
@@ -327,6 +362,10 @@ header{position:fixed;top:0;left:0;right:0;width:100%;z-index:100;}
 <a class="btn-laranja" href="acompanhar.html">Acompanhar pedido</a>
 <a class="btn btn-wa" href="enviar-projeto.html">Solicite seu orçamento</a>
 </div>
+</div>
+<div class="header-acoes-mobile">
+<a class="ham-loja" href="loja.html">🛒 Loja</a>
+<a class="ham-orc" href="enviar-projeto.html">Solicite seu orçamento</a>
 </div>
 </header>
 <div class="drawer-overlay" id="drawerOverlay"></div>

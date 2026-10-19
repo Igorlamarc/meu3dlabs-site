@@ -322,3 +322,16 @@ img,video{max-width:100%;height:auto;}svg,iframe{max-width:100%;}
 #m3lBrickCartao{line-height:normal;}
 #m3lBrickCartao iframe{max-width:100%;}
 #m3lBrickCartao img,#m3lBrickCartao svg{max-width:100%;height:auto;}
+/* ===== BOTÃO DA CONTA EM DESTAQUE (header) ===== */
+.header-inner .m3l-login-btn{
+background:linear-gradient(135deg,#f26522,#e05512) !important;
+color:#fff !important;
+border:1.5px solid transparent !important;
+box-shadow:0 3px 12px rgba(242,101,34,.35) !important;
+font-weight:800 !important;
+}
+.header-inner .m3l-login-btn::before{content:'👤 ';font-size:.9em;}
+.header-inner .m3l-login-btn:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(242,101,34,.45) !important;}
+@media(max-width:820px){
+.header-inner .m3l-login-btn{padding:9px 15px !important;font-size:.82rem !important;}
+}

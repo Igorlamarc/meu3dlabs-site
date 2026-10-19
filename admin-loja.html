@@ -490,7 +490,8 @@ function abrirForm(id, duplicar){
       '<h3>' + (ehDup ? '📄 Duplicar produto' : (p ? '✏️ Editar produto' : '➕ Postar novo produto')) + '</h3>' +
       (ehDup ? '<p style="font-size:13px;color:#7a5c00;background:#fff4d6;padding:10px 12px;border-radius:8px;margin:-8px 0 16px;">Cópia de <b>' + esc(p.nome) + '</b>. Altere o nome, a cor ou a foto e clique em Salvar. O original não é alterado.</p>' : '') +
       '<div class="campos">' +
-        '<div class="campo full"><label>Nome do produto *</label><input id="fNome" maxlength="80" placeholder="Ex.: Chaveiro personalizado" value="' + (p ? esc(p.nome) : '') + '"></div>' +
+        '<div class="campo full"><label>Nome do produto *</label><input id="fNome" maxlength="80" placeholder="Ex.: Chaveiro personalizado" oninput="document.getElementById(\'contadorNome\').textContent=this.value.length+\' / 80\';" value="' + (p ? esc(p.nome) : '') + '"></div>' +
+        '<div class="campo full"><div class="slug-preview" id="contadorNome">0 / 80</div></div>' +
         '<div class="campo full"><div class="slug-preview" id="slugPreview">🔗 Slug: <span id="slugTexto">' + (slugAtual || 'será gerado do nome') + '</span></div></div>' +
         '<div class="campo full"><label>Descrição</label><textarea id="fDesc" maxlength="500" placeholder="Detalhes, material, tamanho..." oninput="document.getElementById(\'contadorDesc\').textContent=this.value.length+\' / 500\';">' + (p ? esc(p.descricao || '') : '') + '</textarea><div class="slug-preview" id="contadorDesc">0 / 500</div></div>' +
         '<div class="campo"><label>Preço (R$)</label><input id="fPreco" type="number" step="0.01" min="0" placeholder="0,00" value="' + (p ? p.preco : '') + '"></div>' +
@@ -515,7 +516,7 @@ function abrirForm(id, duplicar){
         '<div class="campo full"><label>Fotos do produto <span style="font-weight:400;color:#8a94a8;">(a 1ª é a principal — clique na ⭐ para definir)</span></label>' +
           '<div class="upload-area" onclick="document.getElementById(\'fileInput\').click()">' +
             '<div class="icone">📷</div>' +
-            '<div class="txt">Clique para escolher a foto (ou várias)<br>JPG, PNG, WEBP ou GIF — comprimimos automaticamente</div>' +
+            '<div class="txt">Clique para escolher a foto ou GIF (ou vários)<br>JPG, PNG, WEBP ou GIF — até 8 MB por arquivo · GIFs animados vão sem compressão</div>' +
           '</div>' +
           '<input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple class="hidden" onchange="enviarFotos(this)">' +
           '<div class="imgs-preview" id="preview"></div>' +
@@ -539,6 +540,8 @@ function abrirForm(id, duplicar){
   renderCoresPick();
   var cd=document.getElementById('contadorDesc');
   if(cd)cd.textContent=String(document.getElementById('fDesc').value.length)+' / 500';
+  var cn=document.getElementById('contadorNome');
+  if(cn)cn.textContent=String(document.getElementById('fNome').value.length)+' / 80';
   document.getElementById('fNome').addEventListener('input', atualizarSlugPreview);
 }
 function atualizarSlugPreview(){
@@ -581,9 +584,16 @@ function comprimirImagem(arquivo){
   });
 }
 async function enviarFotos(fonte){
+  const LIMITE_MB = 8;
+  const LIMITE_BYTES = LIMITE_MB * 1024 * 1024;
   const arquivos = fonte && fonte.files ? Array.from(fonte.files) : Array.from(fonte || []);
   if(!arquivos.length) return;
   for(const arqOriginal of arquivos){
+    const tamMB = (arqOriginal.size / (1024*1024)).toFixed(1);
+    if(arqOriginal.size > LIMITE_BYTES){
+      mostrarToast('❌ "' + (arqOriginal.name || 'arquivo') + '" tem ' + tamMB + ' MB — o limite é ' + LIMITE_MB + ' MB. Comprima o GIF (ex.: ezgif.com) e tente de novo.', 'erro');
+      continue;
+    }
     const arq = await comprimirImagem(arqOriginal);
     const fd = new FormData();
     fd.append('imagem', arq);
@@ -596,9 +606,9 @@ async function enviarFotos(fonte){
       const t = await r.json().catch(() => ({}));
       if(!r.ok) throw new Error(t.error || 'Falha no upload');
       imagensTemp.push(t.url);
-      mostrarToast('📷 Foto enviada!', 'ok');
+      mostrarToast('📷 "' + (arq.name || 'Foto') + '" enviada (' + (arq.size/(1024*1024)).toFixed(1) + ' MB)!', 'ok');
     }catch(e){
-      mostrarToast('Erro no upload: ' + e.message, 'erro');
+      mostrarToast('Erro no upload de "' + (arq.name || 'arquivo') + '" (' + tamMB + ' MB): ' + e.message, 'erro');
     }
   }
   if(fonte && fonte.value !== undefined) fonte.value = '';

@@ -224,6 +224,21 @@
       });
     });
   }
+  /* ---------- E-mail de boas-vindas para cliente NOVO via Google (via backend) ---------- */
+  /* Cliente que entra pela primeira vez com o Google pula a verificação de e-mail,
+     então o backend dispara o e-mail de agradecimento com o cupom de 10% diretamente. */
+  function pedirBoasVindasBackend(email,nome){
+    return fetch(API_BASE+'/auth/enviar-boas-vindas',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:email,nome:nome||''})
+    }).then(function(r){
+      return r.json().catch(function(){return {};}).then(function(d){
+        if(!r.ok)throw {code:'backend-erro',status:r.status,detalhe:(d&&d.error)||''};
+        return d;
+      });
+    });
+  }
   /* ---------- Reenvio com contagem regressiva ---------- */
   var COOLDOWN_REENVIO=60;
   function iniciarCooldown(btn){
@@ -809,6 +824,19 @@
     var gBtn=$('m3lGoogle');
     gBtn.disabled=true;
     auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .then(function(cred){
+        /* Cliente NOVO via Google: o e-mail já vem verificado, então o fluxo de
+           confirmação (que libera o cupom) nunca dispara. Pedimos ao backend que
+           envie o e-mail de boas-vindas com o cupom de 10% para não perder o cliente. */
+        try{
+          if(cred.additionalUserInfo&&cred.additionalUserInfo.isNewUser&&cred.user&&cred.user.email){
+            pedirBoasVindasBackend(cred.user.email,cred.user.displayName||'')
+              .then(function(){console.info('loja-login: e-mail de boas-vindas enviado (cliente novo via Google)');})
+              .catch(function(e){console.warn('loja-login: boas-vindas não enviado',(e&&e.code)||'');});
+          }
+        }catch(e){}
+        return cred;
+      })
       .then(fechaModal)
       .catch(function(e){erro(traduzErro(e));})
       .then(function(){gBtn.disabled=false;});
