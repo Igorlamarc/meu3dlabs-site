@@ -109,7 +109,11 @@ function renderProdutos(lista){
     }else if(cores.length===1){
       html+='<div class="produto-cor"><span class="mini-swatch" style="background:'+corHex(cores[0])+'"></span> '+escL(cores[0]||'')+'</div>';
     }
-    if(emPromo){var pct=Math.round((1-parseFloat(p.precoPromo)/precoN)*100);html+='<div class="produto-preco"><span style="text-decoration:line-through;color:#8a94a8;font-size:13px;font-weight:600;">R$ '+precoLabel(precoN)+'</span> <span style="color:#c0392b;font-weight:800;">R$ '+precoLabel(parseFloat(p.precoPromo))+'</span> <span style="background:#c0392b;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:12px;">-'+pct+'%</span></div>';}else{html+='<div class="produto-preco">'+plabel+' <small>· unidade</small></div>';}
+        if(!esgotado){
+      var _pix='R$ '+precoLabel(precoVenda*0.95);
+            html+='<div style="font-size:12px;color:#4a5161;line-height:1.5;margin-top:4px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;"><img src="img/logo/pix.png" alt="Pix" style="width:14px;height:14px;flex-shrink:0;"><b style="color:#0f1e3d;">'+_pix+'</b> <span style="opacity:.6;">·</span> <span style="white-space:nowrap;">até <b style="color:#0f1e3d;">12x</b></span> <img src="img/logo/cartao.png" alt="Bandeiras aceitas" style="height:14px;flex-shrink:0;"></div>';
+    }
+    if(emPromo){var pct=Math.round((1-parseFloat(p.precoPromo)/precoN)*100);html+='<div class="produto-preco" style="margin-top:2px;"><span style="text-decoration:line-through;color:#8a94a8;font-size:13px;font-weight:600;">R$ '+precoLabel(precoN)+'</span> <span style="color:#c0392b;font-weight:800;">R$ '+precoLabel(parseFloat(p.precoPromo))+'</span> <span style="background:#c0392b;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:12px;">-'+pct+'%</span></div>';}else{html+='<div class="produto-preco" style="margin-top:2px;">'+plabel+' <small>· unidade</small></div>';}
     if(esgotado){
       html+='<button class="btn-pedir" onclick="pedirPeca(\''+p.slug+'\')">🔔 Avise-me quando chegar</button>';
     }else{

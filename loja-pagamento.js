@@ -158,12 +158,21 @@ function abrirBrickCartao(p){
         initialization:{
           amount:Math.round((parseFloat(p.total)||0)*100)/100
         },
-        customization:{
+            customization:{
           visual:{
             hideFormTitle:true,
             style:{
               theme:'default'
             }
+          },
+          /* Limite de parcelas: o MP permitiria até 18x conforme o cartão, mas o
+             backend da loja só aceita até 12x — travamos em 12 para nunca oferecer
+             uma parcela que o pagamento rejeite no final. */
+          installments:{
+            maxInstallments:12
+          },
+          paymentMethods:{
+            maxInstallments:12
           }
         },
         callbacks:{

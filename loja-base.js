@@ -108,7 +108,8 @@ function montar(){
     else{html+='<div style="font-size:40px;text-align:center;padding-top:45px;">📦</div>';}
     html+='</div><div class="fn-card-body"><h4>'+escL(p.nome)+'</h4><div class="fn-preco">'+(emPromo?'<span class="antigo">R$ '+precoLabel(precoN)+'</span><span class="promo">R$ '+precoLabel(preco)+'</span>':'R$ '+precoLabel(precoN))+'</div></div>';
     card.innerHTML=html;
-    card.onclick=function(){abrirModalProduto(p.slug);};
+    /* CORRIGIDO: clique agora abre a página do produto (igual aos cards da vitrine), não o modal antigo */
+    card.onclick=function(){location.href='/produto/'+p.slug;};
     track.appendChild(card);
   });
   document.getElementById('faixaNovidades').style.display='block';

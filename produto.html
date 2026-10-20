@@ -277,7 +277,7 @@ html,body{overflow-x:hidden;max-width:100%;}
             <div id="coresChips"></div>
           </div>
           <div class="p-ctas">
-            <a class="btn btn-comprar" id="btnComprar" href="#">🛒 Comprar na loja</a>
+            <a class="btn btn-comprar" id="btnComprar" href="#">🛒 Comprar</a>
             <a class="btn btn-wa" id="btnWa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
             <button class="btn btn-shr" type="button" onclick="compartilharPagina()">🔗 Compartilhar</button>
           </div>
@@ -551,8 +551,8 @@ function render(p,lista){
   }else{
     ph+='<div class="linha"><span class="preco-novo">'+fmt(preco)+'</span></div>';
   }
-  ph+='<div class="preco-sub">🔷 <b>'+fmt(pixValor)+' no Pix</b> — já com 5% de desconto</div>';
-  ph+='<div class="preco-sub">💳 ou <b>12x de '+fmt(parcela)+'</b> no cartão (juros da operadora)</div>';
+    ph+='<div class="preco-sub"><img src="img/logo/pix.png" alt="" style="width:15px;height:15px;vertical-align:-3px;margin-right:5px;"><b>'+fmt(pixValor)+' no Pix</b> — já com 5% de desconto</div>';
+      ph+='<div class="preco-sub"><img src="img/logo/cartao.png" alt="" style="height:13px;vertical-align:-2px;margin-right:5px;">ou em até <b>12x no cartão</b> (juros da operadora — o valor exato da parcela aparece no pagamento)</div>';
   pc.innerHTML=ph;
   /* Cores */
   var cores=(p.cores&&p.cores.length)?p.cores.slice():[];
