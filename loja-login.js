@@ -862,7 +862,17 @@
     checarVerif();
     if(u&&db){
       db.collection('clientes').doc(u.uid).get().then(function(snap){
-        if(!snap.exists||!window.m3lUser)return;
+        if(!window.m3lUser)return;
+        if(!snap.exists){
+          /* Conta Google sem documento no Firestore (nova ou antiga): cria já com o que
+             o Google fornece (nome + e-mail). WhatsApp, CEP e endereço entram
+             automaticamente no primeiro pedido — o checkout salva no perfil. */
+          var nomeGoogle=(u.displayName||'').trim();
+          perfilCache={nome:nomeGoogle,whatsapp:'',nascimentoDia:null,nascimentoMes:null,cep:'',rua:'',numero:'',complemento:'',bairro:'',cidade:'',uf:''};
+          window.m3lUser.nome=nomeGoogle;
+          atualizarBotao(auth.currentUser);
+          return db.collection('clientes').doc(u.uid).set({nome:nomeGoogle,email:u.email||''},{merge:true});
+        }
         var p=snap.data()||{};
         perfilCache={nome:p.nome||'',whatsapp:p.whatsapp||'',nascimentoDia:p.nascimentoDia||null,nascimentoMes:p.nascimentoMes||null,cep:p.cep||'',rua:p.rua||'',numero:p.numero||'',complemento:p.complemento||'',bairro:p.bairro||'',cidade:p.cidade||'',uf:p.uf||''};
         window.m3lUser.fone=p.whatsapp||'';

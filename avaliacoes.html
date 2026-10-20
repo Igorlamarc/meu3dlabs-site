@@ -59,7 +59,6 @@ section{padding:60px 0;}h2{font-size:28px;color:var(--navy);margin-bottom:10px;f
 footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
 @media(max-width:900px){.reviews-grid{grid-template-columns:repeat(2,1fr);}.stats{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:620px){.reviews-grid{grid-template-columns:1fr;}.stats{grid-template-columns:1fr;}.hero-num{font-size:52px;}.stat-boneco img{height:100px;}.stats-wrap{gap:18px;}}
-
 /* ===== RODAPÉ PADRÃO ===== */
 .site-footer{background:#0a1428;color:rgba(255,255,255,.75);padding:40px 20px 24px;}
 .site-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;}
@@ -67,19 +66,20 @@ footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-si
 .site-footer p,.site-footer a{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;display:block;}
 .site-footer a:hover{color:#ff8a3d;}
 .site-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px;text-align:center;font-size:12px;color:rgba(255,255,255,.45);}
-
 /* ===== Anti-vazamento mobile ===== */
 html,body{overflow-x:hidden;max-width:100%;}
 img,video,svg,iframe{max-width:100%;height:auto;}
-
+/* ===== Botão Avaliar no Google (dentro do hero, integrado à página) ===== */
+.m3l-av-btn{display:flex;justify-content:center;margin:-4px auto 20px;}
+.m3l-av-btn a{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--orange),#e05512);color:#fff;font-weight:800;font-size:1rem;padding:14px 30px;border-radius:999px;text-decoration:none;box-shadow:0 6px 18px rgba(242,101,34,.4);transition:transform .15s,box-shadow .15s;}
+.m3l-av-btn a:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(242,101,34,.5);}
+@media(max-width:560px){.m3l-av-btn a{width:92%;justify-content:center;box-sizing:border-box;}}
 </style>
-
 <meta property="og:type" content="website">
 <meta property="og:title" content="Meu 3D Labs | Avaliações de Clientes">
 <meta property="og:description" content="Impressão 3D personalizada em Nilópolis/RJ. Peças exclusivas, assistência Creality e consultoria.">
 <meta property="og:image" content="https://meu3dlabs.com.br/img/logo/logo.png">
 <meta property="og:site_name" content="Meu 3D Labs">
-
 </head>
 <body>
 <header>
@@ -95,6 +95,9 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <div class="container">
 <h1>Avaliações <span>reais de clientes</span></h1>
 <p>Cada estrela representa um trabalho entregue com qualidade, atenção e compromisso. Veja o que dizem quem já comprou ou foi atendido pela Meu 3D Labs.</p>
+<div class="m3l-av-btn">
+<a href="https://g.page/r/CcGSg0AxWsPnEAE/review" target="_blank" rel="noopener">⭐ Avaliar no Google</a>
+</div>
 <div class="hero-score">
 <div class="hero-num">5.0</div>
 <div>
@@ -114,7 +117,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <h2>O que nossos clientes dizem</h2>
 <p class="subtitle">Avaliações no Google, com nome real de cada cliente.</p>
 <div class="reviews-grid">
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">C</div>
@@ -127,7 +129,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Excelente. Trabalho sério com detalhes de acabamento perfeitos."</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">J</div>
@@ -140,7 +141,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Time super atencioso. Prazo e capacidade de adequar as peças. Super recomendo."</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">J</div>
@@ -153,7 +153,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Produto de excelente qualidade, vale totalmente o investimento. Fiquei muito satisfeito com a compra, superou minhas expectativas."</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">G</div>
@@ -166,7 +165,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Produtos de qualidade! Amamos. Vamos comprar sempre!"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">E</div>
@@ -179,7 +177,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Foi incrível! Eu não conhecia e após conhecer estou muito satisfeita com os produtos e com o trabalho do Meu 3D Labs. Profissionais empenhados e peças satisfatórias!"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">K</div>
@@ -192,7 +189,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Eles têm peças lindas! Apaixonantes! Super indico."</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">M</div>
@@ -205,7 +201,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Consegui resolver o problema da minha impressora 3D. Explicação clara."</p>
 <span class="review-service">Assistência técnica</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">A</div>
@@ -218,7 +213,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Entrei em contato e obtive atendimento rapidamente. Relatei meu problema e me deram a orientação certa para resolver."</p>
 <span class="review-service">Assistência técnica</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">J</div>
@@ -231,7 +225,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Amei meu chaveiro de Nossa Senhora! Ficou a coisa mais linda e delicada do mundo. Super indico!!"</p>
 <span class="review-service">Chaveiros</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">F</div>
@@ -244,7 +237,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Fiz uma encomenda com eles e só tenho elogios. Atendimento e produtos excelentes. Recomendo pra todo tipo de ideia em 3d"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">D</div>
@@ -257,7 +249,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Tudo perfeito!"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">A</div>
@@ -270,7 +261,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Melhor escolha que eu fiz, produto de excelente qualidade, parabéns!!!"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">P</div>
@@ -283,7 +273,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Material de ótima qualidade e um excelente atendimento!"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">D</div>
@@ -296,7 +285,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Trabalho de qualidade!! Parabéns 👏"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">J</div>
@@ -309,7 +297,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Excelente serviço, muito satisfeito!"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">F</div>
@@ -322,7 +309,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Excelente loja com trabalho impecável! Recomendo!"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">C</div>
@@ -335,7 +321,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Trabalho de excelência que faz o custo parecer investimento."</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">F</div>
@@ -348,7 +333,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Peças lindas, resistentes e com excelente acabamento. Gosto muito do atendimento e do fato de conseguir mandar fazer tudo do jeito que eu quero."</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">F</div>
@@ -361,7 +345,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Recomendo bastante. Profissionalismo, excelente atendimento e qualidade incrível. Conseguem transformar a sua ideia em realidade. Um trabalho impecável e que vale super a pena conhecer!"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 <div class="review-card">
 <div class="review-header">
 <div class="review-avatar">C</div>
@@ -374,7 +357,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 <p class="review-text">"Meu projeto ficou incrível, obrigado Igor pelo empenho e dedicação, recomendo muito"</p>
 <span class="review-service">Peças personalizadas</span>
 </div>
-
 </div>
 </div>
 </section>
@@ -414,7 +396,6 @@ img,video,svg,iframe{max-width:100%;height:auto;}
 </div>
 </div>
 </footer>
-
 <footer class="site-footer">
   <div class="footer-inner">
     <div>
@@ -436,6 +417,5 @@ img,video,svg,iframe{max-width:100%;height:auto;}
   </div>
   <div class="footer-bottom">© 2026 Meu 3D Labs · Todos os direitos reservados</div>
 </footer>
-
 </body>
 </html>
