@@ -1,0 +1,74 @@
+/* ============================================================
+   Meu 3D Labs — loja-admin-extras.css
+   Estilos da camada de extras do Admin Loja (claro + noturno).
+   ============================================================ */
+
+/* ===== Chips especiais + ordenação + contagem ===== */
+.lx-chips{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.lx-chip{padding:6px 14px;border:1.5px dashed #dde3ee;border-radius:20px;background:#fff;color:#4a5161;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit;}
+.lx-chip:hover{border-color:#f26522;color:#f26522;}
+.lx-chip.on{background:#f26522;border-color:#f26522;border-style:solid;color:#fff;box-shadow:0 3px 10px rgba(242,101,34,.3);}
+.lx-chip.lx-off{border-style:solid;color:#8a94a8;}
+.lx-count{font-size:12px;color:#8a94a8;font-weight:600;margin-right:4px;}
+.lx-ordem{padding:9px 12px;border:1.5px solid #dde3ee;border-radius:10px;font-size:13px;font-family:inherit;background:#fff;color:#16294f;outline:none;cursor:pointer;}
+.lx-ordem:focus{border-color:#f26522;}
+
+/* ===== Ações rápidas no card ===== */
+.lx-quick{display:flex;align-items:center;gap:6px;padding:8px 11px 0;flex-wrap:wrap;}
+.lx-q{border:1px solid #dde3ee;background:#f7f9fc;color:#16294f;border-radius:8px;font-size:11px;font-weight:700;padding:5px 9px;cursor:pointer;transition:.15s;font-family:inherit;white-space:nowrap;}
+.lx-q:hover{border-color:#f26522;color:#f26522;}
+.lx-q.lx-off-btn{opacity:.75;}
+.lx-q.lx-star{font-size:14px;padding:3px 8px;}
+.lx-q.lx-star.on{background:#fff4d6;border-color:#e8c33a;}
+.lx-stk{display:inline-flex;align-items:center;gap:4px;border:1px solid #dde3ee;border-radius:8px;padding:2px 4px;background:#fff;}
+.lx-stk button{border:none;background:#eef1f6;color:#0f1e3d;width:22px;height:22px;border-radius:6px;font-size:14px;font-weight:800;cursor:pointer;line-height:1;transition:.15s;}
+.lx-stk button:hover{background:#f26522;color:#fff;}
+.lx-stk b{font-size:13px;min-width:18px;text-align:center;color:#0f1e3d;}
+.lx-stk small{font-size:10px;color:#8a94a8;margin-right:2px;}
+.lx-link{display:flex;gap:6px;padding:7px 11px 3px;}
+.lx-link button{flex:1;border:1px solid #dde3ee;background:#fff;color:#4a5670;border-radius:8px;font-size:10.5px;font-weight:700;padding:5px 4px;cursor:pointer;transition:.15s;font-family:inherit;}
+.lx-link button:hover{border-color:#f26522;color:#f26522;background:#fff8f4;}
+
+/* ===== Saúde da loja ===== */
+.lx-saude{background:#fff;border:1px solid #e3e8ef;border-radius:14px;padding:14px 18px;margin-bottom:16px;box-shadow:0 2px 8px rgba(15,30,61,.06);}
+.lx-s-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;}
+.lx-s-pct{font-size:20px;font-weight:800;}
+.lx-s-pct.verde{color:#1d8a4f;}
+.lx-s-pct.laranja{color:#d9a406;}
+.lx-s-pct.vermelho{color:#c0392b;}
+.lx-s-top small{color:#8a94a8;}
+.lx-s-bar{height:9px;background:#eef1f6;border-radius:5px;margin:9px 0 10px;overflow:hidden;}
+.lx-s-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#f26522,#ff8a3d);transition:width .4s;}
+.lx-s-probs{display:flex;gap:8px;flex-wrap:wrap;}
+.lx-s-prob{border:1px solid #dde3ee;background:#fff;color:#4a5670;border-radius:20px;font-size:12px;font-weight:600;padding:5px 13px;cursor:pointer;transition:.15s;font-family:inherit;}
+.lx-s-prob:hover{border-color:#f26522;color:#f26522;background:#fff8f4;}
+
+/* ===== Ações em massa (dentro da barra de mesclar) ===== */
+.lx-massa{display:flex;align-items:center;gap:10px;flex-wrap:wrap;width:100%;margin-top:12px;padding-top:12px;border-top:1px dashed #dde3ee;}
+.lx-m-lab{font-size:13px;font-weight:700;color:#0f1e3d;}
+#lxMassaAcao{padding:8px;border:1px solid #dde3ee;border-radius:8px;font-size:13px;font-family:inherit;max-width:250px;}
+#lxMassaValor{padding:8px;border:1px solid #dde3ee;border-radius:8px;font-size:13px;width:120px;font-family:inherit;}
+
+/* ===== Modo noturno ===== */
+body.dark .lx-chip{background:#16203a;border-color:#2a3a63;color:#a9b4c9;}
+body.dark .lx-chip:hover{border-color:#f26522;color:#f26522;}
+body.dark .lx-chip.on{background:#f26522;border-color:#f26522;color:#fff;}
+body.dark .lx-ordem{background:#16203a;border-color:#2a3a63;color:#e6ecf7;}
+body.dark .lx-q{background:#16203a;border-color:#2a3a63;color:#dbe2f0;}
+body.dark .lx-q:hover{border-color:#f26522;color:#f26522;}
+body.dark .lx-q.lx-star.on{background:#241f12;border-color:#8a6d1f;}
+body.dark .lx-stk{background:#16203a;border-color:#2a3a63;}
+body.dark .lx-stk button{background:#223055;color:#dbe2f0;}
+body.dark .lx-stk button:hover{background:#f26522;color:#fff;}
+body.dark .lx-stk b{color:#fff;}
+body.dark .lx-link button{background:#16203a;border-color:#2a3a63;color:#dbe2f0;}
+body.dark .lx-link button:hover{border-color:#f26522;color:#f26522;background:#241d17;}
+body.dark .lx-saude{background:#16203a;border-color:#223055;}
+body.dark .lx-s-top{color:#dbe2f0;}
+body.dark .lx-s-top b{color:#fff;}
+body.dark .lx-s-bar{background:#223055;}
+body.dark .lx-s-prob{background:#16203a;border-color:#2a3a63;color:#dbe2f0;}
+body.dark .lx-s-prob:hover{border-color:#f26522;color:#f26522;}
+body.dark .lx-m-lab{color:#fff;}
+body.dark #lxMassaAcao,body.dark #lxMassaValor{background:#0f1a30;border-color:#2a3a63;color:#e6ecf7;}
+body.dark .lx-count{color:#6b7690;}

@@ -1,0 +1,93 @@
+/* ============================================================
+   Meu 3D Labs — admin-extras.css
+   Estilos dos recursos avançados (kanban, resumo, números,
+   busca global, tags, notas, meta, chip sumiu).
+   Usa as variáveis do admin.css (dark mode automático).
+   ============================================================ */
+
+/* ===== Resumo do dia ===== */
+#m3lResumo{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+#m3lResumo .r-item{flex:1;min-width:150px;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:12px 16px;box-shadow:0 2px 10px rgba(15,30,61,.07);}
+#m3lResumo .r-num{font-size:20px;font-weight:800;color:var(--navy);line-height:1.2;}
+#m3lResumo .r-lab{font-size:12px;color:var(--gray);font-weight:600;margin-top:2px;}
+#m3lResumo .r-item.alerta{border-left:4px solid var(--red);}
+#m3lResumo .r-item.alerta .r-num{color:var(--red);}
+#m3lResumo .r-item.zero{background:linear-gradient(135deg,#f2fbf5,var(--white));}
+
+/* ===== Meta mensal ===== */
+.meta-bar{height:8px;background:#e3e8ef;border-radius:4px;margin:6px 0 4px;overflow:hidden;}
+.meta-fill{height:100%;background:linear-gradient(90deg,#25a858,#2f9e44);border-radius:4px;transition:width .4s;}
+
+/* ===== Kanban ===== */
+#m3lKanban{display:none;gap:12px;overflow-x:auto;padding-bottom:10px;align-items:stretch;}
+.k-col{min-width:235px;flex:1;background:var(--light);border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;flex-direction:column;transition:.15s;}
+.k-col.over{border:2px dashed var(--orange);background:rgba(242,101,34,.06);}
+.k-head{font-weight:700;font-size:13px;color:var(--navy);padding:4px 4px 10px;display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.k-count{background:var(--navy);color:#fff;border-radius:20px;font-size:11px;padding:1px 8px;font-weight:700;}
+.k-body{flex:1;min-height:60px;}
+.k-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;cursor:grab;box-shadow:0 1px 6px rgba(15,30,61,.08);transition:.15s;}
+.k-card:hover{border-color:var(--orange);box-shadow:0 4px 12px rgba(15,30,61,.12);}
+.k-card.drag{opacity:.45;transform:scale(.97);}
+.k-topo{display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.k-titulo{font-weight:800;font-size:13px;color:var(--navy);}
+.k-ico{background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;border-radius:6px;}
+.k-ico:hover{background:rgba(242,101,34,.15);}
+.k-nome{font-size:12.5px;color:var(--text);font-weight:600;margin-top:3px;}
+.k-info{font-size:11.5px;color:var(--gray);margin-top:2px;}
+.k-tags{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap;}
+.k-vazio{text-align:center;color:var(--gray);font-size:12px;padding:14px 0;opacity:.6;}
+
+/* ===== Modal Números ===== */
+.num-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0 4px;}
+.num-card{background:var(--light);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.num-card b{display:block;font-size:17px;color:var(--navy);}
+.num-card span{font-size:11px;color:var(--gray);font-weight:600;}
+.g-wrap{display:flex;align-items:flex-end;gap:6px;height:150px;margin-top:10px;border-bottom:2px solid var(--border);padding:0 4px;}
+.g-col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;min-width:0;}
+.g-bar{width:70%;max-width:34px;background:linear-gradient(180deg,var(--orange),#e05512);border-radius:6px 6px 0 0;min-height:4px;transition:.2s;}
+.g-bar:hover{filter:brightness(1.12);}
+.g-bar.g-atual{background:linear-gradient(180deg,#25a858,#1f9e4e);}
+.g-lab{font-size:10px;color:var(--gray);margin-top:4px;font-weight:600;}
+.top-cli{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--light);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:13px;}
+.tc-pos{font-weight:800;color:var(--orange);min-width:24px;}
+.tc-nome{font-weight:700;color:var(--navy);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tc-n{color:var(--gray);font-size:12px;white-space:nowrap;}
+.tc-total{font-weight:800;color:var(--green);white-space:nowrap;}
+.m3l-top{margin-top:8px;}
+
+/* ===== Busca global ===== */
+.bg-modal{max-width:520px;}
+.bg-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;background:var(--white);color:var(--text);margin:6px 0 12px;}
+.bg-input:focus{outline:none;border-color:var(--orange);}
+.bg-res{max-height:320px;overflow-y:auto;}
+.bg-item{padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:13.5px;background:var(--white);transition:.15s;}
+.bg-item:hover{border-color:var(--orange);background:rgba(242,101,34,.06);}
+.bg-item small{display:block;color:var(--gray);font-size:11.5px;margin-top:2px;}
+.bg-aba{font-size:11px;background:var(--navy);color:#fff;border-radius:12px;padding:1px 8px;margin-right:6px;font-weight:600;}
+
+/* ===== Tags / notas / histórico (no modal de detalhes) ===== */
+#m3lModalExtras{margin-top:16px;border-top:1px dashed var(--border);padding-top:14px;}
+.m3l-secao{margin-bottom:14px;}
+.m3l-rot{font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.4px;}
+.m3l-tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;}
+.tag-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;}
+.tag-chip.mini{font-size:10.5px;padding:2px 8px;}
+.tag-x{background:none;border:none;cursor:pointer;font-size:13px;font-weight:700;padding:0 2px;line-height:1;color:inherit;opacity:.7;}
+.tag-x:hover{opacity:1;}
+.tag-in{border:1px dashed var(--border);background:transparent;color:var(--text);border-radius:20px;padding:3px 12px;font-size:11.5px;font-family:inherit;min-width:150px;}
+.tag-in:focus{outline:none;border-color:var(--orange);}
+.tag-add{background:var(--orange);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:15px;font-weight:700;line-height:1;}
+.nota-txt{width:100%;min-height:74px;margin-top:8px;background:var(--light);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:13px;font-family:inherit;color:var(--text);resize:vertical;line-height:1.5;}
+.nota-txt:focus{outline:none;border-color:var(--orange);}
+.m3l-hist{margin-top:8px;}
+.hist-item{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--gray);padding:5px 0;border-bottom:1px dashed var(--border);}
+.hist-item b{color:var(--text);}
+.m3l-vazio{font-size:12px;color:var(--gray);font-style:italic;}
+.m3l-btn-ficha{width:100%;background:var(--navy);color:#fff;border:none;padding:12px;border-radius:9px;font-weight:700;font-size:13.5px;cursor:pointer;transition:.2s;font-family:inherit;}
+.m3l-btn-ficha:hover{background:var(--navy-2);}
+
+/* ===== Chip "Sumiu +2d" + destaque na tabela ===== */
+tr.m3l-velho{outline:2px dashed #d9a406;outline-offset:-3px;}
+
+/* ===== PWA ===== */
+html{overscroll-behavior-y:contain;}

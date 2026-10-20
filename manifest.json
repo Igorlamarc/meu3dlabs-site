@@ -1,0 +1,12 @@
+{
+  "name": "Meu 3D Labs — Painel de Pedidos",
+  "short_name": "Painel 3D",
+  "start_url": "admin.html",
+  "display": "standalone",
+  "background_color": "#0f1e3d",
+  "theme_color": "#0f1e3d",
+  "icons": [
+    { "src": "img/logo/logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/logo/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -44,11 +44,13 @@ section{padding:40px 0;}
 .status-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--light-2);}
 .status-num{font-size:18px;font-weight:800;color:var(--navy);}
 .status-num .hash{color:var(--orange);}
-.status-num small{display:block;font-size:12px;font-weight:500;color:var(--gray);margin-top:3px;}
 .status-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);color:var(--green-dark);font-weight:700;font-size:13px;padding:8px 16px;border-radius:30px;}
 .status-pill::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green-dark);animation:pulse 1.6s infinite;}
 .status-pill.cancelado{background:#fde8e8;border-color:rgba(185,28,28,.3);color:#b91c1c;}
 .status-pill.cancelado::before{background:#b91c1c;animation:none;}
+/* Encerrado (Sem resposta): cinza neutro, sem pulso */
+.status-pill.encerrado{background:#f1f3f6;border-color:rgba(15,30,61,.18);color:#5a6472;}
+.status-pill.encerrado::before{background:#8a93a3;animation:none;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
 .timeline{display:flex;flex-direction:column;gap:0;margin:8px 0 4px;}
 .tl-step{display:flex;gap:16px;position:relative;padding-bottom:26px;}
@@ -69,6 +71,10 @@ section{padding:40px 0;}
 .cancel-box{background:#fde8e8;border:1px solid rgba(185,28,28,.25);border-radius:12px;padding:22px 24px;text-align:center;margin:8px 0 4px;}
 .cancel-box strong{display:block;font-size:16px;color:#b91c1c;margin-bottom:6px;}
 .cancel-box span{font-size:13.5px;color:#7a3a3a;line-height:1.6;display:block;}
+/* Caixa de encerrado (Sem resposta): neutra */
+.cancel-box.encerrado-box{background:#f1f3f6;border-color:rgba(15,30,61,.15);}
+.cancel-box.encerrado-box strong{color:#3d4856;}
+.cancel-box.encerrado-box span{color:#5a6472;}
 .resumo{margin-top:24px;background:var(--light);border:1px solid var(--border);border-radius:12px;padding:20px 22px;display:none;}
 .resumo.show{display:block;}
 .resumo h4{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gray);margin-bottom:12px;}
@@ -78,6 +84,10 @@ section{padding:40px 0;}
 .resumo-item .ri-valor{font-weight:700;color:var(--navy);text-align:right;}
 .resumo-total{display:flex;justify-content:space-between;font-weight:800;color:var(--navy);font-size:16px;padding:14px 0 0;border-top:2px solid var(--border);margin-top:6px;}
 .resumo-total .valor{color:var(--orange);}
+/* Código de rastreio (se o pedido tiver) */
+.rastreio-box{margin-bottom:14px;background:var(--white);border:1px dashed var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.rastreio-box .rb-lab{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;}
+.rastreio-box .rb-cod{font-size:15px;font-weight:800;color:var(--navy);letter-spacing:1px;margin-top:2px;}
 .acoes{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;}
 .acoes .btn{flex:1;min-width:220px;text-align:center;}
 .aviso{background:rgba(242,101,34,.07);border-left:4px solid var(--orange);border-radius:0 10px 10px 0;padding:14px 18px;margin-top:10px;font-size:13px;color:#7a3a12;line-height:1.6;}
@@ -136,7 +146,7 @@ img,video{max-width:100%;height:auto;}svg,iframe{max-width:100%;}
 </div>
 <div class="status-box" id="statusBox">
 <div class="status-top">
-<div class="status-num"><span class="hash">#</span><span id="sNumero">M3D-000000</span><button class="btn-copiar" onclick="copiarNumero()" title="Copiar número do pedido">📋 Copiar</button><small id="sCliente" style="display:none;"></small></div>
+<div class="status-num"><span class="hash">#</span><span id="sNumero">M3D-000000</span><button class="btn-copiar" onclick="copiarNumero()" title="Copiar número do pedido">📋 Copiar</button></div>
 <div class="status-pill" id="statusPill">Consultando…</div>
 </div>
 <h4 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:18px;">Status do pedido</h4>
@@ -191,10 +201,15 @@ var d=new Date(v);
 if(isNaN(d.getTime()))return String(v);
 return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
+/* Escapa texto antes de entrar em HTML montado */
+function escHtml(t){var d=document.createElement('div');d.textContent=(t==null?'':String(t));return d.innerHTML;}
+/* PRIVACIDADE (LGPD): esta página é pública — qualquer pessoa pode digitar um número.
+   Por isso NUNCA exibimos nome, WhatsApp ou e-mail do cliente aqui.
+   Dados pessoais ficam apenas no painel interno (admin, protegido por login). */
 /* Status da loja (pronta entrega): Pedido feito, Pago (Pix/Cartão), Em embalagem, Saiu, Entregue */
 function mapearLoja(v){
 var s=String(v||'').toLowerCase().trim();
-if(s==='cancelado'||s==='cancelada')return -1;
+if(s==='cancelado'||s==='cancelada'||s==='sem-resposta'||s==='sem resposta'||s==='sem_resposta')return -1;
 if(['entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 4;
 if(['saiu','enviado','saiu_para_entrega','em_transporte','saiu para entrega'].indexOf(s)>-1)return 3;
 if(['embalagem','em processo de embalagem','em_embalagem','embalando'].indexOf(s)>-1)return 2;
@@ -204,13 +219,34 @@ return 0;
 /* Status da encomenda (orcamento): recebido, orcamento, aprovado, producao, pronto, entregue */
 function mapearOrc(v){
 var s=String(v||'').toLowerCase().trim();
-if(s==='cancelado'||s==='cancelada')return -1;
+if(s==='cancelado'||s==='cancelada'||s==='sem-resposta'||s==='sem resposta'||s==='sem_resposta')return -1;
 if(['entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 5;
 if(['pronto','pronto_entrega','pronto_para_entrega','aguardando_entrega','para_entrega'].indexOf(s)>-1)return 4;
 if(['producao','em_producao','impressao','imprimindo','em_produção','produção'].indexOf(s)>-1)return 3;
 if(['aprovado','aprovacao','confirmado','em_andamento','aprovada','aprovação'].indexOf(s)>-1)return 2;
 if(['orcamento','orcado','orcamento_enviado','aguardando_aprovacao','orçamento','orçado'].indexOf(s)>-1)return 1;
 return 0;
+}
+/* Tradução fina do status para a pill (mostra o status real, não só a etapa) */
+function tradPill(tipo,s){
+var k=String(s||'').toLowerCase().trim();
+if(tipo==='loja'){
+if(k==='pago')return 'Pago';
+if(k==='pago (cartão)'||k==='pago (cartao)')return 'Pago no cartão';
+if(k.indexOf('aguardando')===0)return 'Aguardando pagamento';
+if(k.indexOf('embal')>-1)return 'Em embalagem';
+if(k.indexOf('saiu')===0||k==='enviado'||k.indexOf('em_transporte')>-1)return 'Saiu para entrega';
+if(k==='entregue')return 'Entregue';
+return 'Pedido feito';
+}
+if(k.indexOf('aguardando_entrega')>-1||k==='para_entrega')return 'Pronto';
+if(k.indexOf('analise')>-1)return 'Em análise';
+if(k.indexOf('orc')===0||k==='orçamento')return 'Em orçamento';
+if(k==='aprovado'||k==='em_andamento'||k==='aprovacao'||k==='aprovada')return 'Aprovado';
+if(k.indexOf('produ')===0)return 'Em produção';
+if(k==='pronto')return 'Pronto';
+if(k==='entregue')return 'Entregue';
+return 'Recebido';
 }
 function etiquetaEntrega(e){
 var s=String(e||'').toLowerCase();
@@ -295,29 +331,37 @@ msg.textContent='Não foi possível consultar agora. Tente novamente em instante
 }
 function exibirPedido(dados,tipo,alvo){
 var numero=dados.pedido_id||dados.numero||dados.id||alvo;
-var nomeCli=dados.nome_cliente||dados.cliente||dados.nome||'';
 var sRaw=String(dados.status||dados.estado||dados.etapa||'').toLowerCase().trim();
-var cancelado=(sRaw==='cancelado'||sRaw==='cancelada');
-var status=cancelado?-1:((tipo==='loja')?mapearLoja(dados.status):mapearOrc(dados.status||dados.estado||dados.etapa));
-var nomes=(tipo==='loja')?['Pedido feito','Pago','Em embalagem','Saiu para entrega','Entregue']:['Recebido','Orçamento','Aprovado','Em produção','Pronto','Entregue'];
+var ehCancelado=(sRaw==='cancelado'||sRaw==='cancelada');
+var ehSemResp=(sRaw==='sem-resposta'||sRaw==='sem resposta'||sRaw==='sem_resposta');
+var encerrado=ehCancelado||ehSemResp;
+var status=encerrado?-1:((tipo==='loja')?mapearLoja(dados.status):mapearOrc(dados.status||dados.estado||dados.etapa));
 document.getElementById('sNumero').textContent=numero;
-var elCli=document.getElementById('sCliente');
-if(nomeCli){elCli.textContent='Cliente: '+nomeCli;elCli.style.display='';}
-else{elCli.textContent='';elCli.style.display='none';}
 var pill=document.getElementById('statusPill');
-if(cancelado){
-pill.textContent='Cancelado';
+pill.classList.remove('cancelado','encerrado');
+if(ehCancelado){
 pill.classList.add('cancelado');
+pill.textContent='Cancelado';
 document.getElementById('timeline').innerHTML=
 '<div class="cancel-box"><strong>Este pedido foi cancelado.</strong>'
 +'<span>Se você já fez o pagamento ou quer entender o que aconteceu, chame a gente no WhatsApp que resolvemos rapidinho.</span></div>';
+}else if(ehSemResp){
+pill.classList.add('encerrado');
+pill.textContent='Encerrado';
+document.getElementById('timeline').innerHTML=
+'<div class="cancel-box encerrado-box"><strong>Este pedido foi encerrado.</strong>'
++'<span>Quer retomar ou tirar dúvidas? Chame a gente no WhatsApp com o número do pedido e retomamos de onde parou.</span></div>';
 }else{
-pill.classList.remove('cancelado');
-pill.textContent=nomes[status]||nomes[0];
+pill.textContent=tradPill(tipo,dados.status||dados.estado||dados.etapa);
 montarTimeline(tipo,status);
 }
 var detBox=document.getElementById('detalhesBox');
 var html='';
+/* Código de rastreio (se existir no pedido) */
+var rastreio=dados.codigo_rastreio||dados.rastreio||dados.rastreamento||dados.codigo_rastreamento||'';
+if(rastreio){
+html+='<div class="rastreio-box"><div><div class="rb-lab">📦 Código de rastreio</div><div class="rb-cod" id="rastreioCod">'+escHtml(String(rastreio).toUpperCase())+'</div></div><button class="btn-copiar" onclick="copiarRastreio()">📋 Copiar código</button></div>';
+}
 if(tipo==='loja'){
 var itens=dados.itens||[];
 var subtotal=parseFloat(dados.subtotal)||0;
@@ -326,22 +370,22 @@ itens.forEach(function(item){
 var qtd=item.qtd||item.quantidade||item.quant||1;
 var nome=item.nome||item.produto||item.descricao||'Item';
 var preco=parseFloat(item.preco||item.valor||0);
-html+='<div class="resumo-item"><span class="ri-nome">'+qtd+'x '+nome+(item.cor?' ('+item.cor+')':'')+'</span><span class="ri-valor">'+fmt(preco*qtd)+'</span></div>';
+html+='<div class="resumo-item"><span class="ri-nome">'+qtd+'x '+escHtml(nome+(item.cor?' ('+item.cor+')':''))+'</span><span class="ri-valor">'+fmt(preco*qtd)+'</span></div>';
 });
 if(dados.cupom){
-html+='<div class="resumo-item"><span class="ri-nome">Cupom '+dados.cupom+'</span><span class="ri-valor">-'+fmt(desconto)+'</span></div>';
+html+='<div class="resumo-item"><span class="ri-nome">Cupom '+escHtml(dados.cupom)+'</span><span class="ri-valor">-'+fmt(desconto)+'</span></div>';
 }
 if(subtotal>0&&(desconto>0||dados.cupom)){
 html+='<div class="resumo-item"><span class="ri-nome">Subtotal</span><span class="ri-valor">'+fmt(subtotal)+'</span></div>';
 }
 html+='<div class="resumo-total"><span>Total</span><span class="valor">'+fmt(dados.total||subtotal-desconto)+'</span></div>';
-html+='<div class="resumo-item" style="border-top:1px dashed rgba(15,30,61,.15);margin-top:8px;padding-top:10px;"><span class="ri-nome">Entrega</span><span class="ri-valor">'+etiquetaEntrega(dados.entrega)+'</span></div>';
+html+='<div class="resumo-item" style="border-top:1px dashed rgba(15,30,61,.15);margin-top:8px;padding-top:10px;"><span class="ri-nome">Entrega</span><span class="ri-valor">'+escHtml(etiquetaEntrega(dados.entrega))+'</span></div>';
 if(dados.nota){
-html+='<div class="resumo-item"><span class="ri-nome">Observações</span><span class="ri-valor">'+dados.nota+'</span></div>';
+html+='<div class="resumo-item"><span class="ri-nome">Observações</span><span class="ri-valor">'+escHtml(dados.nota)+'</span></div>';
 }
 }else{
 if(dados.tipo_peca){
-html+='<div class="resumo-item"><span class="ri-nome">Tipo de peça</span><span class="ri-valor">'+dados.tipo_peca+'</span></div>';
+html+='<div class="resumo-item"><span class="ri-nome">Tipo de peça</span><span class="ri-valor">'+escHtml(dados.tipo_peca)+'</span></div>';
 }
 }
 if(dados.created_at||dados.data){
@@ -364,6 +408,14 @@ function copiarNumero(){
   function ok(){var m=document.getElementById('buscaMsg');m.className='busca-msg ok';m.textContent='Número do pedido copiado!';}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(n).then(ok).catch(function(){fbCopia(n);ok();});}
   else{fbCopia(n);ok();}
+}
+function copiarRastreio(){
+  var el=document.getElementById('rastreioCod');
+  if(!el)return;
+  var t=el.textContent.trim();
+  function ok(){var m=document.getElementById('buscaMsg');m.className='busca-msg ok';m.textContent='Código de rastreio copiado!';}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok).catch(function(){fbCopia(t);ok();});}
+  else{fbCopia(t);ok();}
 }
 function fbCopia(t){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
 /* Preenchimento automático via URL (botão "Rastrear" do painel Minha conta ou links da loja).
