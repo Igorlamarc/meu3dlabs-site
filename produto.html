@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<script>if(location.protocol.indexOf('http')===0)document.write('<base href="/">');</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peça 3D pronta entrega | Meu 3D Labs</title>
+<meta name="description" id="metaDesc" content="Peças 3D pronta entrega: chaveiros, miniaturas, religiosos, decoração e utilitários. Pix com 5% de desconto ou cartão online em até 12x.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" id="canonico" href="https://meu3dlabs.com.br/loja.html">
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="Meu 3D Labs">
+<meta property="og:title" id="ogTitle" content="Peça 3D pronta entrega | Meu 3D Labs">
+<meta property="og:description" id="ogDesc" content="Peças 3D pronta entrega: chaveiros, miniaturas, religiosos e mais.">
+<meta property="og:image" content="https://meu3dlabs.com.br/img/logo/logo.png">
+<link rel="icon" href="img/logo/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NZTH0ZSLV0"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-NZTH0ZSLV0');
+</script>
+<style>
+:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--green:#25d366;--green-dark:#0f7a44;--red:#a93226;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);--shadow-lg:0 16px 40px rgba(15,30,61,.14);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;background:var(--light);}
+a{text-decoration:none;color:inherit;}
+img{max-width:100%;height:auto;}
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
+/* ===== Barra de avisos ===== */
+.topbar{background:#0a1428;color:rgba(255,255,255,.92);font-size:12.5px;font-weight:500;padding:8px 16px;text-align:center;letter-spacing:.2px;}
+.topbar b{color:#ff8a3d;}
+.topbar .tp-sep{margin:0 8px;opacity:.45;}
+/* ===== Header ===== */
+header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo img{height:44px;width:auto;display:block;}
+.logo-text{font-weight:800;font-size:19px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}
+.logo-text span{color:var(--orange-2);}
+.header-nav{display:flex;gap:22px;align-items:center;}
+.header-nav a{color:rgba(255,255,255,.82);font-size:13.5px;font-weight:600;transition:.2s;padding:6px 0;border-bottom:2px solid transparent;}
+.header-nav a:hover{color:#fff;border-bottom-color:var(--orange);}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:13.5px;font-weight:700;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);padding:9px 18px;border-radius:30px;transition:.25s;}
+.back-link:hover{background:var(--orange);border-color:var(--orange);}
+/* ===== Breadcrumb ===== */
+.breadcrumb{padding:20px 0 6px;font-size:13px;color:var(--gray);}
+.breadcrumb a{color:var(--gray);transition:.2s;}
+.breadcrumb a:hover{color:var(--orange);}
+.breadcrumb .bc-atual{color:var(--navy);font-weight:700;}
+.breadcrumb .bc-sep{margin:0 7px;opacity:.5;}
+/* ===== Estado carregando ===== */
+.carregando{text-align:center;padding:80px 20px;color:var(--gray);}
+.spinner{display:inline-block;width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* ===== Grid principal ===== */
+.p-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:44px;align-items:start;margin-top:8px;}
+.p-info-col{position:sticky;top:90px;}
+/* ===== Galeria ===== */
+.p-g-main{position:relative;background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;cursor:zoom-in;box-shadow:var(--shadow-sm);transition:.25s;}
+.p-g-main:hover{box-shadow:var(--shadow-md);}
+.p-g-main img{width:100%;height:100%;object-fit:contain;display:block;}
+.p-g-zoom{position:absolute;bottom:12px;right:12px;background:rgba(15,30,61,.75);color:#fff;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;pointer-events:none;opacity:0;transition:.2s;}
+.p-g-main:hover .p-g-zoom{opacity:1;}
+.p-g-noimg{font-size:72px;color:#b9c2d2;}
+.p-g-thumbs{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.p-thumb{width:72px;height:72px;border:2px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;cursor:pointer;padding:0;transition:.2s;display:flex;align-items:center;justify-content:center;}
+.p-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.p-thumb:hover{border-color:var(--orange-2);}
+.p-thumb.on{border-color:var(--orange);box-shadow:0 0 0 3px rgba(242,101,34,.15);}
+/* Setas de navegação da galeria */
+.p-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:none;background:rgba(15,30,61,.82);color:#fff;font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5;transition:.2s;box-shadow:0 4px 12px rgba(0,0,0,.25);}
+.p-nav:hover{background:var(--orange);}
+.p-nav.prev{left:12px;}
+.p-nav.next{right:12px;}
+.p-nav[hidden]{display:none;}
+@media(max-width:620px){.p-nav{width:48px;height:48px;font-size:24px;}}
+/* ===== Info ===== */
+.p-cat{display:inline-block;background:rgba(15,30,61,.07);color:var(--navy);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:6px 15px;border-radius:20px;margin-bottom:12px;}
+.p-grid h1{font-size:clamp(24px,3vw,32px);color:var(--navy);font-weight:800;letter-spacing:-.6px;line-height:1.25;margin-bottom:8px;}
+/* Estrelas rápidas */
+.p-stars{display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:13.5px;color:var(--gray);flex-wrap:wrap;}
+.p-stars .st{color:#f5b301;letter-spacing:2px;font-size:15px;}
+.p-stars a{color:var(--orange);font-weight:700;}
+.p-stars a:hover{text-decoration:underline;}
+.p-badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.p-badge{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:700;padding:7px 16px;border-radius:30px;}
+.p-badge.ok{background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.35);color:var(--green-dark);}
+.p-badge.ama{background:#fef3c7;border:1px solid #e8c33a;color:#92600a;}
+.p-badge.urg{background:#fee9d8;border:1px solid #f2a35c;color:#b3540a;animation:urgPulse 2s infinite;}
+@keyframes urgPulse{0%,100%{opacity:1;}50%{opacity:.75;}}
+/* Preço */
+.p-preco{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:16px;box-shadow:var(--shadow-sm);}
+.p-preco .linha{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.preco-antigo{font-size:17px;color:var(--gray);text-decoration:line-through;}
+.preco-novo{font-size:38px;font-weight:800;color:var(--orange);letter-spacing:-1px;}
+.badge-promo{background:#d73a49;color:#fff;font-size:12px;font-weight:800;padding:5px 12px;border-radius:20px;}
+.preco-sub{font-size:13px;color:var(--gray);margin-top:5px;}
+.preco-sub b{color:var(--navy);}
+/* Cores */
+.p-cores{margin-bottom:18px;}
+.p-cores .rotulo{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:9px;}
+.cor-chip{border:2px solid var(--border);background:var(--white);color:var(--navy);border-radius:30px;padding:8px 18px;font-size:13.5px;font-weight:600;cursor:pointer;transition:.2s;margin:0 7px 7px 0;font-family:inherit;}
+.cor-chip:hover{border-color:var(--orange);}
+.cor-chip.on{border-color:var(--orange);background:rgba(242,101,34,.08);color:var(--orange);}
+/* CTAs */
+.p-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:12px;font-weight:700;transition:.25s;border:none;cursor:pointer;font-size:16px;font-family:inherit;}
+.btn:hover{transform:translateY(-2px);}
+.btn-comprar{flex:1.4;min-width:230px;background:var(--orange);color:#fff;font-size:17px;box-shadow:0 6px 16px rgba(242,101,34,.3);}
+.btn-comprar:hover{background:var(--orange-2);}
+.btn-wa{flex:1;min-width:170px;background:var(--white);color:var(--green-dark);border:2px solid var(--green);font-size:15px;}
+.btn-wa:hover{background:rgba(37,211,102,.08);}
+.btn-shr{flex:0 1 auto;min-width:0;background:transparent;color:var(--navy);border:2px solid var(--border);font-size:14px;padding:14px 18px;}
+.btn-shr:hover{border-color:var(--navy);background:var(--light-2);}
+.btn-comprar.voltar{background:var(--green);box-shadow:0 6px 16px rgba(37,211,102,.3);}
+.btn-comprar.voltar:hover{background:#1fb959;}
+/* ===== Linha de confiança ===== */
+.p-trust{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0 4px;}
+.trust-item{display:flex;align-items:center;gap:9px;background:var(--light-2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-size:12.5px;font-weight:600;color:var(--navy);}
+.trust-item .ti{font-size:17px;}
+/* ===== Accordions ===== */
+.p-accordion{margin-top:18px;border-top:1px solid var(--border);}
+.p-acc{border-bottom:1px solid var(--border);}
+.p-acc summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 4px;font-size:15px;font-weight:700;color:var(--navy);cursor:pointer;transition:.2s;}
+.p-acc summary::-webkit-details-marker{display:none;}
+.p-acc summary::after{content:'+';font-size:22px;font-weight:400;color:var(--orange);transition:.25s;line-height:1;}
+.p-acc[open] summary::after{content:'−';transform:rotate(180deg);}
+.p-acc summary:hover{color:var(--orange);}
+.p-acc .acc-body{padding:0 4px 18px;font-size:14px;color:#3d4856;line-height:1.75;}
+.p-acc .acc-body ul{margin:0;padding-left:18px;}
+.p-acc .acc-body li{margin-bottom:6px;}
+.p-acc .acc-body table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.p-acc .acc-body td{padding:7px 4px;border-bottom:1px dashed var(--border);vertical-align:top;}
+.p-acc .acc-body td:first-child{color:var(--gray);font-weight:600;width:42%;}
+.p-acc .acc-body td:last-child{color:var(--navy);font-weight:600;}
+/* Avaliações link + nota artesanal */
+.p-aval{display:flex;align-items:center;gap:10px;margin-top:18px;padding:13px 16px;background:#fff;border:1px dashed var(--border);border-radius:12px;font-size:13.5px;color:var(--gray);flex-wrap:wrap;}
+.p-aval a{color:var(--orange);font-weight:700;}
+.p-aval a:hover{text-decoration:underline;}
+.nota-artesanal{margin-top:12px;font-size:12.5px;color:#6b7690;line-height:1.6;display:flex;gap:8px;align-items:flex-start;}
+/* ===== Como pedir ===== */
+.como-pedir{background:#fff;border:1px solid var(--border);border-radius:18px;padding:26px 24px;margin:44px 0 6px;box-shadow:var(--shadow-sm);}
+.como-pedir h2{font-size:21px;color:var(--navy);font-weight:800;margin-bottom:4px;letter-spacing:-.3px;}
+.como-pedir .cp-sub{color:var(--gray);font-size:14px;margin-bottom:20px;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.step{background:var(--light);border:1px solid var(--border);border-radius:14px;padding:16px 14px;text-align:center;transition:.25s;}
+.step:hover{border-color:var(--orange);transform:translateY(-3px);box-shadow:var(--shadow-sm);}
+.step .s-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--orange);color:#fff;font-weight:800;font-size:14px;margin-bottom:8px;}
+.step .s-ico{font-size:24px;display:block;margin-bottom:6px;}
+.step .s-tit{font-size:13.5px;font-weight:700;color:var(--navy);display:block;margin-bottom:3px;}
+.step .s-txt{font-size:12px;color:var(--gray);line-height:1.45;display:block;}
+/* ===== Relacionados ===== */
+.rel-sec{padding:40px 0 10px;}
+.rel-sec h2{font-size:26px;color:var(--navy);margin-bottom:4px;font-weight:800;letter-spacing:-.4px;}
+.rel-sec .rel-sub{color:var(--gray);margin-bottom:22px;font-size:14px;}
+.rel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+.rel-card{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);transition:.25s;display:flex;flex-direction:column;}
+.rel-card:hover{box-shadow:var(--shadow-md);transform:translateY(-4px);border-color:var(--orange);}
+.rel-img{height:190px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid var(--light-2);}
+.rel-img img{width:100%;height:100%;object-fit:contain;}
+.rel-noimg{font-size:48px;color:#b9c2d2;}
+.rel-body{padding:14px 16px;display:flex;flex-direction:column;flex:1;}
+.rel-body h3{font-size:14.5px;color:var(--navy);font-weight:700;margin-bottom:6px;line-height:1.35;}
+.rel-preco{font-size:17px;font-weight:800;color:var(--orange);margin-top:auto;}
+.rel-ver{display:inline-block;margin-top:18px;color:var(--orange);font-weight:700;font-size:14px;}
+.rel-ver:hover{text-decoration:underline;}
+/* ===== Serviços ===== */
+.servicos{padding:36px 0 8px;}
+.servicos h2{font-size:22px;color:var(--navy);font-weight:800;margin-bottom:4px;letter-spacing:-.3px;}
+.servicos .sv-sub{color:var(--gray);font-size:14px;margin-bottom:20px;}
+.sv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.sv-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:22px 20px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow-sm);transition:.25s;}
+.sv-card:hover{border-color:var(--orange);transform:translateY(-3px);box-shadow:var(--shadow-md);}
+.sv-card .sv-ico{font-size:28px;}
+.sv-card .sv-tit{font-size:15.5px;font-weight:800;color:var(--navy);}
+.sv-card .sv-txt{font-size:13px;color:var(--gray);line-height:1.55;flex:1;}
+.sv-card .sv-link{font-size:13.5px;font-weight:700;color:var(--orange);}
+.sv-card .sv-link:hover{text-decoration:underline;}
+/* ===== Erro ===== */
+.erro-box{background:var(--white);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow-md);padding:48px 30px;text-align:center;margin-top:24px;}
+.erro-box .e-ico{font-size:52px;margin-bottom:12px;}
+.erro-box h2{font-size:22px;color:var(--navy);margin-bottom:8px;}
+.erro-box p{font-size:14.5px;color:var(--gray);margin-bottom:24px;}
+/* ===== Lightbox ===== */
+.lightbox{position:fixed;inset:0;background:rgba(10,20,40,.88);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out;}
+.lightbox.show{display:flex;}
+.lightbox img{max-width:94vw;max-height:90vh;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+/* ===== Toast ===== */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;font-size:14px;font-weight:600;padding:12px 22px;border-radius:30px;box-shadow:var(--shadow-lg);z-index:400;transition:.3s;opacity:0;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+/* ===== Rodapé ===== */
+.site-footer{background:#0a1428;color:rgba(255,255,255,.75);padding:44px 20px 24px;margin-top:30px;}
+.site-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px;}
+.site-footer h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:12px;}
+.site-footer p,.site-footer a{font-size:13px;color:rgba(255,255,255,.7);line-height:1.8;display:block;}
+.site-footer a:hover{color:#ff8a3d;}
+.site-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px;text-align:center;font-size:12px;color:rgba(255,255,255,.45);}
+/* ===== Responsivo ===== */
+@media(max-width:940px){
+.p-grid{grid-template-columns:1fr;gap:26px;}.p-info-col{position:static;}
+.rel-grid{grid-template-columns:repeat(2,1fr);}
+.steps{grid-template-columns:repeat(2,1fr);}
+.sv-grid{grid-template-columns:1fr;}
+.header-nav{display:none;}
+}
+@media(max-width:620px){
+.rel-grid{grid-template-columns:1fr;}
+.p-ctas .btn{min-width:100%;}
+.preco-novo{font-size:32px;}
+.topbar{font-size:11px;}
+.p-trust{grid-template-columns:1fr;}
+}
+html,body{overflow-x:hidden;max-width:100%;}
+</style>
+</head>
+<body>
+<div class="topbar">🚚 Envio para todo o Brasil<span class="tp-sep">·</span>💳 Cartão online em até <b>12x</b><span class="tp-sep">·</span>🔷 Pix com <b>5% de desconto</b></div>
+<header>
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <img src="img/logo/logo.png" alt="Logo Meu 3D Labs">
+      <span class="logo-text">Meu<span>3D</span>Labs</span>
+    </a>
+    <nav class="header-nav">
+      <a href="index.html">Início</a>
+      <a href="loja.html">Loja</a>
+      <a href="acompanhar.html">Acompanhar pedido</a>
+      <a href="avaliacoes.html">Avaliações</a>
+    </nav>
+    <a class="back-link" href="loja.html">← Voltar à loja</a>
+  </div>
+</header>
+<div class="container">
+  <nav class="breadcrumb" id="breadcrumb">
+    <a href="index.html">Início</a><span class="bc-sep">›</span><a href="loja.html">Loja</a><span class="bc-sep">›</span><span class="bc-atual" id="bcNome">Produto</span>
+  </nav>
+</div>
+<main>
+  <div class="container">
+    <!-- Carregando -->
+    <div class="carregando" id="carregandoBox">
+      <div class="spinner"></div><br>Carregando peça…
+    </div>
+    <!-- Produto -->
+    <div id="produtoBox" hidden>
+      <div class="p-grid">
+        <!-- Galeria -->
+        <div class="p-galeria">
+          <div class="p-g-main" id="gMain" title="Clique para ampliar">
+            <img id="gMainImg" alt="">
+            <div class="p-g-noimg" id="gNoImg" hidden>📦</div>
+            <span class="p-g-zoom">🔍 Ampliar</span>
+            <button class="p-nav prev" id="btnPrevFoto" type="button" title="Foto anterior" hidden>‹</button>
+            <button class="p-nav next" id="btnNextFoto" type="button" title="Próxima foto" hidden>›</button>
+          </div>
+          <div class="p-g-thumbs" id="gThumbs"></div>
+        </div>
+        <!-- Informações -->
+        <div class="p-info-col">
+          <span class="p-cat" id="pCat"></span>
+          <h1 id="pNome"></h1>
+          <div class="p-stars">
+            <span class="st">★★★★★</span>
+            <span>Avaliações reais de clientes</span>
+            <a href="avaliacoes.html" target="_blank" rel="noopener">ver todas →</a>
+          </div>
+          <div class="p-badges" id="pBadges"></div>
+          <div class="p-preco" id="pPreco"></div>
+          <div class="p-cores" id="pCores" hidden>
+            <div class="rotulo">Cor disponível</div>
+            <div id="coresChips"></div>
+          </div>
+          <div class="p-ctas">
+            <a class="btn btn-comprar" id="btnComprar" href="#">🛒 Comprar na loja</a>
+            <a class="btn btn-wa" id="btnWa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
+            <button class="btn btn-shr" type="button" onclick="compartilharPagina()">🔗 Compartilhar</button>
+          </div>
+          <div class="p-trust">
+            <div class="trust-item"><span class="ti">🔒</span>Compra segura no site</div>
+            <div class="trust-item"><span class="ti">🖨️</span>Produção artesanal 3D</div>
+            <div class="trust-item"><span class="ti">📦</span>Envio com rastreio</div>
+            <div class="trust-item"><span class="ti">💬</span>Suporte no WhatsApp</div>
+          </div>
+          <div class="p-accordion">
+            <details class="p-acc" open>
+              <summary>Sobre a peça</summary>
+              <div class="acc-body"><p id="pDesc"></p></div>
+            </details>
+            <details class="p-acc">
+              <summary>Especificações</summary>
+              <div class="acc-body"><table id="espTabela"></table></div>
+            </details>
+            <details class="p-acc">
+              <summary>Entrega e retirada</summary>
+              <div class="acc-body">
+                <ul>
+                  <li><b>Retirada no local:</b> Nilópolis/RJ, sem custo, horário combinado com você.</li>
+                  <li><b>Uber Flash:</b> entrega na região do RJ, custo de transporte por conta do cliente.</li>
+                  <li><b>Correios:</b> envio para todo o Brasil com código de rastreio — disponível para peças pronta entrega da loja.</li>
+                </ul>
+              </div>
+            </details>
+            <details class="p-acc">
+              <summary>Formas de pagamento</summary>
+              <div class="acc-body">
+                <ul>
+                  <li><b>Pix:</b> aprovação imediata com <b>5% de desconto</b>.</li>
+                  <li><b>Cartão de crédito online:</b> em até <b>12x</b> (juros da operadora).</li>
+                  <li>Pagamento 100% seguro, feito direto no site ao finalizar a compra.</li>
+                </ul>
+              </div>
+            </details>
+            <details class="p-acc">
+              <summary>Cuidados com a peça</summary>
+              <div class="acc-body">
+                <ul>
+                  <li>Limpe com pano seco ou levemente umedecido; evite produtos químicos.</li>
+                  <li>Não deixe exposta ao sol direto por longos períodos (pode alterar a cor).</li>
+                  <li>Mantenha longe de fontes de calor, como o painel de carros sob sol.</li>
+                  <li>Peças articuladas ou flexíveis: manuseie as juntas com leveza.</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+          <div class="p-aval">
+            <span>⭐ ⭐ ⭐ ⭐ ⭐</span>
+            <span>Satisfação dos nossos clientes: <a href="avaliacoes.html" target="_blank" rel="noopener">ver avaliações →</a></span>
+          </div>
+          <div class="nota-artesanal">
+            <span>🖨️</span>
+            <span>Peça impressa em 3D artesanalmente, uma a uma. Pequenas variações de acabamento fazem parte do processo e garantem a exclusividade da sua peça.</span>
+          </div>
+        </div>
+      </div>
+      <!-- Como pedir -->
+      <section class="como-pedir">
+        <h2>Como pedir sua peça</h2>
+        <p class="cp-sub">Do clique à entrega, o processo é rápido e transparente:</p>
+        <div class="steps">
+          <div class="step">
+            <span class="s-num">1</span><span class="s-ico">🛒</span>
+            <span class="s-tit">Adicione ao carrinho</span>
+            <span class="s-txt">Escolha a cor e finalize seu pedido na loja</span>
+          </div>
+          <div class="step">
+            <span class="s-num">2</span><span class="s-ico">💳</span>
+            <span class="s-tit">Pague com segurança</span>
+            <span class="s-txt">Pix com 5% OFF ou cartão em até 12x</span>
+          </div>
+          <div class="step">
+            <span class="s-num">3</span><span class="s-ico">🚚</span>
+            <span class="s-tit">Receba ou retire</span>
+            <span class="s-txt">Correios, Uber Flash ou retirada em Nilópolis</span>
+          </div>
+          <div class="step">
+            <span class="s-num">4</span><span class="s-ico">😊</span>
+            <span class="s-tit">Curta sua peça</span>
+            <span class="s-txt">Acompanhe pelo site com seu código de pedido</span>
+          </div>
+        </div>
+      </section>
+    </div>
+    <!-- Erro / não encontrado -->
+    <div class="erro-box" id="erroBox" hidden>
+      <div class="e-ico">🔍</div>
+      <h2>Peça não encontrada</h2>
+      <p>Este produto pode ter sido vendido, renomeado ou está temporariamente indisponível.<br>Confira a loja completa — tem novidade toda semana!</p>
+      <a class="btn btn-comprar" href="loja.html">🛒 Ver todas as peças da loja</a>
+    </div>
+  </div>
+  <!-- Relacionados -->
+  <section class="rel-sec" id="relSec" hidden>
+    <div class="container">
+      <h2>Encontre similares</h2>
+      <p class="rel-sub">Outras peças pronta entrega da Meu 3D Labs.</p>
+      <div class="rel-grid" id="relGrid"></div>
+      <a class="rel-ver" href="loja.html">Ver a loja completa →</a>
+    </div>
+  </section>
+  <!-- Serviços -->
+  <section class="servicos">
+    <div class="container">
+      <h2>A Meu 3D Labs também oferece</h2>
+      <p class="sv-sub">Além da loja pronta entrega, a gente cuida do seu projeto do começo ao fim:</p>
+      <div class="sv-grid">
+        <a class="sv-card" href="assistencia.html">
+          <span class="sv-ico">🔧</span>
+          <span class="sv-tit">Assistência Creality</span>
+          <span class="sv-txt">Suporte especializado e manutenção para sua impressora 3D Creality funcionar sempre no ponto.</span>
+          <span class="sv-link">Conhecer a assistência →</span>
+        </a>
+        <a class="sv-card" href="consultoria.html">
+          <span class="sv-ico">💡</span>
+          <span class="sv-tit">Consultoria 3D</span>
+          <span class="sv-txt">Orientação passo a passo, do design à impressão, para tirar sua ideia do papel.</span>
+          <span class="sv-link">Agendar uma conversa →</span>
+        </a>
+        <a class="sv-card" href="enviar-projeto.html">
+          <span class="sv-ico">✨</span>
+          <span class="sv-tit">Peça personalizada</span>
+          <span class="sv-txt">Não achou a peça ideal? Mande sua ideia e receba um orçamento sob medida.</span>
+          <span class="sv-link">Enviar meu projeto →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <h4>Meu 3D Labs</h4>
+      <p>Impressão 3D personalizada, peças exclusivas e assistência técnica Creality em Nilópolis/RJ.</p>
+    </div>
+    <div>
+      <h4>Navegação</h4>
+      <a href="index.html">🏠 Início</a>
+      <a href="loja.html">🛒 Loja pronta entrega</a>
+      <a href="acompanhar.html">📦 Acompanhar pedido</a>
+      <a href="avaliacoes.html">⭐ Avaliações</a>
+    </div>
+    <div>
+      <h4>Serviços</h4>
+      <a href="assistencia.html">🔧 Assistência Creality</a>
+      <a href="consultoria.html">💡 Consultoria 3D</a>
+      <a href="enviar-projeto.html">✨ Peça personalizada</a>
+      <a href="blog.html">📰 Blog</a>
+    </div>
+    <div>
+      <h4>Atendimento</h4>
+      <a href="https://wa.me/5521966594803" target="_blank">💬 WhatsApp (21) 96659-4803</a>
+      <p>Nilópolis · Rio de Janeiro · RJ</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Meu 3D Labs · Todos os direitos reservados</div>
+</footer>
+<div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
+<div class="toast" id="toastPagina"></div>
+<script>
+var API_PROD='https://meu3dlabs-backend.onrender.com/api/loja/produtos';
+var WA_NUM='5521966594803';
+var BASE_URL='https://meu3dlabs.com.br';
+var CATEGORIAS={chaveiros:'Chaveiros',religiosos:'Religiosos',decoracao:'Decoração',miniaturas:'Miniaturas',colecionaveis:'Colecionáveis',articulados:'Articulados',utilitarios:'Utilitários',outros:'Outros'};
+function esc(t){var d=document.createElement('div');d.textContent=(t==null?'':String(t));return d.innerHTML;}
+function fmt(v){var n=parseFloat(v);return isNaN(n)?'R$ 0,00':'R$ '+n.toFixed(2).replace('.',',');}
+function normalizarBase(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+/* Pega o slug: /produto/xyz (no ar) ou ?produto=/&slug= (funciona até em teste local) */
+function slugDaURL(){
+  var m=location.pathname.match(/\/produto\/([^\/?#]+)/);
+  if(m&&m[1])return decodeURIComponent(m[1]).replace(/\/+$/,'');
+  var p=new URLSearchParams(location.search);
+  var q=p.get('produto')||p.get('slug')||p.get('order');
+  return q?decodeURIComponent(q).replace(/\/+$/,''):null;
+}
+function labelCat(c){return CATEGORIAS[String(c||'').toLowerCase()]||(String(c||'').charAt(0).toUpperCase()+String(c||'').slice(1));}
+var produtoAtual=null,imagens=[],imgAtual=0;
+function setMainImg(i){
+  if(!imagens.length)return;
+  imgAtual=(i+imagens.length)%imagens.length;
+  document.getElementById('gMainImg').src=imagens[imgAtual];
+  document.getElementById('gMainImg').hidden=false;
+  document.getElementById('gNoImg').hidden=true;
+  var ths=document.querySelectorAll('.p-thumb');
+  ths.forEach(function(t,idx){t.classList.toggle('on',idx===imgAtual);});
+  var temMais=imagens.length>1;
+  document.getElementById('btnPrevFoto').hidden=!temMais;
+  document.getElementById('btnNextFoto').hidden=!temMais;
+}
+/* Compartilhar a página atual */
+function compartilharPagina(){
+  var url=location.href;
+  function ok(){var t=document.getElementById('toastPagina');t.textContent='🔗 Link copiado! Envie no WhatsApp ou Instagram.';t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2600);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(ok).catch(function(){var ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);ok();});}
+  else{var ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);ok();}
+}
+function carregar(){
+  fetch(API_PROD,{cache:'no-store'})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    var lista=Array.isArray(d)?d:(d.produtos||[]);
+    var alvo=slugDaURL();
+    var p=null;
+    for(var i=0;i<lista.length;i++){if(String(lista[i].slug)===String(alvo)&&lista[i].ativo!==false){p=lista[i];break;}}
+    if(!p){mostrarErro();return;}
+    produtoAtual=p;
+    render(p,lista);
+  })
+  .catch(function(){mostrarErro();});
+}
+function mostrarErro(){
+  document.getElementById('carregandoBox').hidden=true;
+  document.getElementById('erroBox').hidden=false;
+  document.getElementById('breadcrumb').hidden=true;
+}
+function render(p,lista){
+  var slug=p.slug||'';
+  var url=BASE_URL+'/produto/'+encodeURIComponent(slug);
+  var descLimpa=String(p.descricao||'').split('|')[0].trim();
+  /* SEO */
+  document.title=p.nome+' | Peça 3D pronta entrega | Meu 3D Labs';
+  document.getElementById('metaDesc').setAttribute('content',(descLimpa||'Peça 3D pronta entrega na Meu 3D Labs.').slice(0,155));
+  document.getElementById('canonico').setAttribute('href',url);
+  document.getElementById('ogTitle').setAttribute('content',p.nome+' | Meu 3D Labs');
+  document.getElementById('ogDesc').setAttribute('content',(descLimpa||'Peça 3D pronta entrega.').slice(0,155));
+  document.getElementById('bcNome').textContent=p.nome;
+  /* Galeria */
+  imagens=(p.imagens&&p.imagens.length)?p.imagens.slice():[];
+  var gThumbs=document.getElementById('gThumbs');
+  if(imagens.length){
+    imagens.forEach(function(u,i){
+      var b=document.createElement('button');
+      b.type='button';b.className='p-thumb'+(i===0?' on':'');
+      b.innerHTML='<img src="'+esc(u)+'" alt="'+esc(p.nome)+' — foto '+(i+1)+'" loading="lazy">';
+      b.onclick=function(){setMainImg(i);};
+      gThumbs.appendChild(b);
+    });
+    setMainImg(0);
+  }else{
+    document.getElementById('gMainImg').hidden=true;
+    document.getElementById('gNoImg').hidden=false;
+  }
+  /* Info */
+  document.getElementById('pCat').textContent=labelCat(p.categoria);
+  document.getElementById('pNome').textContent=p.nome;
+  var est=parseInt(p.estoque);
+  var esgotado=!isNaN(est)&&est===0;
+  var urgente=!isNaN(est)&&est>0&&est<=3;
+  /* Badges: pronta entrega + destaque + urgência de estoque */
+  var badges=document.getElementById('pBadges');
+  var bh='';
+  bh+=esgotado?'<span class="p-badge ama">⏳ Sob consulta — encomende pelo WhatsApp</span>':'<span class="p-badge ok">✅ Pronta entrega</span>';
+  if(p.destaque)bh+='<span class="p-badge ama">⭐ Destaque da loja</span>';
+  if(urgente)bh+='<span class="p-badge urg">⚠️ Restam apenas '+est+' unidades!</span>';
+  badges.innerHTML=bh;
+  /* Preço detalhado: valor real do Pix 5% OFF e da parcela 12x */
+  var preco=parseFloat(p.preco)||0;
+  var promo=p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<preco;
+  var precoVenda=promo?parseFloat(p.precoPromo):preco;
+  var pixValor=precoVenda*0.95;
+  var parcela=precoVenda/12;
+  var pc=document.getElementById('pPreco');
+  var ph='';
+  if(promo){
+    var off=Math.round((1-parseFloat(p.precoPromo)/preco)*100);
+    ph+='<div class="linha"><span class="preco-antigo">'+fmt(preco)+'</span><span class="preco-novo">'+fmt(p.precoPromo)+'</span><span class="badge-promo">-'+off+'%</span></div>';
+  }else{
+    ph+='<div class="linha"><span class="preco-novo">'+fmt(preco)+'</span></div>';
+  }
+  ph+='<div class="preco-sub">🔷 <b>'+fmt(pixValor)+' no Pix</b> — já com 5% de desconto</div>';
+  ph+='<div class="preco-sub">💳 ou <b>12x de '+fmt(parcela)+'</b> no cartão (juros da operadora)</div>';
+  pc.innerHTML=ph;
+  /* Cores */
+  var cores=(p.cores&&p.cores.length)?p.cores.slice():[];
+  if(cores.length){
+    document.getElementById('pCores').hidden=false;
+    var box=document.getElementById('coresChips');
+    cores.forEach(function(c,i){
+      var b=document.createElement('button');
+      b.type='button';b.className='cor-chip';b.textContent=c;
+      b.onclick=function(){
+        document.querySelectorAll('.cor-chip').forEach(function(x){x.classList.remove('on');});
+        b.classList.add('on');
+        if(imagens.length===cores.length){setMainImg(i);}
+        else{
+          var alvo=normalizarBase(c),achou=-1;
+          for(var j=0;j<imagens.length;j++){if(normalizarBase(imagens[j]).indexOf(alvo)>-1){achou=j;break;}}
+          if(achou>-1)setMainImg(achou);
+        }
+      };
+      box.appendChild(b);
+    });
+  }
+  /* Descrição */
+  document.getElementById('pDesc').textContent=descLimpa||'Peça 3D pronta entrega da Meu 3D Labs, impressa com acabamento profissional. Dúvidas sobre tamanho, material ou cores? Fale com a gente no WhatsApp!';
+  /* Especificações: tabela preenchida automaticamente com os dados reais */
+  var esp='';
+  esp+='<tr><td>Material</td><td>PLA (leve, resistente e biodegradável)</td></tr>';
+  esp+='<tr><td>Categoria</td><td>'+esc(labelCat(p.categoria))+'</td></tr>';
+  esp+='<tr><td>Cores</td><td>'+(cores.length?esc(cores.join(', ')):'Conforme foto')+'</td></tr>';
+  esp+='<tr><td>Disponibilidade</td><td>'+(esgotado?'Sob consulta (encomenda)':'Pronta entrega'+(!isNaN(est)?' — '+est+' em estoque':''))+'</td></tr>';
+  esp+='<tr><td>Código da peça</td><td>'+esc(slug)+'</td></tr>';
+  esp+='<tr><td>Produção</td><td>Impressão 3D artesanal · Nilópolis/RJ</td></tr>';
+  document.getElementById('espTabela').innerHTML=esp;
+  /* CTAs */
+  var btnC=document.getElementById('btnComprar'),btnW=document.getElementById('btnWa');
+  if(esgotado){
+    btnC.style.display='none';
+    btnW.textContent='💬 Quero encomendar esta peça';
+    var msgEnc='Olá! Vi a peça *'+p.nome+'* no site ('+url+') e ela está sem estoque. Quero encomendar uma! 😊';
+    btnW.href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msgEnc);
+  }else{
+        btnC.href='loja.html?produto='+encodeURIComponent(slug)+'&carrinho=1';
+    btnC.title='Adicionar ao carrinho na loja';
+    var msgWa='Olá! Vi no site a peça *'+p.nome+'* → '+url+'\nQuero saber mais! 😊';
+    btnW.href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msgWa);
+  }
+  /* Relacionados */
+  var rel=lista.filter(function(x){return x.ativo!==false&&x.slug!==slug&&String(x.categoria)===String(p.categoria);});
+  if(rel.length<4){
+    lista.forEach(function(x){if(rel.length>=4)return;if(x.ativo!==false&&x.slug!==slug&&String(x.categoria)!==String(p.categoria))rel.push(x);});
+  }
+  rel=rel.slice(0,4);
+  if(rel.length){
+    var rg=document.getElementById('relGrid');
+    rel.forEach(function(x){
+      var rp=parseFloat(x.preco)||0;
+      var rPromo=x.promo&&parseFloat(x.precoPromo)>0&&parseFloat(x.precoPromo)<rp;
+      var img=(x.imagens&&x.imagens[0])||'';
+      var a=document.createElement('a');
+      a.className='rel-card';a.href='produto.html?produto='+encodeURIComponent(x.slug||'');
+      a.innerHTML='<div class="rel-img">'+(img?'<img src="'+esc(img)+'" alt="'+esc(x.nome)+'" loading="lazy">':'<span class="rel-noimg">📦</span>')+'</div>'+
+        '<div class="rel-body"><h3>'+esc(x.nome)+'</h3><div class="rel-preco">'+(rPromo?fmt(x.precoPromo):fmt(rp))+(rPromo?' <s style="font-size:11.5px;color:var(--gray);font-weight:500;">'+fmt(rp)+'</s>':'')+'</div></div>';
+      rg.appendChild(a);
+    });
+    document.getElementById('relSec').hidden=false;
+  }
+  /* SEO estruturado */
+  var ld={'@context':'https://schema.org','@type':'Product','name':p.nome,'description':descLimpa,'sku':slug,'url':url,
+    'image':imagens.length?imagens:[BASE_URL+'/img/logo/logo.png'],
+    'brand':{'@type':'Brand','name':'Meu 3D Labs'},
+    'offers':{'@type':'Offer','url':url,'priceCurrency':'BRL','price':precoVenda,'itemCondition':'https://schema.org/NewCondition','availability':esgotado?'https://schema.org/OutOfStock':'https://schema.org/InStock','seller':{'@type':'Organization','name':'Meu 3D Labs'}}};
+  var s=document.createElement('script');s.type='application/ld+json';s.textContent=JSON.stringify(ld);document.head.appendChild(s);
+  var bl={'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':[
+    {'@type':'ListItem','position':1,'name':'Início','item':BASE_URL+'/'},
+    {'@type':'ListItem','position':2,'name':'Loja','item':BASE_URL+'/loja.html'},
+    {'@type':'ListItem','position':3,'name':p.nome,'item':url}]};
+  var s2=document.createElement('script');s2.type='application/ld+json';s2.textContent=JSON.stringify(bl);document.head.appendChild(s2);
+  document.getElementById('carregandoBox').hidden=true;
+  document.getElementById('produtoBox').hidden=false;
+}
+/* Setas de navegação das fotos */
+document.getElementById('btnPrevFoto').addEventListener('click',function(e){e.stopPropagation();setMainImg(imgAtual-1);});
+document.getElementById('btnNextFoto').addEventListener('click',function(e){e.stopPropagation();setMainImg(imgAtual+1);});
+/* Lightbox */
+document.getElementById('gMain').addEventListener('click',function(){
+  if(!imagens.length)return;
+  document.getElementById('lightboxImg').src=imagens[imgAtual];
+  document.getElementById('lightbox').classList.add('show');
+});
+document.getElementById('lightbox').addEventListener('click',function(){this.classList.remove('show');});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('lightbox').classList.remove('show');});
+carregar();
+</script>
+</body>
+</html>

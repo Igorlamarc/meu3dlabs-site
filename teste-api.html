@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Teste de API — Meu 3D Labs</title>
+<style>
+body{font-family:Arial;max-width:700px;margin:40px auto;padding:0 20px;color:#16294f;}
+h1{font-size:20px;} .cx{padding:16px;border-radius:10px;margin:14px 0;font-size:14px;line-height:1.6;}
+.ok{background:#e6f7ee;border:1px solid #25d366;color:#0f7a44;}
+.erro{background:#fdecea;border:1px solid #a93226;color:#a93226;}
+.info{background:#f0f3f8;border:1px solid #dde3ee;color:#4a5161;}
+pre{white-space:pre-wrap;word-break:break-all;font-size:12px;background:#fff;padding:10px;border-radius:8px;border:1px solid #eee;}
+</style>
+</head>
+<body>
+<h1>🔍 Diagnóstico da API da loja</h1>
+<div class="cx info">URL: <b>https://meu3dlabs-backend.onrender.com/api/loja/produtos</b><br>Modo: <b id="modo">detectando…</b></div>
+<div id="resultado" class="cx info">Testando…</div>
+<script>
+document.getElementById('modo').textContent=(location.protocol==='file:')?'file:// (duplo clique — não confiável)':(location.protocol+'//'+location.host+' (servidor — confiável)');
+fetch('https://meu3dlabs-backend.onrender.com/api/loja/produtos',{cache:'no-store'})
+.then(function(r){return r.json().then(function(j){return {status:r.status,ok:r.ok,json:j};});})
+.then(function(x){
+  var lista=Array.isArray(x.json)?x.json:(x.json.produtos||[]);
+  var n=Array.isArray(lista)?lista.length:0;
+  document.getElementById('resultado').className='cx '+(n>0?'ok':'erro');
+  document.getElementById('resultado').innerHTML='<b>Status HTTP: '+x.status+'</b> · Produtos recebidos: <b>'+n+'</b>'+
+    (n>0?'<br>✅ API funcionando. Primeiro produto: <b>'+String(lista[0].nome||'')+'</b>':'<br>⚠️ Resposta vazia ou em formato inesperado.')+
+    '<pre>'+String(JSON.stringify(x.json,null,1)).slice(0,800)+'</pre>';
+})
+.catch(function(e){
+  document.getElementById('resultado').className='cx erro';
+  document.getElementById('resultado').innerHTML='<b>❌ O fetch falhou com este erro exato:</b><pre>'+String(e.name+': '+e.message)+'</pre>'+
+    'Se aparecer <b>TypeError: Failed to fetch</b> no modo <b>file://</b>, é o bloqueio do navegador para arquivos locais — teste pelo Live Server.';
+});
+</script>
+</body>
+</html>

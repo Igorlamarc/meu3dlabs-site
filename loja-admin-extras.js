@@ -15,7 +15,7 @@ function fmt(n){n=parseFloat(n)||0;return n.toFixed(2).replace('.',',');}
 function toast(msg,tipo){if(window.mostrarToast)window.mostrarToast(msg,tipo);else alert(msg);}
 function soma(){return typeof produtos!=='undefined'?produtos:[];}
 function porId(id){var a=soma();for(var i=0;i<a.length;i++)if(String(a[i].id)===String(id))return a[i];return null;}
-function linkPublico(p){return 'loja.html?produto='+encodeURIComponent(p.slug||'');}
+function linkPublico(p){return '/produto/'+(p.slug||'');}
 
 /* Salva o produto inteiro com um campo alterado (PUT completo, como o form faz) */
 async function gravarProduto(p){

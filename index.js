@@ -237,7 +237,7 @@ function aceitarCookies(){
       var img=(p.imagens&&p.imagens[0])||'';
       var nome=String(p.nome||'').replace(/</g,'&lt;');
       var preco='R$ '+(parseFloat(p.preco)||0).toFixed(2).replace('.',',');
-      var link='loja.html?produto='+encodeURIComponent(p.slug);
+      var link='/produto/'+p.slug;
       html+='<div class="dst-card">'
         +(img?'<a class="dst-img" href="'+link+'"><img src="'+img+'" alt="'+nome+'" loading="lazy"></a>':'<a class="dst-img dst-noimg" href="'+link+'">📦</a>')
         +'<div class="dst-body"><h3>'+nome+'</h3>'
