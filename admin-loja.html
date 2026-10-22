@@ -153,6 +153,13 @@ body.dark .promo-box{background:#0f1a30;border-color:#2a3a63;}
 .slug-preview{font-size:11px;color:#8a94a8;margin-top:3px;word-break:break-all;}
 .promo-box{border:1.5px dashed #f26522;border-radius:12px;padding:14px;background:#fff8f4;display:flex;flex-direction:column;gap:10px;}
 .promo-box .promo-linha{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#7a3a10;}
+/* CAMPOS MINI (dimensões inline) */
+.campo-mini{flex:1;min-width:95px;}
+.campo-mini .mini-label{display:block;font-size:11px;font-weight:600;color:#4a5670;margin-bottom:4px;}
+.campo-mini input{width:100%;padding:10px 11px;border:1.5px solid #dde3ee;border-radius:9px;font-size:13px;font-family:inherit;color:#16294f;background:#fff;}
+.campo-mini input:focus{border-color:#f26522;outline:none;box-shadow:0 0 0 3px rgba(242,101,34,.12);}
+body.dark .campo-mini .mini-label{color:#a9b4c9;}
+body.dark .campo-mini input{background:#0f1a30;border-color:#2a3a63;color:#e6ecf7;}
 /* SELETOR DE CORES */
 .cores-pick{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
 .cor-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1.5px solid #dde3ee;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;background:#fff;color:#4a5670;}
@@ -239,6 +246,7 @@ body.dark .promo-box{background:#0f1a30;border-color:#2a3a63;}
 <script>
 const API = 'https://meu3dlabs-backend.onrender.com/api';
 const CATEGORIAS = ['chaveiros','religiosos','decoracao','miniaturas','colecionaveis','articulados','sensoriais','utilitarios','outros'];
+const MATERIAIS = ['PLA','PETG','TPU','ABS'];
 let token = localStorage.getItem('m3d_token') || '';
 let produtos = [];
 let editandoId = null;
@@ -497,6 +505,18 @@ function abrirForm(id, duplicar){
         '<div class="campo full"><label>Descrição</label><textarea id="fDesc" maxlength="500" placeholder="Detalhes, material, tamanho..." oninput="document.getElementById(\'contadorDesc\').textContent=this.value.length+\' / 500\';">' + (p ? esc(p.descricao || '') : '') + '</textarea><div class="slug-preview" id="contadorDesc">0 / 500</div></div>' +
         '<div class="campo"><label>Preço (R$)</label><input id="fPreco" type="number" step="0.01" min="0" placeholder="0,00" value="' + (p ? p.preco : '') + '"></div>' +
         '<div class="campo"><label>Estoque (unidades)</label><input id="fEstoque" type="number" min="0" step="1" placeholder="0 = sem estoque" value="' + (p ? p.estoque : 0) + '"></div>' +
+        '<div class="campo"><label>Material</label><select id="fMaterial">' +
+          '<option value=""' + (p && !p.material ? ' selected' : '') + '>Não informado</option>' +
+          MATERIAIS.map(m => '<option value="' + m + '"' + (p && p.material === m ? ' selected' : '') + '>' + m + '</option>').join('') +
+        '</select></div>' +
+        '<div class="campo"><label>Peso (gramas) <span style="font-weight:400;color:#8a94a8;">(opcional)</span></label><input id="fPeso" type="number" step="0.1" min="0" placeholder="Ex.: 15" value="' + (p && p.peso != null ? p.peso : '') + '"></div>' +
+        '<div class="campo full"><label>Dimensões (cm) <span style="font-weight:400;color:#8a94a8;">(opcional — os 3 eixos da peça)</span></label>' +
+          '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
+            '<div class="campo-mini"><span class="mini-label">Altura</span><input id="fAltura" type="number" step="0.1" min="0" placeholder="0,0" value="' + (p && p.altura != null ? p.altura : '') + '"></div>' +
+            '<div class="campo-mini"><span class="mini-label">Largura</span><input id="fLargura" type="number" step="0.1" min="0" placeholder="0,0" value="' + (p && p.largura != null ? p.largura : '') + '"></div>' +
+            '<div class="campo-mini"><span class="mini-label">Profundidade</span><input id="fProfundidade" type="number" step="0.1" min="0" placeholder="0,0" value="' + (p && p.profundidade != null ? p.profundidade : '') + '"></div>' +
+          '</div>' +
+        '</div>' +
         '<div class="campo"><label>Categoria</label><select id="fCategoria">' +
           CATEGORIAS.map(c => '<option value="' + c + '"' + (p && p.categoria === c ? ' selected' : '') + '>' + c.charAt(0).toUpperCase() + c.slice(1) + '</option>').join('') +
         '</select></div>' +
@@ -647,6 +667,16 @@ function mostrarMsg(txt, ok){
   m.textContent = txt;
   setTimeout(() => { m.className = 'sub-msg'; m.textContent = ''; }, 4000);
 }
+/* ===== NOVO: leitura dos campos opcionais de especificação ===== */
+function lerEspecificacao(){
+  return {
+    material: document.getElementById('fMaterial').value || '',
+    altura: parseFloat(document.getElementById('fAltura').value) || null,
+    largura: parseFloat(document.getElementById('fLargura').value) || null,
+    profundidade: parseFloat(document.getElementById('fProfundidade').value) || null,
+    peso: parseFloat(document.getElementById('fPeso').value) || null
+  };
+}
 async function salvarProduto(){
   const nome = document.getElementById('fNome').value.trim();
   if(!nome){ mostrarToast('Digite o nome do produto.', 'erro'); return; }
@@ -657,6 +687,7 @@ async function salvarProduto(){
   if(promoOn && preco > 0 && precoPromo >= preco){ mostrarToast('O preço promocional deve ser MENOR que o preço cheio.', 'erro'); return; }
   const btn = document.getElementById('btnSalvar');
   btn.disabled = true; btn.textContent = 'Salvando...';
+  const esp = lerEspecificacao();
   const dados = {
     nome: nome,
     slug: gerarSlug(nome),
@@ -669,7 +700,12 @@ async function salvarProduto(){
     destaque: document.getElementById('fDestaque').checked,
     ativo: document.getElementById('fAtivo').checked,
     promo: promoOn,
-    precoPromo: precoPromo
+    precoPromo: precoPromo,
+    material: esp.material,
+    altura: esp.altura,
+    largura: esp.largura,
+    profundidade: esp.profundidade,
+    peso: esp.peso
   };
   try{
     if(editandoId){
@@ -772,7 +808,12 @@ async function mesclarSelecionados(){
     destaque: principal.destaque || false,
     ativo: principal.ativo,
     promo: principal.promo || false,
-    precoPromo: principal.precoPromo || 0
+    precoPromo: principal.precoPromo || 0,
+    material: principal.material || '',
+    altura: principal.altura != null ? principal.altura : null,
+    largura: principal.largura != null ? principal.largura : null,
+    profundidade: principal.profundidade != null ? principal.profundidade : null,
+    peso: principal.peso != null ? principal.peso : null
   };
   try{
     await api('/loja/produtos/' + principalId, 'PUT', dados);

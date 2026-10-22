@@ -1,0 +1,15 @@
+{
+  "name": "Meu 3D Labs — Loja de Peças 3D",
+  "short_name": "Meu 3D Labs",
+  "description": "Peças 3D prontas para entrega: chaveiros, colecionáveis, religiosos, decoração e mais. Pix com 5% OFF ou cartão em até 12x.",
+  "lang": "pt-BR",
+  "start_url": "/loja.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f1e3d",
+  "theme_color": "#0f1e3d",
+  "icons": [
+    { "src": "/img/logo/logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/img/logo/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

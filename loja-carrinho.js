@@ -13,6 +13,10 @@ var cupomAtivo=null;
 var clienteDados={nome:'',fone:'',endereco:null};
 var m3lSemCadastro=false;
 var m3lRetomarCheckout=false;
+/* ===== NOVO: controles de feedback visual do carrinho ===== */
+var itemFlashChave=null;   /* última peça adicionada → flash no carrinho */
+var m3dTituloBase='';      /* título original da aba (contador "(2) Loja…") */
+var undoTimer=null;        /* timer do "Desfazer remoção" */
 /* ===== Config compartilhada da loja ===== */
 var API_LOJA = 'https://meu3dlabs-backend.onrender.com/api';
 var WHATSAPP_LOJA = '5521966594803';
@@ -47,6 +51,32 @@ document.addEventListener('m3l-user-changed',function(ev){
     abrirCheckout();
   }
 });
+/* ================= CSS (modal mobile + bolinhas + feedback do carrinho) ================= */
+(function(){
+  var css=document.createElement('style');
+  css.textContent=
+  '#produtoOverlay{cursor:pointer;}' +
+  '#produtoOverlay .produto-modal{cursor:default;}' +
+  '@media(max-width:768px){' +
+  '#produtoModalBody .btn-comprar,#produtoModalBody .btn-pedir{position:fixed;left:16px;right:16px;bottom:16px;z-index:99995;margin:0;width:auto;box-shadow:0 6px 20px rgba(0,0,0,.35);justify-content:center;}' +
+  '#produtoOverlay .produto-modal{padding-bottom:0;}' +
+  '}' +
+  '.produto-cores-dots{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;}' +
+  '.produto-cores-dots .core-dot{width:16px;height:16px;border-radius:50%;display:inline-block;border:2px solid #fff;box-shadow:0 0 0 1px #d9dee8;cursor:default;}' +
+  /* NOVO: feedback visual do carrinho */
+  '@keyframes ciFlash{0%{background:#fff2e8;}60%{background:#fff2e8;}100%{background:transparent;}}' +
+  '.ci-flash{animation:ciFlash 1.8s ease;}' +
+  '.ci-esgotado{opacity:.55;}' +
+  '.ci-esgotado .ci-nome{text-decoration:line-through;}' +
+  '.ci-aviso{font-size:11px;color:#c0392b;font-weight:700;margin-top:5px;line-height:1.4;}' +
+  '.ci-qtd-aviso{font-size:10.5px;color:#8a94a8;font-weight:600;margin-top:3px;}' +
+  '.ci-sub{font-size:11.5px;color:#4a5161;margin-top:3px;}' +
+  '.ci-sub b{color:#0f1e3d;}' +
+  '.undo-toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(20px);background:#0f1e3d;color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:14px;box-shadow:0 8px 26px rgba(15,30,61,.4);z-index:99997;opacity:0;pointer-events:none;transition:.25s;max-width:92vw;box-sizing:border-box;}' +
+  '.undo-toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto;}' +
+  '.undo-toast button{background:none;border:none;color:#f2b28f;font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;padding:4px 6px;white-space:nowrap;}';
+  document.head.appendChild(css);
+})();
 /* ================= VARIANTES ================= */
 document.querySelectorAll('.produto').forEach(function(produto){
 var sw=produto.querySelector('.variantes-lista');
@@ -97,39 +127,138 @@ var p=document.querySelector('.produto[data-id="'+id+'"]');
 if(!p)return null;
 return {nome:p.getAttribute('data-nome'),img:(p.querySelector('.variante-track img')||{getAttribute:function(){return '';}}).getAttribute('src')};
 }
+/* Estoque atual do produto (lendo a vitrine carregada da API).
+   Retorna null quando a vitrine não está disponível (ex.: API fria) — nesse caso o carrinho
+   comporta como antes, sem trava, para nunca bloquear a compra por falta de dado. */
+function estoqueDoProduto(id){
+  if(typeof produtosLoja==='undefined'||!produtosLoja||!produtosLoja.length)return null;
+  for(var i=0;i<produtosLoja.length;i++){
+    if(String(produtosLoja[i].slug)===String(id)){
+      var q=parseInt(produtosLoja[i].estoque);
+      return isNaN(q)?null:Math.max(q,0);
+    }
+  }
+  return null;
+}
+/* Limita a quantidade de cada item do carrinho ao estoque atual.
+   Cobre itens antigos salvos no localStorage quando o estoque mudou no admin. */
+function travarEstoqueCarrinho(){
+  var mudou=false;
+  carrinho.forEach(function(it){
+    var est=estoqueDoProduto(it.id);
+    if(est===null)return;
+    if(est>0&&it.qtd>est){it.qtd=est;mudou=true;}
+  });
+  if(mudou)salvarCarrinho();
+}
 function addCarrinho(id,nome,precoLabel,precoNum,precoOriginal){
-var info=produtoInfo(id);
-var img=info?info.img:'';
-var cor='';
-var sw=pNome(id);
-if(sw&&sw.querySelector('.sw.ativo')){
-cor=sw.querySelector('.sw.ativo').getAttribute('data-cor-label');
+  var est=estoqueDoProduto(id);
+  if(est!==null){
+    if(est<=0){
+      if(typeof mostrarToast==='function')mostrarToast('Essa peça está sem estoque no momento. 🔔 Use "Avise-me quando chegar".');
+      return;
+    }
+    var corPre='';
+    var swPre=pNome(id);
+    if(swPre&&swPre.querySelector('.sw.ativo')){corPre=swPre.querySelector('.sw.ativo').getAttribute('data-cor-label');}
+    var chavePre=id+'|'+corPre;
+    var qtdAtual=0;
+    carrinho.forEach(function(item){if(item.chave===chavePre)qtdAtual=item.qtd;});
+    if(qtdAtual>=est){
+      if(typeof mostrarToast==='function')mostrarToast('Estoque limite: só há '+est+' unidade(s) dessa peça.');
+      abrirCarrinho();
+      return;
+    }
+  }
+  var info=produtoInfo(id);
+  var img=info?info.img:'';
+  var cor='';
+  var sw=pNome(id);
+  if(sw&&sw.querySelector('.sw.ativo')){
+  cor=sw.querySelector('.sw.ativo').getAttribute('data-cor-label');
+  }
+  var chave=id+'|'+cor;
+  var achou=false;
+  carrinho.forEach(function(item){
+  if(item.chave===chave){item.qtd++;achou=true;}
+  });
+  if(!achou){
+  carrinho.push({chave:chave,id:id,nome:nome,cor:cor,precoNum:parseFloat(precoNum),precoLabel:precoLabel,qtd:1,img:img,precoOriginal:parseFloat(precoOriginal)||0});
+  }
+  itemFlashChave=chave; /* NOVO: flash no carrinho */
+  salvarCarrinho();
+  atualizarCarrinhoUI();
+  abrirCarrinho();
+  if(window.gtag)gtag('event','add_to_cart',{currency:'BRL',value:precoNum,items:[{item_id:id,item_name:nome,item_variant:cor||'',quantity:1,price:precoNum}]});
 }
-var chave=id+'|'+cor;
-var achou=false;
-carrinho.forEach(function(item){
-if(item.chave===chave){item.qtd++;achou=true;}
-});
-if(!achou){
-carrinho.push({chave:chave,id:id,nome:nome,cor:cor,precoNum:parseFloat(precoNum),precoLabel:precoLabel,qtd:1,img:img,precoOriginal:parseFloat(precoOriginal)||0});
-}
-salvarCarrinho();
-atualizarCarrinhoUI();
-abrirCarrinho();
-if(window.gtag)gtag('event','add_to_cart',{currency:'BRL',value:precoNum,items:[{item_id:id,item_name:nome,item_variant:cor||'',quantity:1,price:precoNum}]});
+/* ===== NOVO: adicionar N unidades de uma vez (usado pelo seletor da página de produto) =====
+   Soma o máximo possível dentro do estoque real; se já estiver no limite, avisa e abre o carrinho. */
+function addCarrinhoQtd(id,nome,precoLabel,precoNum,precoOriginal,qtdDesejada){
+  var est=estoqueDoProduto(id);
+  var qtdAlvo=Math.max(1,parseInt(qtdDesejada)||1);
+  if(est!==null&&est<=0){
+    if(typeof mostrarToast==='function')mostrarToast('Essa peça está sem estoque no momento. 🔔 Use "Avise-me quando chegar".');
+    return;
+  }
+  var info=produtoInfo(id);
+  var img=info?info.img:'';
+  var cor='';
+  var sw=pNome(id);
+  if(sw&&sw.querySelector('.sw.ativo')){cor=sw.querySelector('.sw.ativo').getAttribute('data-cor-label');}
+  var chave=id+'|'+cor;
+  var atual=0;
+  carrinho.forEach(function(item){if(item.chave===chave)atual=item.qtd;});
+  var limite=(est===null)?qtdAlvo+atual:est;
+  var pode=limite-atual;
+  var adicionar=Math.min(qtdAlvo,pode);
+  if(adicionar<=0){
+    if(typeof mostrarToast==='function')mostrarToast('Estoque limite: só há '+limite+' unidade(s) dessa peça.');
+    abrirCarrinho();
+    return;
+  }
+  var achou=false;
+  carrinho.forEach(function(item){
+    if(item.chave===chave){item.qtd+=adicionar;achou=true;}
+  });
+  if(!achou){
+    carrinho.push({chave:chave,id:id,nome:nome,cor:cor,precoNum:parseFloat(precoNum),precoLabel:precoLabel,qtd:adicionar,img:img,precoOriginal:parseFloat(precoOriginal)||0});
+  }
+  itemFlashChave=chave;
+  salvarCarrinho();
+  atualizarCarrinhoUI();
+  abrirCarrinho();
+  if(window.gtag)gtag('event','add_to_cart',{currency:'BRL',value:(parseFloat(precoNum)||0)*adicionar,items:[{item_id:id,item_name:nome,item_variant:cor||'',quantity:adicionar,price:parseFloat(precoNum)||0}]});
 }
 function removerItem(chave){
-carrinho=carrinho.filter(function(i){return i.chave!==chave;});
-salvarCarrinho();atualizarCarrinhoUI();
+  /* NOVO: remoção com possibilidade de desfazer (padrão Amazon/Shopee) */
+  var idx=-1,item=null;
+  carrinho.forEach(function(i,k){if(i.chave===chave){idx=k;item=i;}});
+  if(idx<0)return;
+  carrinho.splice(idx,1);
+  salvarCarrinho();
+  atualizarCarrinhoUI();
+  mostrarUndoRemocao(item,idx);
 }
 function mudarQtd(chave,delta){
-carrinho.forEach(function(item){
-if(item.chave===chave){
-item.qtd+=delta;
-if(item.qtd<1)item.qtd=1;
-}
-});
-salvarCarrinho();atualizarCarrinhoUI();
+  var alvo=null;
+  carrinho.forEach(function(item){if(item.chave===chave)alvo=item;});
+  if(!alvo)return;
+  if(delta>0){
+    var est=estoqueDoProduto(alvo.id);
+    if(est!==null){
+      if(est<=0){
+        if(typeof mostrarToast==='function')mostrarToast('Essa peça esgotou — remova do carrinho para finalizar.');
+        return;
+      }
+      if(alvo.qtd>=est){
+        if(typeof mostrarToast==='function')mostrarToast('Máximo de '+est+' unidade(s) em estoque.');
+        return;
+      }
+    }
+  }
+  alvo.qtd+=delta;
+  if(alvo.qtd<1)alvo.qtd=1;
+  salvarCarrinho();atualizarCarrinhoUI();
 }
 function salvarCarrinho(){
 localStorage.setItem('m3d_carrinho',JSON.stringify(carrinho));
@@ -172,11 +301,38 @@ var t=totalAntesPix();
 return t>0?Math.round(t*0.05*100)/100:0;
 }
 function totalFinal(){var t=totalCarrinho()-cupomDesconto()-descontoPix()+(horarioSel==='noturno'?TAXA_NOTURNO:0);return t<0?0:t;}
+/* ===== NOVO: toast de remoção com botão "Desfazer" (6 segundos) ===== */
+function mostrarUndoRemocao(item,idx){
+  var t=document.getElementById('undoToast');
+  if(!t){
+    t=document.createElement('div');
+    t.id='undoToast';
+    t.className='undo-toast';
+    t.innerHTML='<span id="undoMsg"></span><button type="button" id="undoBtn">Desfazer</button>';
+    document.body.appendChild(t);
+  }
+  clearTimeout(undoTimer);
+  document.getElementById('undoMsg').textContent='🗑️ "'+(item.nome||'Item')+'" removido do carrinho';
+  t.classList.add('show');
+  document.getElementById('undoBtn').onclick=function(){
+    clearTimeout(undoTimer);
+    t.classList.remove('show');
+    carrinho.splice(Math.min(idx,carrinho.length),0,item);
+    itemFlashChave=item.chave;
+    salvarCarrinho();
+    atualizarCarrinhoUI();
+  };
+  undoTimer=setTimeout(function(){t.classList.remove('show');},6000);
+}
 function atualizarCarrinhoUI(){
 migrarPromoItens();
+travarEstoqueCarrinho();
 var n=0;carrinho.forEach(function(i){n+=i.qtd;});
 var badge=document.getElementById('carrinhoBadge');
 badge.textContent=n;badge.classList.toggle('show',n>0);
+/* NOVO: contador de itens no título da aba */
+if(!m3dTituloBase)m3dTituloBase=document.title;
+document.title=(n>0)?('('+n+') '+m3dTituloBase):m3dTituloBase;
 var body=document.getElementById('cartBody');
 var footer=document.getElementById('cartFooter');
 if(n===0){
@@ -186,7 +342,12 @@ footer.style.display='none';
 return;
 }
 var html='';
+var esgotados=0;
 carrinho.forEach(function(item){
+var est=estoqueDoProduto(item.id);
+var esgotadoItem=(est===0);
+var noLimite=(est!==null&&est>0&&item.qtd>=est);
+if(esgotadoItem)esgotados++;
 var emPromoItem=item.precoOriginal&&item.precoOriginal>item.precoNum;
 var precoHtml=item.precoLabel;
 if(emPromoItem){
@@ -195,17 +356,22 @@ precoHtml='<span style="text-decoration:line-through;color:#8a94a8;font-size:12p
 +'<span style="color:#c0392b;font-weight:800;">'+item.precoLabel+'</span>'
 +' <span style="background:#c0392b;color:#fff;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:10px;">-'+pctC+'%</span>';
 }
-html+='<div class="cart-item">'
+html+='<div class="cart-item'+(esgotadoItem?' ci-esgotado':'')+(item.chave===itemFlashChave?' ci-flash':'')+'">'
 +'<img src="'+item.img+'" alt="'+item.nome.replace(/"/g,'&quot;')+'">'
 +'<div class="ci-info">'
 +'<div class="ci-nome">'+item.nome+(item.cor?' <span style="color:var(--gray);font-weight:500;">('+item.cor+')</span>':'')+'</div>'
 +'<div class="ci-preco">'+precoHtml+'</div>'
-+'<div class="ci-qtd"><button onclick="mudarQtd(\''+item.chave+'\',-1)">−</button><span>'+item.qtd+'</span><button onclick="mudarQtd(\''+item.chave+'\',1)">+</button></div>'
++(esgotadoItem
+  ?'<div class="ci-aviso">⚠️ Esta peça esgotou depois que você adicionou — remova para finalizar.</div>'
+  :'<div class="ci-qtd"><button onclick="mudarQtd(\''+item.chave+'\',-1)">−</button><span>'+item.qtd+'</span><button onclick="mudarQtd(\''+item.chave+'\',1)">+</button></div>'
+   +(noLimite?'<div class="ci-qtd-aviso">📌 Estoque máximo atingido ('+est+' un.)</div>':'')
+   +(item.qtd>1?'<div class="ci-sub">'+item.precoLabel+' × '+item.qtd+' = <b>'+fmt(item.precoNum*item.qtd)+'</b></div>':''))
 +'</div>'
 +'<button class="ci-remove" onclick="removerItem(\''+item.chave+'\')">Remover</button>'
 +'</div>';
 });
 body.innerHTML=html;
+itemFlashChave=null;
 footer.style.display='block';
 document.getElementById('cartTotal').textContent=fmt(totalCarrinho());
 var dp=descontoPromo();
@@ -228,6 +394,28 @@ pnx.style.cssText='text-align:right;font-size:11.5px;color:#0f7a44;font-weight:6
 pnx.textContent='💚 Pagando no PIX: 5% de desconto no checkout';
 var ct2=footer.querySelector('.cart-total');
 if(ct2)footer.insertBefore(pnx,ct2);else footer.appendChild(pnx);
+}
+/* NOVO: botão Finalizar ciente dos itens esgotados */
+var btnFin=footer.querySelector('.btn');
+if(btnFin){
+  if(esgotados===carrinho.length){
+    btnFin.disabled=true;
+    btnFin.textContent='Itens esgotados no carrinho';
+    btnFin.style.opacity='0.55';
+    btnFin.style.cursor='not-allowed';
+  }else{
+    btnFin.disabled=false;
+    btnFin.textContent='Finalizar pedido';
+    btnFin.style.opacity='';
+    btnFin.style.cursor='';
+    btnFin.onclick=function(){
+      if(esgotados>0){
+        if(typeof mostrarToast==='function')mostrarToast('Remova a peça esgotada do carrinho para finalizar o pedido.');
+        return;
+      }
+      abrirCheckout();
+    };
+  }
 }
 }
 /* ===== Botões flutuantes: somem quando carrinho ou modal abrem ===== */

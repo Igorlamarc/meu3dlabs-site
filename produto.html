@@ -36,6 +36,7 @@ img{max-width:100%;height:auto;}
 .topbar{background:#0a1428;color:rgba(255,255,255,.92);font-size:12.5px;font-weight:500;padding:8px 16px;text-align:center;letter-spacing:.2px;}
 .topbar b{color:#ff8a3d;}
 .topbar .tp-sep{margin:0 8px;opacity:.45;}
+.topbar img{display:inline-block;}
 /* ===== Header ===== */
 header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}
 .header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
@@ -108,6 +109,14 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .cor-chip{border:2px solid var(--border);background:var(--white);color:var(--navy);border-radius:30px;padding:8px 18px;font-size:13.5px;font-weight:600;cursor:pointer;transition:.2s;margin:0 7px 7px 0;font-family:inherit;}
 .cor-chip:hover{border-color:var(--orange);}
 .cor-chip.on{border-color:var(--orange);background:rgba(242,101,34,.08);color:var(--orange);}
+/* ===== Quantidade ===== */
+.p-qtd{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.p-qtd .rotulo{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);}
+.qtd-ctrl{display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:4px;}
+.qtd-btn{width:34px;height:34px;border:none;border-radius:9px;background:var(--light-2);color:var(--navy);font-size:18px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;}
+.qtd-btn:hover{background:var(--orange);color:#fff;}
+.qtd-val{min-width:34px;text-align:center;font-size:15px;font-weight:800;color:var(--navy);}
+.qtd-estoque{font-size:12px;color:var(--gray);}
 /* CTAs */
 .p-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:12px;font-weight:700;transition:.25s;border:none;cursor:pointer;font-size:16px;font-family:inherit;}
@@ -170,6 +179,20 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .rel-preco{font-size:17px;font-weight:800;color:var(--orange);margin-top:auto;}
 .rel-ver{display:inline-block;margin-top:18px;color:var(--orange);font-weight:700;font-size:14px;}
 .rel-ver:hover{text-decoration:underline;}
+/* ===== Vistos recentemente ===== */
+.vistos-sec{padding:26px 0 4px;}
+.vistos-sec h2{font-size:20px;color:var(--navy);font-weight:800;margin-bottom:4px;letter-spacing:-.3px;}
+.vistos-sec .rel-sub{color:var(--gray);margin-bottom:16px;font-size:13.5px;}
+.vistos-strip{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin;}
+.vistos-strip::-webkit-scrollbar{height:6px;}
+.vistos-strip::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+.vistos-card{flex:0 0 150px;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:.2s;display:flex;flex-direction:column;}
+.vistos-card:hover{border-color:var(--orange);transform:translateY(-3px);box-shadow:var(--shadow-sm);}
+.vistos-img{height:100px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.vistos-img img{width:100%;height:100%;object-fit:contain;}
+.vistos-body{padding:8px 10px;}
+.vistos-body h4{font-size:12px;color:var(--navy);font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.vistos-preco{font-size:13px;font-weight:800;color:var(--orange);margin-top:4px;}
 /* ===== Serviços ===== */
 .servicos{padding:36px 0 8px;}
 .servicos h2{font-size:22px;color:var(--navy);font-weight:800;margin-bottom:4px;letter-spacing:-.3px;}
@@ -194,6 +217,10 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 /* ===== Toast ===== */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;font-size:14px;font-weight:600;padding:12px 22px;border-radius:30px;box-shadow:var(--shadow-lg);z-index:400;transition:.3s;opacity:0;pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+/* ===== WhatsApp flutuante ===== */
+.wa-float{position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:200;transition:.25s;}
+.wa-float:hover{transform:scale(1.08);background:#1fb959;}
+.wa-float svg{width:28px;height:28px;fill:#fff;}
 /* ===== Rodapé ===== */
 .site-footer{background:#0a1428;color:rgba(255,255,255,.75);padding:44px 20px 24px;margin-top:30px;}
 .site-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px;}
@@ -215,12 +242,14 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .preco-novo{font-size:32px;}
 .topbar{font-size:11px;}
 .p-trust{grid-template-columns:1fr;}
+.wa-float{width:50px;height:50px;bottom:16px;right:16px;}
+.wa-float svg{width:24px;height:24px;}
 }
 html,body{overflow-x:hidden;max-width:100%;}
 </style>
 </head>
 <body>
-<div class="topbar">🚚 Envio para todo o Brasil<span class="tp-sep">·</span>💳 Cartão online em até <b>12x</b><span class="tp-sep">·</span>🔷 Pix com <b>5% de desconto</b></div>
+<div class="topbar">🚚 Envio para todo o Brasil<span class="tp-sep">·</span><img src="img/logo/cartao.png" alt="Cartão" style="height:13px;vertical-align:-2px;margin-right:5px;">Cartão online em até <b>12x</b><span class="tp-sep">·</span><img src="img/logo/pix.png" alt="Pix" style="width:15px;height:15px;vertical-align:-3px;margin-right:5px;">Pix com <b>5% de desconto</b></div>
 <header>
   <div class="container header-inner">
     <a href="index.html" class="logo">
@@ -276,6 +305,15 @@ html,body{overflow-x:hidden;max-width:100%;}
             <div class="rotulo">Cor disponível</div>
             <div id="coresChips"></div>
           </div>
+          <div class="p-qtd" id="pQtdWrap" hidden>
+            <div class="rotulo">Quantidade</div>
+            <div class="qtd-ctrl">
+              <button type="button" class="qtd-btn" id="qtdMenos" aria-label="Diminuir">−</button>
+              <span class="qtd-val" id="qtdVal">1</span>
+              <button type="button" class="qtd-btn" id="qtdMais" aria-label="Aumentar">+</button>
+            </div>
+            <span class="qtd-estoque" id="qtdEstoque"></span>
+          </div>
           <div class="p-ctas">
             <a class="btn btn-comprar" id="btnComprar" href="#">🛒 Comprar</a>
             <a class="btn btn-wa" id="btnWa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
@@ -311,7 +349,7 @@ html,body{overflow-x:hidden;max-width:100%;}
               <div class="acc-body">
                 <ul>
                   <li><b>Pix:</b> aprovação imediata com <b>5% de desconto</b>.</li>
-                  <li><b>Cartão de crédito online:</b> em até <b>12x</b> (juros da operadora).</li>
+                  <li><b>Cartão de crédito online:</b> em até <b>12x</b> (juros da operadora — o valor exato da parcela aparece no pagamento).</li>
                   <li>Pagamento 100% seguro, feito direto no site ao finalizar a compra.</li>
                 </ul>
               </div>
@@ -377,10 +415,18 @@ html,body{overflow-x:hidden;max-width:100%;}
   <!-- Relacionados -->
   <section class="rel-sec" id="relSec" hidden>
     <div class="container">
-      <h2>Encontre similares</h2>
+      <h2>Você também pode gostar</h2>
       <p class="rel-sub">Outras peças pronta entrega da Meu 3D Labs.</p>
       <div class="rel-grid" id="relGrid"></div>
       <a class="rel-ver" href="loja.html">Ver a loja completa →</a>
+    </div>
+  </section>
+  <!-- Vistos recentemente -->
+  <section class="vistos-sec" id="vistosSec" hidden>
+    <div class="container">
+      <h2>👀 Você viu recentemente</h2>
+      <p class="rel-sub">As peças que você navegou antes — volte a qualquer uma com um toque.</p>
+      <div class="vistos-strip" id="vistosStrip"></div>
     </div>
   </section>
   <!-- Serviços -->
@@ -441,6 +487,9 @@ html,body{overflow-x:hidden;max-width:100%;}
 </footer>
 <div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
 <div class="toast" id="toastPagina"></div>
+<a class="wa-float" id="waFloat" href="https://wa.me/5521966594803" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>
+</a>
 <script>
 var API_PROD='https://meu3dlabs-backend.onrender.com/api/loja/produtos';
 var WA_NUM='5521966594803';
@@ -501,6 +550,15 @@ function render(p,lista){
   var slug=p.slug||'';
   var url=BASE_URL+'/produto/'+encodeURIComponent(slug);
   var descLimpa=String(p.descricao||'').split('|')[0].trim();
+  /* Histórico: salva este produto como "visto recentemente" (localStorage) */
+  var HIST_CHAVE='m3d_vistos_recentes';
+  var vistosAnteriores=[];
+  try{vistosAnteriores=JSON.parse(localStorage.getItem(HIST_CHAVE)||'[]');}catch(e){vistosAnteriores=[];}
+  if(!Array.isArray(vistosAnteriores))vistosAnteriores=[];
+  vistosAnteriores=vistosAnteriores.filter(function(s){return String(s)!==String(slug);});
+  vistosAnteriores.unshift(slug);
+  vistosAnteriores=vistosAnteriores.slice(0,8);
+  try{localStorage.setItem(HIST_CHAVE,JSON.stringify(vistosAnteriores));}catch(e){}
   /* SEO */
   document.title=p.nome+' | Peça 3D pronta entrega | Meu 3D Labs';
   document.getElementById('metaDesc').setAttribute('content',(descLimpa||'Peça 3D pronta entrega na Meu 3D Labs.').slice(0,155));
@@ -537,12 +595,12 @@ function render(p,lista){
   if(p.destaque)bh+='<span class="p-badge ama">⭐ Destaque da loja</span>';
   if(urgente)bh+='<span class="p-badge urg">⚠️ Restam apenas '+est+' unidades!</span>';
   badges.innerHTML=bh;
-  /* Preço detalhado: valor real do Pix 5% OFF e da parcela 12x */
+  /* Preço detalhado: valor real do Pix 5% OFF + cartão SEM valor de parcela
+     (o valor da parcela depende dos juros da operadora — só aparece no pagamento) */
   var preco=parseFloat(p.preco)||0;
   var promo=p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<preco;
   var precoVenda=promo?parseFloat(p.precoPromo):preco;
   var pixValor=precoVenda*0.95;
-  var parcela=precoVenda/12;
   var pc=document.getElementById('pPreco');
   var ph='';
   if(promo){
@@ -551,8 +609,8 @@ function render(p,lista){
   }else{
     ph+='<div class="linha"><span class="preco-novo">'+fmt(preco)+'</span></div>';
   }
-    ph+='<div class="preco-sub"><img src="img/logo/pix.png" alt="" style="width:15px;height:15px;vertical-align:-3px;margin-right:5px;"><b>'+fmt(pixValor)+' no Pix</b> — já com 5% de desconto</div>';
-      ph+='<div class="preco-sub"><img src="img/logo/cartao.png" alt="" style="height:13px;vertical-align:-2px;margin-right:5px;">ou em até <b>12x no cartão</b> (juros da operadora — o valor exato da parcela aparece no pagamento)</div>';
+  ph+='<div class="preco-sub"><img src="img/logo/pix.png" alt="" style="width:15px;height:15px;vertical-align:-3px;margin-right:5px;"><b>'+fmt(pixValor)+' no Pix</b> — já com 5% de desconto</div>';
+  ph+='<div class="preco-sub"><img src="img/logo/cartao.png" alt="" style="height:13px;vertical-align:-2px;margin-right:5px;">ou em até <b>12x no cartão</b> <span style="color:#8a94a8;">(juros da operadora — valor exato da parcela aparece no pagamento)</span></div>';
   pc.innerHTML=ph;
   /* Cores */
   var cores=(p.cores&&p.cores.length)?p.cores.slice():[];
@@ -575,11 +633,44 @@ function render(p,lista){
       box.appendChild(b);
     });
   }
+  /* Quantidade (com limite do estoque) */
+  var qtd=1,qtdMax=10;
+  var qtdWrap=document.getElementById('pQtdWrap');
+  var btnC=document.getElementById('btnComprar'),btnW=document.getElementById('btnWa');
+  function atualizaComprar(){btnC.href='loja.html?produto='+encodeURIComponent(slug)+'&carrinho=1&qtd='+qtd;}
+  function setQtd(n){
+    qtd=Math.max(1,Math.min(qtdMax,n));
+    document.getElementById('qtdVal').textContent=qtd;
+    atualizaComprar();
+  }
+  if(!esgotado){
+    if(!isNaN(est)&&est>0)qtdMax=Math.min(est,10);
+    qtdWrap.hidden=false;
+    document.getElementById('qtdEstoque').textContent=qtdMax<10?('máximo '+qtdMax+(qtdMax>1?' disponíveis':' disponível')+''):'';
+    setQtd(1);
+    document.getElementById('qtdMenos').onclick=function(){setQtd(qtd-1);};
+    document.getElementById('qtdMais').onclick=function(){setQtd(qtd+1);};
+  }
   /* Descrição */
   document.getElementById('pDesc').textContent=descLimpa||'Peça 3D pronta entrega da Meu 3D Labs, impressa com acabamento profissional. Dúvidas sobre tamanho, material ou cores? Fale com a gente no WhatsApp!';
-  /* Especificações: tabela preenchida automaticamente com os dados reais */
+  /* Especificações: tabela com os DADOS REAIS do cadastro (material, tamanho, peso) */
+  var mat=String(p.material||'').trim().toUpperCase();
+  var matDesc={PLA:'leve, resistente e biodegradável',PETG:'resistente, semi-flexível e ideal para uso externo',TPU:'flexível como borracha, ideal para peças que dobram',ABS:'rígido e resistente ao calor'};
+  var matTxt=mat?('Impressão 3D em '+mat+(matDesc[mat]?' — '+matDesc[mat]:'')):'PLA (leve, resistente e biodegradável)';
   var esp='';
-  esp+='<tr><td>Material</td><td>PLA (leve, resistente e biodegradável)</td></tr>';
+  esp+='<tr><td>Material</td><td>'+esc(matTxt)+'</td></tr>';
+  function dimVal(v){var n=parseFloat(v);return (isNaN(n)||n<=0)?null:n;}
+  var da=dimVal(p.altura),dl=dimVal(p.largura),dp=dimVal(p.profundidade);
+  if(da&&dl&&dp)esp+='<tr><td>Tamanho</td><td>'+da+' × '+dl+' × '+dp+' cm (altura × largura × profundidade)</td></tr>';
+  else{
+    var dims=[];
+    if(da)dims.push('altura '+da+' cm');
+    if(dl)dims.push('largura '+dl+' cm');
+    if(dp)dims.push('profundidade '+dp+' cm');
+    if(dims.length)esp+='<tr><td>Tamanho</td><td>'+esc(dims.join(' · '))+'</td></tr>';
+  }
+  var peso=dimVal(p.peso);
+  if(peso)esp+='<tr><td>Peso</td><td>'+(peso<1000?peso+' g':(peso/1000).toFixed(2).replace('.',',')+' kg')+'</td></tr>';
   esp+='<tr><td>Categoria</td><td>'+esc(labelCat(p.categoria))+'</td></tr>';
   esp+='<tr><td>Cores</td><td>'+(cores.length?esc(cores.join(', ')):'Conforme foto')+'</td></tr>';
   esp+='<tr><td>Disponibilidade</td><td>'+(esgotado?'Sob consulta (encomenda)':'Pronta entrega'+(!isNaN(est)?' — '+est+' em estoque':''))+'</td></tr>';
@@ -587,19 +678,19 @@ function render(p,lista){
   esp+='<tr><td>Produção</td><td>Impressão 3D artesanal · Nilópolis/RJ</td></tr>';
   document.getElementById('espTabela').innerHTML=esp;
   /* CTAs */
-  var btnC=document.getElementById('btnComprar'),btnW=document.getElementById('btnWa');
   if(esgotado){
     btnC.style.display='none';
     btnW.textContent='💬 Quero encomendar esta peça';
     var msgEnc='Olá! Vi a peça *'+p.nome+'* no site ('+url+') e ela está sem estoque. Quero encomendar uma! 😊';
     btnW.href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msgEnc);
   }else{
-        btnC.href='loja.html?produto='+encodeURIComponent(slug)+'&carrinho=1';
+    atualizaComprar();
     btnC.title='Adicionar ao carrinho na loja';
     var msgWa='Olá! Vi no site a peça *'+p.nome+'* → '+url+'\nQuero saber mais! 😊';
     btnW.href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msgWa);
   }
-  /* Relacionados */
+  document.getElementById('waFloat').href=btnW.href;
+  /* Relacionados: mesma categoria primeiro, complementos depois */
   var rel=lista.filter(function(x){return x.ativo!==false&&x.slug!==slug&&String(x.categoria)===String(p.categoria);});
   if(rel.length<4){
     lista.forEach(function(x){if(rel.length>=4)return;if(x.ativo!==false&&x.slug!==slug&&String(x.categoria)!==String(p.categoria))rel.push(x);});
@@ -618,6 +709,24 @@ function render(p,lista){
       rg.appendChild(a);
     });
     document.getElementById('relSec').hidden=false;
+  }
+  /* Vistos recentemente: produtos anteriores que ainda existem na loja */
+  var avus=vistosAnteriores.filter(function(s){return String(s)!==String(slug);}).map(function(s){
+    for(var i=0;i<lista.length;i++){if(lista[i].ativo!==false&&String(lista[i].slug)===String(s))return lista[i];}
+    return null;
+  }).filter(Boolean).slice(0,4);
+  if(avus.length){
+    var vs=document.getElementById('vistosStrip');
+    avus.forEach(function(x){
+      var vp=parseFloat(x.preco)||0;
+      var vPromo=x.promo&&parseFloat(x.precoPromo)>0&&parseFloat(x.precoPromo)<vp;
+      var vimg=(x.imagens&&x.imagens[0])||'';
+      var a=document.createElement('a');
+      a.className='vistos-card';a.href='produto.html?produto='+encodeURIComponent(x.slug||'');
+      a.innerHTML='<div class="vistos-img">'+(vimg?'<img src="'+esc(vimg)+'" alt="'+esc(x.nome)+'" loading="lazy">':'<span class="rel-noimg" style="font-size:30px;">📦</span>')+'</div><div class="vistos-body"><h4>'+esc(x.nome)+'</h4><div class="vistos-preco">'+(vPromo?fmt(x.precoPromo):fmt(vp))+'</div></div>';
+      vs.appendChild(a);
+    });
+    document.getElementById('vistosSec').hidden=false;
   }
   /* SEO estruturado */
   var ld={'@context':'https://schema.org','@type':'Product','name':p.nome,'description':descLimpa,'sku':slug,'url':url,
