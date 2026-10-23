@@ -55,7 +55,8 @@
   <!-- Barra superior: título + ações -->
   <div class="top-bar">
     <h1 id="tituloPainel">📋 Encomendas</h1>
-    <div class="actions">
+     <div class="actions">
+      <button class="refresh-btn" type="button" id="btnIrLoja" onclick="irParaAdminLoja()" style="background:#0f7a44;" title="Abrir o painel de produtos da loja">🛍️ Admin Loja</button>
       <button class="refresh-btn ia" type="button" onclick="abrirRelatorioIA()">🤖 Relatório p/ IA</button>
       <button class="refresh-btn export" type="button" onclick="exportarCSV()">⬇️ Exportar CSV</button>
       <span class="last-update" id="lastUpdate"></span>
@@ -184,6 +185,128 @@
     </div>
   </div>
 </div>
+
+<!-- ===== NOVO: MODAL EDITAR PEDIDO ===== -->
+<div class="ver-overlay" id="editOverlay" onclick="if(event.target===this)fecharEditar()">
+  <div class="ver-modal">
+    <button class="vm-close" type="button" onclick="fecharEditar()" aria-label="Fechar">✕</button>
+    <h3 id="edTitulo">✏️ Editar pedido</h3>
+    <div class="vm-meta" id="edMeta"></div>
+    <div class="ed-form">
+      <label class="ed-lbl">Cliente</label>
+      <input type="text" id="edNome" class="ed-input">
+      <label class="ed-lbl">Contato (WhatsApp)</label>
+      <input type="text" id="edWhats" class="ed-input">
+      <label class="ed-lbl">Quantidade</label>
+      <input type="number" id="edQtd" class="ed-input" min="1">
+      <label class="ed-lbl">Descrição da peça</label>
+      <textarea id="edDesc" class="ed-input ed-textarea" rows="4"></textarea>
+      <label class="ed-lbl">Prazo desejado</label>
+      <input type="date" id="edPrazo" class="ed-input">
+    </div>
+    <div class="vm-acoes">
+      <button class="vm-copiar" type="button" onclick="salvarEdicao()" id="edSalvar">💾 Salvar alterações</button>
+      <button class="btn btn-wa" type="button" onclick="fecharEditar()" style="background:#8a94a8;color:#fff;border-color:#8a94a8;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL VALOR TOTAL + SINAL 30% ===== -->
+<div class="ver-overlay" id="valorOverlay" onclick="if(event.target===this)fecharValorModal()">
+  <div class="ver-modal">
+    <button class="vm-close" type="button" onclick="fecharValorModal()" aria-label="Fechar">✕</button>
+    <h3>💰 Valor do pedido</h3>
+    <div class="vm-meta" id="valorMeta"></div>
+
+    <label class="ed-lbl">Valor total acordado</label>
+    <div class="valor-input-wrap">
+      <span class="valor-prefix">R$</span>
+      <input type="text" id="valorInput" class="ed-input valor-input" placeholder="0,00" inputmode="decimal" oninput="mascaraValor(this);recalcularSinal();">
+    </div>
+    <div class="valor-sugestoes" id="valorSugestoes"></div>
+
+    <div class="sinal-box" id="sinalBox">
+      <div class="sinal-linha">
+        <span class="sinal-lbl">Sinal (30%)</span>
+        <span class="sinal-val" id="sinalValor">R$ 0,00</span>
+      </div>
+      <div class="sinal-linha">
+        <span class="sinal-lbl">Saldo a receber</span>
+        <span class="sinal-val saldo" id="saldoValor">R$ 0,00</span>
+      </div>
+      <div class="sinal-nota">O sinal é lançado automaticamente como pago. Você pode ajustar depois em 💰 Pagamentos.</div>
+    </div>
+
+    <div class="vm-acoes">
+      <button class="vm-copiar" type="button" onclick="confirmarValor()">✅ Confirmar e aprovar</button>
+      <button class="btn btn-wa" type="button" onclick="fecharValorModal()" style="background:#8a94a8;color:#fff;border-color:#8a94a8;">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL PAGAMENTOS ===== -->
+<div class="ver-overlay" id="pagOverlay" onclick="if(event.target===this)fecharPagamentos()">
+  <div class="ver-modal">
+    <button class="vm-close" type="button" onclick="fecharPagamentos()" aria-label="Fechar">✕</button>
+    <h3>💰 Pagamentos</h3>
+    <div class="vm-meta" id="pagMeta"></div>
+
+    <div class="pag-resumo" id="pagResumo"></div>
+
+    <label class="ed-lbl">Lançar novo pagamento</label>
+    <div class="valor-input-wrap">
+      <span class="valor-prefix">R$</span>
+      <input type="text" id="pagInput" class="ed-input valor-input" placeholder="0,00" inputmode="decimal" oninput="mascaraValor(this)">
+    </div>
+    <div class="valor-sugestoes" id="pagSugestoes"></div>
+
+    <div class="vm-acoes">
+      <button class="vm-copiar" type="button" onclick="lancarPagamento()">➕ Lançar pagamento</button>
+      <button class="btn btn-wa" type="button" onclick="fecharPagamentos()" style="background:#8a94a8;color:#fff;border-color:#8a94a8;">Fechar</button>
+    </div>
+
+    <div class="m3l-rot" style="margin-top:20px;">🕘 Histórico de pagamentos</div>
+    <div class="pag-hist" id="pagHist"></div>
+  </div>
+</div>
+
+<!-- ===== NOVO: PAINEL DE GRÁFICOS ===== -->
+<div class="graf-overlay" id="grafOverlay" onclick="if(event.target===this)fecharGraficos()">
+  <div class="graf-modal">
+    <button class="graf-close" type="button" onclick="fecharGraficos()" aria-label="Fechar">✕</button>
+    <div class="graf-head">
+        <h2>📈 Crescimento da empresa</h2>
+      <div class="graf-anos" id="grafAnos"></div>
+    </div>
+    <div class="graf-kpis" id="grafKpis"></div>
+    <div class="graf-bloco" id="grafBlocoBarras">
+      <h4>Faturado vs Recebido por mês <span class="graf-ano-lbl" id="grafAnoLbl"></span></h4>
+      <div class="graf-legenda"></div>
+      <div class="graf-barras" id="grafBarras"></div>
+    </div>
+    <div class="graf-bloco">
+      <h4>Meta vs. realizado (mensal)</h4>
+      <div class="graf-metas" id="grafMetas"></div>
+    </div>
+    <div class="graf-bloco">
+      <h4>Comparativo anual</h4>
+      <div class="graf-anual" id="grafAnual"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function irParaAdminLoja(){
+  /* ambos os painéis usam o MESMO token do backend (/auth/login).
+     O admin-loja lê a chave 'm3d_token'; o admin lê 'm3d_admin_token'. */
+  var t = sessionStorage.getItem('m3d_admin_token')
+       || localStorage.getItem('m3d_admin_token')
+       || sessionStorage.getItem('m3d_token')
+       || localStorage.getItem('m3d_token') || '';
+  if(t){ try{ localStorage.setItem('m3d_token', t); }catch(e){} }
+  window.location.href = 'admin-loja.html';
+}
+</script>
 
 <!-- Lógica separada no admin.js -->
 <script src="admin.js"></script>

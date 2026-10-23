@@ -209,6 +209,7 @@ body.dark .campo-mini input{background:#0f1a30;border-color:#2a3a63;color:#e6ecf
     <h1>Meu 3D <span>Labs</span> — Admin Loja</h1>
     <div class="acoes-topo">
       <button class="btn-noturno" id="btnNoturno" onclick="alternarNoturno()">🌙 Noturno</button>
+          <button class="btn-noturno" type="button" onclick="irParaAdmin()" title="Abrir o painel de pedidos">📋 Admin</button>
       <button class="sair" onclick="sair()">Sair</button>
     </div>
   </div>
@@ -849,6 +850,14 @@ document.addEventListener('drop', function(e){
   if(files && files.length) enviarFotos(files);
 });
 if(token) entrar();
+</script>
+<script>
+function irParaAdmin(){
+  var t = localStorage.getItem('m3d_token')
+       || sessionStorage.getItem('m3d_token') || '';
+  if(t){ try{ localStorage.setItem('m3d_admin_token', t); }catch(e){} }
+  window.location.href = 'admin.html';
+}
 </script>
 <script src="loja-admin-extras.js"></script>
 </body>
