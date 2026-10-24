@@ -182,7 +182,7 @@ function renderProdutos(lista){
     }
     /* Pagamento em DUAS linhas: Pix (com valor) em cima; cartão (12x, sem valor) embaixo */
     if(!esgotado){
-      var _pix='R$ '+precoLabel(precoVenda*0.95);
+    var _pix = 'R$ ' + precoLabel(precoVenda - (Math.round(precoVenda * 0.05 * 100) / 100));
       html+='<div style="font-size:12px;color:#4a5161;line-height:1.5;margin-top:5px;"><img src="img/logo/pix.png" alt="Pix" style="width:14px;height:14px;vertical-align:-3px;margin-right:4px;"><b style="color:#0f1e3d;">'+_pix+' no Pix</b> <span style="color:#8a94a8;">· 5% OFF</span></div>';
       html+='<div style="font-size:12px;color:#4a5161;line-height:1.5;margin-top:3px;">ou até <b style="color:#0f1e3d;">12x</b> no cartão <img src="img/logo/cartao.png" alt="Bandeiras aceitas" style="height:13px;vertical-align:-2px;margin-left:2px;"></div>';
     }
