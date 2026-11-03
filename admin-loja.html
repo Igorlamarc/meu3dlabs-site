@@ -2,24 +2,99 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Admin Loja — Meu 3D Labs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="loja-admin-extras.css">
 <style>
+/* ============================================================
+   RESET + ANTI-OVERFLOW (trava o scroll horizontal)
+   ============================================================ */
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:#f2f4f8;color:#16294f;transition:background .25s,color .25s;}
+
+html{
+  overflow-x:hidden;
+  -webkit-text-size-adjust:100%;
+  max-width:100%;
+}
+body{
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:#f2f4f8;
+  color:#16294f;
+  transition:background .25s,color .25s;
+  overflow-x:hidden;
+  max-width:100%;
+  width:100%;
+  position:relative;
+  -webkit-font-smoothing:antialiased;
+}
+
+*,*::before,*::after{max-width:100%;}
+img,svg,video,iframe{max-width:100%;height:auto;}
+table{max-width:100%;}
+
+.conteudo,.form-wrap,.card,.grade,.topo,.barra-acoes,
+.busca-rapida,.resumo,.filtro-cat,.campos,.form-acoes{
+  min-width:0;
+}
+
 .hidden{display:none !important;}
-/* TOAST */
-#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f1e3d;color:#fff;padding:13px 26px;border-radius:12px;font-size:14px;font-weight:600;box-shadow:0 8px 26px rgba(15,30,61,.4);opacity:0;transition:.3s;z-index:999;max-width:90vw;text-align:center;pointer-events:none;}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+#toast{
+  position:fixed;
+  bottom:26px;
+  left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:#0f1e3d;
+  color:#fff;
+  padding:13px 26px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:600;
+  box-shadow:0 8px 26px rgba(15,30,61,.4);
+  opacity:0;
+  transition:transform .3s,opacity .3s;
+  z-index:999;
+  max-width:min(calc(100vw - 32px), 420px);
+  width:max-content;
+  text-align:center;
+  pointer-events:none;
+  word-wrap:break-word;
+  overflow-wrap:break-word;
+  line-height:1.4;
+}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 #toast.ok{background:#1d8a4f;}
 #toast.erro{background:#c0392b;}
-/* LOGIN */
-#telaLogin{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f1e3d 0%,#16294f 55%,#24406e 100%);padding:20px;}
-.login-box{background:#fff;border-radius:20px;padding:44px 36px 36px;width:100%;max-width:410px;box-shadow:0 24px 70px rgba(0,0,0,.4);position:relative;text-align:center;animation:subir .35s ease;}
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+#telaLogin{
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#0f1e3d 0%,#16294f 55%,#24406e 100%);
+  padding:20px;
+}
+.login-box{
+  background:#fff;
+  border-radius:20px;
+  padding:44px 36px 36px;
+  width:100%;
+  max-width:410px;
+  box-shadow:0 24px 70px rgba(0,0,0,.4);
+  position:relative;
+  text-align:center;
+  animation:subir .35s ease;
+}
 @keyframes subir{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
 .login-back{position:absolute;top:18px;left:22px;font-size:13px;color:#4a5161;text-decoration:none;transition:.2s;}
 .login-back:hover{color:#f26522;}
@@ -33,16 +108,35 @@ body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:#f2f4f8;colo
 .login-box button:hover{transform:translateY(-1px);box-shadow:0 9px 20px rgba(242,101,34,.45);}
 .login-box button:disabled{opacity:.6;cursor:wait;transform:none;}
 .login-err{color:#c0392b;font-size:13px;margin-bottom:12px;display:none;text-align:center;}
-/* TOPO */
-.topo{background:linear-gradient(120deg,#0f1e3d 0%,#182c54 70%,#1f3a6b 100%);color:#fff;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 3px 14px rgba(15,30,61,.25);position:sticky;top:0;z-index:50;}
-.topo h1{font-size:19px;font-weight:800;letter-spacing:-.3px;}
+
+/* ============================================================
+   TOPO
+   ============================================================ */
+.topo{
+  background:linear-gradient(120deg,#0f1e3d 0%,#182c54 70%,#1f3a6b 100%);
+  color:#fff;
+  padding:16px 26px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:12px;
+  box-shadow:0 3px 14px rgba(15,30,61,.25);
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+.topo h1{font-size:19px;font-weight:800;letter-spacing:-.3px;min-width:0;}
 .topo h1 span{color:#ff8a3d;}
 .topo .sair{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit;transition:.2s;}
 .topo .sair:hover{background:rgba(255,255,255,.14);}
 .btn-noturno{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;transition:.2s;font-family:inherit;}
 .btn-noturno:hover{background:rgba(255,255,255,.25);}
-.topo .acoes-topo{display:flex;gap:10px;align-items:center;}
-/* MODO NOTURNO */
+.topo .acoes-topo{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+/* ============================================================
+   MODO NOTURNO
+   ============================================================ */
 body.dark{background:#0d1424;color:#dbe2f0;}
 body.dark .card{background:#16203a;box-shadow:0 3px 12px rgba(0,0,0,.45);}
 body.dark .card:hover{box-shadow:0 10px 26px rgba(0,0,0,.55);}
@@ -80,10 +174,28 @@ body.dark .btn-vermelho{background:#c0392b;}
 body.dark .btn-cinza{background:#4a5670;}
 body.dark #vazio{color:#6b7690;}
 body.dark .promo-box{background:#0f1a30;border-color:#2a3a63;}
-/* CONTEÚDO */
-.conteudo{max-width:1100px;margin:0 auto;padding:26px 22px;}
-.barra-acoes{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
-.barra-acoes h2{font-size:18px;font-weight:800;letter-spacing:-.2px;}
+body.dark .ordem-select{background:#16203a;border-color:#2a3a63;color:#e6ecf7;}
+body.dark .specs-toggle{background:#16203a;border-color:#2a3a63;color:#dbe2f0;}
+body.dark .specs-toggle:hover{background:#1c2a4a;}
+
+/* ============================================================
+   CONTEÚDO
+   ============================================================ */
+.conteudo{
+  max-width:1100px;
+  margin:0 auto;
+  padding:26px 22px;
+  width:100%;
+}
+.barra-acoes{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.barra-acoes h2{font-size:18px;font-weight:800;letter-spacing:-.2px;min-width:0;}
 .btn{background:#0f1e3d;color:#fff;border:none;padding:10px 18px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;}
 .btn:hover{background:#1d3a6b;transform:translateY(-1px);}
 .btn:disabled{opacity:.5;cursor:wait;transform:none;}
@@ -95,104 +207,548 @@ body.dark .promo-box{background:#0f1a30;border-color:#2a3a63;}
 .btn-vermelho:hover{background:#d8503f;}
 .btn-cinza{background:#8a94a8;}
 .btn-cinza:hover{background:#a4adc0;}
-/* BUSCA RÁPIDA */
-.busca-rapida{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-.busca-rapida .ic{width:38px;height:38px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 8px rgba(15,30,61,.08);flex-shrink:0;}
-.busca-rapida input{flex:1;padding:11px 16px;border:1.5px solid #dde3ee;border-radius:10px;font-size:14px;font-family:inherit;outline:none;transition:.2s;color:#16294f;background:#fff;}
+
+/* ============================================================
+   BUSCA + ORDENAÇÃO
+   ============================================================ */
+.busca-rapida{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+.busca-rapida .ic{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  box-shadow:0 2px 8px rgba(15,30,61,.08);
+  flex-shrink:0;
+}
+.busca-rapida input{
+  flex:1;
+  min-width:0;
+  padding:11px 16px;
+  border:1.5px solid #dde3ee;
+  border-radius:10px;
+  font-size:14px;
+  font-family:inherit;
+  outline:none;
+  transition:.2s;
+  color:#16294f;
+  background:#fff;
+}
 .busca-rapida input:focus{border-color:#f26522;box-shadow:0 0 0 3px rgba(242,101,34,.12);}
-/* RESUMO */
-.resumo{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
-.resumo-item{background:#fff;border:1px solid #e3e8ef;border-radius:12px;padding:12px 18px;font-size:13px;display:flex;align-items:center;gap:9px;box-shadow:0 2px 8px rgba(15,30,61,.06);transition:.2s;}
+.ordem-select{
+  padding:11px 14px;
+  border:1.5px solid #dde3ee;
+  border-radius:10px;
+  font-size:13px;
+  font-family:inherit;
+  background:#fff;
+  color:#16294f;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.ordem-select:focus{outline:none;border-color:#f26522;}
+
+/* ============================================================
+   RESUMO (chips)
+   ============================================================ */
+.resumo{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+.resumo-item{
+  background:#fff;
+  border:1px solid #e3e8ef;
+  border-radius:12px;
+  padding:12px 18px;
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  box-shadow:0 2px 8px rgba(15,30,61,.06);
+  transition:.2s;
+  cursor:pointer;
+  user-select:none;
+}
 .resumo-item:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(15,30,61,.1);}
+.resumo-item.ativo{border-color:#f26522;box-shadow:0 0 0 2px rgba(242,101,34,.18);}
 .resumo-item .num{font-weight:800;font-size:19px;color:#0f1e3d;}
 .resumo-item .rot{color:#4a5161;}
 .resumo-item .num-verde{color:#1d8a4f;}
 .resumo-item .num-vermelho{color:#c0392b;}
 .resumo-item .num-laranja{color:#f26522;}
-/* GRADE */
-.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;}
-.card{position:relative;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(15,30,61,.08);display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s;}
+
+/* ============================================================
+   FILTRO CATEGORIA
+   ============================================================ */
+.filtro-cat{
+  display:flex;
+  gap:7px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+.filtro-cat button{
+  padding:7px 15px;
+  border:1px solid #dde3ee;
+  border-radius:20px;
+  background:#fff;
+  color:#4a5161;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+  font-family:inherit;
+}
+.filtro-cat button:hover{border-color:#f26522;color:#f26522;}
+.filtro-cat button.ativo{background:#0f1e3d;border-color:#0f1e3d;color:#fff;box-shadow:0 3px 10px rgba(15,30,61,.25);}
+
+/* ============================================================
+   GRADE
+   ============================================================ */
+.grade{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(215px,1fr));
+  gap:18px;
+}
+.card{
+  position:relative;
+  background:#fff;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 2px 10px rgba(15,30,61,.08);
+  display:flex;
+  flex-direction:column;
+  transition:transform .2s,box-shadow .2s;
+  min-width:0;
+}
 .card:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(15,30,61,.16);}
-.card .foto{height:175px;background:#eef1f6;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+.card .foto{
+  height:175px;
+  background:#eef1f6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+}
 .card .foto img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
 .card:hover .foto img{transform:scale(1.05);}
 .card .foto .sem-foto{color:#9aa4b8;font-size:13px;text-align:center;padding:10px;}
-.card .info{padding:13px;flex:1;}
-.card .info .nome{font-weight:700;font-size:14px;margin-bottom:4px;}
+.card .foto .foto-count{
+  position:absolute;
+  bottom:8px;
+  left:8px;
+  background:rgba(15,30,61,.82);
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  padding:3px 9px;
+  border-radius:20px;
+  z-index:3;
+}
+.card .info{padding:13px;flex:1;min-width:0;}
+.card .info .nome{
+  font-weight:700;
+  font-size:14px;
+  margin-bottom:4px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  line-clamp:2;
+  -webkit-box-orient:vertical;
+  line-height:1.35;
+}
 .card .info .cat{color:#8a94a8;font-size:12px;margin-bottom:8px;}
 .card .info .preco{font-weight:800;color:#f26522;font-size:15px;margin-bottom:8px;}
 .card .info .preco .preco-antigo{text-decoration:line-through;color:#8a94a8;font-weight:600;font-size:12.5px;margin-right:6px;}
+.card .info .badge-linha{display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+
 .badge{display:inline-block;padding:3px 11px;border-radius:20px;font-size:11px;font-weight:700;}
 .badge.ok{background:#e3f5ec;color:#1d8a4f;}
 .badge.ult{background:#fff4d6;color:#b07d00;}
 .badge.zero{background:#fde8e5;color:#c0392b;}
 .badge.promo{background:#fde8e5;color:#c0392b;}
-.tag-promo{position:absolute;top:10px;right:10px;background:#c0392b;color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;z-index:4;box-shadow:0 3px 8px rgba(0,0,0,.25);}
-.card .acoes{display:flex;gap:6px;padding:11px 13px;border-top:1px solid #eef1f6;}
-.card .acoes button{flex:1;padding:7px 4px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit;}
+.tag-promo{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:#c0392b;
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  padding:4px 10px;
+  border-radius:20px;
+  z-index:4;
+  box-shadow:0 3px 8px rgba(0,0,0,.25);
+}
+
+/* ✅ Ações do card: 3 botões em colunas iguais — sem o controle de estoque */
+.card .acoes{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  padding:11px 13px;
+  border-top:1px solid #eef1f6;
+}
+.card .acoes button{
+  padding:8px 4px;
+  border:none;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s;
+  font-family:inherit;
+  white-space:nowrap;
+}
 .card .acoes button:hover{filter:brightness(1.12);}
-/* SELEÇÃO PARA MESCLAR */
-.sel-check{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid #f26522;color:#f26522;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5;transition:.15s;box-shadow:0 2px 6px rgba(15,30,61,.2);}
+
+/* ============================================================
+   SELEÇÃO PARA MESCLAR / LOTE
+   ============================================================ */
+.sel-check{
+  position:absolute;
+  top:10px;
+  left:10px;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#fff;
+  border:2px solid #f26522;
+  color:#f26522;
+  font-weight:800;
+  font-size:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:5;
+  transition:.15s;
+  box-shadow:0 2px 6px rgba(15,30,61,.2);
+}
 .sel-check:hover{transform:scale(1.12);}
-/* FILTRO CATEGORIA */
-.filtro-cat{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap;}
-.filtro-cat button{padding:7px 15px;border:1px solid #dde3ee;border-radius:20px;background:#fff;color:#4a5161;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;}
-.filtro-cat button:hover{border-color:#f26522;color:#f26522;}
-.filtro-cat button.ativo{background:#0f1e3d;border-color:#0f1e3d;color:#fff;box-shadow:0 3px 10px rgba(15,30,61,.25);}
-/* FORMULÁRIO */
-.form-wrap{background:#fff;border-radius:16px;padding:26px;box-shadow:0 3px 14px rgba(15,30,61,.09);margin-bottom:24px;animation:subir .3s ease;}
+
+/* ============================================================
+   BARRA DE AÇÕES EM LOTE
+   ============================================================ */
+.barraLot{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  background:#0f1e3d;
+  color:#fff;
+  padding:12px 16px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  box-shadow:0 -6px 24px rgba(0,0,0,.3);
+  z-index:200;
+  transform:translateY(120%);
+  transition:transform .25s ease;
+}
+.barraLot.show{transform:translateY(0);}
+.barraLot .bl-info{
+  font-size:13px;
+  font-weight:700;
+  margin-right:auto;
+  white-space:nowrap;
+}
+.barraLot .bl-info b{color:#ff8a3d;}
+.barraLot button{
+  padding:9px 14px;
+  border:none;
+  border-radius:9px;
+  font-size:12.5px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:inherit;
+  transition:.2s;
+  white-space:nowrap;
+}
+.barraLot .bl-ativar{background:#1d8a4f;color:#fff;}
+.barraLot .bl-desativar{background:#8a94a8;color:#fff;}
+.barraLot .bl-excluir{background:#c0392b;color:#fff;}
+.barraLot .bl-cancelar{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3);}
+.barraLot button:hover{filter:brightness(1.15);}
+
+/* ============================================================
+   BARRA MESCLAR
+   ============================================================ */
+.barraMesclar{
+  background:#fff;
+  border:1px dashed #f26522;
+  border-radius:12px;
+  padding:12px 16px;
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.barraMesclar .bm-titulo{font-size:14px;font-weight:700;color:#0f1e3d;}
+.barraMesclar select{
+  padding:8px;
+  border:1px solid #dde3ee;
+  border-radius:8px;
+  font-size:13px;
+  min-width:0;
+  max-width:100%;
+  flex:1;
+  font-family:inherit;
+}
+
+/* ============================================================
+   FORMULÁRIO
+   ============================================================ */
+.form-wrap{
+  background:#fff;
+  border-radius:16px;
+  padding:26px;
+  box-shadow:0 3px 14px rgba(15,30,61,.09);
+  margin-bottom:24px;
+  animation:subir .3s ease;
+  min-width:0;
+}
 .form-wrap h3{margin-bottom:18px;font-size:17px;font-weight:800;}
-.campos{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
-.campo{display:flex;flex-direction:column;}
+.campos{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+.campo{display:flex;flex-direction:column;min-width:0;}
 .campo.full{grid-column:1/-1;}
 .campo label{font-size:12px;font-weight:600;color:#4a5670;margin-bottom:5px;}
-.campo input,.campo select,.campo textarea{padding:11px;border:1.5px solid #dde3ee;border-radius:9px;font-size:14px;font-family:inherit;transition:.2s;color:#16294f;background:#fff;}
+.campo input,.campo select,.campo textarea{
+  padding:11px;
+  border:1.5px solid #dde3ee;
+  border-radius:9px;
+  font-size:14px;
+  font-family:inherit;
+  transition:.2s;
+  color:#16294f;
+  background:#fff;
+  width:100%;
+}
 .campo input:focus,.campo select:focus,.campo textarea:focus{border-color:#f26522;outline:none;box-shadow:0 0 0 3px rgba(242,101,34,.12);}
 .campo textarea{resize:vertical;min-height:70px;}
 .campo input[type=checkbox]{width:auto;align-self:flex-start;}
 .slug-preview{font-size:11px;color:#8a94a8;margin-top:3px;word-break:break-all;}
-.promo-box{border:1.5px dashed #f26522;border-radius:12px;padding:14px;background:#fff8f4;display:flex;flex-direction:column;gap:10px;}
+.promo-box{
+  border:1.5px dashed #f26522;
+  border-radius:12px;
+  padding:14px;
+  background:#fff8f4;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
 .promo-box .promo-linha{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#7a3a10;}
-/* CAMPOS MINI (dimensões inline) */
-.campo-mini{flex:1;min-width:95px;}
+
+/* Bloco de especificações colapsável */
+.specs-toggle{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:11px 15px;
+  background:#f5f7fa;
+  border:1px solid #e3e8ef;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:700;
+  color:#0f1e3d;
+  cursor:pointer;
+  user-select:none;
+  transition:.2s;
+  margin-bottom:4px;
+}
+.specs-toggle:hover{background:#eef1f6;}
+.specs-toggle .seta{
+  margin-left:auto;
+  transition:transform .25s;
+  font-size:11px;
+  color:#8a94a8;
+}
+.specs-toggle.aberto .seta{transform:rotate(180deg);}
+.specs-corpo{display:none;}
+.specs-corpo.aberto{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+
+/* Campos mini */
+.campo-mini{flex:1;min-width:0;}
 .campo-mini .mini-label{display:block;font-size:11px;font-weight:600;color:#4a5670;margin-bottom:4px;}
-.campo-mini input{width:100%;padding:10px 11px;border:1.5px solid #dde3ee;border-radius:9px;font-size:13px;font-family:inherit;color:#16294f;background:#fff;}
+.campo-mini input{
+  width:100%;
+  padding:10px 11px;
+  border:1.5px solid #dde3ee;
+  border-radius:9px;
+  font-size:13px;
+  font-family:inherit;
+  color:#16294f;
+  background:#fff;
+}
 .campo-mini input:focus{border-color:#f26522;outline:none;box-shadow:0 0 0 3px rgba(242,101,34,.12);}
 body.dark .campo-mini .mini-label{color:#a9b4c9;}
 body.dark .campo-mini input{background:#0f1a30;border-color:#2a3a63;color:#e6ecf7;}
-/* SELETOR DE CORES */
+
+/* Seletor de cores */
 .cores-pick{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
-.cor-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border:1.5px solid #dde3ee;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;transition:.15s;background:#fff;color:#4a5670;}
+.cor-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 13px;
+  border:1.5px solid #dde3ee;
+  border-radius:20px;
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s;
+  background:#fff;
+  color:#4a5670;
+}
 .cor-chip:hover{border-color:#f26522;transform:translateY(-1px);}
 .cor-chip.sel{background:#0f1e3d;border-color:#0f1e3d;color:#fff;box-shadow:0 3px 8px rgba(15,30,61,.3);}
 .cor-chip .dot{width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.15);flex-shrink:0;}
 .btn-cinza-mini{padding:6px 14px;border:1px dashed #c6cfdd;border-radius:8px;background:#fff;color:#4a5670;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s;}
 .btn-cinza-mini:hover{border-color:#f26522;color:#f26522;}
-/* UPLOAD */
-.upload-area{border:2px dashed #c6cfdd;border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s;margin-top:6px;}
+
+/* Upload */
+.upload-area{
+  border:2px dashed #c6cfdd;
+  border-radius:12px;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+  margin-top:6px;
+}
 .upload-area:hover{border-color:#f26522;background:#fff8f4;}
 .upload-area .icone{font-size:26px;}
 .upload-area .txt{font-size:13px;color:#667;margin-top:6px;}
 .imgs-preview{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
-.imgs-preview .mini{position:relative;width:86px;height:86px;border-radius:10px;overflow:hidden;border:1px solid #dde3ee;transition:.2s;}
+.imgs-preview .mini{
+  position:relative;
+  width:86px;
+  height:86px;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid #dde3ee;
+  transition:.2s;
+  flex-shrink:0;
+}
 .imgs-preview .mini:hover{transform:scale(1.04);}
 .imgs-preview .mini img{width:100%;height:100%;object-fit:cover;}
 .imgs-preview .mini .mini-btns{position:absolute;top:3px;right:3px;display:flex;gap:3px;}
-.imgs-preview .mini button{background:rgba(192,57,43,.92);color:#fff;border:none;width:20px;height:20px;border-radius:50%;font-size:11px;cursor:pointer;line-height:1;}
+.imgs-preview .mini button{
+  background:rgba(192,57,43,.92);
+  color:#fff;
+  border:none;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  font-size:11px;
+  cursor:pointer;
+  line-height:1;
+}
 .imgs-preview .mini button.btn-star{background:rgba(15,30,61,.85);}
 .imgs-preview .mini.sel-principal{outline:3px solid #f26522;}
-.imgs-preview .mini .lb-principal{position:absolute;bottom:0;left:0;right:0;background:rgba(242,101,34,.92);color:#fff;font-size:9px;font-weight:800;text-align:center;padding:2px 0;}
-.form-acoes{display:flex;gap:10px;margin-top:20px;}
-.form-acoes .btn{flex:1;}
+.imgs-preview .mini .lb-principal{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(242,101,34,.92);
+  color:#fff;
+  font-size:9px;
+  font-weight:800;
+  text-align:center;
+  padding:2px 0;
+}
+
+.form-acoes{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.form-acoes .btn{flex:1;min-width:130px;}
 .sub-msg{font-size:13px;margin-top:12px;padding:11px;border-radius:9px;display:none;}
 .sub-msg.ok{display:block;background:#e3f5ec;color:#1d8a4f;}
 .sub-msg.erro{display:block;background:#fde8e5;color:#c0392b;}
 .carregando{text-align:center;padding:40px;color:#8a94a8;}
-@media(max-width:640px){.campos{grid-template-columns:1fr;}}
+
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media(max-width:780px){
+  .campos{grid-template-columns:1fr;}
+  .specs-corpo.aberto{grid-template-columns:1fr;}
+}
+
+@media(max-width:640px){
+  .conteudo{padding:18px 14px 90px;}
+  .topo{padding:12px 14px;gap:8px;}
+  .topo h1{font-size:15px;line-height:1.25;}
+  .topo .acoes-topo{gap:6px;width:100%;justify-content:flex-end;}
+  .btn-noturno,.topo .sair{padding:7px 11px;font-size:12px;}
+  .barra-acoes{gap:8px;}
+  .barra-acoes h2{font-size:16px;width:100%;}
+  .barra-acoes > div{width:100%;}
+  .barra-acoes .btn{flex:1;font-size:13px;padding:10px 12px;}
+  .grade{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;}
+  .card .foto{height:145px;}
+  .card .info{padding:10px;}
+  .card .info .nome{font-size:13px;}
+  .card .info .preco{font-size:14px;}
+  .card .acoes{padding:8px;gap:4px;}
+  .card .acoes button{font-size:11px;padding:7px 2px;}
+  .resumo{gap:7px;}
+  .resumo-item{padding:9px 12px;font-size:12px;flex:1;min-width:calc(50% - 4px);justify-content:center;}
+  .resumo-item .num{font-size:17px;}
+  .filtro-cat{gap:5px;}
+  .filtro-cat button{font-size:11px;padding:6px 11px;}
+  .form-wrap{padding:18px 15px;}
+  .form-acoes{flex-direction:column;}
+  .form-acoes .btn{width:100%;}
+  .barraMesclar{padding:10px 12px;gap:8px;}
+  .barraMesclar select{width:100%;min-width:0;}
+  .barraMesclar button{flex:1;}
+  .imgs-preview .mini{width:72px;height:72px;}
+  .ordem-select{width:100%;}
+  .busca-rapida .ic{display:none;}
+  .barraLot{padding:10px 12px;gap:6px;}
+  .barraLot .bl-info{font-size:12px;width:100%;margin-bottom:4px;}
+  .barraLot button{flex:1;font-size:11.5px;padding:8px 8px;}
+}
+
+@media(max-width:400px){
+  .conteudo{padding:14px 10px 88px;}
+  .grade{grid-template-columns:1fr;}
+  .card .foto{height:190px;}
+  .resumo-item{min-width:100%;}
+  .card .acoes button{font-size:11.5px;padding:8px 3px;}
+  .login-box{padding:36px 22px 28px;}
+  #toast{max-width:calc(100vw - 20px);font-size:13px;padding:11px 18px;}
+}
+
+/* Safe area iOS */
+@supports(padding:max(0px)){
+  .conteudo{padding-bottom:max(90px, env(safe-area-inset-bottom));}
+}
 </style>
 </head>
 <body>
 <div id="toast"></div>
+
+<!-- ===== LOGIN ===== -->
 <div id="telaLogin">
   <div class="login-box">
     <a class="login-back" href="login.html">← Voltar</a>
@@ -204,39 +760,57 @@ body.dark .campo-mini input{background:#0f1a30;border-color:#2a3a63;color:#e6ecf
     <button id="btnLogin" onclick="fazerLogin()">Entrar</button>
   </div>
 </div>
+
+<!-- ===== PAINEL ===== -->
 <div id="painel" class="hidden">
   <div class="topo">
     <h1>Meu 3D <span>Labs</span> — Admin Loja</h1>
     <div class="acoes-topo">
       <button class="btn-noturno" id="btnNoturno" onclick="alternarNoturno()">🌙 Noturno</button>
-          <button class="btn-noturno" type="button" onclick="irParaAdmin()" title="Abrir o painel de pedidos">📋 Admin</button>
+      <button class="btn-noturno" type="button" onclick="irParaAdmin()" title="Abrir o painel de pedidos">📋 Admin</button>
       <button class="sair" onclick="sair()">Sair</button>
     </div>
   </div>
+
   <div class="conteudo">
+
     <div class="barra-acoes">
       <h2 id="tituloLista">Produtos da loja</h2>
       <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-cinza" id="btnLote" onclick="toggleLote()">☑️ Selecionar</button>
         <button class="btn btn-cinza" id="btnMesclar" onclick="toggleMesclar()">🔗 Mesclar</button>
         <button class="btn btn-laranja" onclick="abrirForm()">+ Novo produto</button>
       </div>
     </div>
+
     <div id="msgAviso" class="msgAvisoBox" style="background:#fff4d6;color:#7a5c00;padding:12px;border-radius:10px;font-size:13px;margin-bottom:12px;">
       ⚠️ Este painel é <b>privado</b> — não crie link para ele no menu público. A loja exibe apenas produtos com <b>Ativo</b> marcado.
     </div>
+
     <div class="busca-rapida">
       <div class="ic">🔍</div>
-      <input id="buscaInput" placeholder="Buscar produto por nome ou categoria..." oninput="renderGrade()">
+      <input id="buscaInput" placeholder="Buscar produto por nome ou categoria..." oninput="buscaComDebounce()">
+      <select class="ordem-select" id="ordemSelect" onchange="renderGrade()">
+        <option value="padrao">Destaques primeiro</option>
+        <option value="nome">Nome (A–Z)</option>
+        <option value="preco-asc">Menor preço</option>
+        <option value="preco-desc">Maior preço</option>
+        <option value="estoque-asc">Menor estoque</option>
+        <option value="recentes">Mais recentes</option>
+      </select>
     </div>
+
     <div id="resumo" class="resumo"></div>
     <div id="filtroCat" class="filtro-cat"></div>
-    <div id="barraMesclar" class="hidden barraMesclar" style="background:#fff;border:1px dashed #f26522;border-radius:12px;padding:12px 16px;margin-bottom:16px;align-items:center;gap:12px;flex-wrap:wrap;">
-      <span class="bm-titulo" style="font-size:14px;font-weight:700;color:#0f1e3d;">🔗 Mesclar selecionados <span id="ctSel">(0)</span></span>
+
+    <div id="barraMesclar" class="hidden barraMesclar">
+      <span class="bm-titulo">🔗 Mesclar selecionados <span id="ctSel">(0)</span></span>
       <span style="font-size:13px;color:#4a5670;">Principal:</span>
-      <select id="selPrincipal" style="padding:8px;border:1px solid #dde3ee;border-radius:8px;font-size:13px;min-width:200px;"></select>
+      <select id="selPrincipal"></select>
       <button class="btn btn-verde" style="padding:8px 16px;font-size:13px;" onclick="mesclarSelecionados()">Mesclar</button>
       <button class="btn btn-cinza" style="padding:8px 16px;font-size:13px;" onclick="toggleMesclar()">Cancelar</button>
     </div>
+
     <div id="formArea"></div>
     <div id="grade" class="grade"></div>
     <div id="vazio" class="hidden" style="text-align:center;color:#8a94a8;padding:50px;">
@@ -244,18 +818,42 @@ body.dark .campo-mini input{background:#0f1a30;border-color:#2a3a63;color:#e6ecf
     </div>
   </div>
 </div>
+
+<!-- ===== BARRA DE AÇÕES EM LOTE ===== -->
+<div id="barraLot" class="barraLot">
+  <span class="bl-info"><b id="blCount">0</b> selecionado(s)</span>
+  <button class="bl-ativar" onclick="loteAcao('ativar')">✓ Ativar</button>
+  <button class="bl-desativar" onclick="loteAcao('desativar')">⏸️ Desativar</button>
+  <button class="bl-excluir" onclick="loteAcao('excluir')">🗑️ Excluir</button>
+  <button class="bl-cancelar" onclick="toggleLote()">✕</button>
+</div>
+
 <script>
 const API = 'https://meu3dlabs-backend.onrender.com/api';
 const CATEGORIAS = ['chaveiros','religiosos','decoracao','miniaturas','colecionaveis','articulados','sensoriais','utilitarios','outros'];
 const MATERIAIS = ['PLA','PETG','TPU','ABS'];
+
 let token = localStorage.getItem('m3d_token') || '';
 let produtos = [];
 let editandoId = null;
 let imagensTemp = [];
 let mesclando = false;
+let modoLote = false;
 let selecionados = [];
 let filtroCategoria = '';
-function gerarSlug(t){return String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80)||'';}
+let filtroRapido = '';
+let buscaTimer = null;
+
+/* ============================================================
+   UTILITÁRIOS
+   ============================================================ */
+function gerarSlug(t){
+  return String(t||'').toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-|-$/g,'')
+    .slice(0,80)||'';
+}
+
 async function api(path, opts, body){
   const conf = { method: opts || 'GET', headers: {} };
   if(token) conf.headers['Authorization'] = 'Bearer ' + token;
@@ -265,12 +863,12 @@ async function api(path, opts, body){
   }
   const r = await fetch(API + path, conf);
   const t = await r.json().catch(() => ({}));
-  if(!r.ok){ throw new Error(t.error || 'Erro na requisição'); }
+  if(!r.ok) throw new Error(t.error || 'Erro na requisição');
   return t;
 }
-/* ===== TOAST (no lugar do alert) ===== */
+
 function mostrarToast(msg, tipo){
-  let t = document.getElementById('toast');
+  const t = document.getElementById('toast');
   t.className = '';
   t.textContent = msg;
   if(tipo) t.classList.add(tipo);
@@ -278,13 +876,28 @@ function mostrarToast(msg, tipo){
   clearTimeout(t._t);
   t._t = setTimeout(function(){ t.classList.remove('show'); }, 3200);
 }
-/* ===== MODO NOTURNO ===== */
+
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"]/g, c => (
+    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]
+  ));
+}
+
+function fmt(n){
+  n = parseFloat(n) || 0;
+  return n.toFixed(2).replace('.', ',');
+}
+
+/* ============================================================
+   MODO NOTURNO
+   ============================================================ */
 function alternarNoturno(){
   document.body.classList.toggle('dark');
   const ativo = document.body.classList.contains('dark');
   localStorage.setItem('m3d_adminloja_noturno', ativo ? '1' : '0');
   document.getElementById('btnNoturno').textContent = ativo ? '☀️ Claro' : '🌙 Noturno';
 }
+
 if(localStorage.getItem('m3d_adminloja_noturno') === '1'){
   document.addEventListener('DOMContentLoaded', function(){
     document.body.classList.add('dark');
@@ -292,11 +905,16 @@ if(localStorage.getItem('m3d_adminloja_noturno') === '1'){
     if(b) b.textContent = '☀️ Claro';
   });
 }
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
 function fazerLogin(){
   const senha = document.getElementById('senha').value.trim();
   if(!senha) return;
   const btn = document.getElementById('btnLogin');
   btn.disabled = true; btn.textContent = 'Entrando...';
+
   fetch(API + '/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -319,6 +937,7 @@ function fazerLogin(){
     btn.disabled = false; btn.textContent = 'Entrar';
   });
 }
+
 function sair(){
   token = '';
   localStorage.removeItem('m3d_token');
@@ -327,11 +946,16 @@ function sair(){
   document.getElementById('painel').classList.add('hidden');
   document.getElementById('telaLogin').classList.remove('hidden');
 }
+
 function entrar(){
   document.getElementById('telaLogin').classList.add('hidden');
   document.getElementById('painel').classList.remove('hidden');
   carregar();
 }
+
+/* ============================================================
+   CARREGAMENTO
+   ============================================================ */
 async function carregar(){
   const g = document.getElementById('grade');
   g.innerHTML = '<div class="carregando">Carregando produtos...</div>';
@@ -345,16 +969,21 @@ async function carregar(){
       document.getElementById('loginErr').textContent = 'Sessão expirada. Entre novamente.';
       document.getElementById('loginErr').style.display = 'block';
     }else{
-      g.innerHTML = '<div class="carregando">Erro ao carregar: ' + e.message + '</div>';
+      g.innerHTML = '<div class="carregando">Erro ao carregar: ' + esc(e.message) + '</div>';
     }
   }
 }
+
+/* ============================================================
+   RESUMO / FILTRO
+   ============================================================ */
 function badgeEstoque(q){
   q = parseInt(q) || 0;
   if(q <= 0) return '<span class="badge zero">Sem estoque</span>';
   if(q <= 3) return '<span class="badge ult">Últimas ' + q + ' un.</span>';
   return '<span class="badge ok">Em estoque (' + q + ')</span>';
 }
+
 function renderResumo(){
   const r = document.getElementById('resumo');
   const total = produtos.length;
@@ -362,13 +991,22 @@ function renderResumo(){
   const inativos = total - ativos;
   const semEstoque = produtos.filter(p => !(parseInt(p.estoque) > 0)).length;
   const promos = produtos.filter(p => p.promo && parseFloat(p.precoPromo) > 0).length;
-  r.innerHTML =
-    '<div class="resumo-item"><span class="num">' + total + '</span><span class="rot">total</span></div>' +
-    '<div class="resumo-item"><span class="num num-verde">' + ativos + '</span><span class="rot">ativos na loja</span></div>' +
-    (inativos ? '<div class="resumo-item"><span class="num num-laranja">' + inativos + '</span><span class="rot">inativos</span></div>' : '') +
-    (semEstoque ? '<div class="resumo-item"><span class="num num-vermelho">' + semEstoque + '</span><span class="rot">sem estoque</span></div>' : '') +
-    (promos ? '<div class="resumo-item"><span class="num num-vermelho">🏷️ ' + promos + '</span><span class="rot">em promoção</span></div>' : '');
+
+  let html = '';
+  html += '<div class="resumo-item' + (filtroRapido === '' ? ' ativo' : '') + '" onclick="setFiltroRapido(\'\')"><span class="num">' + total + '</span><span class="rot">total</span></div>';
+  html += '<div class="resumo-item' + (filtroRapido === 'ativos' ? ' ativo' : '') + '" onclick="setFiltroRapido(\'ativos\')"><span class="num num-verde">' + ativos + '</span><span class="rot">ativos</span></div>';
+  if(inativos) html += '<div class="resumo-item' + (filtroRapido === 'inativos' ? ' ativo' : '') + '" onclick="setFiltroRapido(\'inativos\')"><span class="num num-laranja">' + inativos + '</span><span class="rot">inativos</span></div>';
+  if(semEstoque) html += '<div class="resumo-item' + (filtroRapido === 'semEstoque' ? ' ativo' : '') + '" onclick="setFiltroRapido(\'semEstoque\')"><span class="num num-vermelho">' + semEstoque + '</span><span class="rot">sem estoque</span></div>';
+  if(promos) html += '<div class="resumo-item' + (filtroRapido === 'promo' ? ' ativo' : '') + '" onclick="setFiltroRapido(\'promo\')"><span class="num num-vermelho">🏷️ ' + promos + '</span><span class="rot">em promoção</span></div>';
+  r.innerHTML = html;
 }
+
+function setFiltroRapido(f){
+  filtroRapido = (filtroRapido === f) ? '' : f;
+  renderResumo();
+  renderGrade();
+}
+
 function renderFiltroCat(){
   const f = document.getElementById('filtroCat');
   let html = '<button class="' + (filtroCategoria === '' ? 'ativo' : '') + '" onclick="filtrarCat(\'\')">Todas</button>';
@@ -378,173 +1016,401 @@ function renderFiltroCat(){
   });
   f.innerHTML = html;
 }
+
 function filtrarCat(cat){
   filtroCategoria = cat;
   renderFiltroCat();
   renderGrade();
 }
+
 function render(){
   renderResumo();
   renderFiltroCat();
   renderGrade();
 }
+
+/* ============================================================
+   BUSCA COM DEBOUNCE
+   ============================================================ */
+function buscaComDebounce(){
+  clearTimeout(buscaTimer);
+  buscaTimer = setTimeout(renderGrade, 220);
+}
+
+/* ============================================================
+   GRADE
+   ============================================================ */
 function renderGrade(){
   const g = document.getElementById('grade');
   const termo = (document.getElementById('buscaInput') ? document.getElementById('buscaInput').value : '').toLowerCase().trim();
+  const ordem = document.getElementById('ordemSelect') ? document.getElementById('ordemSelect').value : 'padrao';
+
   let lista = produtos.slice();
+
   if(filtroCategoria) lista = lista.filter(p => p.categoria === filtroCategoria);
-  if(termo) lista = lista.filter(p => (p.nome||'').toLowerCase().indexOf(termo) !== -1 || (p.categoria||'').toLowerCase().indexOf(termo) !== -1);
+  if(filtroRapido === 'ativos') lista = lista.filter(p => p.ativo);
+  if(filtroRapido === 'inativos') lista = lista.filter(p => !p.ativo);
+  if(filtroRapido === 'semEstoque') lista = lista.filter(p => !(parseInt(p.estoque) > 0));
+  if(filtroRapido === 'promo') lista = lista.filter(p => p.promo && parseFloat(p.precoPromo) > 0);
+
+  if(termo){
+    lista = lista.filter(p =>
+      (p.nome||'').toLowerCase().indexOf(termo) !== -1 ||
+      (p.categoria||'').toLowerCase().indexOf(termo) !== -1
+    );
+  }
+
   document.getElementById('vazio').classList.toggle('hidden', lista.length > 0);
   g.innerHTML = '';
+
   if(!lista.length){
-    if(produtos.length) g.innerHTML = '<div class="carregando" style="grid-column:1/-1;">Nenhum produto encontrado para "' + esc(termo) + '".</div>';
+    if(produtos.length){
+      g.innerHTML = '<div class="carregando" style="grid-column:1/-1;">Nenhum produto encontrado para "' + esc(termo) + '".</div>';
+    }
     return;
   }
+
   lista.sort((a, b) => {
+    if(ordem === 'nome') return (a.nome||'').localeCompare(b.nome||'');
+    if(ordem === 'preco-asc') return (parseFloat(a.preco)||0) - (parseFloat(b.preco)||0);
+    if(ordem === 'preco-desc') return (parseFloat(b.preco)||0) - (parseFloat(a.preco)||0);
+    if(ordem === 'estoque-asc') return (parseInt(a.estoque)||0) - (parseInt(b.estoque)||0);
+    if(ordem === 'recentes') return String(b.id||'').localeCompare(String(a.id||''));
     if(a.destaque && !b.destaque) return -1;
     if(!a.destaque && b.destaque) return 1;
     return (a.nome || '').localeCompare(b.nome || '');
   });
+
+  const fragment = document.createDocumentFragment();
+
   lista.forEach(p => {
     const img = (p.imagens && p.imagens.length) ? p.imagens[0] : null;
+    const totalImgs = (p.imagens && p.imagens.length) ? p.imagens.length : 0;
     const emPromo = !!p.promo && parseFloat(p.precoPromo) > 0 && parseFloat(p.precoPromo) < parseFloat(p.preco);
+
     const card = document.createElement('div');
     card.className = 'card';
+
     let selHtml = '';
     const marcado = selecionados.indexOf(p.id) !== -1;
-    if(mesclando){
+
+    if(mesclando || modoLote){
       card.style.outline = marcado ? '2px solid #f26522' : '1px solid #dde3ee';
       selHtml = '<div class="sel-check" style="' + (marcado ? 'background:#f26522;color:#fff;' : '') + '" onclick="toggleSel(\'' + p.id + '\', event)">' + (marcado ? '✓' : '') + '</div>';
     }
-    const tagPromo = emPromo ? '<span class="tag-promo">-' + Math.round((1 - parseFloat(p.precoPromo) / parseFloat(p.preco)) * 100) + '%</span>' : '';
-    card.innerHTML = selHtml + tagPromo +
-      '<div class="foto">' + (img ? '<img src="' + img + '" loading="lazy">' : '<div class="sem-foto">📷 Sem foto<br>adicione no produto</div>') + '</div>' +
+
+    const tagPromo = emPromo
+      ? '<span class="tag-promo">-' + Math.round((1 - parseFloat(p.precoPromo) / parseFloat(p.preco)) * 100) + '%</span>'
+      : '';
+
+    const fotoHtml = img
+      ? '<img src="' + img + '" loading="lazy" alt="' + esc(p.nome) + '">'
+      : '<div class="sem-foto">📷 Sem foto<br>adicione no produto</div>';
+
+    const countHtml = totalImgs > 1 ? '<span class="foto-count">🖼️ ' + totalImgs + '</span>' : '';
+
+    /* ✅ Apenas os 3 botões — sem controle de estoque */
+    const acoesHtml = (mesclando || modoLote)
+      ? '<div style="flex:1;text-align:center;color:#8a94a8;font-size:12px;padding:6px;">Toque na bolinha para selecionar</div>'
+      : '<button style="background:#0f1e3d;color:#fff" onclick="abrirForm(\'' + p.id + '\')">Editar</button>' +
+        '<button style="background:#eef1f6;color:#0f1e3d" onclick="abrirForm(\'' + p.id + '\',true)">Duplicar</button>' +
+        '<button style="background:#fde8e5;color:#c0392b" onclick="excluirProduto(\'' + p.id + '\')">Excluir</button>';
+
+    card.innerHTML =
+      selHtml + tagPromo +
+      '<div class="foto">' + fotoHtml + countHtml + '</div>' +
       '<div class="info">' +
         '<div class="nome">' + esc(p.nome) + (p.destaque ? ' ⭐' : '') + '</div>' +
         '<div class="cat">' + esc(p.categoria || 'outros') + (p.ativo ? '' : ' · <b style="color:#c0392b">inativo</b>') + '</div>' +
         (emPromo
           ? '<div class="preco"><span class="preco-antigo">R$ ' + fmt(p.preco) + '</span>R$ ' + fmt(p.precoPromo) + '</div>'
           : '<div class="preco">R$ ' + fmt(p.preco) + '</div>') +
-        badgeEstoque(p.estoque) + (emPromo ? ' <span class="badge promo">Promoção</span>' : '') +
+        '<div class="badge-linha">' + badgeEstoque(p.estoque) + (emPromo ? ' <span class="badge promo">Promoção</span>' : '') + '</div>' +
       '</div>' +
-      '<div class="acoes">' + (mesclando
-        ? '<div style="flex:1;text-align:center;color:#8a94a8;font-size:12px;padding:6px;">Clique na bolinha para selecionar</div>'
-        : '<button style="background:#0f1e3d;color:#fff" onclick="abrirForm(\'' + p.id + '\')">Editar</button>' +
-          '<button style="background:#eef1f6;color:#0f1e3d" onclick="abrirForm(\'' + p.id + '\',true)">Duplicar</button>' +
-          '<button style="background:#fde8e5;color:#c0392b" onclick="excluirProduto(\'' + p.id + '\')">Excluir</button>'
-      ) + '</div>';
-    g.appendChild(card);
+      '<div class="acoes">' + acoesHtml + '</div>';
+
+    fragment.appendChild(card);
   });
+
+  g.appendChild(fragment);
+  atualizarBarraLote();
 }
-function esc(s){
-  return String(s == null ? '' : s).replace(/[&<>"]/g, c => (
-    {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]
-  ));
+
+/* ============================================================
+   AÇÕES EM LOTE
+   ============================================================ */
+function toggleLote(){
+  modoLote = !modoLote;
+  selecionados = [];
+
+  if(modoLote && mesclando){
+    mesclando = false;
+    document.getElementById('barraMesclar').classList.add('hidden');
+    document.getElementById('btnMesclar').textContent = '🔗 Mesclar';
+  }
+
+  document.getElementById('formArea').innerHTML = '';
+  editandoId = null;
+  imagensTemp = [];
+
+  if(modoLote){
+    document.getElementById('tituloLista').textContent = 'Selecione os produtos';
+    document.getElementById('btnLote').textContent = '✕ Cancelar';
+    document.getElementById('btnLote').classList.add('btn-laranja');
+  }else{
+    document.getElementById('tituloLista').textContent = 'Produtos da loja';
+    document.getElementById('btnLote').textContent = '☑️ Selecionar';
+    document.getElementById('btnLote').classList.remove('btn-laranja');
+  }
+
+  atualizarBarraLote();
+  renderGrade();
 }
-function fmt(n){
-  n = parseFloat(n) || 0;
-  return n.toFixed(2).replace('.', ',');
+
+function atualizarBarraLote(){
+  const barra = document.getElementById('barraLot');
+  const count = document.getElementById('blCount');
+  if(!barra) return;
+
+  if(modoLote && selecionados.length > 0){
+    barra.classList.add('show');
+    if(count) count.textContent = selecionados.length;
+  }else{
+    barra.classList.remove('show');
+  }
 }
-/* ===== SELETOR DE CORES ===== */
-const CORES_USADAS=[['Preto','#111111'],['Branco','#f5f5f5'],['Cinza','#9aa4b8'],['Vermelho','#d73a49'],['Laranja','#f26522'],['Amarelo','#e8c33a'],['Verde','#25a858'],['Azul','#1f6feb'],['Roxo','#8250df'],['Rosa','#e066a8'],['Marrom','#8a5a2b'],['Dourado','#d4af37'],['Prateado','#c0c6cf']];
-function coresAtuais(){try{return (document.getElementById('fCores').value||'').split(',').map(s=>s.trim()).filter(Boolean);}catch(e){return [];}}
+
+async function loteAcao(acao){
+  if(!selecionados.length){
+    mostrarToast('Selecione ao menos um produto.', 'erro');
+    return;
+  }
+
+  const qtd = selecionados.length;
+  let msg = '';
+
+  if(acao === 'ativar') msg = 'Ativar ' + qtd + ' produto(s) na loja?';
+  if(acao === 'desativar') msg = 'Desativar ' + qtd + ' produto(s) da loja?';
+  if(acao === 'excluir') msg = 'Excluir ' + qtd + ' produto(s) permanentemente?\n\nEssa ação não pode ser desfeita.';
+
+  if(!confirm(msg)) return;
+
+  let ok = 0, falhas = 0;
+
+  for(const id of selecionados.slice()){
+    const p = produtos.find(x => x.id === id);
+    if(!p) continue;
+
+    try{
+      if(acao === 'excluir'){
+        await api('/loja/produtos/' + id, 'DELETE');
+      }else{
+        await api('/loja/produtos/' + id, 'PUT', {
+          nome: p.nome,
+          slug: gerarSlug(p.nome),
+          descricao: p.descricao || '',
+          preco: p.preco,
+          estoque: p.estoque,
+          categoria: p.categoria || 'outros',
+          cores: p.cores || [],
+          imagens: p.imagens || [],
+          destaque: p.destaque || false,
+          ativo: (acao === 'ativar'),
+          promo: p.promo || false,
+          precoPromo: p.precoPromo || 0,
+          material: p.material || '',
+          altura: p.altura != null ? p.altura : null,
+          largura: p.largura != null ? p.largura : null,
+          profundidade: p.profundidade != null ? p.profundidade : null,
+          peso: p.peso != null ? p.peso : null
+        });
+      }
+      ok++;
+    }catch(e){
+      falhas++;
+    }
+  }
+
+  selecionados = [];
+  modoLote = false;
+  document.getElementById('btnLote').textContent = '☑️ Selecionar';
+  document.getElementById('btnLote').classList.remove('btn-laranja');
+  document.getElementById('tituloLista').textContent = 'Produtos da loja';
+  atualizarBarraLote();
+
+  await carregar();
+
+  if(falhas){
+    mostrarToast('✅ ' + ok + ' produto(s) processado(s) · ❌ ' + falhas + ' falhou(ram)', 'erro');
+  }else{
+    mostrarToast('✅ ' + ok + ' produto(s) processado(s)!', 'ok');
+  }
+}
+
+/* ============================================================
+   SELEÇÃO
+   ============================================================ */
+function toggleSel(id, ev){
+  if(ev) ev.stopPropagation();
+  const i = selecionados.indexOf(id);
+  if(i === -1) selecionados.push(id);
+  else selecionados.splice(i, 1);
+
+  if(mesclando) atualizarBarraMesclar();
+  atualizarBarraLote();
+  renderGrade();
+}
+
+/* ============================================================
+   SELETOR DE CORES
+   ============================================================ */
+const CORES_USADAS = [
+  ['Preto','#111111'],['Branco','#f5f5f5'],['Cinza','#9aa4b8'],
+  ['Vermelho','#d73a49'],['Laranja','#f26522'],['Amarelo','#e8c33a'],
+  ['Verde','#25a858'],['Azul','#1f6feb'],['Roxo','#8250df'],
+  ['Rosa','#e066a8'],['Marrom','#8a5a2b'],['Dourado','#d4af37'],
+  ['Prateado','#c0c6cf']
+];
+
+function coresAtuais(){
+  try{
+    return (document.getElementById('fCores').value || '').split(',').map(s => s.trim()).filter(Boolean);
+  }catch(e){ return []; }
+}
+
 function renderCoresPick(){
-  var box=document.getElementById('coresPick');if(!box)return;
-  var atuais=coresAtuais();
-  var html='';
+  const box = document.getElementById('coresPick');
+  if(!box) return;
+  const atuais = coresAtuais();
+  let html = '';
   CORES_USADAS.forEach(function(c){
-    var sel=atuais.indexOf(c[0])!==-1;
-    html+='<span class="cor-chip'+(sel?' sel':'')+'" onclick="toggleCorChip(\''+c[0]+'\')"><span class="dot" style="background:'+c[1]+'"></span>'+c[0]+'</span>';
+    const sel = atuais.indexOf(c[0]) !== -1;
+    html += '<span class="cor-chip' + (sel ? ' sel' : '') + '" onclick="toggleCorChip(\'' + c[0] + '\')"><span class="dot" style="background:' + c[1] + '"></span>' + c[0] + '</span>';
   });
-  box.innerHTML=html;
+  box.innerHTML = html;
   atualizarCoresPreview();
 }
+
 function toggleCorChip(nome){
-  var atuais=coresAtuais();
-  var i=atuais.indexOf(nome);
-  if(i===-1)atuais.push(nome);else atuais.splice(i,1);
-  document.getElementById('fCores').value=atuais.join(', ');
+  const atuais = coresAtuais();
+  const i = atuais.indexOf(nome);
+  if(i === -1) atuais.push(nome);
+  else atuais.splice(i, 1);
+  document.getElementById('fCores').value = atuais.join(', ');
   renderCoresPick();
 }
+
 function toggleOutraCor(){
-  var inp=document.getElementById('fCorOutra');
+  const inp = document.getElementById('fCorOutra');
   inp.classList.toggle('hidden');
-  if(!inp.classList.contains('hidden'))inp.focus();
+  if(!inp.classList.contains('hidden')) inp.focus();
 }
+
 function adicionarCorDigitada(){
-  var inp=document.getElementById('fCorOutra');
-  var v=(inp.value||'').trim();
-  if(!v)return;
-  var atuais=coresAtuais();
-  if(atuais.indexOf(v)===-1)atuais.push(v);
-  document.getElementById('fCores').value=atuais.join(', ');
-  inp.value='';
+  const inp = document.getElementById('fCorOutra');
+  const v = (inp.value || '').trim();
+  if(!v) return;
+  const atuais = coresAtuais();
+  if(atuais.indexOf(v) === -1) atuais.push(v);
+  document.getElementById('fCores').value = atuais.join(', ');
+  inp.value = '';
   atualizarCoresPreview();
 }
+
 function atualizarCoresPreview(){
-  var pv=document.getElementById('coresPreview');
-  if(!pv)return;
-  var a=coresAtuais();
-  pv.textContent=a.length?('Selecionadas: '+a.join(', ')):'Nenhuma cor selecionada ainda.';
+  const pv = document.getElementById('coresPreview');
+  if(!pv) return;
+  const a = coresAtuais();
+  pv.textContent = a.length ? ('Selecionadas: ' + a.join(', ')) : 'Nenhuma cor selecionada ainda.';
 }
+
+/* ============================================================
+   FORMULÁRIO
+   ============================================================ */
 function abrirForm(id, duplicar){
   editandoId = (id && !duplicar) ? id : null;
   imagensTemp = [];
+
+  if(modoLote){ modoLote = false; selecionados = []; atualizarBarraLote(); document.getElementById('btnLote').textContent = '☑️ Selecionar'; document.getElementById('btnLote').classList.remove('btn-laranja'); }
+  if(mesclando){ mesclando = false; document.getElementById('barraMesclar').classList.add('hidden'); document.getElementById('btnMesclar').textContent = '🔗 Mesclar'; }
+
   const p = id ? produtos.find(x => x.id === id) : null;
   const ehDup = !!(id && duplicar && p);
   const fa = document.getElementById('formArea');
-  document.getElementById('tituloLista').textContent = ehDup ? ('Duplicando: ' + p.nome) : (p ? 'Editando: ' + p.nome : 'Novo produto');
+
+  document.getElementById('tituloLista').textContent = ehDup
+    ? ('Duplicando: ' + p.nome)
+    : (p ? 'Editando: ' + p.nome : 'Novo produto');
+
   const slugAtual = p ? gerarSlug(p.nome) : '';
+
   fa.innerHTML =
     '<div class="form-wrap">' +
       '<h3>' + (ehDup ? '📄 Duplicar produto' : (p ? '✏️ Editar produto' : '➕ Postar novo produto')) + '</h3>' +
       (ehDup ? '<p style="font-size:13px;color:#7a5c00;background:#fff4d6;padding:10px 12px;border-radius:8px;margin:-8px 0 16px;">Cópia de <b>' + esc(p.nome) + '</b>. Altere o nome, a cor ou a foto e clique em Salvar. O original não é alterado.</p>' : '') +
       '<div class="campos">' +
-        '<div class="campo full"><label>Nome do produto *</label><input id="fNome" maxlength="80" placeholder="Ex.: Chaveiro personalizado" oninput="document.getElementById(\'contadorNome\').textContent=this.value.length+\' / 80\';" value="' + (p ? esc(p.nome) : '') + '"></div>' +
+
+        '<div class="campo full"><label>Nome do produto *</label><input id="fNome" maxlength="80" placeholder="Ex.: Chaveiro personalizado" oninput="atualizarSlugPreview();document.getElementById(\'contadorNome\').textContent=this.value.length+\' / 80\';" value="' + (p ? esc(p.nome) : '') + '"></div>' +
         '<div class="campo full"><div class="slug-preview" id="contadorNome">0 / 80</div></div>' +
         '<div class="campo full"><div class="slug-preview" id="slugPreview">🔗 Slug: <span id="slugTexto">' + (slugAtual || 'será gerado do nome') + '</span></div></div>' +
+
         '<div class="campo full"><label>Descrição</label><textarea id="fDesc" maxlength="500" placeholder="Detalhes, material, tamanho..." oninput="document.getElementById(\'contadorDesc\').textContent=this.value.length+\' / 500\';">' + (p ? esc(p.descricao || '') : '') + '</textarea><div class="slug-preview" id="contadorDesc">0 / 500</div></div>' +
-        '<div class="campo"><label>Preço (R$)</label><input id="fPreco" type="number" step="0.01" min="0" placeholder="0,00" value="' + (p ? p.preco : '') + '"></div>' +
+
+        '<div class="campo"><label>Preço (R$) *</label><input id="fPreco" type="number" step="0.01" min="0" placeholder="0,00" value="' + (p ? p.preco : '') + '" oninput="validarPrecoAoVivo()"></div>' +
         '<div class="campo"><label>Estoque (unidades)</label><input id="fEstoque" type="number" min="0" step="1" placeholder="0 = sem estoque" value="' + (p ? p.estoque : 0) + '"></div>' +
+
         '<div class="campo"><label>Material</label><select id="fMaterial">' +
           '<option value=""' + (p && !p.material ? ' selected' : '') + '>Não informado</option>' +
           MATERIAIS.map(m => '<option value="' + m + '"' + (p && p.material === m ? ' selected' : '') + '>' + m + '</option>').join('') +
         '</select></div>' +
+
         '<div class="campo"><label>Peso (gramas) <span style="font-weight:400;color:#8a94a8;">(opcional)</span></label><input id="fPeso" type="number" step="0.1" min="0" placeholder="Ex.: 15" value="' + (p && p.peso != null ? p.peso : '') + '"></div>' +
-        '<div class="campo full"><label>Dimensões (cm) <span style="font-weight:400;color:#8a94a8;">(opcional — os 3 eixos da peça)</span></label>' +
-          '<div style="display:flex;gap:10px;flex-wrap:wrap;">' +
+
+        '<div class="campo full" style="margin-top:6px;">' +
+          '<div class="specs-toggle" onclick="toggleSpecs(this)">' +
+            '<span>📐 Dimensões da peça (cm)</span>' +
+            '<span class="seta">▼</span>' +
+          '</div>' +
+          '<div class="specs-corpo">' +
             '<div class="campo-mini"><span class="mini-label">Altura</span><input id="fAltura" type="number" step="0.1" min="0" placeholder="0,0" value="' + (p && p.altura != null ? p.altura : '') + '"></div>' +
             '<div class="campo-mini"><span class="mini-label">Largura</span><input id="fLargura" type="number" step="0.1" min="0" placeholder="0,0" value="' + (p && p.largura != null ? p.largura : '') + '"></div>' +
             '<div class="campo-mini"><span class="mini-label">Profundidade</span><input id="fProfundidade" type="number" step="0.1" min="0" placeholder="0,0" value="' + (p && p.profundidade != null ? p.profundidade : '') + '"></div>' +
           '</div>' +
         '</div>' +
+
         '<div class="campo"><label>Categoria</label><select id="fCategoria">' +
           CATEGORIAS.map(c => '<option value="' + c + '"' + (p && p.categoria === c ? ' selected' : '') + '>' + c.charAt(0).toUpperCase() + c.slice(1) + '</option>').join('') +
         '</select></div>' +
-        '<div class="campo full"><label>Cores (clique para selecionar)</label>' +
+
+        '<div class="campo full"><label>Cores (toque para selecionar)</label>' +
           '<div class="cores-pick" id="coresPick"></div>' +
           '<div style="margin-top:8px;"><button type="button" class="btn-cinza-mini" onclick="toggleOutraCor()">+ Outra cor</button></div>' +
           '<input id="fCorOutra" class="hidden" style="margin-top:6px;padding:10px;border:1px solid #dde3ee;border-radius:8px;width:100%;box-sizing:border-box;" placeholder="Escreva o nome da cor e aperte Enter" onkeydown="if(event.key===\'Enter\'){event.preventDefault();adicionarCorDigitada();}">' +
           '<input type="hidden" id="fCores">' +
           '<div class="slug-preview" id="coresPreview"></div>' +
         '</div>' +
+
         '<div class="campo full promo-box">' +
-          '<div class="promo-linha"><input type="checkbox" id="fPromo"' + (p && p.promo ? ' checked' : '') + ' onchange="document.getElementById(\'promoPrecoWrap\').style.display=this.checked?\'block\':\'none\'"> 🏷️ Produto em promoção</div>' +
+          '<div class="promo-linha"><input type="checkbox" id="fPromo"' + (p && p.promo ? ' checked' : '') + ' onchange="document.getElementById(\'promoPrecoWrap\').style.display=this.checked?\'block\':\'none\';validarPrecoAoVivo();"> 🏷️ Produto em promoção</div>' +
           '<div id="promoPrecoWrap" style="display:' + (p && p.promo ? 'block' : 'none') + ';">' +
             '<label style="font-size:12px;font-weight:600;color:#4a5670;margin-bottom:5px;">Preço promocional (R$) — deve ser MENOR que o preço cheio</label>' +
-            '<input id="fPrecoPromo" type="number" step="0.01" min="0" placeholder="0,00" value="' + (p && p.precoPromo != null ? p.precoPromo : '') + '">' +
+            '<input id="fPrecoPromo" type="number" step="0.01" min="0" placeholder="0,00" value="' + (p && p.precoPromo != null ? p.precoPromo : '') + '" oninput="validarPrecoAoVivo()">' +
+            '<div class="slug-preview" id="promoFeedback"></div>' +
           '</div>' +
         '</div>' +
-        '<div class="campo full"><label>Fotos do produto <span style="font-weight:400;color:#8a94a8;">(a 1ª é a principal — clique na ⭐ para definir)</span></label>' +
+
+        '<div class="campo full"><label>Fotos do produto <span style="font-weight:400;color:#8a94a8;">(a 1ª é a principal — toque na ⭐ para definir)</span></label>' +
           '<div class="upload-area" onclick="document.getElementById(\'fileInput\').click()">' +
             '<div class="icone">📷</div>' +
-            '<div class="txt">Clique para escolher a foto ou GIF (ou vários)<br>JPG, PNG, WEBP ou GIF — até 8 MB por arquivo · GIFs animados vão sem compressão</div>' +
+            '<div class="txt">Toque para escolher a foto ou GIF (ou vários)<br>JPG, PNG, WEBP ou GIF — até 8 MB por arquivo · GIFs animados vão sem compressão</div>' +
           '</div>' +
           '<input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple class="hidden" onchange="enviarFotos(this)">' +
           '<div class="imgs-preview" id="preview"></div>' +
         '</div>' +
+
         '<div class="campo"><label><input type="checkbox" id="fDestaque"' + (p && p.destaque ? ' checked' : '') + '> ⭐ Destaque (aparece primeiro)</label></div>' +
         '<div class="campo"><label><input type="checkbox" id="fAtivo"' + (p === null || p.ativo ? ' checked' : '') + '> Ativo na loja</label></div>' +
+
       '</div>' +
       '<div class="form-acoes">' +
         '<button class="btn btn-verde" id="btnSalvar" onclick="salvarProduto()">💾 Salvar produto</button>' +
@@ -552,73 +1418,120 @@ function abrirForm(id, duplicar){
       '</div>' +
       '<div class="sub-msg" id="subMsg"></div>' +
     '</div>';
+
   fa.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   if(p){
     const iv = p.imagens || [];
     imagensTemp = iv.slice();
     renderPreview();
   }
+
   document.getElementById('fCores').value = p ? (p.cores || []).join(', ') : '';
   renderCoresPick();
-  var cd=document.getElementById('contadorDesc');
-  if(cd)cd.textContent=String(document.getElementById('fDesc').value.length)+' / 500';
-  var cn=document.getElementById('contadorNome');
-  if(cn)cn.textContent=String(document.getElementById('fNome').value.length)+' / 80';
-  document.getElementById('fNome').addEventListener('input', atualizarSlugPreview);
+
+  const cd = document.getElementById('contadorDesc');
+  if(cd) cd.textContent = String(document.getElementById('fDesc').value.length) + ' / 500';
+
+  const cn = document.getElementById('contadorNome');
+  if(cn) cn.textContent = String(document.getElementById('fNome').value.length) + ' / 80';
 }
+
+function toggleSpecs(el){
+  el.classList.toggle('aberto');
+  const corpo = el.nextElementSibling;
+  if(corpo) corpo.classList.toggle('aberto');
+}
+
+function validarPrecoAoVivo(){
+  const promoOn = document.getElementById('fPromo') && document.getElementById('fPromo').checked;
+  const fb = document.getElementById('promoFeedback');
+  if(!promoOn || !fb) return;
+
+  const preco = parseFloat(document.getElementById('fPreco').value) || 0;
+  const promo = parseFloat(document.getElementById('fPrecoPromo').value) || 0;
+
+  if(!promo) { fb.textContent = ''; return; }
+
+  if(preco > 0 && promo >= preco){
+    fb.style.color = '#c0392b';
+    fb.textContent = '⚠️ O preço promocional deve ser MENOR que o preço cheio.';
+  }else if(preco > 0){
+    const desc = Math.round((1 - promo / preco) * 100);
+    fb.style.color = '#1d8a4f';
+    fb.textContent = '✅ Desconto de ' + desc + '% — de R$ ' + fmt(preco) + ' por R$ ' + fmt(promo);
+  }
+}
+
 function atualizarSlugPreview(){
   const nome = document.getElementById('fNome').value.trim();
   const sp = document.getElementById('slugTexto');
   if(sp) sp.textContent = gerarSlug(nome) || 'digite o nome';
 }
+
 function fecharForm(){
   document.getElementById('formArea').innerHTML = '';
   document.getElementById('tituloLista').textContent = 'Produtos da loja';
   editandoId = null;
   imagensTemp = [];
 }
-/* ===== COMPRESSÃO DE IMAGEM (antes do upload) ===== */
+
+/* ============================================================
+   COMPRESSÃO DE IMAGEM
+   ============================================================ */
 function comprimirImagem(arquivo){
   return new Promise(function(resolve){
     if(!arquivo.type || arquivo.type.indexOf('image/') !== 0){ resolve(arquivo); return; }
     if(arquivo.type === 'image/gif'){ resolve(arquivo); return; }
-    var img = new Image();
-    var url = URL.createObjectURL(arquivo);
+
+    const img = new Image();
+    const url = URL.createObjectURL(arquivo);
+
     img.onload = function(){
       URL.revokeObjectURL(url);
-      var MAX = 1200;
-      var w = img.width, h = img.height;
+      const MAX = 1200;
+      const w = img.width, h = img.height;
+
       if(w <= MAX && h <= MAX && arquivo.size <= 300000){ resolve(arquivo); return; }
-      var esc = Math.min(MAX / w, MAX / h, 1);
-      var cv = document.createElement('canvas');
+
+      const esc = Math.min(MAX / w, MAX / h, 1);
+      const cv = document.createElement('canvas');
       cv.width = Math.round(w * esc);
       cv.height = Math.round(h * esc);
-      var cx = cv.getContext('2d');
+
+      const cx = cv.getContext('2d');
       cx.drawImage(img, 0, 0, cv.width, cv.height);
+
       cv.toBlob(function(blob){
         if(!blob){ resolve(arquivo); return; }
-        var nome = (arquivo.name || 'foto.jpg').replace(/\.[^.]+$/, '') + '.jpg';
+        const nome = (arquivo.name || 'foto.jpg').replace(/\.[^.]+$/, '') + '.jpg';
         resolve(new File([blob], nome, { type: 'image/jpeg' }));
       }, 'image/jpeg', 0.82);
     };
+
     img.onerror = function(){ URL.revokeObjectURL(url); resolve(arquivo); };
     img.src = url;
   });
 }
+
 async function enviarFotos(fonte){
   const LIMITE_MB = 8;
   const LIMITE_BYTES = LIMITE_MB * 1024 * 1024;
   const arquivos = fonte && fonte.files ? Array.from(fonte.files) : Array.from(fonte || []);
   if(!arquivos.length) return;
+
   for(const arqOriginal of arquivos){
     const tamMB = (arqOriginal.size / (1024*1024)).toFixed(1);
+
     if(arqOriginal.size > LIMITE_BYTES){
       mostrarToast('❌ "' + (arqOriginal.name || 'arquivo') + '" tem ' + tamMB + ' MB — o limite é ' + LIMITE_MB + ' MB. Comprima o GIF (ex.: ezgif.com) e tente de novo.', 'erro');
       continue;
     }
+
     const arq = await comprimirImagem(arqOriginal);
     const fd = new FormData();
     fd.append('imagem', arq);
+
     try{
       const r = await fetch(API + '/loja/produtos/upload', {
         method: 'POST',
@@ -633,16 +1546,18 @@ async function enviarFotos(fonte){
       mostrarToast('Erro no upload de "' + (arq.name || 'arquivo') + '" (' + tamMB + ' MB): ' + e.message, 'erro');
     }
   }
+
   if(fonte && fonte.value !== undefined) fonte.value = '';
   renderPreview();
 }
+
 function renderPreview(){
   const pr = document.getElementById('preview');
   pr.innerHTML = '';
   imagensTemp.forEach((u, i) => {
     const d = document.createElement('div');
     d.className = 'mini' + (i === 0 ? ' sel-principal' : '');
-    d.innerHTML = '<img src="' + u + '">' +
+    d.innerHTML = '<img src="' + u + '" alt="Foto ' + (i+1) + '">' +
       '<div class="mini-btns">' +
         (i > 0 ? '<button class="btn-star" title="Definir como principal" onclick="definirPrincipal(' + i + ')">★</button>' : '') +
         '<button title="Remover" onclick="removerImg(' + i + ')">×</button>' +
@@ -651,6 +1566,7 @@ function renderPreview(){
     pr.appendChild(d);
   });
 }
+
 function definirPrincipal(i){
   if(i <= 0) return;
   const u = imagensTemp.splice(i, 1)[0];
@@ -658,17 +1574,20 @@ function definirPrincipal(i){
   renderPreview();
   mostrarToast('⭐ Foto definida como principal!', 'ok');
 }
+
 function removerImg(i){
   imagensTemp.splice(i, 1);
   renderPreview();
 }
+
 function mostrarMsg(txt, ok){
   const m = document.getElementById('subMsg');
+  if(!m) return;
   m.className = 'sub-msg ' + (ok ? 'ok' : 'erro');
   m.textContent = txt;
   setTimeout(() => { m.className = 'sub-msg'; m.textContent = ''; }, 4000);
 }
-/* ===== NOVO: leitura dos campos opcionais de especificação ===== */
+
 function lerEspecificacao(){
   return {
     material: document.getElementById('fMaterial').value || '',
@@ -678,17 +1597,26 @@ function lerEspecificacao(){
     peso: parseFloat(document.getElementById('fPeso').value) || null
   };
 }
+
+/* ============================================================
+   SALVAR
+   ============================================================ */
 async function salvarProduto(){
   const nome = document.getElementById('fNome').value.trim();
   if(!nome){ mostrarToast('Digite o nome do produto.', 'erro'); return; }
+
   const preco = parseFloat(document.getElementById('fPreco').value) || 0;
   const promoOn = document.getElementById('fPromo').checked;
   const precoPromo = promoOn ? (parseFloat(document.getElementById('fPrecoPromo').value) || 0) : 0;
+
   if(promoOn && precoPromo <= 0){ mostrarToast('Informe um preço promocional válido.', 'erro'); return; }
   if(promoOn && preco > 0 && precoPromo >= preco){ mostrarToast('O preço promocional deve ser MENOR que o preço cheio.', 'erro'); return; }
+
   const btn = document.getElementById('btnSalvar');
   btn.disabled = true; btn.textContent = 'Salvando...';
+
   const esp = lerEspecificacao();
+
   const dados = {
     nome: nome,
     slug: gerarSlug(nome),
@@ -708,6 +1636,7 @@ async function salvarProduto(){
     profundidade: esp.profundidade,
     peso: esp.peso
   };
+
   try{
     if(editandoId){
       await api('/loja/produtos/' + editandoId, 'PUT', dados);
@@ -720,11 +1649,14 @@ async function salvarProduto(){
   }catch(e){
     mostrarToast('Erro ao salvar: ' + e.message, 'erro');
   }
+
   btn.disabled = false; btn.textContent = '💾 Salvar produto';
 }
+
 async function excluirProduto(id){
   const p = produtos.find(x => x.id === id);
   if(!confirm('Excluir o produto "' + (p ? p.nome : '') + '"? Essa ação não pode ser desfeita.')) return;
+
   try{
     await api('/loja/produtos/' + id, 'DELETE');
     await carregar();
@@ -733,13 +1665,25 @@ async function excluirProduto(id){
     mostrarToast('Erro ao excluir: ' + e.message, 'erro');
   }
 }
-/* ===== MESCLAR ===== */
+
+/* ============================================================
+   MESCLAR
+   ============================================================ */
 function toggleMesclar(){
   mesclando = !mesclando;
   selecionados = [];
+
+  if(mesclando && modoLote){
+    modoLote = false;
+    document.getElementById('btnLote').textContent = '☑️ Selecionar';
+    document.getElementById('btnLote').classList.remove('btn-laranja');
+    atualizarBarraLote();
+  }
+
   document.getElementById('formArea').innerHTML = '';
   editandoId = null;
   imagensTemp = [];
+
   if(mesclando){
     document.getElementById('tituloLista').textContent = 'Selecione os produtos para mesclar';
     document.getElementById('btnMesclar').textContent = '✕ Cancelar';
@@ -749,22 +1693,19 @@ function toggleMesclar(){
     document.getElementById('btnMesclar').textContent = '🔗 Mesclar';
     document.getElementById('barraMesclar').classList.add('hidden');
   }
+
   atualizarBarraMesclar();
   renderGrade();
 }
-function toggleSel(id, ev){
-  if(ev) ev.stopPropagation();
-  const i = selecionados.indexOf(id);
-  if(i === -1) selecionados.push(id); else selecionados.splice(i, 1);
-  atualizarBarraMesclar();
-  renderGrade();
-}
+
 function atualizarBarraMesclar(){
   const sel = document.getElementById('selPrincipal');
   const ct = document.getElementById('ctSel');
   if(!sel) return;
+
   ct.textContent = '(' + selecionados.length + ')';
   sel.innerHTML = '';
+
   selecionados.forEach(id => {
     const p = produtos.find(x => x.id === id);
     if(p){
@@ -775,28 +1716,39 @@ function atualizarBarraMesclar(){
     }
   });
 }
+
 async function mesclarSelecionados(){
   if(selecionados.length < 2){
     mostrarToast('Selecione pelo menos 2 produtos para mesclar.', 'erro');
     return;
   }
+
   const sel = document.getElementById('selPrincipal');
   const principalId = sel.value;
   const principal = produtos.find(x => x.id === principalId);
+
   if(!principal){ mostrarToast('Selecione o produto principal.', 'erro'); return; }
-  const secundarios = selecionados.filter(id => id !== principalId)
-    .map(id => produtos.find(x => x.id === id)).filter(Boolean);
+
+  const secundarios = selecionados
+    .filter(id => id !== principalId)
+    .map(id => produtos.find(x => x.id === id))
+    .filter(Boolean);
+
   if(!secundarios.length){
     mostrarToast('Selecione pelo menos 2 produtos diferentes.', 'erro');
     return;
   }
+
   if(!confirm('Mesclar ' + (secundarios.length + 1) + ' produtos em "' + principal.nome + '"?\n\nFotos e cores serão unidas no produto principal, o estoque será somado e os demais produtos serão excluídos.')) return;
+
   let imagens = (principal.imagens || []).slice();
   let cores = (principal.cores || []).slice();
+
   secundarios.forEach(s => {
     (s.imagens || []).forEach(u => { if(imagens.indexOf(u) === -1) imagens.push(u); });
     (s.cores || []).forEach(c => { if(cores.indexOf(c) === -1) cores.push(c); });
   });
+
   const dados = {
     nome: principal.nome,
     slug: gerarSlug(principal.nome),
@@ -816,45 +1768,59 @@ async function mesclarSelecionados(){
     profundidade: principal.profundidade != null ? principal.profundidade : null,
     peso: principal.peso != null ? principal.peso : null
   };
+
   try{
     await api('/loja/produtos/' + principalId, 'PUT', dados);
+
     for(const s of secundarios){
       await api('/loja/produtos/' + s.id, 'DELETE');
     }
+
     mesclando = false;
     selecionados = [];
     document.getElementById('btnMesclar').textContent = '🔗 Mesclar';
     document.getElementById('barraMesclar').classList.add('hidden');
     document.getElementById('tituloLista').textContent = 'Produtos da loja';
+
     await carregar();
     mostrarToast('✅ Produtos mesclados em "' + principal.nome + '"!', 'ok');
   }catch(e){
     mostrarToast('Erro ao mesclar: ' + e.message, 'erro');
   }
 }
-/* ===== DRAG & DROP ===== */
+
+/* ============================================================
+   DRAG & DROP
+   ============================================================ */
 document.addEventListener('dragover', function(e){
-  var area = e.target.closest('.upload-area');
+  const area = e.target.closest('.upload-area');
   if(area){ e.preventDefault(); area.style.borderColor = '#f26522'; area.style.background = '#fff8f4'; }
 });
+
 document.addEventListener('dragleave', function(e){
-  var area = e.target.closest('.upload-area');
+  const area = e.target.closest('.upload-area');
   if(area){ area.style.borderColor = '#c6cfdd'; area.style.background = ''; }
 });
+
 document.addEventListener('drop', function(e){
-  var area = e.target.closest('.upload-area');
+  const area = e.target.closest('.upload-area');
   if(!area) return;
   e.preventDefault(); e.stopPropagation();
   area.style.borderColor = '#c6cfdd'; area.style.background = '';
-  var files = e.dataTransfer && e.dataTransfer.files;
+  const files = e.dataTransfer && e.dataTransfer.files;
   if(files && files.length) enviarFotos(files);
 });
+
+/* ============================================================
+   INICIALIZAÇÃO
+   ============================================================ */
 if(token) entrar();
 </script>
+
 <script>
 function irParaAdmin(){
-  var t = localStorage.getItem('m3d_token')
-       || sessionStorage.getItem('m3d_token') || '';
+  const t = localStorage.getItem('m3d_token')
+         || sessionStorage.getItem('m3d_token') || '';
   if(t){ try{ localStorage.setItem('m3d_admin_token', t); }catch(e){} }
   window.location.href = 'admin.html';
 }

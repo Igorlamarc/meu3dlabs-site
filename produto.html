@@ -81,6 +81,44 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .p-nav.next{right:12px;}
 .p-nav[hidden]{display:none;}
 @media(max-width:620px){.p-nav{width:48px;height:48px;font-size:24px;}}
+/* ===== SELO DE DIMENSÕES NA GALERIA ===== */
+.p-selo-dimensoes{
+  position:absolute;
+  top:16px;
+  left:16px;
+  z-index:6;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:9px 16px;
+  border-radius:24px;
+  background:rgba(15,30,61,.82);
+  color:#fff;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.3px;
+  line-height:1;
+  white-space:nowrap;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 3px 12px rgba(15,30,61,.28);
+  pointer-events:none;
+}
+/* CORREÇÃO: garante que o atributo hidden vença o display:inline-flex */
+.p-selo-dimensoes[hidden]{display:none !important;}
+.p-selo-dimensoes .sd-ico{
+  font-size:13px;
+  opacity:.85;
+  line-height:1;
+}
+@media(max-width:620px){
+  .p-selo-dimensoes{top:12px;left:12px;padding:7px 13px;font-size:12px;border-radius:20px;}
+  .p-selo-dimensoes .sd-ico{font-size:12px;}
+}
+@media(max-width:400px){
+  .p-selo-dimensoes{top:10px;left:10px;padding:6px 11px;font-size:11px;}
+}
 /* ===== Info ===== */
 .p-cat{display:inline-block;background:rgba(15,30,61,.07);color:var(--navy);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:6px 15px;border-radius:20px;margin-bottom:12px;}
 .p-grid h1{font-size:clamp(24px,3vw,32px);color:var(--navy);font-weight:800;letter-spacing:-.6px;line-height:1.25;margin-bottom:8px;}
@@ -294,6 +332,8 @@ html,body{overflow-x:hidden;max-width:100%;}
           <div class="p-g-main" id="gMain" title="Clique para ampliar">
             <img id="gMainImg" alt="">
             <div class="p-g-noimg" id="gNoImg" hidden>📦</div>
+            <!-- NOVO: selo de dimensões -->
+            <div class="p-selo-dimensoes" id="pSeloDim" hidden></div>
             <span class="p-g-zoom">🔍 Ampliar</span>
             <button class="p-nav prev" id="btnPrevFoto" type="button" title="Foto anterior" hidden>‹</button>
             <button class="p-nav next" id="btnNextFoto" type="button" title="Próxima foto" hidden>›</button>
@@ -508,7 +548,41 @@ var CATEGORIAS={chaveiros:'Chaveiros',religiosos:'Religiosos',decoracao:'Decora�
 function esc(t){var d=document.createElement('div');d.textContent=(t==null?'':String(t));return d.innerHTML;}
 function fmt(v){var n=parseFloat(v);return isNaN(n)?'R$ 0,00':'R$ '+n.toFixed(2).replace('.',',');}
 function normalizarBase(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
-/* Pega o slug: /produto/xyz (no ar) ou ?produto=/&slug= (funciona até em teste local) */
+
+/* ===== SELO DE DIMENSÕES (mesma lógica do loja-vitrine) =====
+   - altura + peso          -> "12 cm · 80 g"
+   - só altura              -> "12 cm"
+   - só peso                -> "80 g"
+   - só comprimento (2D)    -> "15 cm"
+   - nada preenchido        -> sem selo
+   ========================================================== */
+function seloPeso(gramas){
+  var g=parseFloat(gramas);
+  if(!g||g<=0||isNaN(g))return '';
+  if(g>=1000){
+    var kg=g/1000;
+    return (kg%1===0?kg.toFixed(0):kg.toFixed(1).replace('.',','))+' kg';
+  }
+  return Math.round(g)+' g';
+}
+function seloCm(valor){
+  var v=parseFloat(valor);
+  if(!v||v<=0||isNaN(v))return '';
+  return (v%1===0?v.toFixed(0):v.toFixed(1).replace('.',','))+' cm';
+}
+function textoDimensoes(p){
+  if(!p)return '';
+  var altura=seloCm(p.altura);
+  var peso=seloPeso(p.peso);
+  var comprimento=seloCm(p.profundidade!==undefined?p.profundidade:p.comprimento);
+  var partes=[];
+  if(altura){partes.push(altura);}
+  else if(comprimento){partes.push(comprimento);}
+  if(peso)partes.push(peso);
+  return partes.join(' · ');
+}
+
+/* Pega o slug: /produto/xyz (no ar) ou ?produto=&slug= (funciona até em teste local) */
 function slugDaURL(){
   var m=location.pathname.match(/\/produto\/([^\/?#]+)/);
   if(m&&m[1])return decodeURIComponent(m[1]).replace(/\/+$/,'');
@@ -591,6 +665,18 @@ function render(p,lista){
   }else{
     document.getElementById('gMainImg').hidden=true;
     document.getElementById('gNoImg').hidden=false;
+  }
+  /* CORRIGIDO: selo de dimensões — esconde por completo quando não há medidas */
+  var elSelo=document.getElementById('pSeloDim');
+  var txtDim=textoDimensoes(p);
+  if(txtDim){
+    elSelo.innerHTML='<span class="sd-ico">📐</span><span>'+esc(txtDim)+'</span>';
+    elSelo.hidden=false;
+    elSelo.style.display='inline-flex';
+  }else{
+    elSelo.hidden=true;
+    elSelo.style.display='none';
+    elSelo.innerHTML='';
   }
   /* Info */
   document.getElementById('pCat').textContent=labelCat(p.categoria);

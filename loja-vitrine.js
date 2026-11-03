@@ -2,6 +2,42 @@
 var produtosLoja = [];
 function escL(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function precoLabel(v){v=parseFloat(v)||0;return v.toFixed(2).replace('.',',');}
+
+/* ===== SELO DE DIMENSÕES (altura/peso) =====
+   Regras:
+   - altura + peso          -> "12 cm · 80 g"
+   - só altura              -> "12 cm"
+   - só peso                -> "80 g"
+   - só comprimento/profundidade sem altura -> "15 cm" (peça chapada 2D)
+   - nada preenchido        -> sem selo
+   ========================================== */
+function seloPeso(gramas){
+  var g=parseFloat(gramas);
+  if(!g||g<=0||isNaN(g))return '';
+  if(g>=1000){
+    var kg=g/1000;
+    return (kg%1===0?kg.toFixed(0):kg.toFixed(1).replace('.',','))+' kg';
+  }
+  return Math.round(g)+' g';
+}
+function seloCm(valor){
+  var v=parseFloat(valor);
+  if(!v||v<=0||isNaN(v))return '';
+  return (v%1===0?v.toFixed(0):v.toFixed(1).replace('.',','))+' cm';
+}
+function montarSeloDimensoes(p){
+  if(!p)return '';
+  var altura=seloCm(p.altura);
+  var peso=seloPeso(p.peso);
+  var comprimento=seloCm(p.profundidade!==undefined?p.profundidade:p.comprimento);
+  var partes=[];
+  if(altura){partes.push(altura);}
+  else if(comprimento){partes.push(comprimento);}
+  if(peso)partes.push(peso);
+  if(!partes.length)return '';
+  return '<span class="selo-dimensoes">'+partes.join(' · ')+'</span>';
+}
+
 /* Detecta teste local: em localhost/file usa caminho relativo; no ar usa URL própria */
 var LOCAL_TESTE=(location.protocol==='file:'||location.hostname==='localhost'||location.hostname==='127.0.0.1');
 /* ===== CSS injetado: modal fixo no rodapé (mobile) + bolinhas de cores + spinner de carregamento ===== */
@@ -158,6 +194,8 @@ function renderProdutos(lista){
     card.setAttribute('data-material',String(p.material||'').toLowerCase().trim());
     /* Card mostra SOMENTE a 1ª foto — sem troca de foto no card; as demais ficam na página do produto */
     var html='<div class="produto-img">'+badgeProduto(estoque)+(emPromoFoto?'<span style="position:absolute;top:56px;right:10px;background:#c0392b;color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;z-index:4;box-shadow:0 3px 8px rgba(0,0,0,.25);">-'+pctFoto+'%</span>':'');
+    /* NOVO: selo de dimensões no canto superior esquerdo */
+    html+=montarSeloDimensoes(p);
     /* NOVO: coração de favorito (agora é o único botão no canto da foto) */
     html+='<button class="fav-btn'+(isFav?' on':'')+'" type="button" onclick="toggleFavorito(\''+p.slug+'\',this)" title="'+(isFav?'Remover dos favoritos':'Salvar nos favoritos')+'" aria-label="Favoritar">'+(isFav?'❤️':'♡')+'</button>';
     html+='<div class="variante-track">';
@@ -236,6 +274,8 @@ function abrirModalProduto(slug){
   html+='</div><div class="pm-info">';
   html+='<span class="produto-cat">'+escL(labelCategoria(p.categoria))+'</span>';
   html+='<h3 style="font-size:20px;color:var(--navy);margin-bottom:8px;">'+escL(p.nome)+'</h3>';
+  /* NOVO: selo de dimensões no modal */
+  html+=montarSeloDimensoes(p);
   if(p.descricao)html+='<p class="pm-desc">'+escL(p.descricao)+'</p>';
   if(cores.length){
     html+='<div class="pm-cores"><span>Cores:</span>';

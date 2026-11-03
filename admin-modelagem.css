@@ -1,0 +1,814 @@
+/* ==========================================================================
+   Meu 3D Labs — admin-modelagem.css
+   Estilos exclusivos da aba Modelagem 3D + barra de visão + modais
+   Depende de admin.css + admin-extras.css
+   ========================================================================== */
+
+/* ---------- Status pills da modelagem ---------- */
+.status-novo           { background:#e8edf7; color:#0f1e3d; }
+.status-em-analise     { background:#fff4e0; color:#8a5500; }
+.status-orcamento      { background:#fff0e6; color:#c2410c; }
+.status-aprovado       { background:#e6f0ff; color:#1d4ed8; }
+.status-pago           { background:#e6f7ee; color:#0f7a44; }
+.status-producao       { background:#f0e9ff; color:#5b21b6; }
+.status-pronto         { background:#e0f2fe; color:#0369a1; }
+.status-transferido    { background:#f1f5f9; color:#475569; }
+.status-recusado       { background:#fdecea; color:#a93226; }
+
+/* ==========================================================================
+   BARRA DE VISÃO — Ativos / Entregues / Encerrados / Todos
+   ========================================================================== */
+.visao-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 14px;
+}
+
+.visao-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #fff;
+  border: 1.5px solid #e3e8ef;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #4a5161;
+  cursor: pointer;
+  transition: background .18s, border-color .18s, color .18s;
+  white-space: nowrap;
+}
+
+.visao-chip b {
+  font-weight: 800;
+  color: #0f1e3d;
+  font-size: 12px;
+}
+
+.visao-chip:hover {
+  border-color: #f26522;
+  color: #0f1e3d;
+}
+
+.visao-chip.active {
+  background: #0f1e3d;
+  border-color: #0f1e3d;
+  color: #fff;
+}
+
+.visao-chip.active b { color: #ff8a3d; }
+
+body.dark .visao-chip {
+  background: #16233d;
+  border-color: #2a3b5c;
+  color: #9fb0c9;
+}
+
+body.dark .visao-chip b { color: #e6edf7; }
+
+body.dark .visao-chip.active {
+  background: #f26522;
+  border-color: #f26522;
+  color: #fff;
+}
+
+body.dark .visao-chip.active b { color: #fff; }
+
+/* ---------- Campo de valor dentro do balcão de status ---------- */
+.m3d-valor-box {
+  background: #f7f9fc;
+  border: 1.5px solid #dbe3ee;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin: 4px 0 16px;
+}
+
+.m3d-valor-box label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: #4a5161;
+  margin-bottom: 10px;
+}
+
+.m3d-valor-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid #dbe3ee;
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.m3d-valor-wrap:focus-within {
+  border-color: #f26522;
+  box-shadow: 0 0 0 3px rgba(242,101,34,.13);
+}
+
+.m3d-valor-prefix {
+  padding: 0 12px;
+  font-weight: 700;
+  color: #4a5161;
+  font-size: 14px;
+  border-right: 1.5px solid #dbe3ee;
+  line-height: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  background: #f7f9fc;
+}
+
+.m3d-valor-wrap input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 14px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  color: #0f1e3d;
+  background: transparent;
+}
+
+.m3d-valor-hint {
+  font-size: 11.5px;
+  color: #8a94a8;
+  margin-top: 8px;
+  line-height: 1.55;
+}
+
+/* ---------- Painel de transferência para encomenda ---------- */
+.m3d-transf-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 0;
+  border-bottom: 1px solid #e3e8ef;
+  font-size: 13.5px;
+}
+
+.m3d-transf-linha:last-child { border-bottom: none; }
+
+.m3d-transf-linha strong {
+  color: #4a5161;
+  font-weight: 700;
+  min-width: 118px;
+  flex-shrink: 0;
+  font-size: 12.5px;
+}
+
+.m3d-transf-linha span {
+  color: #0f1e3d;
+  font-weight: 600;
+}
+
+.m3d-transf-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 13px 15px;
+  margin: 14px 0 4px;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: #7c2d12;
+}
+
+/* ---------- Detalhes da faixa ---------- */
+.m3d-faixa-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  padding: 4px 11px;
+  border-radius: 20px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.m3d-faixa-simples  { background:#e6f7ee; color:#0f7a44; }
+.m3d-faixa-media    { background:#fff0e6; color:#c2410c; }
+.m3d-faixa-complexa { background:#f0e9ff; color:#5b21b6; }
+
+/* ---------- Lista de nomes ---------- */
+.m3d-nomes-txt {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.m3d-nome-tag {
+  display: inline-block;
+  background: #eef2fa;
+  color: #1d3a6b;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+}
+
+/* ==========================================================================
+   CABEÇALHO DO PAINEL MODELAGEM
+   ========================================================================== */
+#painelModelagem {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px 60px;
+}
+
+/* Barra de título + botões */
+#painelModelagem .top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+#painelModelagem .top-bar h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--navy, #0f1e3d);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+#painelModelagem .top-bar .actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Abas — garante que fiquem com o mesmo visual do main */
+#painelModelagem .tabs {
+  margin-bottom: 18px;
+}
+
+/* Cards de métricas */
+#modStatsGrid {
+  margin-bottom: 18px;
+}
+
+/* ---------- Cabeçalho compacto ---------- */
+.mod-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.mod-desc {
+  font-size: 13.5px;
+  color: #4a5161;
+  line-height: 1.65;
+  max-width: 640px;
+  margin: 0;
+}
+
+.mod-header-box {
+  background: #fff;
+  border: 1px solid #e3e8ef;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 10px rgba(15,30,61,.07);
+}
+
+.mod-header-titulo {
+  font-size: 15px;
+  color: #0f1e3d;
+  display: block;
+}
+
+.mod-header-desc {
+  font-size: 12.5px;
+  color: #8a94a8;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   FILTROS DE STATUS
+   ========================================================================== */
+.mod-filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1.5px solid #e3e8ef;
+  color: #4a5161;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .18s, border-color .18s, color .18s;
+  white-space: nowrap;
+}
+
+.mod-filtro b {
+  font-weight: 800;
+  color: #0f1e3d;
+}
+
+.mod-filtro:hover {
+  border-color: #f26522;
+  color: #0f1e3d;
+}
+
+.mod-filtro.ativo {
+  background: #0f1e3d;
+  border-color: #0f1e3d;
+  color: #fff;
+}
+
+.mod-filtro.ativo b { color: #ff8a3d; }
+
+/* ==========================================================================
+   BOTÕES DE AÇÃO NA TABELA
+   ========================================================================== */
+.mod-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 13px;
+  border-radius: 7px;
+  border: 1.5px solid #e3e8ef;
+  background: #fff;
+  color: #0f1e3d;
+  cursor: pointer;
+  transition: background .18s, border-color .18s, color .18s;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.mod-btn:hover {
+  border-color: #0f1e3d;
+  background: #f5f7fa;
+}
+
+.mod-btn.ver:hover {
+  border-color: #1d4ed8;
+  color: #1d4ed8;
+  background: #eff4ff;
+}
+
+.mod-btn.st {
+  background: #f26522;
+  border-color: #f26522;
+  color: #fff;
+}
+
+.mod-btn.st:hover {
+  background: #e05512;
+  border-color: #e05512;
+  color: #fff;
+}
+
+/* ✅ Botão de transferência para encomenda */
+.mod-btn.transf {
+  background: #0f7a44;
+  border-color: #0f7a44;
+  color: #fff;
+}
+
+.mod-btn.transf:hover {
+  background: #0b6337;
+  border-color: #0b6337;
+  color: #fff;
+}
+
+.mod-acoes {
+  display: flex;
+  gap: 6px;
+  white-space: nowrap;
+  flex-wrap: wrap;
+}
+
+/* ---------- Link WhatsApp ---------- */
+.mod-wa {
+  color: #0f7a44;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 12.5px;
+  white-space: nowrap;
+  transition: color .18s;
+}
+
+.mod-wa:hover {
+  color: #25d366;
+  text-decoration: underline;
+}
+
+.mod-sem-valor { color: #8a94a8; }
+
+/* ---------- Estados da tabela ---------- */
+.mod-loading,
+.mod-erro {
+  text-align: center;
+  padding: 34px 16px !important;
+  font-size: 13.5px;
+  color: #8a94a8;
+}
+
+.mod-erro { color: #a93226; }
+
+/* ==========================================================================
+   BLOCOS DENTRO DOS MODAIS
+   ========================================================================== */
+.m3d-transf-bloco {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e3e8ef;
+}
+
+.m3d-transf-bloco:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.m3d-transf-bloco h4 {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  color: #8a94a8;
+  margin: 0 0 10px;
+}
+
+/* ---------- Grade de status ---------- */
+.mod-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mod-status-opt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 2px solid #e3e8ef;
+  border-radius: 10px;
+  padding: 11px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color .18s, background .18s, transform .15s;
+}
+
+.mod-status-opt:hover {
+  border-color: #ff8a3d;
+  transform: translateY(-1px);
+}
+
+.mod-status-opt.sel {
+  border-color: #f26522;
+  background: #fff8f4;
+  box-shadow: 0 0 0 3px rgba(242, 101, 34, .12);
+}
+
+.mod-status-opt.atual {
+  opacity: .55;
+  cursor: default;
+}
+
+.mod-status-opt .status-pill {
+  pointer-events: none;
+}
+
+/* ---------- Caixa de mensagem ---------- */
+.mod-msg-box {
+  background: #f7f9fc;
+  border: 1.5px solid #dbe3ee;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+.mod-msg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mod-msg-titulo {
+  font-size: 11.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  color: #4a5161;
+}
+
+.mod-msg-copiar {
+  background: #fff;
+  border: 1.5px solid #dbe3ee;
+  color: #0f1e3d;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .18s, border-color .18s;
+  white-space: nowrap;
+}
+
+.mod-msg-copiar:hover {
+  background: #0f1e3d;
+  border-color: #0f1e3d;
+  color: #fff;
+}
+
+.mod-msg-box textarea {
+  width: 100%;
+  border: 1.5px solid #dbe3ee;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.65;
+  color: #1c2430;
+  background: #fff;
+  resize: vertical;
+  min-height: 170px;
+}
+
+.mod-msg-box textarea:focus {
+  outline: none;
+  border-color: #f26522;
+  box-shadow: 0 0 0 3px rgba(242, 101, 34, .12);
+}
+
+/* ---------- Ações do modal ---------- */
+.mod-status-acoes {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 6px;
+  padding-top: 14px;
+  border-top: 1px solid #e3e8ef;
+}
+
+.mod-btn-cancel {
+  background: #fff;
+  border: 1.5px solid #e3e8ef;
+  color: #4a5161;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 11px 20px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .18s, border-color .18s;
+}
+
+.mod-btn-cancel:hover {
+  background: #f5f7fa;
+  border-color: #8a94a8;
+}
+
+.mod-btn-aplicar {
+  background: #f26522;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 12px 24px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .18s, transform .15s, box-shadow .18s;
+  box-shadow: 0 4px 14px rgba(242, 101, 34, .3);
+}
+
+.mod-btn-aplicar:hover:not(:disabled) {
+  background: #e05512;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(242, 101, 34, .38);
+}
+
+.mod-btn-aplicar:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   MODAIS — visibilidade garantida
+   ========================================================================== */
+#modStatusOverlay,
+#modDetalheOverlay,
+#encStatusOverlay {
+  display: none;
+}
+
+#modStatusOverlay.aberto,
+#modDetalheOverlay.aberto,
+#encStatusOverlay.aberto {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  z-index: 9999 !important;
+}
+
+#modStatusOverlay .status-box,
+#modDetalheOverlay .ver-modal,
+#encStatusOverlay .status-box {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+.mod-status-box {
+  max-width: 620px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+/* ✅ Esconde o select legado (substituído pelo botão Status) */
+.status-select { display: none !important; }
+
+/* ==========================================================================
+   DARK MODE
+   ========================================================================== */
+body.dark .mod-desc { color: #9fb0c9; }
+
+body.dark .mod-filtro {
+  background: #16233d;
+  border-color: #2a3b5c;
+  color: #9fb0c9;
+}
+body.dark .mod-filtro b { color: #e6edf7; }
+body.dark .mod-filtro.ativo {
+  background: #f26522;
+  border-color: #f26522;
+  color: #fff;
+}
+body.dark .mod-filtro.ativo b { color: #fff; }
+
+body.dark .mod-btn {
+  background: #16233d;
+  border-color: #2a3b5c;
+  color: #e6edf7;
+}
+body.dark .mod-btn:hover { background: #1f3050; border-color: #3d5480; }
+body.dark .mod-btn.st {
+  background: #f26522;
+  border-color: #f26522;
+  color: #fff;
+}
+body.dark .mod-btn.transf {
+  background: #0f7a44;
+  border-color: #0f7a44;
+  color: #fff;
+}
+
+body.dark .mod-status-opt {
+  background: #16233d;
+  border-color: #2a3b5c;
+}
+body.dark .mod-status-opt.sel {
+  background: #2a1d0f;
+  border-color: #f26522;
+}
+
+body.dark .mod-msg-box {
+  background: #0f1a2e;
+  border-color: #2a3b5c;
+}
+body.dark .mod-msg-titulo { color: #9fb0c9; }
+body.dark .mod-msg-copiar {
+  background: #16233d;
+  border-color: #2a3b5c;
+  color: #e6edf7;
+}
+body.dark .mod-msg-box textarea {
+  background: #16233d;
+  border-color: #2a3b5c;
+  color: #e6edf7;
+}
+
+body.dark .mod-status-acoes { border-color: #24354f; }
+body.dark .mod-btn-cancel {
+  background: #16233d;
+  border-color: #2a3b5c;
+  color: #9fb0c9;
+}
+
+body.dark .m3d-valor-box {
+  background: #16233d;
+  border-color: #2a3b5c;
+}
+body.dark .m3d-valor-box label { color: #9fb0c9; }
+body.dark .m3d-valor-wrap {
+  background: #0f1a2e;
+  border-color: #2a3b5c;
+}
+body.dark .m3d-valor-prefix {
+  background: #16233d;
+  border-color: #2a3b5c;
+  color: #9fb0c9;
+}
+body.dark .m3d-valor-wrap input { color: #e6edf7; }
+body.dark .m3d-valor-hint { color: #6b7c96; }
+
+body.dark .m3d-transf-linha { border-color: #24354f; }
+body.dark .m3d-transf-linha strong { color: #9fb0c9; }
+body.dark .m3d-transf-linha span { color: #e6edf7; }
+
+body.dark .m3d-transf-aviso {
+  background: #2a1d0f;
+  border-color: #5a3a1a;
+  color: #f0c9a0;
+}
+
+body.dark .m3d-nome-tag {
+  background: #1d3a6b;
+  color: #b8cdf0;
+}
+
+body.dark .m3d-transf-bloco { border-color: #24354f; }
+body.dark .m3d-transf-bloco h4 { color: #6b7c96; }
+body.dark .mod-wa { color: #4ade80; }
+body.dark .mod-loading { color: #6b7c96; }
+
+body.dark .mod-header-box {
+  background: #16233d;
+  border-color: #2a3b5c;
+}
+body.dark .mod-header-titulo { color: #e6ecf7; }
+body.dark .mod-header-desc { color: #9aa8c7; }
+
+body.dark #painelModelagem .top-bar h1 { color: #e6ecf7; }
+
+/* ==========================================================================
+   RESPONSIVO
+   ========================================================================== */
+@media (max-width: 900px) {
+  #painelModelagem .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  #painelModelagem .top-bar .actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 620px) {
+  .m3d-transf-linha {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .m3d-transf-linha strong { min-width: 0; }
+
+  .mod-status-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .mod-status-acoes {
+    flex-direction: column-reverse;
+  }
+  .mod-btn-cancel,
+  .mod-btn-aplicar {
+    width: 100%;
+  }
+  .mod-acoes {
+    flex-direction: column;
+  }
+  .mod-filtro {
+    font-size: 11.5px;
+    padding: 6px 11px;
+  }
+
+  .visao-chip {
+    font-size: 11.5px;
+    padding: 7px 13px;
+  }
+}

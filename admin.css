@@ -1,7 +1,6 @@
 /* ============================================================
    Meu 3D Labs — admin.css (Painel de Pedidos)
    Organizado por seção:
-
     1. Variáveis e tema
     2. Reset e base
     3. Header
@@ -11,22 +10,28 @@
     7. Cards de estatísticas
     8. Controles (busca e filtros)
     9. Chips de filtro por prazo
-   10. Tabela de pedidos
-   11. Pills de status e ações da célula
-   12. Estados (vazio, erro, carregando)
-   13. Login
-   14. Rodapé
-   15. Modal: status atualizado
-   16. Modal: ver mais
-   17. Modal: prazo crítico
-   18. Modal: relatório IA
-   19. Responsivo
-   20. Modo escuro (todas as overrides)
-   21. Acessibilidade
+   10. Barra de visão (Ativos / Entregues / Encerrados / Todos)
+   11. Tabela de pedidos
+   12. Pills de status e ações da célula
+   13. Estados (vazio, erro, carregando)
+   14. Login
+   15. Rodapé
+   16. Modal: status atualizado
+   17. Modal: ver mais
+   18. Modal: prazo crítico
+   19. Modal: relatório IA
+   20. Botões de ação compartilhados (status, transferência)
+   21. Responsivo
+   22. Modo escuro
+   23. Acessibilidade
    ============================================================ */
 
 /* ===== 1. VARIÁVEIS E TEMA ===== */
-:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--text:#1c2430;--green:#25a858;--yellow:#d9a406;--blue:#1f6feb;--purple:#8250df;--red:#d73a49;}
+:root{
+  --navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;
+  --light:#f5f7fa;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--text:#1c2430;
+  --green:#25a858;--yellow:#d9a406;--blue:#1f6feb;--purple:#8250df;--red:#d73a49;
+}
 
 /* ===== 2. RESET E BASE ===== */
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -97,6 +102,7 @@ main{max-width:1200px;margin:0 auto;padding:30px 20px 60px;}
 .stat-card.yellow{background:linear-gradient(135deg,#fffbea,var(--white));}
 .stat-card.red{background:linear-gradient(135deg,#fff2f2,var(--white));}
 .stat-card.red .stat-value{color:var(--red);}
+.stat-card.gray{background:linear-gradient(135deg,#f7f8fa,var(--white));}
 
 /* ===== 8. CONTROLES (BUSCA E FILTROS) ===== */
 .controls{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
@@ -116,9 +122,17 @@ main{max-width:1200px;margin:0 auto;padding:30px 20px 60px;}
 .prazo-chip .chip-n{background:rgba(0,0,0,.1);border-radius:20px;padding:0 7px;font-size:11px;}
 .prazo-chip.active .chip-n{background:rgba(255,255,255,.25);}
 
-/* ===== 10. TABELA DE PEDIDOS ===== */
+/* ===== 10. BARRA DE VISÃO (Ativos / Entregues / Encerrados / Todos) ===== */
+.visao-chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px;}
+.visao-chip{display:inline-flex;align-items:center;gap:5px;background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:8px 16px;font-size:12.5px;font-weight:700;font-family:inherit;color:var(--gray);cursor:pointer;transition:.2s;white-space:nowrap;}
+.visao-chip b{font-weight:800;color:var(--navy);font-size:12px;}
+.visao-chip:hover{border-color:var(--orange);color:var(--navy);}
+.visao-chip.active{background:var(--navy);border-color:var(--navy);color:#fff;}
+.visao-chip.active b{color:var(--orange-2);}
+
+/* ===== 11. TABELA DE PEDIDOS ===== */
 .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:auto;box-shadow:0 2px 10px rgba(15,30,61,.07);-webkit-overflow-scrolling:touch;}
-table{width:100%;border-collapse:collapse;min-width:1000px;font-size:13px;}
+table{width:100%;border-collapse:collapse;min-width:1100px;font-size:13px;}
 thead th{background:var(--navy);color:#fff;text-align:left;padding:12px 14px;font-size:12px;text-transform:uppercase;letter-spacing:.4px;font-weight:600;white-space:nowrap;position:sticky;top:0;}
 tbody td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
 tbody tr:nth-child(even){background:#fafbfd;}
@@ -128,6 +142,7 @@ tbody tr.row-novo{background:#f0fbf4;animation:novoPulse 2s ease;}
 @keyframes novoPulse{0%{background:#d9f5e3;}100%{background:#f0fbf4;}}
 tr.tr-atrasado{box-shadow:inset 3px 0 0 var(--red);}
 tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
+
 /* Células */
 .td-id{font-weight:700;color:var(--navy);white-space:nowrap;}
 .td-client{font-weight:700;color:var(--navy);}
@@ -142,13 +157,26 @@ tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
 .td-desc .total-loja{display:block;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);font-weight:800;color:var(--orange);font-size:14px;}
 .td-desc .entrega-loja{display:block;font-size:12px;color:var(--gray);margin-top:2px;}
 .item-thumb{display:inline-block;width:34px;height:34px;border-radius:8px;object-fit:cover;border:1px solid var(--border);vertical-align:middle;margin-right:8px;background:var(--light);}
+
+/* Coluna Valor (adicionada por admin-extras.js) */
+.th-valor{white-space:nowrap;}
+.valor-col{white-space:nowrap;}
+.valor-cell{font-weight:800;font-size:12.5px;line-height:1.35;white-space:nowrap;}
+.valor-cell.total{color:var(--navy);}
+.valor-cell.pago{color:#0f7a44;font-weight:700;font-size:11.5px;}
+.valor-cell.falta{color:#c0392b;font-weight:700;font-size:11.5px;}
+.valor-cell.quitado{color:#0f7a44;font-weight:800;font-size:11.5px;}
+.valor-cell.vazio{color:#b9c2d2;font-weight:600;font-style:italic;font-size:12.5px;}
+
 /* WhatsApp na célula */
 .wa-link{display:inline-flex;align-items:center;gap:5px;margin-top:6px;background:#25d366;color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;transition:.2s;}
 .wa-link:hover{background:#1fb959;transform:translateY(-1px);}
 .wa-link svg{width:13px;height:13px;fill:#fff;flex-shrink:0;}
+
 /* Badge NOVO */
 .novo-badge{display:inline-block;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;text-transform:uppercase;letter-spacing:.4px;animation:blink 1.5s infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.5;}}
+
 /* Badges de prazo */
 .prazo-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;}
 .prazo-badge .p-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
@@ -166,7 +194,7 @@ tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
 .prazo-x{background:#f1f3f6;color:#8a93a3;border:1px solid var(--border);}
 .prazo-x .p-dot{background:#8a93a3;}
 
-/* ===== 11. PILLS DE STATUS E AÇÕES DA CÉLULA ===== */
+/* ===== 12. PILLS DE STATUS E AÇÕES DA CÉLULA ===== */
 .urg-badge{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap;text-transform:uppercase;letter-spacing:.3px;}
 .urg-verde{background:#e6f7ee;color:#1a7f43;}
 .urg-amarelo{background:#fef3c7;color:#92600a;}
@@ -186,6 +214,9 @@ tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
 .status-aguardando{background:#fff1e6;color:#b3541e;}
 .status-pagocartao{background:#e6f7ee;color:#1a7f43;border:1.5px solid #25a858;}
 .status-embalagem{background:#e0f7fa;color:#00695c;border:1.5px solid #26a69a;}
+.status-semresposta{background:#f0f1f4;color:#5a6472;border:1.5px dashed #9aa5b5;}
+.status-transferido{background:#f1f5f9;color:#475569;}
+.status-recusado{background:#fdecea;color:#a93226;}
 .status-select{padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:inherit;background:var(--white);color:var(--text);cursor:pointer;}
 .status-select:focus{outline:none;border-color:var(--orange);}
 .del-btn{display:inline-flex;align-items:center;gap:5px;margin-top:6px;background:#e74c3c;color:#fff;font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;transition:.2s;cursor:pointer;border:none;}
@@ -195,7 +226,7 @@ tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
 .ver-mais-btn{display:inline-block;margin-top:6px;background:var(--navy);color:#fff;border:none;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;transition:.2s;}
 .ver-mais-btn:hover{background:var(--navy-2);}
 
-/* ===== 12. ESTADOS (VAZIO, ERRO, CARREGANDO) ===== */
+/* ===== 13. ESTADOS (VAZIO, ERRO, CARREGANDO) ===== */
 .empty-state{text-align:center;padding:60px 20px;color:var(--gray);}
 .error-box{background:#fde8e8;border:1px solid #f5c6c6;color:#b91c1c;border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:14px;display:none;}
 .error-box.show{display:block;}
@@ -203,7 +234,7 @@ tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
 .spinner{display:inline-block;width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:10px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ===== 13. LOGIN ===== */
+/* ===== 14. LOGIN ===== */
 .login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;}
 .login-box{background:var(--white);border-radius:16px;padding:40px 32px;width:100%;max-width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative;}
 .login-box .login-back{position:absolute;top:16px;left:16px;color:var(--gray);font-size:13px;font-weight:600;padding:6px 10px;border-radius:6px;}
@@ -217,10 +248,10 @@ tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
 .login-error{color:#d73a49;font-size:13px;margin-top:10px;display:none;}
 .login-error.show{display:block;}
 
-/* ===== 14. RODAPÉ ===== */
+/* ===== 15. RODAPÉ ===== */
 footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 
-/* ===== 15. MODAL: STATUS ATUALIZADO ===== */
+/* ===== 16. MODAL: STATUS ATUALIZADO ===== */
 .status-overlay{display:none;position:fixed;inset:0;background:rgba(15,30,61,.55);z-index:400;align-items:center;justify-content:center;padding:20px;}
 .status-overlay.show{display:flex;}
 .status-box{background:var(--white);border-radius:16px;padding:30px 26px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:slideDown .3s ease;position:relative;}
@@ -238,7 +269,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 .sb-copied{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:500;opacity:0;pointer-events:none;transition:.3s;}
 .sb-copied.show{opacity:1;}
 
-/* ===== 16. MODAL: VER MAIS ===== */
+/* ===== 17. MODAL: VER MAIS ===== */
 .ver-overlay{display:none;position:fixed;inset:0;background:rgba(10,20,40,.6);z-index:999;align-items:center;justify-content:center;padding:20px;}
 .ver-overlay.show{display:flex;}
 .ver-modal{background:var(--white);border-radius:16px;width:min(560px,100%);max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(10,20,40,.4);position:relative;padding:26px 24px;animation:slideDown .3s ease;}
@@ -258,7 +289,7 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 .vm-rot{font-weight:700;color:var(--navy);min-width:150px;}
 .vm-valor{color:var(--text);word-break:break-word;flex:1;}
 
-/* ===== 17. MODAL: PRAZO CRÍTICO ===== */
+/* ===== 18. MODAL: PRAZO CRÍTICO ===== */
 .prazo-overlay{display:none;position:fixed;inset:0;background:rgba(120,10,25,.55);z-index:800;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease;}
 .prazo-overlay.show{display:flex;}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
@@ -274,29 +305,55 @@ footer{text-align:center;padding:20px;font-size:12px;color:var(--gray);}
 .prazo-modal .pm-acoes button{flex:1;min-width:130px;padding:12px;border-radius:9px;font-size:13.5px;font-weight:700;cursor:pointer;border:none;transition:.2s;}
 .pm-ver{background:var(--navy);color:#fff;}
 .pm-ver:hover{background:var(--navy-2);}
-/* Escopo correto vence o `button{border:none}` acima — sem !important */
 .prazo-modal .pm-acoes .pm-ok{background:var(--light);color:var(--gray);border:1px solid var(--border);}
 .prazo-modal .pm-acoes .pm-ok:hover{background:#fde8e8;color:#b3202e;}
 
-/* ===== 18. MODAL: RELATÓRIO IA ===== */
+/* ===== 19. MODAL: RELATÓRIO IA ===== */
 .relatorio-txt{width:100%;min-height:260px;background:var(--light);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px;font-family:inherit;color:var(--text);line-height:1.6;resize:vertical;}
 
-/* ===== 19. RESPONSIVO ===== */
+/* ===== 20. BOTÕES DE AÇÃO COMPARTILHADOS ===== */
+/* Usados tanto pelos modais de modelagem quanto pelo botão Status das encomendas */
+.mod-btn{display:inline-flex;align-items:center;justify-content:center;font-family:inherit;font-size:12px;font-weight:700;padding:6px 13px;border-radius:7px;border:1.5px solid var(--border);background:var(--white);color:var(--navy);cursor:pointer;transition:.18s;white-space:nowrap;line-height:1.3;}
+.mod-btn:hover{border-color:var(--navy);background:#f5f7fa;}
+.mod-btn.ver:hover{border-color:var(--blue);color:var(--blue);background:#eff4ff;}
+.mod-btn.st{background:var(--orange);border-color:var(--orange);color:#fff;}
+.mod-btn.st:hover{background:#e05512;border-color:#e05512;color:#fff;}
+.mod-btn.transf{background:#0f7a44;border-color:#0f7a44;color:#fff;}
+.mod-btn.transf:hover{background:#0b6337;border-color:#0b6337;color:#fff;}
+.mod-acoes{display:flex;gap:6px;white-space:nowrap;flex-wrap:wrap;}
+
+/* ===== 21. RESPONSIVO ===== */
 @media(max-width:700px){
-.stats-grid{grid-template-columns:repeat(2,1fr);}
-.top-bar h1{font-size:20px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .top-bar h1{font-size:20px;}
+  .visao-chip{font-size:11.5px;padding:7px 13px;}
+  .mod-acoes{flex-direction:column;}
 }
 
-/* ===== 20. MODO ESCURO (todas as overrides) ===== */
+/* ===== 22. MODO ESCURO ===== */
 body.dark{--light:#0d1424;--white:#16203a;--gray:#9aa8c7;--border:#2a3a5c;--text:#e6ecf7;}
+
 body.dark .top-bar h1{color:#e6ecf7;}
-body.dark .tab-btn,body.dark .prazo-chip,body.dark .filter-select,body.dark .search-box input,body.dark .status-select{background:#16203a;color:#e6ecf7;border-color:#2a3a5c;}
+
+/* Abas e filtros */
+body.dark .tab-btn,
+body.dark .prazo-chip,
+body.dark .filter-select,
+body.dark .search-box input,
+body.dark .status-select{background:#16203a;color:#e6ecf7;border-color:#2a3a5c;}
 body.dark .tab-btn:hover{color:#e6ecf7;}
-/* Correção dark: aba/chip ativo agora destaca em laranja (antes ficava invisível) */
 body.dark .tab-btn.active{background:#f26522;border-color:#f26522;color:#fff;}
 body.dark .tab-btn.active:hover{color:#fff;}
 body.dark .prazo-chip.active{background:#f26522;border-color:#f26522;color:#fff;}
-/* Cards de estatística */
+
+/* Barra de visão */
+body.dark .visao-chip{background:#16203a;border-color:#2a3a5c;color:#9aa8c7;}
+body.dark .visao-chip b{color:#e6ecf7;}
+body.dark .visao-chip:hover{border-color:#f26522;color:#e6ecf7;}
+body.dark .visao-chip.active{background:#f26522;border-color:#f26522;color:#fff;}
+body.dark .visao-chip.active b{color:#fff;}
+
+/* Cards */
 body.dark .stat-card{box-shadow:0 2px 10px rgba(0,0,0,.35);}
 body.dark .stat-card .stat-value{color:#e6ecf7;}
 body.dark .stat-card.orange{background:#241d17;box-shadow:inset 0 0 0 1.5px rgba(242,101,34,.3),0 2px 10px rgba(0,0,0,.3);}
@@ -305,6 +362,8 @@ body.dark .stat-card.blue{background:#141f33;box-shadow:inset 0 0 0 1.5px rgba(3
 body.dark .stat-card.purple{background:#1d1830;box-shadow:inset 0 0 0 1.5px rgba(130,80,223,.3),0 2px 10px rgba(0,0,0,.3);}
 body.dark .stat-card.yellow{background:#241f12;box-shadow:inset 0 0 0 1.5px rgba(217,164,6,.3),0 2px 10px rgba(0,0,0,.3);}
 body.dark .stat-card.red{background:#2a1518;box-shadow:inset 0 0 0 1.5px rgba(215,58,73,.35),0 2px 10px rgba(0,0,0,.3);}
+body.dark .stat-card.gray{background:#1a2236;box-shadow:inset 0 0 0 1.5px rgba(138,148,168,.2),0 2px 10px rgba(0,0,0,.3);}
+
 /* Tabela */
 body.dark thead th{background:#1a2c55;}
 body.dark tbody tr:nth-child(even){background:#1a2745;}
@@ -312,38 +371,48 @@ body.dark tbody tr:hover{background:#22325a;}
 body.dark .td-id{color:#ff8a3d;}
 body.dark .td-client{color:#e6ecf7;}
 body.dark .td-desc .item-nome{color:#e6ecf7;}
+
+/* Coluna Valor */
+body.dark .valor-cell.total{color:#ff8a3d;}
+body.dark .valor-cell.pago{color:#4ade80;}
+body.dark .valor-cell.falta{color:#f87171;}
+body.dark .valor-cell.quitado{color:#4ade80;}
+body.dark .valor-cell.vazio{color:#6b7c96;}
+
 /* Modais e campos */
-body.dark .vm-texto,body.dark .vm-campo,body.dark .sb-msg,body.dark .login-box input{background:#0d1424;color:#e6ecf7;border-color:#2a3a5c;}
+body.dark .vm-texto,
+body.dark .vm-campo,
+body.dark .sb-msg,
+body.dark .login-box input{background:#0d1424;color:#e6ecf7;border-color:#2a3a5c;}
 body.dark .vm-copiar{background:#1f6feb;}
 body.dark .status-box h3{color:#e6ecf7;}
 body.dark .ver-modal h3{color:#e6ecf7;}
 body.dark .vm-rot{color:#ff8a3d;}
 body.dark .prazo-modal .pm-item strong{color:#e6ecf7;}
 
-/* ===== 21. ACESSIBILIDADE (novo, seguro) =====
-   Quem ativa "reduzir movimento" no sistema: para blink, pulse,
-   spin e transições — padrão de mercado. */
-@media (prefers-reduced-motion: reduce){
-*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
-}
+/* Botões compartilhados */
+body.dark .mod-btn{background:#16233d;border-color:#2a3b5c;color:#e6ecf7;}
+body.dark .mod-btn:hover{background:#1f3050;border-color:#3d5480;}
+body.dark .mod-btn.st{background:#f26522;border-color:#f26522;color:#fff;}
+body.dark .mod-btn.transf{background:#0f7a44;border-color:#0f7a44;color:#fff;}
 
-/* ============================================================
-   22. NOVIDADES DA RODADA
-   ============================================================ */
-
-/* Correção: textos do login invisíveis no modo escuro
-   (caixa virava #16203a e o título continuava navy = ilegível) */
+/* Login no escuro */
 body.dark .login-box h2{color:#e6ecf7;}
 body.dark .login-box p{color:#9aa8c7;}
 body.dark .login-box .login-back{color:#9aa8c7;}
 
-/* Badge de prazo "Encerrado" (cancelado / sem resposta)
-   — antes era só bolinha cinza com ✕ */
+/* Badge de prazo "Encerrado" */
 .prazo-badge.prazo-x{background:linear-gradient(135deg,#f4f6f9,#e8ecf3);border:1px solid #d5dce6;color:#5a6472;font-weight:600;}
 .prazo-badge.prazo-x .p-dot{background:#9aa5b5;}
 body.dark .prazo-badge.prazo-x{background:#1c2438;border-color:#3a4a6b;color:#b8c2d8;}
 body.dark .prazo-badge.prazo-x .p-dot{background:#8a94a8;}
 
-/* Novo status: Sem resposta (cliente sumiu) */
-.status-semresposta{background:#f0f1f4;color:#5a6472;border:1.5px dashed #9aa5b5;}
+/* Status: sem resposta (cliente sumiu) */
 body.dark .status-semresposta{background:#1c2438;color:#b8c2d8;border-color:#3a4a6b;}
+body.dark .status-transferido{background:#1c2438;color:#b8c2d8;}
+body.dark .status-recusado{background:#2a1518;color:#f87171;}
+
+/* ===== 23. ACESSIBILIDADE ===== */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+}
