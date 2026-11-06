@@ -2,16 +2,18 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Consultoria 3D para Iniciantes — Meu 3D Labs</title>
-<meta name="description" content="Consultoria 3D por videochamada: aprenda a configurar o fatiador, calibrar sua impressora e imprimir com segurança, no seu ritmo.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Consultoria 3D — Aula particular por videochamada | Meu 3D Labs</title>
+<meta name="description" content="Aula particular com especialista por videochamada. Domine sua impressora 3D: fatiador, calibração, temperaturas e primeira impressão. R$ 100 por hora.">
 <meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0f1e3d">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Consultoria 3D para Iniciantes — Meu 3D Labs">
-<meta property="og:description" content="Aprenda do fatiador à primeira impressão, com acompanhamento em tempo real.">
-<meta property="og:image" content="img/consultorias/banner-servicos.png">
+<meta property="og:title" content="Consultoria 3D — Aula particular com especialista | Meu 3D Labs">
+<meta property="og:description" content="Aula particular por videochamada. Do fatiador à primeira impressão, no seu ritmo. R$ 100 por hora.">
+<meta property="og:image" content="https://meu3dlabs.com.br/img/consultorias/banner-servicos.png">
 <meta property="og:site_name" content="Meu 3D Labs">
 <link rel="icon" href="img/logo/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="img/logo/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,224 +25,1008 @@ gtag('js',new Date());
 gtag('config','G-NZTH0ZSLV0');
 </script>
 <style>
-:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);}
-*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1060px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}.btn-wa{background:#25d366;color:#fff;}.btn-wa:hover{background:#1fb959;}
-header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
-.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:64px 0 0;text-align:center;}.hero .container{padding-bottom:0;}.hero h1{font-size:clamp(28px,4.5vw,42px);line-height:1.2;margin-bottom:12px;font-weight:800;letter-spacing:-.5px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:17px;color:rgba(255,255,255,.92);max-width:640px;margin:0 auto 22px;}
-.hero-chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:34px;}.chip{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:7px 16px;border-radius:30px;font-size:13px;font-weight:600;}
-/* ===== CARROSSEL DE BANNERS ===== */
-.banner-carousel{position:relative;max-width:900px;margin:0 auto;border-radius:18px;overflow:hidden;border:2px solid rgba(255,255,255,.16);box-shadow:0 24px 70px rgba(0,0,0,.35);touch-action:pan-y;}
-.bn-slides{display:flex;transition:transform .55s cubic-bezier(.4,0,.2,1);}
+/* ============================================================
+   MEU 3D LABS — consultoria.html
+   Página única com CSS inline
+   ============================================================ */
+
+/* ==================== TOKENS ==================== */
+:root{
+  --navy:#0f1e3d;--navy-2:#16294f;--navy-deep:#0a1428;
+  --orange:#f26522;--orange-2:#ff8a3d;--orange-soft:#fff2eb;
+  --white:#fff;--light:#f5f7fa;--light-2:#f0f3f8;
+  --gray:#4a5161;--gray-muted:#8a94a8;
+  --border:#e3e8ef;--border-soft:#eef1f6;
+  --green:#25d366;--green-dark:#0f7a44;
+  --gold:#f5a623;
+  --shadow-xs:0 1px 4px rgba(15,30,61,.05);
+  --shadow-sm:0 2px 10px rgba(15,30,61,.07);
+  --shadow-md:0 10px 28px rgba(15,30,61,.11);
+  --shadow-lg:0 20px 50px rgba(15,30,61,.16);
+  --r-sm:8px;--r-md:14px;--r-lg:18px;--r-xl:24px;--r-pill:999px;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+/* ==================== RESET ==================== */
+*,*::before,*::after{box-sizing:border-box;}
+*{margin:0;padding:0;}
+html{
+  scroll-behavior:smooth;scroll-padding-top:100px;-webkit-text-size-adjust:100%;
+  overflow-x:hidden;overflow-x:clip;width:100%;max-width:100vw;
+}
+body{
+  font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;
+  color:#1c2430;line-height:1.65;background:var(--white);
+  overflow-x:hidden;overflow-x:clip;width:100%;max-width:100vw;position:relative;
+}
+img,video,iframe,table,svg{max-width:100%;}
+img,video{height:auto;}
+a{text-decoration:none;color:inherit;}
+button{font-family:inherit;}
+.container{max-width:1120px;margin:0 auto;padding:0 20px;}
+*:focus-visible{outline:2px solid var(--orange);outline-offset:2px;border-radius:4px;}
+
+/* ==================== BOTÕES ==================== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--orange);color:var(--white);
+  padding:14px 28px;border-radius:var(--r-sm);
+  font-weight:700;font-size:15px;border:none;cursor:pointer;
+  transition:background .22s var(--ease),transform .22s var(--ease);
+  text-align:center;
+}
+.btn:hover{background:var(--orange-2);transform:translateY(-2px);}
+.btn-outline{
+  background:transparent;border:2px solid rgba(255,255,255,.42);
+  color:var(--white);
+}
+.btn-outline:hover{background:rgba(255,255,255,.14);border-color:var(--white);}
+.btn-wa{background:var(--green);color:var(--white);box-shadow:0 4px 14px rgba(37,211,102,.32);}
+.btn-wa:hover{background:#1fb959;}
+
+/* ==================== TOPBAR ==================== */
+.topbar{
+  background:var(--navy-deep);color:rgba(255,255,255,.92);
+  font-size:12.5px;font-weight:500;
+  padding:9px 16px;text-align:center;letter-spacing:.2px;
+}
+.topbar b{color:var(--orange-2);}
+.topbar .tp-item{display:inline-flex;align-items:center;gap:5px;vertical-align:middle;}
+.topbar .tp-sep{margin:0 9px;opacity:.45;}
+.topbar .tp-ico{height:13px;width:auto;display:inline-block;vertical-align:-2px;object-fit:contain;}
+.topbar .tp-ico-cartao{height:12px;}
+
+/* ==================== HEADER ==================== */
+header{
+  background:var(--navy-deep);color:var(--white);
+  padding:20px 0 22px;position:sticky;top:0;z-index:100;
+}
+.header-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:18px;min-height:60px;
+}
+.logo{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.logo img{height:52px;width:52px;object-fit:contain;border-radius:10px;display:block;}
+.logo-text{
+  font-weight:800;font-size:25px;color:var(--white);
+  white-space:nowrap;letter-spacing:-.03em;
+}
+.logo-text span{color:var(--orange-2);}
+.header-nav{display:flex;gap:22px;align-items:center;flex-wrap:wrap;}
+.header-nav a{
+  color:rgba(255,255,255,.82);font-size:13.5px;font-weight:600;
+  transition:color .2s;padding:6px 0;
+  border-bottom:2px solid transparent;white-space:nowrap;
+}
+.header-nav a:hover{color:var(--white);border-bottom-color:var(--orange);}
+.header-nav a.atual{color:var(--white);border-bottom-color:var(--orange);}
+
+/* ==================== HERO ==================== */
+.hero{
+  background:linear-gradient(140deg,var(--navy) 0%,var(--navy-2) 55%,#1d3a6b 100%);
+  color:var(--white);padding:60px 0 56px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-140px;right:-110px;
+  width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(242,101,34,.2),transparent 70%);
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:1;text-align:center;}
+.hero-eyebrow{
+  display:inline-block;
+  background:rgba(242,101,34,.16);
+  border:1px solid rgba(242,101,34,.38);
+  color:var(--orange-2);
+  font-size:.72rem;font-weight:800;letter-spacing:1.4px;
+  text-transform:uppercase;
+  padding:7px 16px;border-radius:var(--r-pill);
+  margin-bottom:20px;
+}
+.hero h1{
+  font-size:clamp(28px,4vw,44px);line-height:1.14;
+  font-weight:800;letter-spacing:-.8px;margin-bottom:16px;
+}
+.hero h1 span{color:var(--orange-2);}
+.hero-sub{
+  font-size:16.5px;color:rgba(255,255,255,.87);
+  max-width:660px;margin:0 auto 24px;line-height:1.65;
+}
+.hero-sub strong{color:var(--white);font-weight:800;}
+
+/* Preço no hero */
+.hero-preco{
+  display:inline-flex;align-items:baseline;gap:10px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:var(--r-pill);
+  padding:12px 26px;
+  margin-bottom:26px;
+}
+.hero-preco .hp-valor{
+  font-size:26px;font-weight:800;color:var(--white);
+  letter-spacing:-.8px;line-height:1;
+}
+.hero-preco .hp-valor strong{color:var(--orange-2);}
+.hero-preco .hp-periodo{
+  font-size:13px;color:rgba(255,255,255,.72);font-weight:600;
+}
+
+/* Chips */
+.hero-chips{
+  display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+  margin-bottom:30px;
+}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.18);
+  padding:7px 16px;border-radius:var(--r-pill);
+  font-size:12.5px;font-weight:700;
+  color:rgba(255,255,255,.9);
+}
+
+/* CTAs do hero */
+.hero-ctas{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+.hero-ctas .btn{font-size:15px;padding:15px 30px;}
+
+/* ==================== CARROSSEL DE BANNERS ==================== */
+.banner-section{padding:0 0 48px;background:linear-gradient(180deg,#16294f 0%,var(--white) 65%);}
+.banner-carousel{
+  position:relative;max-width:920px;margin:0 auto;
+  border-radius:var(--r-xl);overflow:hidden;
+  border:2px solid rgba(255,255,255,.16);
+  box-shadow:0 24px 70px rgba(0,0,0,.32);
+  touch-action:pan-y;background:var(--navy);
+}
+.bn-slides{display:flex;transition:transform .55s var(--ease);}
 .bn-slide{flex:0 0 100%;min-width:100%;}
 .bn-slide img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;}
-.bn-arrow{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;background:rgba(15,30,61,.55);color:#fff;border:none;font-size:22px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:.25s;backdrop-filter:blur(4px);z-index:3;}
-.banner-carousel:hover .bn-arrow,.banner-carousel:focus-within .bn-arrow{opacity:1;}
+.bn-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(15,30,61,.6);color:var(--white);
+  border:none;font-size:22px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:.25s;
+  backdrop-filter:blur(4px);z-index:3;
+}
+.banner-carousel:hover .bn-arrow,
+.banner-carousel:focus-within .bn-arrow{opacity:1;}
 .bn-arrow:hover{background:var(--orange);}
-.bn-prev{left:12px;}.bn-next{right:12px;}
-.bn-dots{position:absolute;bottom:14px;left:0;right:0;display:flex;justify-content:center;gap:8px;z-index:3;}
-.bn-dot{width:9px;height:9px;border-radius:8px;background:rgba(255,255,255,.45);border:none;cursor:pointer;transition:.3s;padding:0;}
+.bn-prev{left:12px;}
+.bn-next{right:12px;}
+.bn-dots{
+  position:absolute;bottom:14px;left:0;right:0;
+  display:flex;justify-content:center;gap:8px;z-index:3;
+}
+.bn-dot{
+  width:9px;height:9px;border-radius:8px;
+  background:rgba(255,255,255,.45);
+  border:none;cursor:pointer;transition:.3s;padding:0;
+}
 .bn-dot.ativo{background:var(--orange-2);width:26px;}
-.hero-benefits{display:flex;justify-content:center;align-items:center;gap:12px 28px;flex-wrap:wrap;margin:26px auto 0;}
-.hb-item{display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,.92);font-size:13.5px;font-weight:600;}
-.hb-item span{font-size:17px;}
-section{padding:64px 0;}h2{font-size:28px;color:var(--navy);margin-bottom:10px;font-weight:800;letter-spacing:-.4px;}.subtitle{color:var(--gray);max-width:620px;margin-bottom:34px;font-size:15px;}
-.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:var(--shadow-sm);transition:.25s;}.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--orange);}.card .ic{font-size:28px;margin-bottom:10px;}.card h3{font-size:16px;color:var(--navy);margin-bottom:6px;font-weight:700;}.card p{font-size:13.5px;color:var(--gray);line-height:1.55;}
-.list-check{list-style:none;max-width:640px;}.list-check li{position:relative;padding:10px 0 10px 34px;border-bottom:1px solid var(--border);font-size:15px;color:#3d4856;}.list-check li::before{content:'✓';position:absolute;left:0;top:10px;width:24px;height:24px;background:rgba(37,211,102,.15);color:#0f7a44;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;}
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}.step{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--shadow-sm);}.step-num{width:38px;height:38px;background:var(--orange);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;margin-bottom:12px;}.step h4{color:var(--navy);margin-bottom:6px;font-weight:700;font-size:15px;}.step p{color:var(--gray);font-size:13.5px;}
-.preco-box{background:var(--light);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;max-width:640px;margin:0 auto;}.preco-box .valor{font-size:26px;font-weight:800;color:var(--navy);}.preco-box .valor strong{color:var(--orange);}.preco-box p{color:var(--gray);font-size:14px;margin-top:8px;line-height:1.6;}
-.avaliacoes{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:820px;margin:0 auto;}.aval{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:var(--shadow-sm);}.aval .stars{color:#f5a623;font-size:14px;letter-spacing:1px;margin-bottom:8px;}.aval p{font-size:14px;color:var(--gray);font-style:italic;line-height:1.6;margin-bottom:10px;}.aval .nome{font-weight:700;color:var(--navy);font-size:14px;}.aval .tag{font-size:12px;color:var(--gray);}
-.faq-item{background:var(--light);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;}.faq-q{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;font-weight:600;color:var(--navy);font-size:15px;user-select:none;}.faq-q::after{content:'+';font-size:22px;color:var(--orange);transition:transform .3s;flex-shrink:0;margin-left:12px;}.faq-item.open .faq-q::after{transform:rotate(45deg);}.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;padding:0 20px;}.faq-item.open .faq-a{max-height:400px;padding:0 20px 18px;}.faq-a p{color:var(--gray);font-size:14.5px;line-height:1.6;}.faq-a strong{color:var(--navy);}
-.cta-final{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);color:#fff;text-align:center;}.cta-final h2{color:#fff;}.cta-final p{color:rgba(255,255,255,.88);max-width:560px;margin:0 auto 26px;font-size:15px;}.cta-final .btn{font-size:17px;padding:16px 36px;}
-footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
-@media(max-width:760px){.cards-grid,.steps{grid-template-columns:1fr 1fr;}.avaliacoes{grid-template-columns:1fr;}.bn-arrow{opacity:1;width:36px;height:36px;font-size:18px;}.hero-benefits{gap:10px 16px;}.hb-item{font-size:12.5px;}}
-@media(max-width:520px){.cards-grid,.steps{grid-template-columns:1fr;}.hero-chips{gap:8px;}}
-/* ===== RODAPÉ PADRÃO ===== */
-.site-footer{background:#0a1428;color:rgba(255,255,255,.75);padding:40px 20px 24px;}
-.site-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;}
-.site-footer h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:12px;}
-.site-footer p,.site-footer a{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;display:block;}
-.site-footer a:hover{color:#ff8a3d;}
-.site-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px;text-align:center;font-size:12px;color:rgba(255,255,255,.45);}
-/* ===== Anti-vazamento mobile ===== */
-html,body{overflow-x:hidden;max-width:100%;}
-img,video,svg,iframe{max-width:100%;height:auto;}
+
+/* ==================== SEÇÕES ==================== */
+.secao{padding:60px 0;}
+.secao-cinza{background:var(--light-2);}
+.secao-head{text-align:center;max-width:740px;margin:0 auto 38px;}
+.secao-tag{
+  display:inline-block;
+  background:rgba(242,101,34,.1);color:var(--orange);
+  font-size:11.5px;font-weight:800;text-transform:uppercase;
+  letter-spacing:1.1px;padding:7px 17px;border-radius:var(--r-pill);
+  margin-bottom:14px;
+}
+.secao-head h2{
+  font-size:clamp(24px,3.2vw,34px);color:var(--navy);
+  font-weight:800;letter-spacing:-.6px;line-height:1.22;margin-bottom:12px;
+}
+.secao-head p{font-size:15px;color:var(--gray);line-height:1.7;}
+
+/* ==================== PARA QUEM É ==================== */
+.paraquem-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:14px;max-width:1020px;margin:0 auto;
+}
+.pq-card{
+  background:var(--white);
+  border:2px solid var(--border);
+  border-radius:var(--r-md);
+  padding:20px 18px;
+  display:flex;align-items:flex-start;gap:12px;
+  transition:all .22s var(--ease);
+}
+.pq-card:hover{
+  border-color:#f2b28f;
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-sm);
+}
+.pq-ico{
+  width:34px;height:34px;flex-shrink:0;
+  border-radius:10px;
+  background:rgba(37,211,102,.14);
+  color:var(--green-dark);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;
+}
+.pq-txt{font-size:13.5px;color:#3d4856;line-height:1.55;font-weight:600;}
+
+/* ==================== O QUE VOCÊ APRENDE ==================== */
+.aprende-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:16px;max-width:1040px;margin:0 auto;
+}
+.ap-card{
+  background:var(--white);
+  border:2px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:24px 22px 22px;
+  transition:all .24s var(--ease);
+  position:relative;
+  overflow:hidden;
+}
+.ap-card:hover{
+  border-color:var(--orange);
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-md);
+}
+.ap-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--orange),var(--orange-2));
+  opacity:0;transition:opacity .24s;
+}
+.ap-card:hover::before{opacity:1;}
+.ap-ico{
+  width:48px;height:48px;
+  border-radius:14px;
+  background:var(--orange-soft);
+  border:1px solid #f7d7c4;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  margin-bottom:14px;
+}
+.ap-card h3{
+  font-size:15.5px;color:var(--navy);font-weight:800;
+  margin-bottom:7px;line-height:1.3;
+}
+.ap-card p{font-size:13px;color:var(--gray);line-height:1.6;}
+
+/* ==================== COMO FUNCIONA ==================== */
+.etapas{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:16px;max-width:1040px;margin:0 auto;
+}
+.etapa{
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:24px 20px 22px;
+  transition:all .24s var(--ease);
+  position:relative;
+}
+.etapa:hover{
+  border-color:#f2b28f;
+  transform:translateY(-3px);
+  box-shadow:var(--shadow-md);
+}
+.etapa-num{
+  width:44px;height:44px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--orange),var(--orange-2));
+  color:var(--white);
+  font-size:18px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+  box-shadow:0 5px 16px rgba(242,101,34,.26);
+}
+.etapa h3{
+  font-size:14.5px;color:var(--navy);font-weight:800;
+  margin-bottom:7px;line-height:1.3;
+}
+.etapa p{font-size:12.5px;color:var(--gray);line-height:1.6;}
+
+/* ==================== PREÇO ==================== */
+.preco-wrap{
+  max-width:820px;margin:0 auto;
+  display:grid;grid-template-columns:1.15fr 1fr;
+  gap:0;
+  border-radius:var(--r-xl);
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  border:1.5px solid var(--border);
+}
+.preco-principal{
+  background:linear-gradient(140deg,var(--navy) 0%,var(--navy-2) 100%);
+  color:var(--white);
+  padding:38px 34px;
+  position:relative;
+  overflow:hidden;
+}
+.preco-principal::before{
+  content:'';position:absolute;top:-80px;right:-80px;
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(242,101,34,.28),transparent 70%);
+  pointer-events:none;
+}
+.preco-principal > *{position:relative;z-index:1;}
+.pp-tag{
+  display:inline-block;
+  background:rgba(242,101,34,.2);
+  border:1px solid rgba(242,101,34,.45);
+  color:var(--orange-2);
+  font-size:10.5px;font-weight:800;letter-spacing:.9px;
+  text-transform:uppercase;
+  padding:5px 13px;border-radius:var(--r-pill);
+  margin-bottom:16px;
+}
+.pp-titulo{
+  font-size:15px;font-weight:700;
+  color:rgba(255,255,255,.78);
+  margin-bottom:8px;line-height:1.4;
+}
+.pp-valor{
+  display:flex;align-items:baseline;gap:8px;
+  margin-bottom:6px;
+}
+.pp-valor .moeda{font-size:20px;font-weight:700;color:rgba(255,255,255,.7);}
+.pp-valor .num{
+  font-size:52px;font-weight:800;
+  letter-spacing:-2.5px;line-height:.95;
+  color:var(--orange-2);
+}
+.pp-valor .periodo{font-size:16px;font-weight:700;color:rgba(255,255,255,.72);}
+.pp-desc{
+  font-size:13px;color:rgba(255,255,255,.75);
+  line-height:1.6;margin-bottom:22px;
+  max-width:320px;
+}
+.pp-lista{
+  list-style:none;
+  display:flex;flex-direction:column;gap:8px;
+  margin-bottom:24px;
+}
+.pp-lista li{
+  display:flex;align-items:flex-start;gap:9px;
+  font-size:13px;color:rgba(255,255,255,.88);
+  line-height:1.5;
+}
+.pp-lista li::before{
+  content:'✓';
+  color:var(--green);
+  font-weight:800;flex-shrink:0;
+  font-size:14px;line-height:1.4;
+}
+.pp-cta{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;
+  background:var(--orange);color:var(--white);
+  padding:15px 26px;border-radius:var(--r-md);
+  font-weight:800;font-size:15px;
+  border:none;cursor:pointer;
+  transition:all .22s var(--ease);
+  box-shadow:0 6px 20px rgba(242,101,34,.36);
+}
+.pp-cta:hover{
+  background:var(--orange-2);
+  transform:translateY(-2px);
+  box-shadow:0 10px 28px rgba(242,101,34,.46);
+}
+.preco-secundario{
+  background:var(--white);
+  padding:38px 32px;
+  display:flex;flex-direction:column;justify-content:center;
+  gap:18px;
+}
+.ps-bloco{border-bottom:1px dashed var(--border);padding-bottom:18px;}
+.ps-bloco:last-child{border-bottom:none;padding-bottom:0;}
+.ps-titulo{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.7px;
+  color:var(--orange);
+  margin-bottom:7px;
+}
+.ps-txt{font-size:13px;color:#3d4856;line-height:1.65;}
+.ps-txt strong{color:var(--navy);font-weight:800;}
+
+/* ==================== AVALIAÇÕES ==================== */
+.avaliacoes{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:18px;max-width:820px;margin:0 auto;
+}
+.aval{
+  background:var(--white);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:24px 22px;
+  box-shadow:var(--shadow-xs);
+  transition:all .24s var(--ease);
+  position:relative;
+}
+.aval:hover{border-color:#f2b28f;box-shadow:var(--shadow-sm);}
+.aval::before{
+  content:'"';
+  position:absolute;top:8px;right:18px;
+  font-size:56px;font-weight:900;
+  color:rgba(242,101,34,.09);
+  line-height:1;font-family:Georgia,serif;
+  pointer-events:none;
+}
+.aval-stars{color:var(--gold);font-size:14px;letter-spacing:1px;margin-bottom:10px;}
+.aval-txt{
+  font-size:14px;color:var(--gray);
+  font-style:italic;line-height:1.65;
+  margin-bottom:14px;position:relative;z-index:1;
+}
+.aval-nome{font-weight:800;color:var(--navy);font-size:14px;margin-bottom:2px;}
+.aval-tag{
+  font-size:11.5px;color:var(--gray-muted);font-weight:600;
+  display:inline-flex;align-items:center;gap:5px;
+}
+
+/* ==================== FAQ — CORRIGIDO ==================== */
+.faq-lista{max-width:760px;margin:0 auto;}
+
+.faq-item{
+  border-bottom:1px solid var(--border);
+  background:transparent;
+}
+
+/* Summary: mantém comportamento nativo de clique */
+.faq-item summary{
+  list-style:none;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:20px 4px;
+  cursor:pointer;
+  font-size:15px;
+  font-weight:700;
+  color:var(--navy);
+  transition:color .2s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.faq-item summary::-webkit-details-marker{display:none;}
+.faq-item summary::marker{content:'';}
+
+/* O sinal +/− é decorativo e NÃO intercepta cliques */
+.faq-item summary::after{
+  content:'+';
+  font-size:22px;
+  font-weight:400;
+  color:var(--orange);
+  transition:transform .25s var(--ease);
+  line-height:1;
+  flex-shrink:0;
+  pointer-events:none;
+  user-select:none;
+}
+.faq-item[open] summary::after{content:'−';}
+.faq-item summary:hover{color:var(--orange);}
+
+.faq-item .faq-resp{
+  padding:0 4px 20px;
+  font-size:14px;
+  color:#3d4856;
+  line-height:1.75;
+  animation:faqAbre .22s var(--ease);
+}
+.faq-item .faq-resp strong{color:var(--navy);font-weight:800;}
+
+@keyframes faqAbre{
+  from{opacity:0;transform:translateY(-4px);}
+  to{opacity:1;transform:none;}
+}
+
+/* ==================== CTA FINAL ==================== */
+.cta-final{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+  color:var(--white);text-align:center;
+  padding:64px 0;
+  position:relative;overflow:hidden;
+}
+.cta-final::before{
+  content:'';position:absolute;bottom:-140px;left:-120px;
+  width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(242,101,34,.18),transparent 70%);
+  pointer-events:none;
+}
+.cta-final .container{position:relative;z-index:1;}
+.cta-final h2{
+  color:var(--white);font-size:clamp(24px,3vw,34px);
+  font-weight:800;letter-spacing:-.6px;margin-bottom:12px;
+}
+.cta-final p{
+  color:rgba(255,255,255,.88);
+  max-width:580px;margin:0 auto 30px;
+  font-size:15.5px;line-height:1.65;
+}
+.cta-final .acoes{
+  display:flex;justify-content:center;gap:14px;flex-wrap:wrap;
+}
+.cta-final .btn{font-size:16px;padding:17px 34px;}
+
+/* ==================== FOOTER ==================== */
+.site-footer{
+  background:var(--navy-deep);color:rgba(255,255,255,.75);
+  padding:48px 20px 26px;
+}
+.site-footer .footer-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:32px;
+}
+.site-footer h4{
+  color:var(--white);font-size:14.5px;font-weight:800;margin-bottom:14px;
+}
+.site-footer p,.site-footer a{
+  font-size:13px;color:rgba(255,255,255,.7);
+  line-height:1.85;display:block;
+}
+.site-footer a{transition:color .2s;}
+.site-footer a:hover{color:var(--orange-2);}
+.site-footer .footer-bottom{
+  max-width:1100px;margin:32px auto 0;
+  border-top:1px solid rgba(255,255,255,.12);
+  padding-top:20px;text-align:center;font-size:12px;
+  color:rgba(255,255,255,.45);
+}
+
+/* ==================== WHATSAPP FLUTUANTE ==================== */
+.wa-float{
+  position:fixed;bottom:24px;right:24px;
+  width:58px;height:58px;border-radius:50%;
+  background:var(--green);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 24px rgba(37,211,102,.42);
+  z-index:200;
+  transition:transform .25s var(--ease),background .25s;
+}
+.wa-float:hover{
+  transform:scale(1.08);
+  background:#1fb959;
+  box-shadow:0 8px 30px rgba(37,211,102,.55);
+}
+.wa-float svg{width:30px;height:30px;fill:var(--white);}
+
+/* ==================== RESPONSIVO ==================== */
+@media(max-width:1024px){
+  header{padding:16px 0 18px;}
+  .header-inner{min-height:56px;gap:14px;}
+  .logo img{width:48px;height:48px;}
+  .logo-text{font-size:23px;}
+  .header-nav{gap:16px;}
+  .header-nav a{font-size:12.5px;}
+  .aprende-grid{grid-template-columns:repeat(2,1fr);}
+  .paraquem-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+@media(max-width:940px){
+  .header-nav{display:none;}
+  .etapas{grid-template-columns:repeat(2,1fr);}
+  .preco-wrap{grid-template-columns:1fr;max-width:540px;}
+  .preco-principal{padding:34px 28px;}
+  .preco-secundario{padding:32px 28px;}
+}
+
+@media(max-width:820px){
+  header{padding:14px 0 16px;}
+  .header-inner{min-height:52px;gap:12px;}
+  .logo img{width:44px;height:44px;}
+  .logo-text{font-size:21px;}
+  .topbar{font-size:11.5px;padding:8px 12px;}
+  .topbar .tp-sep{margin:0 6px;}
+  .hero{padding:42px 0 40px;}
+  .banner-section{padding:0 0 40px;}
+  .bn-arrow{opacity:1;width:36px;height:36px;font-size:18px;}
+}
+
+@media(max-width:640px){
+  .container{padding:0 16px;}
+  .hero{padding:32px 0 30px;}
+  .hero h1{font-size:clamp(23px,6.5vw,30px);}
+  .hero-sub{font-size:14.5px;}
+  .hero-preco{padding:10px 20px;margin-bottom:22px;}
+  .hero-preco .hp-valor{font-size:22px;}
+  .hero-preco .hp-periodo{font-size:12px;}
+  .chip{font-size:11.5px;padding:6px 13px;}
+  .hero-ctas{flex-direction:column;}
+  .hero-ctas .btn{width:100%;}
+  .secao{padding:42px 0;}
+  .secao-head h2{font-size:22px;}
+  .secao-head p{font-size:14px;}
+  .paraquem-grid{grid-template-columns:1fr;gap:10px;}
+  .pq-card{padding:16px 14px;}
+  .aprende-grid{grid-template-columns:1fr;gap:12px;}
+  .ap-card{padding:20px 18px;}
+  .etapas{grid-template-columns:1fr;gap:12px;}
+  .etapa{padding:20px 18px;}
+  .preco-wrap{max-width:100%;}
+  .preco-principal{padding:28px 22px;}
+  .pp-valor .num{font-size:44px;}
+  .preco-secundario{padding:26px 22px;gap:16px;}
+  .avaliacoes{grid-template-columns:1fr;gap:12px;}
+  .faq-item summary{padding:18px 4px;font-size:14.5px;}
+  .faq-item .faq-resp{font-size:13.5px;}
+  .cta-final{padding:44px 0;}
+  .cta-final .btn{width:100%;}
+  .site-footer{padding:36px 16px 22px;}
+  .wa-float{width:52px;height:52px;bottom:16px;right:16px;}
+  .wa-float svg{width:26px;height:26px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+  html{scroll-behavior:auto;}
+}
+
+@media print{
+  header,.topbar,.hero,.banner-section,.cta-final,.site-footer,.wa-float{display:none !important;}
+  .secao{padding:20px 0;}
+}
 </style>
-<meta property="og:type" content="website">
-<meta property="og:title" content="Meu 3D Labs | Consultoria Técnica para Impressoras 3D Creality">
-<meta property="og:description" content="Impressão 3D personalizada em Nilópolis/RJ. Peças exclusivas, assistência Creality e consultoria.">
-<meta property="og:image" content="https://meu3dlabs.com.br/img/logo/logo.png">
-<meta property="og:site_name" content="Meu 3D Labs">
 </head>
 <body>
+
+<!-- ==================== TOPBAR ==================== -->
+<div class="topbar">
+  <span class="tp-item">🚚 Envio para todo o Brasil</span>
+  <span class="tp-sep">·</span>
+  <span class="tp-item">
+    <img src="img/logo/pix.png" alt="Pix" class="tp-ico">
+    Pix com <b>5% OFF</b>
+  </span>
+  <span class="tp-sep">·</span>
+  <span class="tp-item">
+    <img src="img/logo/cartao.png" alt="Cartão" class="tp-ico tp-ico-cartao">
+    Cartão em até <b>12x</b>
+  </span>
+</div>
+
+<!-- ==================== HEADER ==================== -->
 <header>
-<div class="container header-inner">
-<a href="index.html" class="logo">
-<img src="img/logo/logo.png" alt="Logo Meu 3D Labs">
-<span class="logo-text">Meu<span>3D</span>Labs</span>
-</a>
-<a class="back-link" href="index.html">← Voltar ao site</a>
-</div>
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <img src="img/logo/logo.png" alt="Logo Meu 3D Labs">
+      <span class="logo-text">Meu<span>3D</span>Labs</span>
+    </a>
+    <nav class="header-nav">
+      <a href="index.html">Início</a>
+      <a href="loja.html">Loja</a>
+      <a href="modelagem-3d.html">Modelagem 3D</a>
+      <a href="assistencia.html">Assistência</a>
+      <a href="consultoria.html" class="atual">Consultoria</a>
+      <a href="enviar-projeto.html">Enviar projeto</a>
+      <a href="acompanhar.html">Rastreio</a>
+    </nav>
+  </div>
 </header>
+
+<!-- ==================== HERO ==================== -->
 <section class="hero">
-<div class="container">
-<h1>Consultoria 3D <span>para Iniciantes</span></h1>
-<p>Uma aula particular completa, por videochamada, para você dominar sua impressora de uma vez por todas: do fatiador à primeira impressão, no seu ritmo e sem depender de ninguém.</p>
-<div class="hero-chips">
-<span class="chip">Aula particular</span>
-<span class="chip">Videochamada</span>
-<span class="chip">No seu ritmo</span>
-<span class="chip">Suporte direto</span>
-</div>
-</div>
-<div class="container">
-<div class="banner-carousel" id="bnc" aria-roledescription="carrossel">
-<div class="bn-slides" id="bncTrack">
-<div class="bn-slide"><img src="img/consultorias/banner-servicos.png" alt="Assistência online e consultoria especializada Meu 3D Labs"></div>
-<div class="bn-slide"><img src="img/consultorias/banner-servicos2.png" alt="Formas de pagamento, retirada local em Nilópolis e entrega para todo o Brasil"></div>
-</div>
-<button class="bn-arrow bn-prev" onclick="bnGo(-1)" aria-label="Banner anterior">‹</button>
-<button class="bn-arrow bn-next" onclick="bnGo(1)" aria-label="Próximo banner">›</button>
-<div class="bn-dots" id="bncDots"></div>
-</div>
-<div class="hero-benefits">
-<div class="hb-item"><span>🎯</span>Foco 100% no seu nível</div>
-<div class="hb-item"><span>🕒</span>Agende no seu horário</div>
-<div class="hb-item"><span>💬</span>Tire dúvidas pelo WhatsApp</div>
-<div class="hb-item"><span>⭐</span>Atendimento 5 estrelas no Google</div>
-</div>
-</div>
+  <div class="container hero-inner">
+    <span class="hero-eyebrow">💡 Consultoria 3D</span>
+    <h1>Aula particular <span>com especialista</span></h1>
+    <p class="hero-sub">Uma hora de videochamada, foco total na <strong>sua impressora</strong> e nas <strong>suas dúvidas</strong>. Do fatiador à primeira impressão — você sai com a máquina funcionando e sabe usar sozinho.</p>
+
+    <div class="hero-preco">
+      <span class="hp-valor">R$ <strong>100</strong></span>
+      <span class="hp-periodo">/ hora de atendimento</span>
+    </div>
+
+    <div class="hero-chips">
+      <span class="chip">👤 Individual</span>
+      <span class="chip">📹 Videochamada</span>
+      <span class="chip">🎯 No seu nível</span>
+      <span class="chip">⭐ 5.0 no Google</span>
+    </div>
+
+    <div class="hero-ctas">
+      <a class="btn btn-wa" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20agendar%20uma%20consultoria%203D." target="_blank" rel="noopener">💬 Agendar no WhatsApp</a>
+      <a class="btn btn-outline" href="#preco">Ver como funciona</a>
+    </div>
+  </div>
 </section>
-<section>
-<div class="container">
-<h2>Para quem é a consultoria</h2>
-<p class="subtitle">Se você se identifica com qualquer uma destas situações, a consultoria é para você.</p>
-<ul class="list-check">
-<li>Comprei minha primeira impressora 3D e não sei por onde começar</li>
-<li>Já imprimo, mas as peças saem com defeito e eu não sei o motivo</li>
-<li>Quero calibrar minha máquina e entender as configurações do fatiador</li>
-<li>Quero escolher o material certo para cada tipo de peça</li>
-<li>Quero imprimir com mais qualidade, gastando menos tempo e material</li>
-<li>Quero aprender com acompanhamento de quem trabalha com impressão 3D todos os dias</li>
-</ul>
-</div>
+
+<!-- ==================== CARROSSEL DE BANNERS ==================== -->
+<section class="banner-section">
+  <div class="container">
+    <div class="banner-carousel" id="bnc" aria-roledescription="carrossel">
+      <div class="bn-slides" id="bncTrack">
+        <div class="bn-slide"><img src="img/consultorias/banner-servicos.png" alt="Assistência online e consultoria especializada Meu 3D Labs"></div>
+        <div class="bn-slide"><img src="img/consultorias/consultoria3.png" alt="Consultoria 3D Meu 3D Labs"></div>
+        <div class="bn-slide"><img src="img/consultorias/banner-servicos2.png" alt="Formas de pagamento, retirada local em Nilópolis e entrega para todo o Brasil"></div>
+      </div>
+      <button class="bn-arrow bn-prev" onclick="bnGo(-1)" aria-label="Banner anterior">‹</button>
+      <button class="bn-arrow bn-next" onclick="bnGo(1)" aria-label="Próximo banner">›</button>
+      <div class="bn-dots" id="bncDots"></div>
+    </div>
+  </div>
 </section>
-<section style="background:var(--light-2);">
-<div class="container">
-<h2>O que você aprende</h2>
-<p class="subtitle">Conteúdo prático, direto ao ponto, adaptado ao seu nível e à sua impressora.</p>
-<div class="cards-grid">
-<div class="card"><div class="ic">⚙️</div><h3>Fatiador</h3><p>Configuração completa do seu fatiador: perfil, camadas, suportes e preenchimento.</p></div>
-<div class="card"><div class="ic">🌡️</div><h3>Temperaturas</h3><p>Configurações ideais de temperatura para cada tipo de filamento.</p></div>
-<div class="card"><div class="ic">🖨️</div><h3>Primeira impressão</h3><p>Do modelo pronto à primeira impressão, com segurança e sem desperdício.</p></div>
-<div class="card"><div class="ic">📐</div><h3>Calibração</h3><p>Nivelamento da mesa e ajustes de precisão para peças bem acabadas.</p></div>
-<div class="card"><div class="ic">🧵</div><h3>Materiais</h3><p>PLA, PETG, ABS e TPU: qual usar em cada projeto e como armazenar.</p></div>
-<div class="card"><div class="ic">🔧</div><h3>Correção de falhas</h3><p>Primeira camada, stringing, warping e os erros mais comuns de iniciante.</p></div>
-</div>
-</div>
+
+<!-- ==================== PARA QUEM É ==================== -->
+<section class="secao">
+  <div class="container">
+    <div class="secao-head">
+      <span class="secao-tag">É para você?</span>
+      <h2>Se você se identifica com algum item</h2>
+      <p>Não importa o seu nível — se você tem uma impressora 3D e quer deixar de depender de tutoriais no YouTube, a consultoria resolve.</p>
+    </div>
+
+    <div class="paraquem-grid">
+      <div class="pq-card">
+        <span class="pq-ico">✓</span>
+        <span class="pq-txt">Comprei minha primeira impressora e não sei por onde começar</span>
+      </div>
+      <div class="pq-card">
+        <span class="pq-ico">✓</span>
+        <span class="pq-txt">Já imprimo, mas as peças saem com defeito e eu não sei o motivo</span>
+      </div>
+      <div class="pq-card">
+        <span class="pq-ico">✓</span>
+        <span class="pq-txt">Quero calibrar a máquina e entender as configurações do fatiador</span>
+      </div>
+      <div class="pq-card">
+        <span class="pq-ico">✓</span>
+        <span class="pq-txt">Quero escolher o filamento certo para cada tipo de peça</span>
+      </div>
+      <div class="pq-card">
+        <span class="pq-ico">✓</span>
+        <span class="pq-txt">Quero imprimir melhor, gastando menos tempo e material</span>
+      </div>
+      <div class="pq-card">
+        <span class="pq-ico">✓</span>
+        <span class="pq-txt">Quero aprender com quem trabalha com impressão 3D todos os dias</span>
+      </div>
+    </div>
+  </div>
 </section>
-<section>
-<div class="container">
-<h2>Como funciona</h2>
-<p class="subtitle">Simples: você agenda, a gente se encontra por vídeo e sai com tudo funcionando.</p>
-<div class="steps">
-<div class="step"><div class="step-num">1</div><h4>Chame no WhatsApp</h4><p>Conte seu objetivo e o modelo da sua impressora.</p></div>
-<div class="step"><div class="step-num">2</div><h4>Combine a sessão</h4><p>Definimos horário e a duração ideal para você.</p></div>
-<div class="step"><div class="step-num">3</div><h4>Aula ao vivo</h4><p>Videochamada com acompanhamento passo a passo.</p></div>
-<div class="step"><div class="step-num">4</div><h4>Imprima sozinho</h4><p>Sai da aula com confiança para imprimir sem ajuda.</p></div>
-</div>
-</div>
+
+<!-- ==================== O QUE VOCÊ APRENDE ==================== -->
+<section class="secao secao-cinza">
+  <div class="container">
+    <div class="secao-head">
+      <span class="secao-tag">Conteúdo</span>
+      <h2>O que você domina ao final</h2>
+      <p>Conteúdo prático, direto ao ponto, adaptado ao seu nível e à sua impressora.</p>
+    </div>
+
+    <div class="aprende-grid">
+      <div class="ap-card">
+        <div class="ap-ico">⚙️</div>
+        <h3>Fatiador</h3>
+        <p>Configuração completa do seu fatiador: perfil, camadas, suportes e preenchimento.</p>
+      </div>
+      <div class="ap-card">
+        <div class="ap-ico">🌡️</div>
+        <h3>Temperaturas</h3>
+        <p>Configurações ideais de temperatura para cada tipo de filamento.</p>
+      </div>
+      <div class="ap-card">
+        <div class="ap-ico">🧊</div>
+        <h3>Primeira impressão</h3>
+        <p>Do modelo pronto à primeira impressão, com segurança e sem desperdício.</p>
+      </div>
+      <div class="ap-card">
+        <div class="ap-ico">📐</div>
+        <h3>Calibração</h3>
+        <p>Nivelamento da mesa e ajustes de precisão para peças bem acabadas.</p>
+      </div>
+      <div class="ap-card">
+        <div class="ap-ico">🧵</div>
+        <h3>Materiais</h3>
+        <p>PLA, PETG, ABS e TPU: qual usar em cada projeto e como armazenar.</p>
+      </div>
+      <div class="ap-card">
+        <div class="ap-ico">🔧</div>
+        <h3>Correção de falhas</h3>
+        <p>Primeira camada, stringing, warping e os erros mais comuns de iniciante.</p>
+      </div>
+    </div>
+  </div>
 </section>
-<section>
-<div class="container">
-<div class="preco-box">
-<div class="valor">Valor <strong>sob consulta</strong></div>
-<p>Consultoria cobrada por hora de atendimento, com valor informado antes de agendar, sem surpresa. A quantidade de horas é definida conforme o seu nível e o seu objetivo.</p>
-</div>
-</div>
+
+<!-- ==================== COMO FUNCIONA ==================== -->
+<section class="secao">
+  <div class="container">
+    <div class="secao-head">
+      <span class="secao-tag">Passo a passo</span>
+      <h2>Como funciona a sessão</h2>
+      <p>Simples: você agenda, a gente se encontra por vídeo e você sai com a máquina funcionando.</p>
+    </div>
+
+    <div class="etapas">
+      <div class="etapa">
+        <div class="etapa-num">1</div>
+        <h3>Chame no WhatsApp</h3>
+        <p>Conte seu objetivo e o modelo da sua impressora.</p>
+      </div>
+      <div class="etapa">
+        <div class="etapa-num">2</div>
+        <h3>Combine a sessão</h3>
+        <p>Definimos horário e a duração ideal para você.</p>
+      </div>
+      <div class="etapa">
+        <div class="etapa-num">3</div>
+        <h3>Aula ao vivo</h3>
+        <p>Videochamada com acompanhamento passo a passo.</p>
+      </div>
+      <div class="etapa">
+        <div class="etapa-num">4</div>
+        <h3>Imprima sozinho</h3>
+        <p>Sai da aula com confiança para imprimir sem ajuda.</p>
+      </div>
+    </div>
+  </div>
 </section>
-<section style="background:var(--light);">
-<div class="container">
-<h2 style="text-align:center;">Quem já foi atendido</h2>
-<p class="subtitle" style="text-align:center;margin-left:auto;margin-right:auto;">Avaliações reais de clientes no Google.</p>
-<div class="avaliacoes">
-<div class="aval">
-<div class="stars">★★★★★</div>
-<p>"Consegui resolver o problema da minha impressora 3D. Explicação clara."</p>
-<div class="nome">Marcos V.</div>
-<div class="tag">Avaliação no Google</div>
-</div>
-<div class="aval">
-<div class="stars">★★★★★</div>
-<p>"Entrei em contato e obtive atendimento rapidamente. Me deram a orientação certa para resolver."</p>
-<div class="nome">Aruana C.</div>
-<div class="tag">Avaliação no Google</div>
-</div>
-</div>
-</div>
+
+<!-- ==================== PREÇO ==================== -->
+<section class="secao secao-cinza" id="preco">
+  <div class="container">
+    <div class="secao-head">
+      <span class="secao-tag">Investimento</span>
+      <h2>Quanto custa</h2>
+      <p>Sem pacote mínimo, sem letras miúdas. Você paga pela hora que usar.</p>
+    </div>
+
+    <div class="preco-wrap">
+      <div class="preco-principal">
+        <span class="pp-tag">Sessão padrão</span>
+        <div class="pp-titulo">Aula particular com especialista</div>
+        <div class="pp-valor">
+          <span class="moeda">R$</span>
+          <span class="num">100</span>
+          <span class="periodo">/ hora</span>
+        </div>
+        <p class="pp-desc">Uma hora de aula particular por videochamada, focada no que você precisa resolver.</p>
+
+        <ul class="pp-lista">
+          <li>Atendimento individual — foco total em você</li>
+          <li>Videochamada com acompanhamento na sua máquina</li>
+          <li>Conteúdo adaptado ao seu nível</li>
+          <li>Tira dúvidas ao vivo durante a sessão</li>
+          <li>Precisa de mais? Agenda outra hora quando quiser</li>
+        </ul>
+
+        <a class="pp-cta" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20agendar%201%20hora%20de%20consultoria%203D%20(R%24%20100)." target="_blank" rel="noopener">
+          💬 Agendar 1 hora — R$ 100
+        </a>
+      </div>
+
+      <div class="preco-secundario">
+        <div class="ps-bloco">
+          <div class="ps-titulo">💳 Pagamento</div>
+          <p class="ps-txt">Pix (com desconto) ou cartão. O valor é <strong>combinado antes de agendar</strong> e confirmado no WhatsApp.</p>
+        </div>
+        <div class="ps-bloco">
+          <div class="ps-titulo">⏱️ Duração</div>
+          <p class="ps-txt">1 hora é o suficiente para resolver a maioria dos casos. Casos complexos podem precisar de mais tempo — <strong>você decide</strong> se agenda outra sessão.</p>
+        </div>
+        <div class="ps-bloco">
+          <div class="ps-titulo">🎯 Formato</div>
+          <p class="ps-txt">Videochamada via WhatsApp ou outra plataforma combinada. Você fica na sua máquina, o especialista orienta em tempo real.</p>
+        </div>
+        <div class="ps-bloco">
+          <div class="ps-titulo">📅 Agendamento</div>
+          <p class="ps-txt">Horários definidos no WhatsApp, conforme a sua disponibilidade e a agenda da Meu 3D Labs.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
-<section>
-<div class="container">
-<h2>Perguntas frequentes</h2>
-<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Preciso ter conhecimento de impressão 3D?</div><div class="faq-a"><p><strong>Não.</strong> A consultoria é feita para iniciantes. O conteúdo e o ritmo se adaptam ao seu nível.</p></div></div>
-<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">A consultoria é individual?</div><div class="faq-a"><p><strong>Sim.</strong> A aula é particular, 100% focada na sua impressora, no seu objetivo e nas suas dúvidas.</p></div></div>
-<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Onde acontece a sessão?</div><div class="faq-a"><p>Por <strong>videochamada</strong> (WhatsApp ou outra plataforma combinada). Você acompanha da sua máquina, com a minha orientação em tempo real.</p></div></div>
-<div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">E se eu precisar de mais de uma sessão?</div><div class="faq-a"><p>Sem problema. A consultoria é cobrada por hora e você pode agendar novas sessões quando quiser, sempre com valor informado antes.</p></div></div>
-</div>
+
+<!-- ==================== AVALIAÇÕES ==================== -->
+<section class="secao">
+  <div class="container">
+    <div class="secao-head">
+      <span class="secao-tag">Prova social</span>
+      <h2>Quem já foi atendido</h2>
+      <p>Avaliações reais de clientes no Google.</p>
+    </div>
+
+    <div class="avaliacoes">
+      <div class="aval">
+        <div class="aval-stars">★★★★★</div>
+        <p class="aval-txt">"Consegui resolver o problema da minha impressora 3D. Explicação clara."</p>
+        <div class="aval-nome">Marcos V.</div>
+        <div class="aval-tag">✓ Avaliação no Google</div>
+      </div>
+      <div class="aval">
+        <div class="aval-stars">★★★★★</div>
+        <p class="aval-txt">"Entrei em contato e obtive atendimento rapidamente. Me deram a orientação certa para resolver."</p>
+        <div class="aval-nome">Aruana C.</div>
+        <div class="aval-tag">✓ Avaliação no Google</div>
+      </div>
+    </div>
+  </div>
 </section>
+
+<!-- ==================== FAQ ==================== -->
+<section class="secao secao-cinza">
+  <div class="container">
+    <div class="secao-head">
+      <span class="secao-tag">Dúvidas</span>
+      <h2>Perguntas frequentes</h2>
+      <p>As dúvidas mais comuns antes de agendar.</p>
+    </div>
+
+    <div class="faq-lista">
+      <details class="faq-item">
+        <summary>Preciso ter conhecimento de impressão 3D?</summary>
+        <div class="faq-resp"><strong>Não.</strong> A consultoria é feita para iniciantes. O conteúdo e o ritmo se adaptam ao seu nível.</div>
+      </details>
+      <details class="faq-item">
+        <summary>A consultoria é individual?</summary>
+        <div class="faq-resp"><strong>Sim.</strong> A aula é particular, 100% focada na sua impressora, no seu objetivo e nas suas dúvidas.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Onde acontece a sessão?</summary>
+        <div class="faq-resp">Por <strong>videochamada</strong> (WhatsApp ou outra plataforma combinada). Você acompanha da sua máquina, com a orientação em tempo real.</div>
+      </details>
+      <details class="faq-item">
+        <summary>E se eu precisar de mais de uma sessão?</summary>
+        <div class="faq-resp">Sem problema. A consultoria é cobrada por hora e você pode agendar novas sessões quando quiser, sempre com valor informado antes.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Quem atende?</summary>
+        <div class="faq-resp">Um <strong>especialista da Meu 3D Labs</strong>. Quem faz a impressão, a modelagem e a assistência técnica do dia a dia — então resolve o que você está enfrentando porque já viveu aquilo.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Quando devo pagar?</summary>
+        <div class="faq-resp">O valor é combinado e pago antes da sessão — pelo Pix ou cartão. Assim garantimos seu horário na agenda e você não tem surpresa depois.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Serve para qualquer impressora?</summary>
+        <div class="faq-resp">A consultoria é focada em <strong>Creality</strong> (nossa especialidade), mas também atende outras marcas. Se tiver dúvida, chame no WhatsApp que confirmamos antes.</div>
+      </details>
+      <details class="faq-item">
+        <summary>E se eu precisar de modelagem depois?</summary>
+        <div class="faq-resp">A modelagem 3D é um serviço à parte, orçado separadamente. Mas o especialista pode te orientar sobre o que faz sentido no seu projeto — e você já terá o contato de quem executa.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CTA FINAL ==================== -->
 <section class="cta-final">
-<div class="container">
-<h2>Pronto para dominar sua impressora?</h2>
-<p>Agende sua consultoria e saia da aula imprimindo com confiança.</p>
-<a class="btn btn-wa" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20a%20consultoria%203D.">Agendar consultoria</a>
-</div>
+  <div class="container">
+    <h2>Pronto para dominar sua impressora?</h2>
+    <p>Agende sua hora com um especialista e saia da sessão imprimindo com confiança — sem depender de vídeo no YouTube.</p>
+    <div class="acoes">
+      <a class="btn btn-wa" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20agendar%20uma%20consultoria%203D." target="_blank" rel="noopener">💬 Agendar no WhatsApp</a>
+      <a class="btn btn-outline" href="enviar-projeto.html">Ver outros serviços</a>
+    </div>
+  </div>
 </section>
-<footer>
-<div class="container">
-<div class="footer-bottom">
-<p>© 2026 Meu 3D Labs · Todos os direitos reservados</p>
-<div class="footer-links">
-<a href="index.html">Início</a>
-<a href="assistencia.html">Assistência</a>
-<a href="enviar-projeto.html">Orçamento</a>
-</div>
-</div>
-</div>
-</footer>
-<script>
-function toggleFaq(el){var item=el.parentElement;var isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(f){f.classList.remove('open');});if(!isOpen){item.classList.add('open');}}
-/* ===== CARROSSEL DE BANNERS ===== */
-var bnIdx=0,bnTotal=0,bnTimer=null;
-function bnRender(){document.getElementById('bncTrack').style.transform='translateX(-'+bnIdx*100+'%)';document.querySelectorAll('.bn-dot').forEach(function(d,i){d.classList.toggle('ativo',i===bnIdx);});}
-function bnGo(d){bnIdx=(bnIdx+d+bnTotal)%bnTotal;bnRender();bnReinicia();}
-function bnIr(i){bnIdx=i;bnRender();bnReinicia();}
-function bnAuto(){bnTimer=setInterval(function(){bnIdx=(bnIdx+1)%bnTotal;bnRender();},5000);}
-function bnReinicia(){clearInterval(bnTimer);bnAuto();}
-(function(){
-var car=document.getElementById('bnc');
-if(!car)return;
-bnTotal=car.querySelectorAll('.bn-slide').length;
-var dots=document.getElementById('bncDots');
-for(var i=0;i<bnTotal;i++){
-var b=document.createElement('button');
-b.className='bn-dot'+(i===0?' ativo':'');
-b.setAttribute('data-i',i);
-b.setAttribute('aria-label','Ir para o banner '+(i+1));
-b.onclick=function(){bnIr(parseInt(this.getAttribute('data-i')));};
-dots.appendChild(b);
-}
-var x0=null;
-car.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;clearInterval(bnTimer);},{passive:true});
-car.addEventListener('touchend',function(e){
-if(x0===null)return;
-var dx=e.changedTouches[0].clientX-x0;
-if(Math.abs(dx)>40){bnIdx=(bnIdx+(dx<0?1:-1)+bnTotal)%bnTotal;bnRender();}
-bnReinicia();x0=null;
-},{passive:true});
-car.addEventListener('mouseenter',function(){clearInterval(bnTimer);});
-car.addEventListener('mouseleave',function(){bnReinicia();});
-bnAuto();
-})();
-</script>
+
+<!-- ==================== FOOTER ==================== -->
 <footer class="site-footer">
   <div class="footer-inner">
     <div>
@@ -250,17 +1036,136 @@ bnAuto();
     <div>
       <h4>Navegação</h4>
       <a href="index.html">🏠 Início</a>
-      <a href="loja.html">🛒 Loja</a>
+      <a href="loja.html">🛍️ Loja</a>
       <a href="acompanhar.html">📦 Acompanhar pedido</a>
       <a href="avaliacoes.html">⭐ Avaliações</a>
     </div>
     <div>
+      <h4>Serviços</h4>
+      <a href="assistencia.html">🔧 Assistência Creality</a>
+      <a href="consultoria.html">💡 Consultoria 3D</a>
+      <a href="modelagem-3d.html">✨ Modelagem 3D</a>
+      <a href="enviar-projeto.html">📩 Enviar projeto</a>
+    </div>
+    <div>
       <h4>Atendimento</h4>
-      <a href="https://wa.me/5521966594803" target="_blank">💬 WhatsApp (21) 96659-4803</a>
+      <a href="https://wa.me/5521966594803" target="_blank" rel="noopener">💬 WhatsApp (21) 96659-4803</a>
       <p>Nilópolis · Rio de Janeiro · RJ</p>
     </div>
   </div>
   <div class="footer-bottom">© 2026 Meu 3D Labs · Todos os direitos reservados</div>
 </footer>
+
+<!-- ==================== WHATSAPP FLUTUANTE ==================== -->
+<a class="wa-float" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20a%20consultoria%203D." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>
+</a>
+
+<script>
+/* ============================================================
+   MEU 3D LABS — consultoria.html
+   JS: carrossel de banners
+   ============================================================ */
+
+/* ==================== CARROSSEL DE BANNERS ==================== */
+var bnIdx = 0, bnTotal = 0, bnTimer = null;
+
+function bnRender(){
+  var track = document.getElementById('bncTrack');
+  if(track) track.style.transform = 'translateX(-' + (bnIdx * 100) + '%)';
+  document.querySelectorAll('.bn-dot').forEach(function(d, i){
+    d.classList.toggle('ativo', i === bnIdx);
+  });
+}
+
+function bnGo(dir){
+  bnIdx = (bnIdx + dir + bnTotal) % bnTotal;
+  bnRender();
+  bnReinicia();
+}
+
+function bnIr(i){
+  bnIdx = i;
+  bnRender();
+  bnReinicia();
+}
+
+function bnAuto(){
+  bnTimer = setInterval(function(){
+    bnIdx = (bnIdx + 1) % bnTotal;
+    bnRender();
+  }, 5000);
+}
+
+function bnReinicia(){
+  clearInterval(bnTimer);
+  bnAuto();
+}
+
+(function(){
+  var car = document.getElementById('bnc');
+  if(!car) return;
+
+  var slides = car.querySelectorAll('.bn-slide');
+  bnTotal = slides.length;
+  if(bnTotal <= 1) return;
+
+  var dots = document.getElementById('bncDots');
+  for(var i = 0; i < bnTotal; i++){
+    var b = document.createElement('button');
+    b.className = 'bn-dot' + (i === 0 ? ' ativo' : '');
+    b.setAttribute('data-i', i);
+    b.setAttribute('aria-label', 'Ir para o banner ' + (i + 1));
+    b.onclick = function(){
+      bnIr(parseInt(this.getAttribute('data-i'), 10));
+    };
+    if(dots) dots.appendChild(b);
+  }
+
+  var x0 = null;
+  car.addEventListener('touchstart', function(e){
+    x0 = e.touches[0].clientX;
+    clearInterval(bnTimer);
+  }, { passive: true });
+
+  car.addEventListener('touchend', function(e){
+    if(x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if(Math.abs(dx) > 40){
+      bnIdx = (bnIdx + (dx < 0 ? 1 : -1) + bnTotal) % bnTotal;
+      bnRender();
+    }
+    bnReinicia();
+    x0 = null;
+  }, { passive: true });
+
+  car.addEventListener('mouseenter', function(){ clearInterval(bnTimer); });
+  car.addEventListener('mouseleave', function(){ bnReinicia(); });
+
+  bnAuto();
+})();
+
+/* ==================== FAQ — fecha os outros ao abrir ==================== */
+/* Usa <details> nativo. O JS só garante que apenas UM fique aberto.
+   Guarda com setTimeout para não cancelar a abertura pelo próprio
+   evento toggle do item clicado. */
+(function(){
+  var itens = document.querySelectorAll('.faq-lista .faq-item');
+  if(!itens.length) return;
+
+  itens.forEach(function(item){
+    item.addEventListener('toggle', function(){
+      if(!this.open) return;
+      var self = this;
+      setTimeout(function(){
+        itens.forEach(function(outro){
+          if(outro !== self && outro.open) outro.open = false;
+        });
+      }, 0);
+    });
+  });
+})();
+</script>
+
 </body>
 </html>

@@ -1,5 +1,9 @@
 /* ===== Meu 3D Labs — loja/checkout: tela de finalização (dados, entrega, pagamento, cupom, modal) ===== */
 /* IMPORTANTE: carregar DEPOIS do loja-carrinho.js e ANTES do loja-pedido.js no loja.html */
+
+/* ================= API PIX ================= */
+var API_LOJA = 'https://meu3dlabs-backend.onrender.com/api/loja';
+
 /* ================= CUPONS (estrutura pronta) ================= */
 var CUPONS={
  'MEUPRIMEIRO3D10': {tipo:'porcentagem', valor:10}
@@ -8,6 +12,7 @@ var CUPONS={
  'M3D5': {tipo:'fixo', valor:5}
  */
 };
+
 /* ================= CHECKOUT ================= */
 function abrirCheckout(){
 if(totalCarrinho()<=0)return;
@@ -24,6 +29,7 @@ restaurarCupomUI();
 abrirModal();
 if(window.gtag)gtag('event','begin_checkout',{currency:'BRL',value:totalFinal()});
 }
+
 /* ===== Convite para cadastrar antes do checkout (visitante sem conta) ===== */
 function mostrarConviteCadastro(){
 document.getElementById('modalTitulo').textContent='🎁 Cadastre-se e ganhe 10% OFF';
@@ -38,16 +44,19 @@ document.getElementById('modalBody').innerHTML=
 +'</div>';
 abrirModal();
 }
+
 function criarContaDoConvite(){
 fecharModal();
 m3lRetomarCheckout=true;
 if(window.m3lAbrirCadastro){window.m3lAbrirCadastro();}
 }
+
 function continuarSemCadastro(){
 m3lSemCadastro=true;
 window.m3lCupomSugerido=null;
 abrirCheckout();
 }
+
 function etapaResumo(){
 var html='';
 html+='<div class="erro-box" id="erroBox"></div>';
@@ -89,7 +98,7 @@ html+='<div class="entrega-opcoes" id="entregaOpcoes">'
 html+='<div class="entrega-aviso">📦 <strong>Importante:</strong> fora do Rio de Janeiro, o pedido só é confirmado após o cálculo do frete e do prazo de envio. Vamos te passar o valor antes de qualquer pagamento.</div>';
 html+='<div class="etapa-titulo">Forma de pagamento</div>';
 html+='<div class="entrega-opcoes" id="pagamentoOpcoes">'
-+'<div class="entrega-op'+(pagamentoSel==='pix'?' sel':'')+'" onclick="selPagamento(\'pix\',this)"><input type="radio" name="pagamento" '+(pagamentoSel==='pix'?'checked':'')+'><div><div class="eo-titulo">PIX 💚</div><div class="eo-desc"><strong>5% de desconto</strong> — QR Code gerado na hora do pedido. Envie o comprovante no WhatsApp.</div></div></div>'
++'<div class="entrega-op'+(pagamentoSel==='pix'?' sel':'')+'" onclick="selPagamento(\'pix\',this)"><input type="radio" name="pagamento" '+(pagamentoSel==='pix'?'checked':'')+'><div><div class="eo-titulo">PIX 💚</div><div class="eo-desc"><strong>5% de desconto</strong> — QR Code gerado na hora. Seu pedido fica registrado e você acompanha pelo site.</div></div></div>'
 +'<div class="entrega-op'+(pagamentoSel==='cartao'?' sel':'')+'" onclick="selPagamento(\'cartao\',this)"><input type="radio" name="pagamento" '+(pagamentoSel==='cartao'?'checked':'')+'><div><div class="eo-titulo">Cartão de crédito 💳</div><div class="eo-desc">Até <strong>12x</strong> no checkout seguro do Mercado Pago. Sem o desconto do PIX.</div></div></div>'
 +'</div>';
 html+='<div id="horarioBlock" style="display:'+(entregaSel==='correios'?'none':'block')+';">'
@@ -116,11 +125,14 @@ html+='<textarea class="nota-field" id="notaPedido" placeholder="Ex: prefiro ret
 html+='<button class="btn-finalizar" onclick="gerarPedido()">Gerar meu pedido</button>';
 return html;
 }
+
 function guardarNome(el){clienteDados.nome=el.value;}
+
 function guardarFone(el){
   clienteDados.fone = el.value.replace(/\D/g, '');
   mascaraFone(el);
 }
+
 function mascaraFone(el){
   var d = el.value.replace(/\D/g, '').slice(0, 11);
   var v = '';
@@ -129,6 +141,7 @@ function mascaraFone(el){
   if (d.length > 6) v += '-' + d.slice(7, 11);
   el.value = v;
 }
+
 function selEntrega(v,el){
 entregaSel=v;
 document.querySelectorAll('#entregaOpcoes .entrega-op').forEach(function(o){o.classList.remove('sel');});
@@ -140,6 +153,7 @@ if(eb)eb.style.display=(v==='correios')?'block':'none';
 var hb=document.getElementById('horarioBlock');
 if(hb)hb.style.display=(v==='correios')?'none':'block';
 }
+
 /* ===== Seleção Pix / Cartão: troca o total na hora (5% só no PIX) ===== */
 function selPagamento(v,el){
 pagamentoSel=v;
@@ -149,12 +163,14 @@ var inp=el.querySelector('input');
 if(inp)inp.checked=true;
 atualizarTotalResumo();
 }
+
 function mascaraCep(el){
 var d=el.value.replace(/\D/g,'').slice(0,8);
 var v=d;
 if(d.length>5)v=d.slice(0,5)+'-'+d.slice(5);
 el.value=v;
 }
+
 function selHorario(v,el){
 horarioSel=v;
 document.querySelectorAll('.hor-op').forEach(function(o){o.classList.remove('sel');});
@@ -163,14 +179,17 @@ var inp=el.querySelector('input');
 if(inp)inp.checked=true;
 atualizarTotalResumo();
 }
+
 /* ================= CUPOM ================= */
 function cuponsUsados(){
 try{var l=JSON.parse(localStorage.getItem('m3l_cupons_usados')||'[]');return Array.isArray(l)?l:[];}catch(e){return [];}}
+
 function marcarCupomUsado(cod){
 if(!cod)return;
 var l=cuponsUsados();
 if(l.indexOf(cod)===-1){l.push(cod);localStorage.setItem('m3l_cupons_usados',JSON.stringify(l));}
 }
+
 function aplicarCupom(){
 var input=document.getElementById('cupomInput');
 var msg=document.getElementById('cupomMsg');
@@ -208,6 +227,7 @@ msg.textContent='Cupom aplicado com sucesso!';
 criarChipCupom();
 atualizarTotalResumo();
 }
+
 /* ===== Trava do cupom: campo cinza + botão vira Remover ===== */
 function travarCampoCupom(travar){
 var inp=document.getElementById('cupomInput');
@@ -227,6 +247,7 @@ btn.style.cursor='';
 }
 }
 }
+
 function criarChipCupom(){
 if(!cupomAtivo||document.getElementById('cupomAplicado'))return;
 var linha=document.querySelector('.cupom-linha');
@@ -238,6 +259,7 @@ chip.innerHTML='🎟️ '+cupomAtivo.codigo+' · -'+fmt(cupomAtivo.desc)+' <butt
 linha.parentElement.appendChild(chip);
 travarCampoCupom(true);
 }
+
 function removerCupom(){
 cupomAtivo=null;
 var chip=document.getElementById('cupomAplicado');
@@ -249,10 +271,12 @@ if(inp)inp.value='';
 travarCampoCupom(false);
 atualizarTotalResumo();
 }
+
 function restaurarCupomUI(){
 criarChipCupom();
 atualizarTotalResumo();
 }
+
 function atualizarTotalResumo(){
 var el=document.querySelector('.resumo-total .valor');
 if(el)el.textContent=fmt(totalFinal());
@@ -286,5 +310,110 @@ boxp.parentElement.insertBefore(dpix,boxp);
 }
 }
 }
+
 function abrirModal(){document.getElementById('modalOverlay').classList.add('open');floatsOcultar();}
+
 function fecharModal(){document.getElementById('modalOverlay').classList.remove('open');floatsMostrar();pedidoAtual=null;entregaSel='retirada';horarioSel='manha';pagamentoSel='pix';cupomAtivo=null;m3lSemCadastro=false;}
+
+/* ============================================================
+   PIX — PEDIDO REGISTRADO (Opção A)
+   Fluxo: cria pedido → mostra QR + código → cliente "Já paguei"
+   → acompanhar.html?pedido=CODIGO
+   ============================================================ */
+
+/* Guarda o código do pedido no navegador do cliente */
+function guardarPedidoLocal(codigo, dados){
+try{
+var l = JSON.parse(localStorage.getItem('m3l_meus_pedidos') || '[]');
+if(!Array.isArray(l)) l = [];
+l = l.filter(function(x){ return x && x.codigo !== codigo; });
+l.unshift({ codigo: codigo, quando: Date.now(), total: dados && dados.total });
+localStorage.setItem('m3l_meus_pedidos', JSON.stringify(l.slice(0, 12)));
+}catch(e){}
+}
+
+/* Vai para a página de acompanhamento */
+function irParaAcompanhamento(codigo){
+guardarPedidoLocal(codigo, { total: totalFinal() });
+try{ carrinho.length = 0; if(typeof salvarCarrinho === 'function') salvarCarrinho(); }catch(e){}
+fecharModal();
+location.href = 'acompanhar.html?pedido=' + encodeURIComponent(codigo);
+}
+
+/* Monta o bloco visual do Pix: código + QR + copia-e-cola + botão "Já paguei" */
+function blocoPixPedido(codigo, valor, textoPix){
+var h = '';
+h += '<div style="text-align:center;padding:8px 0 4px;">';
+h += '<div style="display:inline-block;background:#e8f5ee;color:#1d7a45;font-size:12px;font-weight:800;padding:6px 16px;border-radius:20px;margin-bottom:14px;">💚 PAGUE COM PIX</div>';
+h += '<div style="background:#f5f7fa;border:1.5px dashed #c6cfdd;border-radius:12px;padding:14px;margin-bottom:14px;">';
+h += '<div style="font-size:11px;font-weight:700;color:#8a94a8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Número do pedido</div>';
+h += '<div style="font-size:19px;font-weight:800;color:#0f1e3d;letter-spacing:1px;">' + codigo + '</div>';
+h += '</div>';
+h += '<div id="pixQrBox" style="display:flex;justify-content:center;margin-bottom:14px;"></div>';
+h += '<div style="font-size:13px;color:#4a5161;margin-bottom:4px;">Valor a pagar</div>';
+h += '<div style="font-size:26px;font-weight:800;color:#f26522;margin-bottom:14px;">' + fmt(valor) + '</div>';
+if(textoPix){
+h += '<div style="display:flex;gap:6px;margin-bottom:14px;">';
+h += '<input type="text" id="pixCopiaCola" readonly value="' + String(textoPix).replace(/"/g,'&quot;') + '" style="flex:1;min-width:0;padding:10px;border:1.5px solid #dde3ee;border-radius:8px;font-size:11px;font-family:monospace;color:#4a5161;background:#fff;">';
+h += '<button type="button" onclick="copiarPixCopiaCola()" style="padding:10px 14px;border:none;border-radius:8px;background:#0f1e3d;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Copiar</button>';
+h += '</div>';
+}
+h += '<button type="button" onclick="marcarPixPago(\'' + codigo + '\')" style="width:100%;box-sizing:border-box;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,#1d8a4f,#23a95f);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(29,138,79,.35);margin-bottom:10px;">✅ Já paguei</button>';
+h += '<p style="font-size:11.5px;color:#8a94a8;line-height:1.5;margin:0;">Assim que confirmarmos o pagamento, o status muda em <strong>Acompanhar pedido</strong>. Você pode fechar esta janela.</p>';
+h += '</div>';
+return h;
+}
+
+/* Desenha o QR no div #pixQrBox (usa qrcodejs já carregado no loja.html) */
+function desenharQrPix(textoPix){
+var box = document.getElementById('pixQrBox');
+if(!box || !textoPix) return;
+box.innerHTML = '';
+if(typeof QRCode === 'undefined'){
+box.innerHTML = '<div style="font-size:12px;color:#8a94a8;">QR indisponível — use o código copia e cola.</div>';
+return;
+}
+new QRCode(box, {
+text: textoPix,
+width: 190,
+height: 190,
+colorDark: '#0f1e3d',
+colorLight: '#ffffff',
+correctLevel: QRCode.CorrectLevel.M
+});
+}
+
+function copiarPixCopiaCola(){
+var inp = document.getElementById('pixCopiaCola');
+if(!inp) return;
+inp.select();
+try{ document.execCommand('copy'); }catch(e){}
+if(navigator.clipboard && navigator.clipboard.writeText){
+navigator.clipboard.writeText(inp.value).catch(function(){});
+}
+if(typeof mostrarToast === 'function') mostrarToast('Código Pix copiado!', 'ok');
+}
+
+/* Cliente clica "Já paguei" */
+function marcarPixPago(codigo){
+var btn = document.querySelector('#modalBody button[onclick*="marcarPixPago"]');
+if(btn){ btn.disabled = true; btn.textContent = 'Registrando...'; }
+
+fetch(API_LOJA + '/pedidos/' + encodeURIComponent(codigo) + '/informar-pagamento', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' }
+})
+.then(function(r){ return r.json().then(function(t){ return { ok: r.ok, t: t }; }); })
+.then(function(res){
+if(res.ok){
+irParaAcompanhamento(codigo);
+}else{
+if(btn){ btn.disabled = false; btn.textContent = '✅ Já paguei'; }
+if(typeof mostrarToast === 'function') mostrarToast('Não foi possível registrar. Tente novamente.', 'erro');
+}
+})
+.catch(function(){
+if(btn){ btn.disabled = false; btn.textContent = '✅ Já paguei'; }
+if(typeof mostrarToast === 'function') mostrarToast('Erro de conexão. Tente novamente.', 'erro');
+});
+}

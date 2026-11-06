@@ -1,7 +1,13 @@
 /* Service worker do painel: network-first (nunca serve versão velha),
    cache só como fallback offline. API do backend NUNCA é cacheada. */
-var CACHE = 'm3d-admin-v2';
-var ASSETS = ['admin.html','admin.css','admin.js','admin-extras.js','admin-extras.css','img/logo/logo.png'];
+var CACHE = 'm3d-admin-v3';
+var ASSETS = [
+  'admin.html','admin.css','admin.js','admin-extras.js','admin-extras.css',
+  'admin-modelagem.js','admin-modelagem.css',
+  'admin-loja.js','admin-loja.css','admin-loja.html',
+  'acompanhar.html','acompanhar.js','acompanhar.css',
+  'img/logo/logo.png'
+];
 
 self.addEventListener('install', function(e){
   e.waitUntil(caches.open(CACHE).then(function(c){ return c.addAll(ASSETS); }));

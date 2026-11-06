@@ -2,6 +2,7 @@
    Meu 3D Labs — admin-modelagem.js
    Aba "Modelagem 3D" do painel administrativo.
    Carregar DEPOIS de admin.js.
+   v1.1 — botão Cancelar + normalização de status para o acompanhar
    ========================================================================== */
 (function () {
   'use strict';
@@ -33,8 +34,23 @@
     { id: 'producao',    label: 'Em produção',              classe: 'status-producao' },
     { id: 'pronto',      label: 'Pronto',                   classe: 'status-pronto' },
     { id: 'transferido', label: 'Transferido p/ encomenda', classe: 'status-transferido' },
-    { id: 'recusado',    label: 'Recusado',                 classe: 'status-recusado' }
+    { id: 'recusado',    label: 'Recusado',                 classe: 'status-recusado' },
+    { id: 'cancelado',   label: 'Cancelado',                classe: 'status-cancelado' }
   ];
+
+  /* Mapa: status enviado ao backend → status que o acompanhar.js entende */
+  var MAPA_STATUS_ACOMPANHAR = {
+    'novo':        'novo',
+    'em-analise':  'em analise',
+    'orcamento':   'orcamento',
+    'aprovado':    'aprovado',
+    'pago':        'pago',
+    'producao':    'producao',
+    'pronto':      'pronto',
+    'transferido': 'transferido',
+    'recusado':    'sem-resposta',
+    'cancelado':   'cancelado'
+  };
 
   var LOJA_URL = 'https://meu3dlabs.com.br/loja';
 
@@ -47,7 +63,6 @@
   var modAtual = null;
   var modAcaoAtual = null;
 
-  /* Filtros combinados */
   var modFiltroPrazo = 'todos';
   var modBuscaTxt = '';
   var modDataIni = '';
@@ -77,6 +92,10 @@
       if (MOD_STATUS[i].id === id) return MOD_STATUS[i];
     }
     return MOD_STATUS[0];
+  }
+
+  function statusParaBackend(id) {
+    return MAPA_STATUS_ACOMPANHAR[id] || id;
   }
 
   function modNumero(p) {
@@ -329,6 +348,8 @@
       var wa = waLink(p, '');
       var num = modNumero(p);
       var pid = String(p.id);
+      var stRaw = String(p.status || '').toLowerCase();
+      var jaCancelado = (stRaw === 'cancelado' || stRaw === 'cancelada');
 
       html += '<tr>';
       html += '<td><strong>' + esc(num) + '</strong></td>';
@@ -344,28 +365,27 @@
 
       html += '<td><span class="m3d-faixa-badge ' + esc(faixa.cor) + '">' + esc(faixa.nome) + '</span></td>';
 
-      /* Recebido em */
       html += '<td>' + esc(modData(p)) + '</td>';
-
-      /* Prazo */
       html += '<td>' + modBadgePrazo(p) + '</td>';
 
-      /* Orçamento — APENAS UMA VEZ */
       html += '<td>' + (valor
         ? '<strong>' + esc(brl(valor)) + '</strong>'
         : '<span class="mod-sem-valor">—</span>') + '</td>';
 
-      /* Status */
       html += '<td><span class="status-pill ' + esc(st.classe) + '">' + esc(st.label) + '</span></td>';
 
-      /* Ações */
-      html += '<td class="mod-acoes">' +
-        '<button type="button" class="mod-btn ver" data-mod-ver="' + esc(pid) + '">Ver</button>' +
-        '<button type="button" class="mod-btn st" data-mod-status="' + esc(pid) + '">Status</button>' +
-        (p.status === 'pronto' && !p.encomenda_id
-          ? '<button type="button" class="mod-btn transf" data-mod-transf="' + esc(pid) + '">📦 Encomenda</button>'
-          : '') +
-        '</td>';
+      /* Ações — agora com Cancelar */
+      html += '<td class="mod-acoes">';
+      html += '<button type="button" class="mod-btn ver" data-mod-ver="' + esc(pid) + '">Ver</button>';
+      html += '<button type="button" class="mod-btn st" data-mod-status="' + esc(pid) + '">Status</button>';
+      if (p.status === 'pronto' && !p.encomenda_id) {
+        html += '<button type="button" class="mod-btn transf" data-mod-transf="' + esc(pid) + '">📦 Encomenda</button>';
+      }
+            if (!jaCancelado) {
+        html += '<button type="button" class="mod-btn cancelar" data-mod-cancelar="' + esc(pid) + '">🚫 Cancelar</button>';
+      }
+      html += '<button type="button" class="mod-btn excluir" data-mod-excluir="' + esc(pid) + '">🗑️ Excluir</button>';
+      html += '</td>';
 
       html += '</tr>';
     }
@@ -397,6 +417,65 @@
         if (p) modTransferir(p);
       });
     }
+
+    var cancels = document.querySelectorAll('[data-mod-cancelar]');
+    for (var m = 0; m < cancels.length; m++) {
+      cancels[m].addEventListener('click', function () {
+        var p = modBuscar(this.getAttribute('data-mod-cancelar'));
+        if (p) modCancelarPedido(p);
+      });
+    }
+
+        var excls = document.querySelectorAll('[data-mod-excluir]');
+    for (var n = 0; n < excls.length; n++) {
+      excls[n].addEventListener('click', function () {
+        var p = modBuscar(this.getAttribute('data-mod-excluir'));
+        if (p) modExcluirPedido(p);
+      });
+    }
+  }
+
+  /* ========================================================================
+     05.1 CANCELAR PEDIDO
+     ======================================================================== */
+  function modCancelarPedido(p) {
+    if (!p) return;
+    var num = modNumero(p);
+    if (!confirm('Cancelar a modelagem ' + num + '?\n\nEssa ação muda o status para "Cancelado" e o cliente vê a informação no acompanhamento.')) {
+      return;
+    }
+    var dados = {
+      status: statusParaBackend('cancelado'),
+      servico: p.servico || 'modelagem',
+      mensagem_enviada: modMensagem(p, 'cancelado')
+    };
+    modSalvar(p.id, dados, 'Modelagem ' + num + ' cancelada ✅');
+  }
+
+  /* ========================================================================
+     05.2 EXCLUIR PEDIDO (apaga do banco)
+     ======================================================================== */
+  function modExcluirPedido(p) {
+    if (!p) return;
+    var num = modNumero(p);
+    if (!confirm('EXCLUIR DEFINITIVAMENTE a modelagem ' + num + '?\n\nEssa ação apaga o registro do banco de dados e NÃO pode ser desfeita.')) {
+      return;
+    }
+    fetch(API_URL + '/orcamentos/' + encodeURIComponent(p.id), {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + modToken() }
+    })
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json().catch(function () { return {}; });
+    })
+    .then(function () {
+      toast('Modelagem ' + num + ' excluída ✅');
+      modCarregar(true);
+    })
+    .catch(function (e) {
+      toast('Erro ao excluir: ' + e.message, 'erro');
+    });
   }
 
   /* ========================================================================
@@ -637,6 +716,10 @@
           'Se quiser, posso tentar ajustar o escopo para caber melhor no seu orçamento — ' +
           'é só me dizer.\n\n' +
           'Fico à disposição!';
+      case 'cancelado':
+        return 'Olá, ' + nome + '! Sua solicitação de modelagem ' + pedido + ' foi cancelada.\n\n' +
+          'Se quiser refazer o pedido, ajustar algo ou tirar qualquer dúvida, ' +
+          'é só me chamar por aqui — vamos adorar te atender!';
       default:
         return '';
     }
@@ -828,7 +911,7 @@
     var msg = modMensagem(p, sid).replace(/\{VALOR\}/g, brl(valor).replace('R$ ', ''));
 
     var dados = {
-      status: sid,
+      status: statusParaBackend(sid),
       servico: p.servico || 'modelagem',
       mensagem_enviada: msg
     };
@@ -917,7 +1000,7 @@
           'Authorization': 'Bearer ' + modToken()
         },
         body: JSON.stringify({
-          status: 'transferido',
+          status: statusParaBackend('transferido'),
           servico: p.servico || 'modelagem',
           encomenda_id: novoId || null,
           encomenda_numero: novoNum || null,
@@ -1002,13 +1085,11 @@
   function modAtualizarBadge() {
     var total = modItens.length;
 
-    /* Todos os possíveis IDs do contador de modelagem */
     ['countModelagem', 'countModelagem2', 'tab-modelagem-count'].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) el.textContent = total;
     });
 
-    /* Espelha os contadores reais do admin.js em TODAS as barras */
     var pares = [
       ['countOrc',     ['countOrc2']],
       ['countAssist',  ['countAssist2']],
@@ -1157,7 +1238,6 @@
       });
     }
 
-    /* Filtros */
     var busca = document.getElementById('modBusca');
     if (busca) busca.addEventListener('input', modAplicarFiltros);
     var iniF = document.getElementById('modFiltroInicio');
@@ -1167,7 +1247,6 @@
     var stF = document.getElementById('modStatusFilter');
     if (stF) stF.addEventListener('change', modAplicarFiltros);
 
-    /* Aba clicada → carrega */
     var btnAba = document.getElementById('tab-modelagem');
     if (btnAba) {
       btnAba.addEventListener('click', function () {
@@ -1187,6 +1266,7 @@
       setFiltroPrazo: modSetFiltroPrazo,
       exportarCSV: modExportarCSV,
       abrirRelatorioIA: modAbrirRelatorioIA,
+      cancelar: modCancelarPedido,
       get itens() { return modItens; }
     };
   }

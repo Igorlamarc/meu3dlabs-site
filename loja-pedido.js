@@ -25,6 +25,21 @@ function salvarMeuPedido(p){
   }catch(e){}
 }
 
+/* Sincroniza também com a chave usada pela tela de acompanhamento */
+function sincronizarMeusPedidos(p){
+  try{
+    if(typeof guardarPedidoLocal==='function'){
+      guardarPedidoLocal(p.numero,{total:p.total});
+      return;
+    }
+    var l=JSON.parse(localStorage.getItem('m3l_meus_pedidos')||'[]');
+    if(!Array.isArray(l))l=[];
+    l=l.filter(function(x){return x&&x.codigo!==p.numero;});
+    l.unshift({codigo:p.numero,quando:Date.now(),total:p.total});
+    localStorage.setItem('m3l_meus_pedidos',JSON.stringify(l.slice(0,12)));
+  }catch(e){}
+}
+
 function limparCarrinhoAposPedido(){
   carrinho = [];
   salvarCarrinho();
@@ -172,9 +187,12 @@ function gerarPedido(){
       return;
     }
 
+    /* ===== PIX: fluxo novo (Opção A) ===== */
     if(cupomAtivo){marcarCupomUsado(cupomAtivo.codigo);}
-    limparCarrinhoAposPedido();
+    sincronizarMeusPedidos(pedidoAtual);
     salvarPerfilDoPedido();
+    limparCarrinhoAposPedido();
+
     if(window.gtag){
       gtag('event','purchase',{
         currency:'BRL',value:pedidoAtual.total,
@@ -182,9 +200,19 @@ function gerarPedido(){
         items:(pedidoAtual.itens||[]).map(function(i){return {item_name:i.nome,item_variant:i.cor||'',price:i.preco,quantity:i.qtd};})
       });
     }
-    document.getElementById('modalTitulo').textContent='Pedido gerado';
-    document.getElementById('modalBody').innerHTML=etapaPedido(pedidoAtual);
-    mostrarPix(pedidoAtual.total);
+
+    /* Gera o Pix com o código do pedido como txid (rastreável no extrato do banco) */
+    var textoPix = (typeof montarPix === 'function')
+      ? montarPix(pedidoAtual.total, pedidoAtual.numero)
+      : null;
+
+    document.getElementById('modalTitulo').textContent='Pague com Pix';
+    document.getElementById('modalBody').innerHTML=blocoPixPedido(
+      pedidoAtual.numero,
+      pedidoAtual.total,
+      textoPix
+    );
+    try{ desenharQrPix(textoPix); }catch(e){}
   }
 
   /* ===== FALHA: não cobra, preserva carrinho ===== */
@@ -206,7 +234,6 @@ function gerarPedido(){
           '🔒 <strong>Nenhum pagamento foi gerado.</strong> Você não será cobrado por este erro.'+
         '</div>'+
         '<button class="btn-wa" onclick="fecharModal();" style="background:#0f7a44;">🔄 Tentar novamente</button>'+
-        '<a class="btn-wa" href="https://wa.me/5521966594803?text='+encodeURIComponent('Olá! Tentei finalizar um pedido na loja e deu erro. Podem me ajudar? Meu carrinho está montado.')+'" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>'+
         '<button class="btn-voltar" onclick="fecharModal()">Fechar</button>'+
       '</div>';
     abrirModal();
@@ -237,7 +264,6 @@ function gerarPedido(){
     }
     html+='</div>'+
       '<button class="btn-wa" onclick="fecharModal();location.reload();" style="background:#0f7a44;">🔄 Aceitar e revisar carrinho</button>'+
-      '<a class="btn-wa" href="https://wa.me/5521966594803?text='+encodeURIComponent('Olá! Meu pedido na loja teve alteração de preço/estoque. Podem me ajudar?')+'" target="_blank" rel="noopener">💬 Falar no WhatsApp</a>'+
       '<button class="btn-voltar" onclick="fecharModal()">Fechar</button>'+
       '</div>';
     document.getElementById('modalTitulo').textContent='Pedido precisa de atualização';
@@ -300,12 +326,12 @@ function pagamentoTexto(f){
   return f==='cartao'?'Cartão de crédito (Mercado Pago)':'PIX';
 }
 
-/* ================= TELA DO PEDIDO GERADO ================= */
+/* ================= TELA DO PEDIDO GERADO (CARTÃO) ================= */
 function etapaPedido(p){
   var html='<div class="pedido-ok">'
     +'<div class="ok-icon">✅</div>'
     +'<h3>Pedido gerado com sucesso!</h3>'
-    +'<p>Guarde o número abaixo e envie no WhatsApp para confirmar.</p>'
+    +'<p>Guarde o número abaixo para acompanhar seu pedido.</p>'
     +'<div class="pedido-numero"><span>#</span>'+p.numero+'<button class="btn-copiar-codigo" onclick="copiarCodigoPedido(\''+p.numero+'\')">📋 Copiar código</button></div>'
     +'<div class="resumo-clean">'
 
@@ -364,18 +390,17 @@ function etapaPedido(p){
 
   html+='</div></div>';
 
-  html+='<button class="btn-wa" onclick="enviarWhats()"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z"/></svg>Enviar pedido / comprovante no WhatsApp</button>'
-    +'<button class="btn-voltar" onclick="fecharModal()">Continuar comprando</button>'
+  html+='<button class="btn-voltar" onclick="fecharModal()">Fechar</button>'
     +'</div>';
 
   return html;
 }
 
-/* ================= WHATSAPP ================= */
+/* ================= WHATSAPP (opcional — só para cartão e dúvidas) ================= */
 function enviarWhats(){
   if(!pedidoAtual)return;
   var p=pedidoAtual;
-  var linhas=['Olá! Quero confirmar o pedido #'+p.numero+' na loja da Meu 3D Labs.',''];
+  var linhas=['Olá! Quero falar sobre o pedido #'+p.numero+' na loja da Meu 3D Labs.',''];
   linhas.push('👤 Cliente: '+p.nome);
   linhas.push('📱 WhatsApp: '+p.fone);
   if(p.email){linhas.push('📧 E-mail: '+p.email);}
@@ -396,8 +421,6 @@ function enviarWhats(){
   linhas.push('Pagamento: '+pagamentoTexto(p.forma));
   if(p.forma==='cartao'){
     linhas.push('O pagamento será concluído no checkout do Mercado Pago');
-  }else{
-    linhas.push('Comprovante do PIX será enviado junto');
   }
   if(p.nota){linhas.push('Observação: '+p.nota);}
   if(p.optin){linhas.push('Cliente aceitou receber novidades pelo WhatsApp');}

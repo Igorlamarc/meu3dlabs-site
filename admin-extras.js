@@ -48,10 +48,79 @@ function injectTopButtons(){
     b.onclick=fn;box.insertBefore(b,$('.refresh-btn',box));
     return b;
   }
+    btn('m3lBtnColunas','👁️ Colunas','#4a5568',abrirColunas,'Mostrar/ocultar colunas');
   btn('m3lBtnBusca','🔍 Buscar','#0f9d8f',abrirBusca,'Busca global (Ctrl+K)');
   btn('m3lBtnKanban','🗂️ Kanban','#1f6feb',toggleKanban,'Visão Kanban (K)');
   btn('m3lBtnNum','📊 Números','#8250df',abrirNum,'Gráficos e clientes');
   btn('m3lBtnBackup','💾 Backup','#57606a',fazerBackup,'Baixar cópia de segurança');
+}
+
+var COLS_OCULTAS = JSON.parse(localStorage.getItem('m3l_cols_ocultas')||'[]');
+
+function abrirColunas(){
+  var thead=document.getElementById('tabelaHead');
+  if(!thead)return;
+  var ths=Array.from(thead.querySelectorAll('th'));
+  var lista=ths.map(function(th,i){
+    var nome=String(th.textContent||'').trim()||('col-'+i);
+    return {idx:i,nome:nome};
+  }).filter(function(c){
+    var n=c.nome.toLowerCase();
+    return n!=='status' && n!=='ações' && n.indexOf('aç')===-1;
+  });
+
+  var ov=document.getElementById('m3lColsOverlay');
+  if(!ov){
+    ov=document.createElement('div');
+    ov.className='ver-overlay';
+    ov.id='m3lColsOverlay';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',function(e){if(e.target===ov)fecharColunas();});
+  }
+  var html='<div class="ver-modal" style="max-width:420px;">'
+    +'<button type="button" class="vm-close" onclick="fecharColunas()">✕</button>'
+    +'<h3 style="margin:0 0 6px;color:#0f1e3d;font-size:18px;">👁️ Colunas visíveis</h3>'
+    +'<p style="margin:0 0 16px;font-size:13px;color:#6b7690;">Desmarque para ocultar. Fica salvo no navegador.</p>'
+    +'<div style="display:flex;flex-direction:column;gap:8px;">';
+  lista.forEach(function(c){
+    var marcado = COLS_OCULTAS.indexOf(c.idx)===-1;
+    html+='<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f7f9fc;border:1.5px solid #e3e8ef;border-radius:9px;cursor:pointer;font-size:14px;font-weight:600;color:#0f1e3d;">'
+      +'<input type="checkbox" data-col="'+c.idx+'" '+(marcado?'checked':'')+' style="width:18px;height:18px;cursor:pointer;">'
+      +'<span>'+c.nome+'</span>'
+      +'</label>';
+  });
+  html+='</div></div>';
+  ov.innerHTML=html;
+  ov.querySelectorAll('input[data-col]').forEach(function(inp){
+    inp.onchange=function(){
+      var idx=parseInt(inp.getAttribute('data-col'),10);
+      var pos=COLS_OCULTAS.indexOf(idx);
+      if(inp.checked){ if(pos>-1)COLS_OCULTAS.splice(pos,1); }
+      else { if(pos===-1)COLS_OCULTAS.push(idx); }
+      localStorage.setItem('m3l_cols_ocultas',JSON.stringify(COLS_OCULTAS));
+      aplicarColunasOcultas();
+    };
+  });
+  ov.classList.add('show');
+}
+
+function fecharColunas(){
+  var ov=document.getElementById('m3lColsOverlay');
+  if(ov)ov.classList.remove('show');
+}
+
+function aplicarColunasOcultas(){
+  var thead=document.getElementById('tabelaHead');
+  if(thead){
+    thead.querySelectorAll('th').forEach(function(th,i){
+      th.style.display = COLS_OCULTAS.indexOf(i)>-1 ? 'none' : '';
+    });
+  }
+  document.querySelectorAll('#tabelaBody tr').forEach(function(tr){
+    Array.from(tr.children).forEach(function(td,i){
+      td.style.display = COLS_OCULTAS.indexOf(i)>-1 ? 'none' : '';
+    });
+  });
 }
 
 /* ===== 2. RESUMO DO DIA ===== */
@@ -116,12 +185,12 @@ function metaPop(){
 /* ===== 4. HISTÓRICO DE STATUS ===== */
 function wrapMudarStatus(){
   var _ms=window.mudarStatus;if(!_ms)return;
-  window.mudarStatus=function(id,novo){
+  window.mudarStatus=function(id,novo,extras){
     var p=pedPorId(id),ant=p?String(p.status||''):'';
-    var r=_ms(id,novo);
+    var r=_ms(id,novo,extras);
     if(ant&&ant!==String(novo)){
       var k=String(id),h=histDe(k);
-      h.push({de:ant,para:String(novo),ts:Date.now()});
+      h.push({de:ant,para:String(novo),ts:Date.now(),ag:extras||null});
       if(h.length>50)h=h.slice(-50);
       SS('m3l_hist_'+k,h);
     }
@@ -549,10 +618,24 @@ var SINAL_PCT = 30;
 (function(){
   var css = document.createElement('style');
   css.textContent =
+  '@media(max-width:900px){' +
+'  #mainContent .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}' +
+'  #mainContent table{min-width:auto;width:100%;font-size:11.5px;}' +
+'  #mainContent table th,#mainContent table td{padding:6px 5px;}' +
+'  #mainContent table .col-ocultavel{display:none !important;}' +
+'  #mainContent table .col-desc,#mainContent table .col-tipo{display:none !important;}' +
+'}' +
+'@media(max-width:600px){' +
+'  #mainContent table{font-size:10.5px;}' +
+'  #mainContent table th,#mainContent table td{padding:5px 3px;}' +
+'  #mainContent .btn-edit,#mainContent .btn-pag,#mainContent .btn-cancelar{font-size:10px;padding:4px 6px;}' +
+'}' +
   '.btn-edit{background:#e8eef9;color:#0f1e3d;border:1.5px solid #c5d2e8;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap;margin-left:4px;}' +
   '.btn-edit:hover{background:#0f1e3d;color:#fff;border-color:#0f1e3d;}' +
   '.btn-pag{background:#e6f7ee;color:#0f7a44;border:1.5px solid #a8dfc2;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap;margin-left:4px;}' +
   '.btn-pag:hover{background:#0f7a44;color:#fff;border-color:#0f7a44;}' +
+  '.btn-cancelar{background:#fdeaea;color:#c0392b;border:1.5px solid #f2b8b5;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap;margin-left:4px;}' +
+'.btn-cancelar:hover{background:#c0392b;color:#fff;border-color:#c0392b;}' +
   '.valor-cell{font-weight:800;font-size:12.5px;line-height:1.35;white-space:nowrap;}' +
   '.valor-cell.total{color:#0f1e3d;}' +
   '.valor-cell.pago{color:#0f7a44;font-weight:700;font-size:11.5px;}' +
@@ -760,9 +843,19 @@ function aplicarColunaValor(){
     var td=document.createElement('td');
     td.className='valor-col';
     td.innerHTML=html;
-    var alvo=tds[tds.length-2];
-    if(alvo&&alvo.parentNode)alvo.parentNode.insertBefore(td,alvo);
-    else tr.appendChild(td);
+  /* Ancora pelo NOME do header, não por posição fixa */
+var thead=document.getElementById('tabelaHead');
+var idxStatus=-1;
+if(thead){
+  Array.from(thead.querySelectorAll('th')).forEach(function(th,k){
+    var t=String(th.textContent||'').trim().toLowerCase();
+    if(t.indexOf('status')!==-1||t.indexOf('aç')!==-1||t.indexOf('ac')===0) idxStatus=k;
+  });
+}
+var tdStatus = idxStatus>-1 ? tds[idxStatus] : null;
+var alvo = tdStatus || tds[tds.length-1];
+if(alvo&&alvo.parentNode)alvo.parentNode.insertBefore(td,alvo);
+else tr.appendChild(td);
   });
 }
 
@@ -771,10 +864,9 @@ var STATUS_FECHADOS=['entregue','cancelado','Cancelado'];
 
 /* ✅ Ignora Loja e Modelagem */
 function aplicarBotoesEditar(){
-  if(ehModelagem2())return;
   var isLoja=(typeof window.tipoAtivo!=='undefined'&&window.tipoAtivo==='loja');
   if(isLoja)return;
-
+  var isModelagem=ehModelagem2();
   document.querySelectorAll('#tabelaBody tr').forEach(function(tr){
     var sel=tr.querySelector('.status-select');
     if(!sel)return;
@@ -786,6 +878,22 @@ function aplicarBotoesEditar(){
     listaPedidos().forEach(function(x){if(String(x.id)===String(id))p=x;});
     var st=p?String(p.status||''):'';
     var fechado=STATUS_FECHADOS.indexOf(st)!==-1;
+        /* Botão Cancelar — todas as abas, exceto loja */
+    var stCancel = p?String(p.status||'').toLowerCase():'';
+    var jaCancelado = (stCancel==='cancelado'||stCancel==='cancelada');
+    if(p && !jaCancelado && !cel.querySelector('.btn-cancelar')){
+      var bc=document.createElement('button');
+      bc.type='button';
+      bc.className='btn-cancelar';
+      bc.textContent='🚫 Cancelar';
+      bc.title='Cancelar este pedido';
+      bc.onclick=function(ev){
+        ev.stopPropagation();
+        if(!confirm('Cancelar o pedido '+(p.pedido_id||('#'+id))+'?\\n\\nEssa ação muda o status para Cancelado.'))return;
+        window.mudarStatus(id,'cancelado');
+      };
+      cel.appendChild(bc);
+    }
     if(p&&valorTotalDe(p)>0&&st!=='cancelado'&&st!=='Cancelado'&&!cel.querySelector('.btn-pag')){
       var bp=document.createElement('button');
       bp.type='button';
@@ -877,8 +985,8 @@ function instalarHookStatus(){
   if(_mudarStatusOriginal)return;
   if(typeof window.mudarStatus!=='function')return;
   _mudarStatusOriginal=window.mudarStatus;
-  window.mudarStatus=function(id,novoStatus){
-    return _mudarStatusOriginal.apply(this,arguments);
+  window.mudarStatus=function(id,novoStatus,extras){
+    return _mudarStatusOriginal.call(this,id,novoStatus,extras);
   };
 }
 

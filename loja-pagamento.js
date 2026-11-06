@@ -33,8 +33,12 @@ function crc16(str){
   }
   return crc.toString(16).toUpperCase().padStart(4,'0');
 }
-function montarPix(valor){
-  var txid = 'MEU3D' + Date.now().toString().slice(-8);
+function montarPix(valor, txidPedido){
+  /* Usa o código do pedido como txid (máx. 25 chars alfanuméricos, sem hífen) */
+  var txid = txidPedido
+    ? String(txidPedido).replace(/[^A-Za-z0-9]/g,'').slice(0,25)
+    : ('MEU3D' + Date.now().toString().slice(-8));
+
   var v = parseFloat(String(valor == null ? '' : valor).replace('R$','').trim().replace(',', '.'));
   if(isNaN(v)) v = 0;
   var mai = pCampo('00','br.gov.bcb.pix') + pCampo('01', CHAVE_PIX);
@@ -44,32 +48,119 @@ function montarPix(valor){
   payload += pCampo('62', pCampo('05', txid));
   return payload + '6304' + crc16(payload + '6304');
 }
-function copiarPix(){
-  var c = document.getElementById('pixCopiaECola');
-  if(!c) return;
-  c.select(); c.setSelectionRange(0, 99999);
-  if(navigator.clipboard) navigator.clipboard.writeText(c.value).catch(function(){});
-}
-function mostrarPix(valor){
+
+/* ===== PIX — FLUXO COM PEDIDO REGISTRADO (Opção A) =====
+   Antes: QR → "envie o comprovante no WhatsApp" (manual, fora do site)
+   Agora: pedido no banco → QR + código do pedido + "Já paguei" → acompanhar.html
+   Nada de WhatsApp obrigatório. O cliente acompanha pelo site. */
+function mostrarPix(valor, codigoPedido){
   var box = document.getElementById('pixArea');
   if(!box){
     box = document.createElement('div');
     box.id = 'pixArea';
-    box.style.cssText = 'text-align:center;margin:16px 0;padding:16px;border:2px dashed #f26522;border-radius:12px;background:#fff8f4;';
     document.getElementById('modalBody').appendChild(box);
   }
+
+  /* Código do pedido: usa o que veio, ou o pedidoAtual global */
+  var codigo = codigoPedido || (window.pedidoAtual && window.pedidoAtual.numero) || '';
   var pix = montarPix(valor);
+
   box.innerHTML =
-    '<h4 style="margin:0 0 4px;color:#0f1e3d;">💰 Pagamento via PIX</h4>' +
-    '<p style="font-size:13px;color:#4a5161;margin:0 0 12px;">Pague e envie o comprovante no WhatsApp junto com o nº do pedido.</p>' +
-    '<div id="pixQr" style="display:flex;justify-content:center;margin-bottom:10px;"></div>' +
-    '<p style="font-size:12.5px;color:#4a5161;margin:0 0 4px;">Valor: <b style="color:#0f1e3d;">' + fmt(valor) + '</b></p>' +
-    '<p style="font-size:12.5px;color:#4a5161;margin:0 0 8px;">Chave PIX: <b>21980284930</b></p>' +
-    '<textarea readonly id="pixCopiaECola" style="width:100%;font-size:11px;color:#555;border:1px solid #ddd;border-radius:8px;padding:8px;box-sizing:border-box;resize:none;" rows="3"></textarea>' +
-    '<br><button type="button" onclick="copiarPix()" style="margin-top:8px;background:#f26522;color:#fff;border:none;padding:9px 18px;border-radius:8px;font-weight:700;cursor:pointer;">📋 Copiar código PIX</button>';
-  document.getElementById('pixCopiaECola').value = pix;
-  if(window.QRCode){ new QRCode(document.getElementById('pixQr'), { text: pix, width: 200, height: 200 }); }
-  box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    '<div style="text-align:center;padding:8px 0 4px;">'
+
+    /* Selo */
+    +'<div style="display:inline-block;background:#e8f5ee;color:#1d7a45;font-size:12px;font-weight:800;padding:6px 16px;border-radius:20px;margin-bottom:14px;">💚 PAGUE COM PIX</div>'
+
+    /* Número do pedido */
+    +(codigo
+      ?'<div style="background:#f5f7fa;border:1.5px dashed #c6cfdd;border-radius:12px;padding:14px;margin-bottom:14px;">'
+        +'<div style="font-size:11px;font-weight:700;color:#8a94a8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Número do pedido</div>'
+        +'<div style="font-size:19px;font-weight:800;color:#0f1e3d;letter-spacing:1px;">'+codigo+'</div>'
+      +'</div>'
+      :'')
+
+    /* QR Code */
+    +'<div id="pixQr" style="display:flex;justify-content:center;margin-bottom:14px;"></div>'
+
+    /* Valor */
+    +'<div style="font-size:13px;color:#4a5161;margin-bottom:4px;">Valor a pagar</div>'
+    +'<div style="font-size:26px;font-weight:800;color:#f26522;margin-bottom:14px;">'+fmt(valor)+'</div>'
+
+    /* Copia e cola */
+    +'<div style="display:flex;gap:6px;margin-bottom:14px;">'
+      +'<input type="text" readonly id="pixCopiaECola" value="'+String(pix).replace(/"/g,'&quot;')+'" style="flex:1;min-width:0;padding:10px;border:1.5px solid #dde3ee;border-radius:8px;font-size:11px;font-family:monospace;color:#4a5161;background:#fff;">'
+      +'<button type="button" onclick="copiarPix()" style="padding:10px 14px;border:none;border-radius:8px;background:#0f1e3d;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Copiar</button>'
+    +'</div>'
+
+    /* Botão Já paguei */
+    +'<button type="button" id="btnJaPaguei" onclick="pixJaPaguei(\''+codigo+'\')" style="width:100%;box-sizing:border-box;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,#1d8a4f,#23a95f);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(29,138,79,.35);margin-bottom:10px;">✅ Já paguei</button>'
+
+    +'<p style="font-size:11.5px;color:#8a94a8;line-height:1.5;margin:0;">Assim que confirmarmos o pagamento, o status muda em <strong>Acompanhar pedido</strong>. Você pode fechar esta janela.</p>'
+
+    +'</div>';
+
+  /* Desenha o QR */
+  if(window.QRCode){
+    var qrBox = document.getElementById('pixQr');
+    qrBox.innerHTML = '';
+    new QRCode(qrBox, {
+      text: pix,
+      width: 190,
+      height: 190,
+      colorDark: '#0f1e3d',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  box.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+/* Copia o código Pix */
+function copiarPix(){
+  var c = document.getElementById('pixCopiaECola');
+  if(!c) return;
+  c.select(); c.setSelectionRange(0, 99999);
+  try{ document.execCommand('copy'); }catch(e){}
+  if(navigator.clipboard) navigator.clipboard.writeText(c.value).catch(function(){});
+  if(typeof mostrarToast === 'function') mostrarToast('Código Pix copiado!', 'ok');
+}
+
+/* Cliente informa "Já paguei" */
+function pixJaPaguei(codigo){
+  if(!codigo){
+    if(typeof mostrarToast === 'function') mostrarToast('Pedido não identificado.', 'erro');
+    return;
+  }
+
+  var btn = document.getElementById('btnJaPaguei');
+  if(btn){ btn.disabled = true; btn.textContent = 'Registrando...'; }
+
+  fetch(API_BASE_PAG + '/loja/pedidos/' + encodeURIComponent(codigo) + '/informar-pagamento', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, dados: d }; }); })
+  .then(function(res){
+    if(res.ok){
+      /* Grava local e vai para acompanhamento */
+      try{
+        if(typeof guardarPedidoLocal === 'function'){
+          guardarPedidoLocal(codigo, { total: parseFloat(document.getElementById('pixCopiaECola') ? 0 : 0) });
+        }
+      }catch(e){}
+      try{ carrinho.length = 0; if(typeof salvarCarrinho === 'function') salvarCarrinho(); }catch(e){}
+      fecharModal();
+      location.href = 'acompanhar.html?pedido=' + encodeURIComponent(codigo);
+    }else{
+      if(btn){ btn.disabled = false; btn.textContent = '✅ Já paguei'; }
+      if(typeof mostrarToast === 'function') mostrarToast('Não foi possível registrar agora. Tente novamente.', 'erro');
+    }
+  })
+  .catch(function(){
+    if(btn){ btn.disabled = false; btn.textContent = '✅ Já paguei'; }
+    if(typeof mostrarToast === 'function') mostrarToast('Erro de conexão. Tente novamente.', 'erro');
+  });
 }
 /* ===== CARTÃO (Mercado Pago) =====
    Fluxo principal: formulário de cartão EMBUTIDO (Card Payment Brick) dentro do modal da loja —

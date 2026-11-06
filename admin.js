@@ -21,6 +21,18 @@ var mensagemAtual = '';
 /* 🆕 Filtro de visibilidade: 'ativos' | 'entregues' | 'encerrados' | 'todos' */
 var filtroVisao = 'ativos';
 
+/* Status em que o recibo pode ser emitido */
+var STATUS_COM_RECIBO = [
+  'pago', 'Pago (Cartão)',
+  'gerando nota', 'embalagem', 'saiu', 'entregue',
+  'aprovado', 'producao', 'pronto',
+  'consultoria-paga', 'em-atendimento', 'consultoria-finalizada',
+  'finalizado'
+];
+function podeEmitirRecibo(status) {
+  return STATUS_COM_RECIBO.indexOf(String(status || '')) !== -1;
+}
+
 try {
   window.API = API_URL;
   window.API_BASE = API_URL;
@@ -630,6 +642,13 @@ function aplicarFiltros() {
       ? '<div style="margin-top:6px;"><button type="button" class="del-btn" data-id="' + p.id + '" onclick="excluirPedido(' + p.id + ')"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Excluir</button></div>'
       : '';
 
+    var reciboBtn = podeEmitirRecibo(status)
+      ? '<div style="margin-top:6px;">'
+        + '<button type="button" class="recibo-btn" onclick="abrirRecibo(\'' + (p.pedido_id || p.id) + '\', ' + (tipoAtivo === 'loja' ? 'true' : 'false') + ')" '
+        + 'style="width:100%;padding:6px 10px;background:#f0f6ff;border:1px solid #1f6feb;border-radius:8px;color:#1f6feb;font-size:12px;font-weight:700;cursor:pointer;">🧾 Recibo</button>'
+        + '</div>'
+      : '';
+
     var detalhes = tipoAtivo === 'loja' ? montarItensLoja(p) : montarDescricao(p.descricao_peca || '');
 
     var extra = [];
@@ -688,6 +707,7 @@ function aplicarFiltros() {
             opcoesStatus(status) +
           '</select>' +
         '</div>' +
+        reciboBtn + 
         delBtn +
       '</td>' +
     '</tr>';
@@ -742,6 +762,7 @@ function renderizarStats() {
       var s = p.status || 'feito';
       return s === 'pago' || s === 'Pago (Cartão)';
     }).length;
+        var gerandoNota = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'gerando nota'; }).length;
     var embalagens = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'embalagem'; }).length;
     var saidas = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'saiu'; }).length;
     var entreguesL = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'entregue'; }).length;
@@ -757,7 +778,7 @@ function renderizarStats() {
       '<div class="stat-card yellow"><div class="stat-ico">⏳</div><div class="stat-label">Aguardando pagamento</div><div class="stat-value">' + aguardando + '</div><div class="stat-detail">Pix + Cartão pendentes</div></div>' +
       '<div class="stat-card blue"><div class="stat-ico">📝</div><div class="stat-label">Pedido feito</div><div class="stat-value">' + feitos + '</div><div class="stat-detail">Aguardando confirmação</div></div>' +
       '<div class="stat-card yellow"><div class="stat-ico">💰</div><div class="stat-label">Pagos</div><div class="stat-value">' + pagos + '</div><div class="stat-detail">Pix + Cartão</div></div>' +
-      '<div class="stat-card purple"><div class="stat-ico">📦</div><div class="stat-label">Em embalagem</div><div class="stat-value">' + embalagens + '</div><div class="stat-detail">Preparando o envio</div></div>' +
+          '<div class="stat-card purple"><div class="stat-ico">🧾</div><div class="stat-label">Gerando nota</div><div class="stat-value">' + gerandoNota + '</div></div>' +
       '<div class="stat-card purple"><div class="stat-ico">🚚</div><div class="stat-label">Saiu</div><div class="stat-value">' + saidas + '</div></div>' +
       '<div class="stat-card green"><div class="stat-ico">✅</div><div class="stat-label">Entregues</div><div class="stat-value">' + entreguesL + '</div></div>';
   } else {
@@ -1099,24 +1120,58 @@ function classeStatusPill(s) {
   if (s === 'Pago (Cartão)') return 'pagocartao';
   if (String(s).indexOf('Aguardando') === 0) return 'aguardando';
   if (s === 'sem-resposta') return 'semresposta';
+  if (s === 'Pagamento em verificação (Pix)') return 'verificacao';
+  if (s === 'Pix aguardando compensação') return 'verificacao';
+if (s === 'Pix não identificado') return 'recusado';
   return s;
 }
 
 function opcoesTodas() {
   if (tipoAtivo === 'loja') {
     return [
-      ['feito', '📝 Pedido feito'],
       ['Aguardando pagamento (Pix)', '⏳ Aguardando pagamento (Pix)'],
       ['Aguardando pagamento (Cartão)', '⏳ Aguardando pagamento (Cartão)'],
+      ['Pagamento em verificação (Pix)', '🔍 Pix em verificação'],
+      ['Pix aguardando compensação', '⏳ Pix aguardando compensação'],
+      ['Pix não identificado', '⚠️ Pix não identificado'],
       ['pago', '💰 Pago no Pix'],
       ['Pago (Cartão)', '✅ Pago no cartão'],
+      ['gerando nota', '🧾 Gerando nota fiscal'],
       ['embalagem', '📦 Em processo de embalagem'],
       ['saiu', '🚚 Saiu para entrega'],
       ['entregue', '🔵 Entregue'],
+      ['cancelado', '✕ Cancelado']
+    ];
+  }
+
+  if (tipoAtivo === 'consultoria') {
+    return [
+      ['novo', 'Novo'],
+      ['em-analise', 'Em análise'],
+      ['aguardando-pagamento', '⏳ Aguardando pagamento'],
+      ['consultoria-paga', '💰 Consultoria paga'],
+      ['agendado', '📅 Agendamento realizado'],
+      ['em-atendimento', '💻 Em atendimento'],
+      ['consultoria-finalizada', '✅ Consultoria finalizada'],
       ['sem-resposta', '📭 Sem resposta'],
       ['cancelado', '✕ Cancelado']
     ];
   }
+
+  if (tipoAtivo === 'assistencia') {
+    return [
+      ['novo', 'Novo'],
+      ['em-analise', 'Em análise'],
+      ['agendado', '📅 Agendamento realizado'],
+      ['a-caminho', '🚗 A caminho do atendimento'],
+      ['aguardando-peca', '🔧 Aguardando peça'],
+      ['finalizado', '✅ Finalizado'],
+      ['sem-resposta', '📭 Sem resposta'],
+      ['cancelado', '✕ Cancelado']
+    ];
+  }
+
+  /* encomenda (padrão) */
   return [
     ['novo', 'Novo'],
     ['em-analise', 'Em análise'],
@@ -1137,30 +1192,65 @@ function opcoesStatus(atual) {
 }
 
 function traduzirStatus(s) {
-  var map = tipoAtivo === 'loja'
-    ? {
-        'Aguardando pagamento (Pix)': '⏳ Aguardando (Pix)',
-        'Aguardando pagamento (Cartão)': '⏳ Aguardando (Cartão)',
-        feito: '📝 Pedido feito',
-        pago: '💰 Pago no Pix',
-        'Pago (Cartão)': '✅ Pago no cartão',
-        embalagem: '📦 Em embalagem',
-        saiu: '🚚 Saiu para entrega',
-        entregue: '🔵 Entregue',
-        'sem-resposta': '📭 Sem resposta',
-        cancelado: '✕ Cancelado'
-      }
-    : {
-        novo: 'Novo',
-        'em-analise': 'Em análise',
-        orcamento: 'Em orçamento',
-        aprovado: 'Aprovado',
-        producao: 'Em produção',
-        pronto: '🔵 Pronto',
-        entregue: '🔵 Entregue',
-        'sem-resposta': '📭 Sem resposta',
-        cancelado: '✕ Cancelado'
-      };
+  if (tipoAtivo === 'loja') {
+    var mapLoja = {
+      'Aguardando pagamento (Pix)': '⏳ Aguardando (Pix)',
+      'Aguardando pagamento (Cartão)': '⏳ Aguardando (Cartão)',
+      'Pix aguardando compensação': '⏳ Aguardando compensação',
+      'Pix não identificado': '⚠️ Pix não identificado',
+      'Pagamento em verificação (Pix)': '🔍 Pix em verificação',
+      'feito': '📝 Pedido feito',
+      'pago': '💰 Pago no Pix',
+      'Pago (Cartão)': '✅ Pago no cartão',
+      'gerando nota': '🧾 Gerando nota',
+      'embalagem': '📦 Em embalagem',
+      'saiu': '🚚 Saiu para entrega',
+      'entregue': '🔵 Entregue',
+      'cancelado': '✕ Cancelado'
+    };
+    return mapLoja[s] || s;
+  }
+
+  if (tipoAtivo === 'consultoria') {
+    var mapCon = {
+      'novo': 'Novo',
+      'em-analise': 'Em análise',
+      'aguardando-pagamento': '⏳ Aguardando pagamento',
+      'consultoria-paga': '💰 Consultoria paga',
+      'agendado': '📅 Agendada',
+      'em-atendimento': '💻 Em atendimento',
+      'consultoria-finalizada': '✅ Finalizada',
+      'sem-resposta': '📭 Sem resposta',
+      'cancelado': '✕ Cancelado'
+    };
+    return mapCon[s] || s;
+  }
+
+  if (tipoAtivo === 'assistencia') {
+    var mapAss = {
+      'novo': 'Novo',
+      'em-analise': 'Em análise',
+      'agendado': '📅 Agendada',
+      'a-caminho': '🚗 A caminho',
+      'aguardando-peca': '🔧 Aguardando peça',
+      'finalizado': '✅ Finalizado',
+      'sem-resposta': '📭 Sem resposta',
+      'cancelado': '✕ Cancelado'
+    };
+    return mapAss[s] || s;
+  }
+
+  var map = {
+    novo: 'Novo',
+    'em-analise': 'Em análise',
+    orcamento: 'Em orçamento',
+    aprovado: 'Aprovado',
+    producao: 'Em produção',
+    pronto: '🔵 Pronto',
+    entregue: '🔵 Entregue',
+    'sem-resposta': '📭 Sem resposta',
+    cancelado: '✕ Cancelado'
+  };
   return map[s] || s;
 }
 
@@ -1198,7 +1288,8 @@ function excluirPedido(id) {
   });
 }
 
-function mudarStatus(id, novoStatus) {
+function mudarStatus(id, novoStatus, extras) {
+  console.log('[mudarStatus] extras recebidos:', extras);
   var p = getListaAtiva().find(function(x) { return x.id === id; });
   var nome = p ? (p.nome_cliente || '') : '';
   var pedidoRef = p && p.pedido_id ? p.pedido_id : ('#' + id);
@@ -1206,21 +1297,36 @@ function mudarStatus(id, novoStatus) {
   var statusAnterior = p ? (p.status || statusPadrao()) : '';
   var endpoint = tipoAtivo === 'loja' ? '/loja/pedidos/' : '/orcamentos/';
 
+  var corpo = { status: novoStatus };
+
+  /* ✅ Campos extras (agendamento) */
+  if (extras) {
+    if (extras.data_agendamento) corpo.data_agendamento = extras.data_agendamento;
+    if (extras.hora_agendamento) corpo.hora_agendamento = extras.hora_agendamento;
+  }
+
+  console.log('[mudarStatus] corpo enviado:', corpo);
+
   fetch(API_URL + endpoint + id, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + token
     },
-    body: JSON.stringify({ status: novoStatus })
+    body: JSON.stringify(corpo)
   })
   .then(function(res) {
     if (res.status === 401) { sair(); throw new Error('Sessão expirada'); }
     if (!res.ok) throw new Error('Erro ' + res.status);
     return res.json();
   })
-  .then(function() {
-    if (p) p.status = novoStatus;
+    .then(function(dados) {
+    console.log('[mudarStatus] resposta da API:', dados);
+    if (p) {
+      p.status = novoStatus;
+      if (extras && extras.data_agendamento) p.data_agendamento = extras.data_agendamento;
+      if (extras && extras.hora_agendamento) p.hora_agendamento = extras.hora_agendamento;
+    }
     renderizar();
     if (novoStatus !== statusAnterior) {
       mostrarBalcao(nome, pedidoRef, contato, novoStatus);
@@ -1240,6 +1346,25 @@ function montarMensagemEntregue(primeiroNome, id) {
   }
   msg += 'Se precisar de algo, ou quiser encomendar uma nova peça, é só chamar! 💛';
   return msg;
+}
+
+/* Verifica se o status exige agendamento */
+function statusExigeAgendamento(status) {
+  return status === 'agendado';
+}
+
+/* Monta o bloco de inputs de data/hora no balcão */
+function blocoInputsAgendamento(p) {
+  var dataAtual = p && p.data_agendamento ? String(p.data_agendamento).slice(0, 10) : '';
+  var horaAtual = p && p.hora_agendamento ? String(p.hora_agendamento).slice(0, 5) : '';
+  return '<div style="margin:14px 0;padding:14px;background:#f0f6ff;border:2px solid #1f6feb;border-radius:12px;">'
+    + '<div style="font-size:12px;font-weight:800;color:#0f1e3d;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📅 Data e hora do agendamento</div>'
+    + '<div style="display:flex;gap:10px;">'
+    + '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Data</label>'
+    + '<input type="date" id="encAgData" value="' + dataAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;"></div>'
+    + '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Hora</label>'
+    + '<input type="time" id="encAgHora" value="' + horaAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;"></div>'
+    + '</div></div>';
 }
 
 function montarMensagemStatus(nome, id, status) {
@@ -1283,11 +1408,39 @@ function montarMensagemStatus(nome, id, status) {
   return map[status] || '';
 }
 
+/* Verifica se o status exige agendamento */
+function statusExigeAgendamento(status) {
+  return status === 'agendado';
+}
+
+/* Monta o bloco de inputs de data/hora no balcão */
+function blocoInputsAgendamento(p) {
+  var dataAtual = p && p.data_agendamento ? String(p.data_agendamento).slice(0, 10) : '';
+  var horaAtual = p && p.hora_agendamento ? String(p.hora_agendamento).slice(0, 5) : '';
+  return '<div style="margin:14px 0;padding:14px;background:#f0f6ff;border:2px solid #1f6feb;border-radius:12px;">'
+    + '<div style="font-size:12px;font-weight:800;color:#0f1e3d;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📅 Data e hora do agendamento</div>'
+    + '<div style="display:flex;gap:10px;">'
+    + '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Data</label>'
+    + '<input type="date" id="encAgData" value="' + dataAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;"></div>'
+    + '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Hora</label>'
+    + '<input type="time" id="encAgHora" value="' + horaAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;"></div>'
+    + '</div></div>';
+}
+
 function mostrarBalcao(nome, id, contato, status) {
   mensagemAtual = montarMensagemStatus(nome, id, status);
   if (!mensagemAtual) return;
 
   document.getElementById('sbTitulo').textContent = 'Status: ' + traduzirStatus(status);
+    /* Inputs de agendamento (consultoria / assistência) */
+  var boxAg = document.getElementById('sbAgendamento');
+  if (!boxAg) {
+    boxAg = document.createElement('div');
+    boxAg.id = 'sbAgendamento';
+    document.getElementById('sbMensagem').parentNode.insertBefore(boxAg, document.getElementById('sbMensagem'));
+  }
+  var pedidoAtual = getListaAtiva().find(function(x) { return (x.pedido_id || ('#' + x.id)) === id; });
+  boxAg.innerHTML = statusExigeAgendamento(status) ? blocoInputsAgendamento(pedidoAtual) : '';
   document.getElementById('sbMensagem').textContent = mensagemAtual;
 
   var wa = montarLinkWhatsApp(contato);
@@ -1429,6 +1582,7 @@ function fbCopia(t) {
 /* ===== 15. TECLA ESCAPE ===== */
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
+        fecharRecibo();
     fecharVerMais();
     fecharRelatorio();
     fecharBalaoPrazo();
@@ -1438,8 +1592,141 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
+/* ============================================================
+   RECIBO EM PDF — modal dentro do admin (sem aba nova)
+   ============================================================ */
+function abrirRecibo(codigo, ehLoja) {
+  if (!codigo) return;
+
+  var tokenAtual = token || sessionStorage.getItem('m3d_admin_token') || '';
+  var url = ehLoja
+    ? API_URL + '/loja/pedidos/' + encodeURIComponent(codigo) + '/recibo'
+    : API_URL + '/orcamentos/' + encodeURIComponent(codigo) + '/recibo';
+
+  /* Cria (ou reaproveita) o overlay */
+  var overlay = document.getElementById('reciboOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'reciboOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,30,61,.55);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:99999;padding:20px;';
+    overlay.innerHTML =
+      '<div id="reciboBox" style="background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(15,30,61,.3);max-width:420px;width:100%;padding:34px 28px;text-align:center;font-family:Arial,Helvetica,sans-serif;position:relative;">' +
+        '<button type="button" id="reciboFechar" style="position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;color:#8a94a8;cursor:pointer;line-height:1;">&times;</button>' +
+        '<div style="font-size:44px;margin-bottom:10px;">🧾</div>' +
+        '<h2 id="reciboCodigo" style="margin:0 0 6px;color:#0f1e3d;font-size:20px;font-weight:800;"></h2>' +
+        '<p style="margin:0 0 22px;color:#5a6472;font-size:13.5px;line-height:1.6;">Escolha como deseja obter o recibo em PDF.</p>' +
+        '<button type="button" id="reciboBaixar" style="display:block;width:100%;padding:13px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;border:none;margin:0 0 10px;background:#f26522;color:#fff;">📥 Baixar PDF</button>' +
+        '<button type="button" id="reciboEnviar" style="display:block;width:100%;padding:13px;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;background:#f0f6ff;color:#1f6feb;border:1px solid #1f6feb;">✉️ Enviar por e-mail</button>' +
+        '<div id="reciboMsg" style="font-size:12.5px;color:#8a94a8;margin-top:16px;min-height:18px;line-height:1.5;"></div>' +
+      '</div>';
+    document.body.appendChild(overlay);
+
+    document.getElementById('reciboFechar').onclick = fecharRecibo;
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) fecharRecibo();
+    });
+  }
+
+  overlay.style.display = 'flex';
+  document.getElementById('reciboCodigo').textContent = 'Recibo ' + codigo;
+
+  var msg = document.getElementById('reciboMsg');
+  var btnBaixar = document.getElementById('reciboBaixar');
+  var btnEnviar = document.getElementById('reciboEnviar');
+
+  msg.textContent = '';
+  msg.style.color = '#8a94a8';
+  btnBaixar.disabled = false;
+  btnEnviar.disabled = false;
+  btnBaixar.textContent = '📥 Baixar PDF';
+  btnEnviar.textContent = '✉️ Enviar por e-mail';
+
+  /* ---- BAIXAR ---- */
+  btnBaixar.onclick = function () {
+    btnBaixar.disabled = true;
+    btnBaixar.textContent = 'Gerando...';
+    msg.textContent = '';
+    msg.style.color = '#8a94a8';
+
+    fetch(url, { headers: { 'Authorization': 'Bearer ' + tokenAtual } })
+      .then(function (r) {
+        if (r.status === 401) {
+          msg.textContent = 'Sessão expirada. Faça login novamente.';
+          msg.style.color = '#d93636';
+          throw new Error('401');
+        }
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.blob();
+      })
+      .then(function (blob) {
+        var u = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = u;
+        a.download = 'recibo-' + codigo + '.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(function () { URL.revokeObjectURL(u); }, 2000);
+        msg.textContent = 'Download iniciado.';
+        msg.style.color = '#1d8a4f';
+      })
+      .catch(function () {
+        if (!msg.textContent) {
+          msg.textContent = 'Não foi possível gerar o recibo.';
+          msg.style.color = '#d93636';
+        }
+      })
+      .finally(function () {
+        btnBaixar.disabled = false;
+        btnBaixar.textContent = '📥 Baixar PDF';
+      });
+  };
+
+  /* ---- ENVIAR ---- */
+  btnEnviar.onclick = function () {
+    btnEnviar.disabled = true;
+    btnEnviar.textContent = 'Enviando...';
+    msg.textContent = '';
+    msg.style.color = '#8a94a8';
+
+    fetch(url + '/enviar', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + tokenAtual,
+        'Content-Type': 'application/json'
+      },
+      body: '{}'
+    })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (x) {
+        if (x.ok) {
+          msg.textContent = 'Recibo enviado para ' + x.d.enviadoPara;
+          msg.style.color = '#1d8a4f';
+        } else {
+          msg.textContent = 'Erro: ' + (x.d.error || 'tente novamente');
+          msg.style.color = '#d93636';
+        }
+      })
+      .catch(function () {
+        msg.textContent = 'Falha ao enviar.';
+        msg.style.color = '#d93636';
+      })
+      .finally(function () {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = '✉️ Enviar por e-mail';
+      });
+  };
+}
+
+function fecharRecibo() {
+  var o = document.getElementById('reciboOverlay');
+  if (o) o.style.display = 'none';
+}
+
 /* ===== 16. EXPOSIÇÃO GLOBAL ===== */
 try {
+    window.abrirRecibo = abrirRecibo;
+  window.fecharRecibo = fecharRecibo;
   window.orcamentos = orcamentos;
   window.lojaPedidos = lojaPedidos;
   window.mudarAba = mudarAba;
@@ -1466,27 +1753,76 @@ try {
    BALCÃO DE STATUS DA ENCOMENDA (padrão visual da Modelagem)
    ===================================================================== */
 (function () {
-  var STATUS_ENC = [
-    { id: 'novo',       label: 'Novo',          classe: 'status-novo' },
-    { id: 'em-analise', label: 'Em análise',    classe: 'status-em-analise' },
-    { id: 'orcamento',  label: 'Em orçamento',  classe: 'status-orcamento' },
-    { id: 'aprovado',   label: 'Aprovado',      classe: 'status-aprovado' },
-    { id: 'producao',   label: 'Em produção',   classe: 'status-producao' },
-    { id: 'pronto',     label: 'Pronto',        classe: 'status-pronto' },
-    { id: 'entregue',   label: 'Entregue',      classe: 'status-entregue' },
+/* Status por contexto — espelha opcoesTodas() */
+function statusDoContexto() {
+  if (tipoAtivo === 'loja') {
+    return [
+      { id: 'Aguardando pagamento (Pix)',      label: 'Aguardando (Pix)',        classe: 'status-aguardando' },
+      { id: 'Aguardando pagamento (Cartão)',   label: 'Aguardando (Cartão)',     classe: 'status-aguardando' },
+      { id: 'Pagamento em verificação (Pix)',  label: 'Pix em verificação',      classe: 'status-verificacao' },
+      { id: 'Pix aguardando compensação',      label: 'Pix aguardando comp.',    classe: 'status-verificacao' },
+      { id: 'Pix não identificado',            label: 'Pix não identificado',    classe: 'status-recusado' },
+      { id: 'pago',                            label: 'Pago no Pix',             classe: 'status-pago' },
+      { id: 'Pago (Cartão)',                   label: 'Pago no cartão',          classe: 'status-pagocartao' },
+      { id: 'gerando nota',                    label: 'Gerando nota',            classe: 'status-embalagem' },
+      { id: 'embalagem',                       label: 'Em embalagem',            classe: 'status-embalagem' },
+      { id: 'saiu',                            label: 'Saiu para entrega',       classe: 'status-saiu' },
+      { id: 'entregue',                        label: 'Entregue',                classe: 'status-entregue' },
+      { id: 'cancelado',                       label: 'Cancelado',               classe: 'status-cancelado' }
+    ];
+  }
+
+  if (tipoAtivo === 'consultoria') {
+    return [
+      { id: 'novo',                  label: 'Novo',                classe: 'status-novo' },
+      { id: 'em-analise',            label: 'Em análise',          classe: 'status-em-analise' },
+      { id: 'aguardando-pagamento',  label: 'Aguardando pagamento', classe: 'status-aguardando' },
+      { id: 'consultoria-paga',      label: 'Consultoria paga',    classe: 'status-pago' },
+      { id: 'agendado',              label: 'Agendamento realizado', classe: 'status-em-analise' },
+      { id: 'em-atendimento',        label: 'Em atendimento',      classe: 'status-producao' },
+      { id: 'consultoria-finalizada', label: 'Consultoria finalizada', classe: 'status-entregue' },
+      { id: 'sem-resposta',          label: 'Sem resposta',        classe: 'status-semresposta' },
+      { id: 'cancelado',             label: 'Cancelado',           classe: 'status-cancelado' }
+    ];
+  }
+
+  if (tipoAtivo === 'assistencia') {
+    return [
+      { id: 'novo',            label: 'Novo',                  classe: 'status-novo' },
+      { id: 'em-analise',      label: 'Em análise',            classe: 'status-em-analise' },
+      { id: 'agendado',        label: 'Agendamento realizado', classe: 'status-em-analise' },
+      { id: 'a-caminho',       label: 'A caminho do atendimento', classe: 'status-producao' },
+      { id: 'aguardando-peca', label: 'Aguardando peça',       classe: 'status-aguardando' },
+      { id: 'finalizado',      label: 'Finalizado',            classe: 'status-entregue' },
+      { id: 'sem-resposta',    label: 'Sem resposta',          classe: 'status-semresposta' },
+      { id: 'cancelado',       label: 'Cancelado',             classe: 'status-cancelado' }
+    ];
+  }
+
+  /* encomenda (padrão) */
+  return [
+    { id: 'novo',         label: 'Novo',         classe: 'status-novo' },
+    { id: 'em-analise',   label: 'Em análise',   classe: 'status-em-analise' },
+    { id: 'orcamento',    label: 'Em orçamento', classe: 'status-orcamento' },
+    { id: 'aprovado',     label: 'Aprovado',     classe: 'status-aprovado' },
+    { id: 'producao',     label: 'Em produção',  classe: 'status-producao' },
+    { id: 'pronto',       label: 'Pronto',       classe: 'status-pronto' },
+    { id: 'entregue',     label: 'Entregue',     classe: 'status-entregue' },
     { id: 'sem-resposta', label: 'Sem resposta', classe: 'status-semresposta' },
-    { id: 'cancelado',  label: 'Cancelado',     classe: 'status-cancelado' }
+    { id: 'cancelado',    label: 'Cancelado',    classe: 'status-cancelado' }
   ];
+}
 
   var encAtual = null;
   var encAcao = null;
 
-  function info(id) {
-    for (var i = 0; i < STATUS_ENC.length; i++) {
-      if (STATUS_ENC[i].id === id) return STATUS_ENC[i];
-    }
-    return STATUS_ENC[0];
+ function info(id) {
+  var lista = statusDoContexto();
+  for (var i = 0; i < lista.length; i++) {
+    if (lista[i].id === id) return lista[i];
   }
+  return { id: id, label: id, classe: 'status-novo' };
+}
 
   function esc(s) {
     return String(s == null ? '' : s)
@@ -1563,8 +1899,9 @@ try {
     html += '</div>';
 
     html += '<div class="m3d-transf-bloco"><h4>Alterar para</h4><div class="mod-status-grid">';
-    for (var i = 0; i < STATUS_ENC.length; i++) {
-      var s = STATUS_ENC[i];
+    var listaStatus = statusDoContexto();
+for (var i = 0; i < listaStatus.length; i++) {
+  var s = listaStatus[i];
       html += '<button type="button" class="mod-status-opt' +
         (s.id === (p.status || 'novo') ? ' atual' : '') +
         '" data-enc-set="' + s.id + '">' +
@@ -1594,7 +1931,6 @@ try {
   function selecionarStatusEncomenda(statusId) {
     if (!encAtual) return;
     encAcao = statusId;
-
     var box = document.getElementById('encDinamico');
     if (!box) return;
 
@@ -1609,6 +1945,22 @@ try {
       : '';
 
     var html = '';
+
+    /* ✅ NOVO — inputs de data/hora quando o status for "agendado" */
+    if (statusId === 'agendado') {
+      var dataAtual = p.data_agendamento ? String(p.data_agendamento).slice(0, 10) : '';
+      var horaAtual = p.hora_agendamento ? String(p.hora_agendamento).slice(0, 5) : '';
+      html += '<div class="enc-agendamento" style="margin:14px 0;padding:14px;background:#f0f6ff;border:2px solid #1f6feb;border-radius:12px;">';
+      html += '<div style="font-size:12px;font-weight:800;color:#0f1e3d;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📅 Data e hora do agendamento</div>';
+      html += '<div style="display:flex;gap:10px;">';
+      html += '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Data</label>';
+      html += '<input type="date" id="encDataAg" value="' + dataAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;box-sizing:border-box;">';
+      html += '</div>';
+      html += '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Hora</label>';
+      html += '<input type="time" id="encHoraAg" value="' + horaAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;box-sizing:border-box;">';
+      html += '</div>';
+      html += '</div></div>';
+    }
 
     if (msg) {
       html += '<div class="mod-msg-box">';
@@ -1648,14 +2000,46 @@ try {
       for (var k = 0; k < ops.length; k++) ops[k].classList.remove('sel');
     });
 
-    var aplicar = document.getElementById('encAplicar');
-    if (aplicar) aplicar.addEventListener('click', function () {
-      if (!encAtual || !encAcao) return;
-      fecharBalcaoEncomenda();
-      if (typeof window.mudarStatus === 'function') {
-        window.mudarStatus(encAtual.id, encAcao);
-      }
-    });
+var aplicar = document.getElementById('encAplicar');
+if (aplicar) aplicar.addEventListener('click', function () {
+  if (!encAtual || !encAcao) return;
+  var idAtual = encAtual.id;
+  var acao = encAcao;
+
+  /* ✅ Lê e valida os campos de agendamento ANTES de fechar o balcão */
+  var dadosAg = null;
+  if (acao === 'agendado') {
+    var elData = document.getElementById('encDataAg');
+    var elHora = document.getElementById('encHoraAg');
+    if (!elData || !elData.value) {
+      alert('Informe a data do agendamento.');
+      return;
+    }
+    if (!elHora || !elHora.value) {
+      alert('Informe a hora do agendamento.');
+      return;
+    }
+    dadosAg = {
+      data_agendamento: elData.value,
+      hora_agendamento: elHora.value
+    };
+    console.log('[balcao] dadosAg montado:', dadosAg);
+  }
+
+  fecharBalcaoEncomenda();
+
+  if (typeof window.mudarStatus === 'function') {
+  var dadosAg = null;
+if (acao === 'agendado') {
+  var elData = document.getElementById('encDataAg');
+  var elHora = document.getElementById('encHoraAg');
+  if (!elData || !elData.value) { alert('Informe a data do agendamento.'); return; }
+  if (!elHora || !elHora.value) { alert('Informe a hora do agendamento.'); return; }
+  dadosAg = { data_agendamento: elData.value, hora_agendamento: elHora.value };
+}
+window.mudarStatus(idAtual, acao, dadosAg);
+  }
+});
   }
 
   function fecharBalcaoEncomenda() {
@@ -1670,4 +2054,148 @@ try {
   document.addEventListener('click', function () {
     setTimeout(trocarSelectPorBotao, 120);
   });
+})();
+
+/* ============================================================
+   PIX — 3 AÇÕES DO ADMIN (verde / amarelo / vermelho)
+   ============================================================ */
+
+function ehPixPendente(status) {
+  var s = String(status || '').toLowerCase();
+  return s.indexOf('verifica') !== -1
+      || s.indexOf('aguardando compensa') !== -1
+      || s.indexOf('não identificado') !== -1
+      || s.indexOf('nao identificado') !== -1
+      || s === 'em_verificacao';
+}
+
+function acaoPix(codigo, acao, btn) {
+  if (!codigo) return;
+
+  var rotulo = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+
+  fetch(API_URL + '/loja/pedidos/' + encodeURIComponent(codigo) + '/' + acao, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({})
+  })
+  .then(function(res) {
+    if (res.status === 401) { sair(); throw new Error('Sessão expirada'); }
+    if (!res.ok) return res.json().then(function(d) {
+      throw new Error((d && (d.erro || d.error)) || ('HTTP ' + res.status));
+    });
+    return res.json();
+  })
+  .then(function(dados) {
+    var p = dados.pedido || {};
+
+    /* Atualiza a lista local */
+    var local = lojaPedidos.filter(function(x) {
+      return String(x.pedido_id) === String(codigo) || String(x.id) === String(codigo);
+    })[0];
+    if (local && p.status) local.status = p.status;
+
+    /* Atualiza pill sem re-renderizar */
+    var pill = document.getElementById('pill-' + (local ? local.id : ''));
+    if (pill) {
+      if (acao === 'confirmar') {
+        pill.className = 'status-pill status-pago';
+        pill.textContent = '💰 Pago no Pix';
+      } else if (acao === 'aguardar') {
+        pill.className = 'status-pill status-verificacao';
+        pill.textContent = '⏳ Aguardando compensação';
+      } else if (acao === 'recusar') {
+        pill.className = 'status-pill status-recusado';
+        pill.textContent = '⚠️ Pix não identificado';
+      }
+    }
+
+    /* Remove os 3 botões da linha — a ação foi tomada */
+    var tr = btn ? btn.closest('tr') : null;
+    if (tr) {
+      tr.querySelectorAll('.pix-acao-btn').forEach(function(b) { b.remove(); });
+    }
+
+    renderizar();
+
+    /* Balcão com mensagem pronta */
+    if (local && window.mostrarBalcao) {
+      var stMap = { confirmar: 'pago', aguardar: 'Pix aguardando compensação', recusar: 'Pix não identificado' };
+      mostrarBalcao(local.nome_cliente, local.pedido_id || ('#' + local.id), local.whatsapp || local.email, stMap[acao] || '');
+    }
+  })
+  .catch(function(e) {
+    if (btn) { btn.disabled = false; btn.textContent = rotulo; }
+    alert('Não foi possível agora: ' + ((e && e.message) || 'erro'));
+    console.error('acaoPix:', e);
+  });
+}
+
+/* Injeta os 3 botões nas linhas com Pix pendente */
+(function() {
+  function injetarBotoesPix() {
+    if (tipoAtivo !== 'loja') return;
+
+    document.querySelectorAll('#tabelaBody tr').forEach(function(tr) {
+      if (tr.querySelector('.pix-acao-btn')) return;
+
+      var sel = tr.querySelector('select.status-select');
+      if (!sel) return;
+
+      var match = String(sel.getAttribute('onchange') || '').match(/mudarStatus\((\d+)/);
+      if (!match) return;
+      var id = match[1];
+
+      var p = lojaPedidos.filter(function(x) { return String(x.id) === String(id); })[0];
+      if (!p || !ehPixPendente(p.status)) return;
+
+      var codigo = p.pedido_id || p.id;
+      var td = sel.closest('td');
+      if (!td) return;
+
+      /* Container */
+      var box = document.createElement('div');
+      box.className = 'pix-acoes';
+
+      function criarBtn(classe, texto, acao) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'pix-acao-btn ' + classe;
+        b.textContent = texto;
+        b.onclick = function() { acaoPix(codigo, acao, b); };
+        return b;
+      }
+
+      box.appendChild(criarBtn('pix-confirmar', '✅ Confirmar Pix', 'confirmar'));
+      box.appendChild(criarBtn('pix-aguardar', '⏳ Ainda não caiu', 'aguardar'));
+      box.appendChild(criarBtn('pix-recusar', '❌ Não identifiquei', 'recusar'));
+
+      td.appendChild(box);
+    });
+  }
+
+  var _renderOriginal = window.renderizar;
+  if (typeof _renderOriginal === 'function') {
+    window.renderizar = function() {
+      var r = _renderOriginal.apply(this, arguments);
+      setTimeout(injetarBotoesPix, 60);
+      return r;
+    };
+  }
+
+  var _aplicarOriginal = window.aplicarFiltros;
+  if (typeof _aplicarOriginal === 'function') {
+    window.aplicarFiltros = function() {
+      var r = _aplicarOriginal.apply(this, arguments);
+      setTimeout(injetarBotoesPix, 60);
+      return r;
+    };
+  }
+
+  window.acaoPix = acaoPix;
+  window.addEventListener('load', function() { setTimeout(injetarBotoesPix, 300); });
 })();

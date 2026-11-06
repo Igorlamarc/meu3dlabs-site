@@ -812,3 +812,50 @@ body.dark #painelModelagem .top-bar h1 { color: #e6ecf7; }
     padding: 7px 13px;
   }
 }
+
+/* ==========================================================================
+   BOTÃO CANCELAR + STATUS CANCELADO
+   ========================================================================== */
+.status-cancelado { background:#fdecea; color:#a93226; }
+
+.mod-btn.cancelar {
+  background: #fdeaea;
+  border-color: #f2b8b5;
+  color: #c0392b;
+}
+.mod-btn.cancelar:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: #fff;
+}
+body.dark .mod-btn.cancelar {
+  background: #3a1a1a;
+  border-color: #6b2b2b;
+  color: #ff9b9b;
+}
+body.dark .mod-btn.cancelar:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: #fff;
+}
+
+.mod-btn.excluir {
+  background: #f5f5f5;
+  border-color: #d0d5dd;
+  color: #5a6472;
+}
+.mod-btn.excluir:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: #fff;
+}
+body.dark .mod-btn.excluir {
+  background: #1f2a3d;
+  border-color: #3d4a5c;
+  color: #9fb0c9;
+}
+body.dark .mod-btn.excluir:hover {
+  background: #c0392b;
+  border-color: #c0392b;
+  color: #fff;
+}

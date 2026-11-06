@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin Blog — Meu 3D Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   MEU 3D LABS — admin-feed.html
+   Painel de publicações do blog.
+   Mesmo padrão visual e de autenticação do admin-loja.
+   ============================================================ */
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{overflow-x:hidden;-webkit-text-size-adjust:100%;max-width:100%;}
+body{
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:#f2f4f8;color:#16294f;
+  overflow-x:hidden;max-width:100%;width:100%;
+  position:relative;-webkit-font-smoothing:antialiased;
+  transition:background .25s,color .25s;
+}
+img,svg,video,iframe{max-width:100%;height:auto;}
+.hidden{display:none !important;}
+
+/* ==================== TOAST ==================== */
+#toast{
+  position:fixed;bottom:26px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:#0f1e3d;color:#fff;
+  padding:13px 26px;border-radius:12px;
+  font-size:14px;font-weight:600;
+  box-shadow:0 8px 26px rgba(15,30,61,.4);
+  opacity:0;transition:transform .3s,opacity .3s;
+  z-index:999;max-width:min(calc(100vw - 32px),420px);
+  width:max-content;text-align:center;
+  pointer-events:none;line-height:1.4;
+}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+#toast.ok{background:#1d8a4f;}
+#toast.erro{background:#c0392b;}
+
+/* ==================== LOGIN ==================== */
+#telaLogin{
+  min-height:100vh;min-height:100dvh;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#0f1e3d 0%,#16294f 55%,#24406e 100%);
+  padding:20px;
+}
+.login-box{
+  background:#fff;border-radius:20px;
+  padding:44px 36px 36px;width:100%;max-width:410px;
+  box-shadow:0 24px 70px rgba(0,0,0,.4);
+  position:relative;text-align:center;
+  animation:subir .35s ease;
+}
+@keyframes subir{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+.login-back{
+  position:absolute;top:18px;left:22px;
+  font-size:13px;color:#4a5161;text-decoration:none;transition:.2s;
+}
+.login-back:hover{color:#f26522;}
+.login-icon{
+  width:68px;height:68px;border-radius:50%;
+  background:linear-gradient(135deg,#fff4ec,#ffe6d5);
+  display:flex;align-items:center;justify-content:center;
+  margin:26px auto 16px;font-size:30px;
+  box-shadow:inset 0 0 0 1.5px #ffd8ba;
+}
+.login-box h1{font-size:20px;color:#0f1e3d;margin-bottom:6px;font-weight:800;}
+.login-box p{color:#4a5161;font-size:13.5px;margin-bottom:24px;line-height:1.5;}
+.login-box input{
+  width:100%;padding:14px 16px;
+  border:2px solid #f26522;border-radius:10px;
+  font-size:14px;outline:none;font-family:inherit;
+  transition:.2s;color:#0f1e3d;
+}
+.login-box input:focus{box-shadow:0 0 0 4px rgba(242,101,34,.16);}
+.login-box input::placeholder{color:#9aa4b8;}
+.login-box button{
+  width:100%;margin-top:14px;padding:14px;
+  background:linear-gradient(135deg,#f26522,#ff7c3d);
+  border:none;border-radius:10px;color:#fff;
+  font-size:15px;font-weight:700;cursor:pointer;
+  transition:.2s;font-family:inherit;
+  box-shadow:0 6px 16px rgba(242,101,34,.35);
+}
+.login-box button:hover{transform:translateY(-1px);box-shadow:0 9px 20px rgba(242,101,34,.45);}
+.login-box button:disabled{opacity:.6;cursor:wait;transform:none;}
+.login-err{color:#c0392b;font-size:13px;margin-bottom:12px;display:none;text-align:center;}
+
+/* ==================== TOPO ==================== */
+.topo{
+  background:linear-gradient(120deg,#0f1e3d 0%,#182c54 70%,#1f3a6b 100%);
+  color:#fff;padding:16px 26px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px;
+  box-shadow:0 3px 14px rgba(15,30,61,.25);
+  position:sticky;top:0;z-index:50;
+}
+.topo h1{font-size:19px;font-weight:800;letter-spacing:-.3px;min-width:0;}
+.topo h1 span{color:#ff8a3d;}
+.topo .acoes-topo{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.btn-noturno{
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);
+  color:#fff;padding:8px 16px;border-radius:8px;
+  cursor:pointer;font-size:13px;transition:.2s;font-family:inherit;
+}
+.btn-noturno:hover{background:rgba(255,255,255,.25);}
+.topo .sair{
+  background:transparent;border:1px solid rgba(255,255,255,.4);
+  color:#fff;padding:8px 16px;border-radius:8px;
+  cursor:pointer;font-size:13px;font-family:inherit;transition:.2s;
+}
+.topo .sair:hover{background:rgba(255,255,255,.14);}
+
+/* ==================== MODO NOTURNO ==================== */
+body.dark{background:#0d1424;color:#dbe2f0;}
+body.dark .card{background:#16203a;box-shadow:0 3px 12px rgba(0,0,0,.45);}
+body.dark .card .info .nome{color:#fff;}
+body.dark .card .info .cat{color:#8a94a8;}
+body.dark .card .acoes{border-top-color:#223055;}
+body.dark .resumo-item{background:#16203a;border-color:#223055;}
+body.dark .resumo-item .num{color:#fff;}
+body.dark .resumo-item .rot{color:#8a94a8;}
+body.dark .filtro-cat button{background:#16203a;border-color:#223055;color:#a9b4c9;}
+body.dark .filtro-cat button.ativo{background:#f26522;border-color:#f26522;color:#fff;}
+body.dark .busca-rapida input{background:#16203a;border-color:#2a3a63;color:#e6ecf7;}
+body.dark .busca-rapida input::placeholder{color:#6b7690;}
+body.dark .form-wrap{background:#16203a;box-shadow:0 3px 12px rgba(0,0,0,.45);}
+body.dark .form-wrap h3{color:#fff;}
+body.dark .campo label{color:#a9b4c9;}
+body.dark .campo input,body.dark .campo select,body.dark .campo textarea{
+  background:#0f1a30;border-color:#2a3a63;color:#e6ecf7;
+}
+body.dark .slug-preview{color:#6b7690;}
+body.dark .btn{background:#223055;}
+body.dark .btn:hover{background:#2c3d6e;}
+body.dark .btn-laranja{background:#f26522;}
+body.dark .btn-laranja:hover{background:#ff8a3d;}
+body.dark .btn-verde{background:#1d8a4f;}
+body.dark .btn-vermelho{background:#c0392b;}
+body.dark .btn-cinza{background:#4a5670;}
+body.dark #vazio{color:#6b7690;}
+body.dark .ordem-select{background:#16203a;border-color:#2a3a63;color:#e6ecf7;}
+body.dark .img-preview{border-color:#2a3a63;}
+body.dark .upload-area{border-color:#2a3a63;}
+body.dark .upload-area:hover{background:#1c2a4a;}
+
+/* ==================== CONTEÚDO ==================== */
+.conteudo{max-width:1100px;margin:0 auto;padding:26px 22px;width:100%;}
+
+.barra-acoes{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:14px;flex-wrap:wrap;gap:10px;
+}
+.barra-acoes h2{font-size:18px;font-weight:800;letter-spacing:-.2px;min-width:0;}
+
+.btn{
+  background:#0f1e3d;color:#fff;border:none;
+  padding:10px 18px;border-radius:9px;
+  font-size:14px;font-weight:600;cursor:pointer;
+  transition:.2s;font-family:inherit;
+}
+.btn:hover{background:#1d3a6b;transform:translateY(-1px);}
+.btn:disabled{opacity:.5;cursor:wait;transform:none;}
+.btn-laranja{background:#f26522;box-shadow:0 4px 12px rgba(242,101,34,.3);}
+.btn-laranja:hover{background:#ff7c3d;}
+.btn-verde{background:#1d8a4f;}
+.btn-verde:hover{background:#23a95f;}
+.btn-vermelho{background:#c0392b;}
+.btn-vermelho:hover{background:#d8503f;}
+.btn-cinza{background:#8a94a8;}
+.btn-cinza:hover{background:#a4adc0;}
+
+/* ==================== BUSCA ==================== */
+.busca-rapida{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:14px;flex-wrap:wrap;
+}
+.busca-rapida .ic{
+  width:38px;height:38px;border-radius:10px;background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;box-shadow:0 2px 8px rgba(15,30,61,.08);flex-shrink:0;
+}
+.busca-rapida input{
+  flex:1;min-width:0;padding:11px 16px;
+  border:1.5px solid #dde3ee;border-radius:10px;
+  font-size:14px;font-family:inherit;outline:none;
+  transition:.2s;color:#16294f;background:#fff;
+}
+.busca-rapida input:focus{border-color:#f26522;box-shadow:0 0 0 3px rgba(242,101,34,.12);}
+.ordem-select{
+  padding:11px 14px;border:1.5px solid #dde3ee;border-radius:10px;
+  font-size:13px;font-family:inherit;background:#fff;
+  color:#16294f;cursor:pointer;flex-shrink:0;
+}
+.ordem-select:focus{outline:none;border-color:#f26522;}
+
+/* ==================== RESUMO ==================== */
+.resumo{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.resumo-item{
+  background:#fff;border:1px solid #e3e8ef;border-radius:12px;
+  padding:12px 18px;font-size:13px;
+  display:flex;align-items:center;gap:9px;
+  box-shadow:0 2px 8px rgba(15,30,61,.06);
+  transition:.2s;cursor:pointer;user-select:none;
+}
+.resumo-item:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(15,30,61,.1);}
+.resumo-item.ativo{border-color:#f26522;box-shadow:0 0 0 2px rgba(242,101,34,.18);}
+.resumo-item .num{font-weight:800;font-size:19px;color:#0f1e3d;}
+.resumo-item .rot{color:#4a5161;}
+.resumo-item .num-verde{color:#1d8a4f;}
+.resumo-item .num-vermelho{color:#c0392b;}
+
+/* ==================== FILTRO CATEGORIA ==================== */
+.filtro-cat{display:flex;gap:7px;margin-bottom:18px;flex-wrap:wrap;}
+.filtro-cat button{
+  padding:7px 15px;border:1px solid #dde3ee;border-radius:20px;
+  background:#fff;color:#4a5161;font-size:12px;font-weight:600;
+  cursor:pointer;transition:.2s;font-family:inherit;
+}
+.filtro-cat button:hover{border-color:#f26522;color:#f26522;}
+.filtro-cat button.ativo{background:#0f1e3d;border-color:#0f1e3d;color:#fff;box-shadow:0 3px 10px rgba(15,30,61,.25);}
+
+/* ==================== GRADE ==================== */
+.grade{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:18px;
+}
+.card{
+  position:relative;background:#fff;border-radius:14px;overflow:hidden;
+  box-shadow:0 2px 10px rgba(15,30,61,.08);
+  display:flex;flex-direction:column;
+  transition:transform .2s,box-shadow .2s;min-width:0;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(15,30,61,.16);}
+.card .foto{
+  height:155px;background:#eef1f6;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;position:relative;
+}
+.card .foto img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.card:hover .foto img{transform:scale(1.05);}
+.card .foto .sem-foto{color:#9aa4b8;font-size:13px;text-align:center;padding:10px;}
+.card .foto .emoji-foto{font-size:44px;}
+.card .info{padding:13px;flex:1;min-width:0;}
+.card .info .nome{
+  font-weight:700;font-size:14px;margin-bottom:4px;
+  overflow:hidden;text-overflow:ellipsis;
+  display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;
+  -webkit-box-orient:vertical;line-height:1.35;
+}
+.card .info .cat{color:#8a94a8;font-size:12px;margin-bottom:8px;}
+.badge{
+  display:inline-block;padding:3px 11px;border-radius:20px;
+  font-size:11px;font-weight:700;
+}
+.badge.ok{background:#e3f5ec;color:#1d8a4f;}
+.badge.rascunho{background:#fff4d6;color:#b07d00;}
+.badge.destaque{background:#fde8e5;color:#c0392b;}
+.tag-destaque{
+  position:absolute;top:10px;right:10px;
+  background:#f26522;color:#fff;font-size:11px;font-weight:800;
+  padding:4px 10px;border-radius:20px;z-index:4;
+  box-shadow:0 3px 8px rgba(0,0,0,.25);
+}
+.card .acoes{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:6px;
+  padding:11px 13px;border-top:1px solid #eef1f6;
+}
+.card .acoes button{
+  padding:8px 4px;border:none;border-radius:8px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  transition:.15s;font-family:inherit;white-space:nowrap;
+}
+.card .acoes button:hover{filter:brightness(1.12);}
+
+/* ==================== FORMULÁRIO ==================== */
+.form-wrap{
+  background:#fff;border-radius:16px;padding:26px;
+  box-shadow:0 3px 14px rgba(15,30,61,.09);
+  margin-bottom:24px;animation:subir .3s ease;min-width:0;
+}
+.form-wrap h3{margin-bottom:18px;font-size:17px;font-weight:800;}
+.campos{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+.campo{display:flex;flex-direction:column;min-width:0;}
+.campo.full{grid-column:1/-1;}
+.campo label{font-size:12px;font-weight:600;color:#4a5670;margin-bottom:5px;}
+.campo input,.campo select,.campo textarea{
+  padding:11px;border:1.5px solid #dde3ee;border-radius:9px;
+  font-size:14px;font-family:inherit;transition:.2s;
+  color:#16294f;background:#fff;width:100%;
+}
+.campo input:focus,.campo select:focus,.campo textarea:focus{
+  border-color:#f26522;outline:none;box-shadow:0 0 0 3px rgba(242,101,34,.12);
+}
+.campo textarea{resize:vertical;min-height:80px;line-height:1.6;}
+.campo input[type=checkbox]{width:auto;align-self:flex-start;}
+.slug-preview{font-size:11px;color:#8a94a8;margin-top:3px;word-break:break-all;}
+.slug-preview.estourou{color:#c0392b;}
+.slug-preview.dica-boa{color:#1d8a4f;}
+
+/* Upload */
+.upload-area{
+  border:2px dashed #c6cfdd;border-radius:12px;padding:20px;
+  text-align:center;cursor:pointer;transition:.2s;margin-top:6px;
+}
+.upload-area:hover{border-color:#f26522;background:#fff8f4;}
+.upload-area .icone{font-size:26px;}
+.upload-area .txt{font-size:13px;color:#667;margin-top:6px;line-height:1.5;}
+.img-preview{
+  position:relative;width:100%;max-width:280px;
+  border-radius:10px;overflow:hidden;border:1px solid #dde3ee;
+  margin-top:12px;
+}
+.img-preview img{width:100%;display:block;}
+.img-preview .btn-remover{
+  position:absolute;top:6px;right:6px;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(192,57,43,.92);color:#fff;
+  border:none;font-size:14px;cursor:pointer;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+}
+
+.form-acoes{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.form-acoes .btn{flex:1;min-width:130px;}
+
+/* ==================== VAZIO ==================== */
+.carregando{text-align:center;padding:40px;color:#8a94a8;}
+
+/* ==================== RESPONSIVO ==================== */
+@media(max-width:780px){
+  .campos{grid-template-columns:1fr;}
+}
+@media(max-width:640px){
+  .conteudo{padding:18px 14px 60px;}
+  .topo{padding:12px 14px;gap:8px;}
+  .topo h1{font-size:15px;line-height:1.25;}
+  .topo .acoes-topo{gap:6px;width:100%;justify-content:flex-end;}
+  .btn-noturno,.topo .sair{padding:7px 11px;font-size:12px;}
+  .barra-acoes{gap:8px;}
+  .barra-acoes h2{font-size:16px;width:100%;}
+  .barra-acoes > div{width:100%;}
+  .barra-acoes .btn{flex:1;font-size:13px;padding:10px 12px;}
+  .grade{grid-template-columns:1fr;gap:12px;}
+  .card .foto{height:180px;}
+  .resumo{gap:7px;}
+  .resumo-item{padding:9px 12px;font-size:12px;flex:1;min-width:calc(50% - 4px);justify-content:center;}
+  .resumo-item .num{font-size:17px;}
+  .filtro-cat{gap:5px;}
+  .filtro-cat button{font-size:11px;padding:6px 11px;}
+  .form-wrap{padding:18px 15px;}
+  .form-acoes{flex-direction:column;}
+  .form-acoes .btn{width:100%;}
+  .ordem-select{width:100%;}
+  .busca-rapida .ic{display:none;}
+}
+@media(max-width:400px){
+  .conteudo{padding:14px 10px 60px;}
+  .resumo-item{min-width:100%;}
+  .login-box{padding:36px 22px 28px;}
+  #toast{max-width:calc(100vw - 20px);font-size:13px;padding:11px 18px;}
+}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- ===== LOGIN ===== -->
+<div id="telaLogin">
+  <div class="login-box">
+    <a class="login-back" href="index.html">← Voltar</a>
+    <div class="login-icon">📰</div>
+    <h1>Área restrita</h1>
+    <p>Digite a senha para acessar o painel do blog.</p>
+    <div class="login-err" id="loginErr">Senha incorreta</div>
+    <input type="password" id="senha" placeholder="Senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()">
+    <button id="btnLogin" onclick="fazerLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- ===== PAINEL ===== -->
+<div id="painel" class="hidden">
+  <div class="topo">
+    <h1>Meu 3D <span>Labs</span> — Admin Blog</h1>
+    <div class="acoes-topo">
+      <button class="btn-noturno" id="btnNoturno" onclick="alternarNoturno()">🌙 Noturno</button>
+      <button class="btn-noturno" type="button" onclick="abrirBlogPublico()" title="Abrir o blog público">👁️ Ver blog</button>
+      <button class="sair" onclick="sair()">Sair</button>
+    </div>
+  </div>
+
+  <div class="conteudo">
+    <div class="barra-acoes">
+      <h2 id="tituloLista">Publicações do blog</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-laranja" onclick="abrirForm()">+ Nova publicação</button>
+      </div>
+    </div>
+
+    <div id="msgAviso" style="background:#fff4d6;color:#7a5c00;padding:12px;border-radius:10px;font-size:13px;margin-bottom:12px;">
+      ⚠️ Este painel é <b>privado</b>. ⚠️ <b>Nunca publique</b> peças de personagens ou marcas de terceiros sem autorização — apenas conteúdo próprio (peças suas, dicas técnicas, bastidores).
+    </div>
+
+    <div class="busca-rapida">
+      <div class="ic">🔍</div>
+      <input id="buscaInput" placeholder="Buscar publicação por título..." oninput="buscaComDebounce()">
+      <select class="ordem-select" id="ordemSelect" onchange="renderGrade()">
+        <option value="recentes">Mais recentes</option>
+        <option value="antigas">Mais antigas</option>
+        <option value="titulo">Título (A–Z)</option>
+        <option value="destaque">Destaques primeiro</option>
+      </select>
+    </div>
+
+    <div id="resumo" class="resumo"></div>
+    <div id="filtroCat" class="filtro-cat"></div>
+    <div id="formArea"></div>
+    <div id="grade" class="grade"></div>
+    <div id="vazio" class="hidden" style="text-align:center;color:#8a94a8;padding:50px;">
+      Nenhuma publicação cadastrada. Clique em <b>+ Nova publicação</b> para começar.
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   MEU 3D LABS — admin-feed.html
+   Painel de publicações do blog.
+   ============================================================ */
+
+const API = 'https://meu3dlabs-backend.onrender.com/api';
+
+const LIM_TITULO   = 160;
+const LIM_RESUMO   = 300;
+const LIM_CONTEUDO = 50000;
+
+const CATEGORIAS = [
+  { id:'novidade',  label:'Novidade',   emoji:'✨' },
+  { id:'materiais', label:'Materiais',  emoji:'🧵' },
+  { id:'manutencao',label:'Manutenção', emoji:'🔧' },
+  { id:'precos',    label:'Preços',     emoji:'💰' },
+  { id:'bastidores',label:'Bastidores', emoji:'🏭' },
+  { id:'iniciante', label:'Iniciante',  emoji:'🧊' }
+];
+
+let token = localStorage.getItem('m3d_token') || '';
+let posts = [];
+let editandoId = null;
+let imagemTemp = null;
+let filtroCategoria = '';
+let buscaTimer = null;
+
+/* ==================== HELPERS ==================== */
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
+
+function catInfo(id){
+  return CATEGORIAS.find(c => c.id === id) || { id:'novidade', label:'Novidade', emoji:'✨' };
+}
+
+function fmtData(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  if(isNaN(d.getTime())) return '';
+  const dia = String(d.getDate()).padStart(2,'0');
+  const mes = String(d.getMonth()+1).padStart(2,'0');
+  return dia + '/' + mes + '/' + d.getFullYear();
+}
+
+function fmtNum(n){
+  return Number(n || 0).toLocaleString('pt-BR');
+}
+
+async function api(path, opts, body){
+  const conf = { method: opts || 'GET', headers: {} };
+  if(token) conf.headers['Authorization'] = 'Bearer ' + token;
+  if(body !== undefined){
+    conf.headers['Content-Type'] = 'application/json';
+    conf.body = JSON.stringify(body);
+  }
+  const r = await fetch(API + path, conf);
+  const t = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error(t.error || 'Erro na requisição');
+  return t;
+}
+
+function mostrarToast(msg, tipo){
+  const t = document.getElementById('toast');
+  t.className = '';
+  t.textContent = msg;
+  if(tipo) t.classList.add(tipo);
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+/* ==================== MODO NOTURNO ==================== */
+function alternarNoturno(){
+  document.body.classList.toggle('dark');
+  const ativo = document.body.classList.contains('dark');
+  localStorage.setItem('m3d_adminfeed_noturno', ativo ? '1' : '0');
+  document.getElementById('btnNoturno').textContent = ativo ? '☀️ Claro' : '🌙 Noturno';
+}
+
+if(localStorage.getItem('m3d_adminfeed_noturno') === '1'){
+  document.addEventListener('DOMContentLoaded', function(){
+    document.body.classList.add('dark');
+    const b = document.getElementById('btnNoturno');
+    if(b) b.textContent = '☀️ Claro';
+  });
+}
+
+/* ==================== LOGIN ==================== */
+function fazerLogin(){
+  const senha = document.getElementById('senha').value.trim();
+  if(!senha) return;
+
+  const btn = document.getElementById('btnLogin');
+  const err = document.getElementById('loginErr');
+
+  btn.disabled = true;
+  btn.textContent = 'Entrando...';
+  err.style.display = 'none';
+
+  fetch(API + '/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ senha: senha })
+  })
+  .then(r => r.json().then(t => ({ ok: r.ok, t: t })))
+  .then(function(res){
+    const ok = res.ok;
+    const t = res.t;
+
+    if(!ok || !t || !t.token){
+      err.textContent = (t && t.error) ? t.error : 'Senha incorreta';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+      return;
+    }
+
+    token = t.token;
+    localStorage.setItem('m3d_token', token);
+    entrar();
+  })
+  .catch(function(){
+    err.textContent = 'Erro de conexão com o servidor';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+  });
+}
+
+function sair(){
+  token = '';
+  localStorage.removeItem('m3d_token');
+  document.getElementById('senha').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('painel').classList.add('hidden');
+  document.getElementById('telaLogin').classList.remove('hidden');
+  fecharForm();
+}
+
+function entrar(){
+  document.getElementById('telaLogin').classList.add('hidden');
+  document.getElementById('painel').classList.remove('hidden');
+  carregar();
+}
+
+function abrirBlogPublico(){
+  window.open('blog.html', '_blank');
+}
+
+/* ==================== CARREGAR ==================== */
+async function carregar(){
+  const g = document.getElementById('grade');
+  g.innerHTML = '<div class="carregando">Carregando publicações...</div>';
+
+  try{
+    const t = await api('/feed/admin');
+    posts = Array.isArray(t.posts) ? t.posts : [];
+    render();
+  }catch(e){
+    if(String(e.message).indexOf('Não autorizado') !== -1){
+      sair();
+      const err = document.getElementById('loginErr');
+      err.textContent = 'Sessão expirada. Entre novamente.';
+      err.style.display = 'block';
+    }else{
+      g.innerHTML = '<div class="carregando">Erro ao carregar: ' + esc(e.message) + '</div>';
+    }
+  }
+}
+
+/* ==================== RESUMO ==================== */
+function renderResumo(){
+  const r = document.getElementById('resumo');
+  const total = posts.length;
+  const publicados = posts.filter(p => p.publicado).length;
+  const rascunhos = total - publicados;
+  const destaques = posts.filter(p => p.destaque).length;
+
+  let html = '';
+  html += '<div class="resumo-item' + (filtroCategoria === '' ? ' ativo' : '') + '" onclick="filtrarCat(\'\')"><span class="num">' + total + '</span><span class="rot">total</span></div>';
+  html += '<div class="resumo-item" onclick="filtrarCat(\'\')"><span class="num num-verde">' + publicados + '</span><span class="rot">publicados</span></div>';
+  if(rascunhos > 0){
+    html += '<div class="resumo-item" onclick="filtrarCat(\'\')"><span class="num" style="color:#b07d00;">' + rascunhos + '</span><span class="rot">rascunhos</span></div>';
+  }
+  if(destaques > 0){
+    html += '<div class="resumo-item" onclick="filtrarCat(\'\')"><span class="num num-vermelho">⭐ ' + destaques + '</span><span class="rot">destaque</span></div>';
+  }
+  r.innerHTML = html;
+}
+
+/* ==================== FILTRO CATEGORIA ==================== */
+function renderFiltroCat(){
+  const f = document.getElementById('filtroCat');
+  let html = '<button class="' + (filtroCategoria === '' ? 'ativo' : '') + '" onclick="filtrarCat(\'\')">Todas</button>';
+  CATEGORIAS.forEach(c => {
+    const qtd = posts.filter(p => p.categoria === c.id).length;
+    if(qtd){
+      html += '<button class="' + (filtroCategoria === c.id ? 'ativo' : '') + '" onclick="filtrarCat(\'' + c.id + '\')">' + c.emoji + ' ' + c.label + ' (' + qtd + ')</button>';
+    }
+  });
+  f.innerHTML = html;
+}
+
+function filtrarCat(cat){
+  filtroCategoria = cat;
+  renderFiltroCat();
+  renderResumo();
+  renderGrade();
+}
+
+/* ==================== BUSCA ==================== */
+function buscaComDebounce(){
+  clearTimeout(buscaTimer);
+  buscaTimer = setTimeout(renderGrade, 220);
+}
+
+/* ==================== RENDER GERAL ==================== */
+function render(){
+  renderResumo();
+  renderFiltroCat();
+  renderGrade();
+}
+
+/* ==================== GRADE ==================== */
+function renderGrade(){
+  const g = document.getElementById('grade');
+  const termo = (document.getElementById('buscaInput') ? document.getElementById('buscaInput').value : '').toLowerCase().trim();
+  const ordem = document.getElementById('ordemSelect') ? document.getElementById('ordemSelect').value : 'recentes';
+
+  let lista = posts.slice();
+
+  if(filtroCategoria){
+    lista = lista.filter(p => p.categoria === filtroCategoria);
+  }
+
+  if(termo){
+    lista = lista.filter(p =>
+      (p.titulo || '').toLowerCase().indexOf(termo) !== -1 ||
+      (p.resumo || '').toLowerCase().indexOf(termo) !== -1
+    );
+  }
+
+  document.getElementById('vazio').classList.toggle('hidden', lista.length > 0 || posts.length === 0);
+  g.innerHTML = '';
+
+  if(!lista.length){
+    if(posts.length){
+      g.innerHTML = '<div class="carregando" style="grid-column:1/-1;">Nenhuma publicação encontrada para "' + esc(termo) + '".</div>';
+    }
+    return;
+  }
+
+  lista.sort((a, b) => {
+    if(ordem === 'titulo') return (a.titulo || '').localeCompare(b.titulo || '');
+    if(ordem === 'antigas') return new Date(a.criado_em || 0) - new Date(b.criado_em || 0);
+    if(ordem === 'destaque'){
+      if(a.destaque && !b.destaque) return -1;
+      if(!a.destaque && b.destaque) return 1;
+      return new Date(b.criado_em || 0) - new Date(a.criado_em || 0);
+    }
+    return new Date(b.criado_em || 0) - new Date(a.criado_em || 0);
+  });
+
+  const fragment = document.createDocumentFragment();
+
+  lista.forEach(p => {
+    const cat = catInfo(p.categoria);
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const tagDestaque = p.destaque ? '<span class="tag-destaque">⭐ Destaque</span>' : '';
+    const fotoHtml = p.imagem
+      ? '<img src="' + esc(p.imagem) + '" loading="lazy" alt="' + esc(p.titulo) + '">'
+      : '<div class="sem-foto"><div class="emoji-foto">' + cat.emoji + '</div><div style="margin-top:8px;">Sem imagem</div></div>';
+
+    const badgePublicado = p.publicado
+      ? '<span class="badge ok">Publicado</span>'
+      : '<span class="badge rascunho">Rascunho</span>';
+
+    card.innerHTML =
+      tagDestaque +
+      '<div class="foto">' + fotoHtml + '</div>' +
+      '<div class="info">' +
+        '<div class="nome">' + esc(p.titulo) + '</div>' +
+        '<div class="cat">' + cat.emoji + ' ' + cat.label + ' · ' + fmtData(p.criado_em) + '</div>' +
+        '<div>' + badgePublicado + '</div>' +
+      '</div>' +
+      '<div class="acoes">' +
+        '<button style="background:#0f1e3d;color:#fff" onclick="abrirForm(' + p.id + ')">Editar</button>' +
+        '<button style="background:#eef1f6;color:#0f1e3d" onclick="togglePublicado(' + p.id + ')">' + (p.publicado ? 'Rascunho' : 'Publicar') + '</button>' +
+        '<button style="background:#fde8e5;color:#c0392b" onclick="excluirPost(' + p.id + ')">Excluir</button>' +
+      '</div>';
+
+    fragment.appendChild(card);
+  });
+
+  g.appendChild(fragment);
+}
+
+/* ==================== FORMULÁRIO ==================== */
+function abrirForm(id){
+  editandoId = id || null;
+  imagemTemp = null;
+
+  const p = id ? posts.find(x => x.id === id) : null;
+
+  const fa = document.getElementById('formArea');
+  document.getElementById('tituloLista').textContent = p ? ('Editando: ' + p.titulo) : 'Nova publicação';
+
+  const catOpts = CATEGORIAS.map(c =>
+    '<option value="' + c.id + '"' + (p && p.categoria === c.id ? ' selected' : '') + '>' + c.emoji + ' ' + c.label + '</option>'
+  ).join('');
+
+  const html = `
+    <div class="form-wrap">
+      <h3>${p ? '✏️ Editar publicação' : '➕ Nova publicação'}</h3>
+
+      <div class="campos">
+
+        <div class="campo full">
+          <label>Título *</label>
+          <input id="fTitulo" type="text" maxlength="${LIM_TITULO}"
+                 placeholder="Ex.: Como escolher seu primeiro filamento"
+                 value="${p ? esc(p.titulo) : ''}">
+          <div class="slug-preview" id="contTitulo">0 / ${LIM_TITULO}</div>
+        </div>
+
+        <div class="campo full">
+          <label>Resumo * <span style="font-weight:400;color:#8a94a8;">(aparece no card do blog)</span></label>
+          <textarea id="fResumo" maxlength="${LIM_RESUMO}"
+                    placeholder="Um resumo curto e direto (160 caracteres ideal)">${p ? esc(p.resumo) : ''}</textarea>
+          <div class="slug-preview" id="contResumo">0 / ${LIM_RESUMO}</div>
+        </div>
+
+        <div class="campo">
+          <label>Categoria *</label>
+          <select id="fCategoria">${catOpts}</select>
+        </div>
+
+        <div class="campo">
+          <label>Publicação</label>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;padding-top:6px;">
+            <input type="checkbox" id="fPublicado" ${p === null || p.publicado ? 'checked' : ''}> Visível no blog público
+          </label>
+        </div>
+
+        <div class="campo full">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+            <input type="checkbox" id="fDestaque" ${p && p.destaque ? 'checked' : ''}> ⭐ Publicação em destaque (aparece grande no topo do blog)
+          </label>
+          <div class="slug-preview">Só é possível ter 1 destaque por vez. Ao marcar aqui, o destaque anterior é removido.</div>
+        </div>
+
+        <div class="campo full">
+          <label>Imagem <span style="font-weight:400;color:#8a94a8;">(opcional)</span></label>
+          <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <div class="icone">📷</div>
+            <div class="txt">Toque para escolher a imagem<br>JPG, PNG, WEBP ou GIF — até 8 MB</div>
+          </div>
+          <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" onchange="enviarImagem(this)">
+          <div id="imgPreviewArea"></div>
+        </div>
+
+        <div class="campo full">
+          <label>Conteúdo completo * <span style="font-weight:400;color:#8a94a8;">(aparece ao clicar em Ler mais)</span></label>
+          <textarea id="fConteudo" style="min-height:240px;" maxlength="${LIM_CONTEUDO}"
+                    placeholder="Texto completo da publicação. Aceita HTML básico: paragrafo, negrito, listas e links.">${p ? esc(p.conteudo) : ''}</textarea>
+          <div class="slug-preview" id="contConteudo">0 / ${fmtNum(LIM_CONTEUDO)}</div>
+          <div class="slug-preview">Aceita HTML simples: &lt;p&gt;, &lt;strong&gt;, &lt;ul&gt;&lt;li&gt;, &lt;a href&gt;, &lt;h2&gt;, &lt;h3&gt;</div>
+        </div>
+
+      </div>
+
+      <div class="form-acoes">
+        <button class="btn btn-verde" id="btnSalvar" onclick="salvarPost()">💾 Salvar publicação</button>
+        <button class="btn btn-cinza" onclick="fecharForm()">Cancelar</button>
+      </div>
+
+      <div class="slug-preview" id="subMsg" style="display:none;margin-top:12px;"></div>
+    </div>
+  `;
+
+  fa.innerHTML = html;
+
+  /* Listeners dos contadores (fora do atributo oninput para evitar problema de aspas) */
+  const fTitulo = document.getElementById('fTitulo');
+  const fResumo = document.getElementById('fResumo');
+  const fConteudo = document.getElementById('fConteudo');
+
+  if(fTitulo) fTitulo.addEventListener('input', atualizarContadores);
+  if(fResumo) fResumo.addEventListener('input', atualizarContadores);
+  if(fConteudo) fConteudo.addEventListener('input', atualizarContadores);
+
+  fa.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  if(p){
+    imagemTemp = p.imagem || null;
+    renderPreview();
+  }
+
+  atualizarContadores();
+}
+
+/* ==================== CONTADORES ==================== */
+function atualizarContadores(){
+  const t  = document.getElementById('fTitulo');
+  const r  = document.getElementById('fResumo');
+  const c  = document.getElementById('fConteudo');
+  const ct = document.getElementById('contTitulo');
+  const cr = document.getElementById('contResumo');
+  const cc = document.getElementById('contConteudo');
+
+  if(t && ct){
+    const n = t.value.length;
+    ct.textContent = n + ' / ' + LIM_TITULO;
+    ct.classList.toggle('estourou', n > LIM_TITULO * 0.95);
+  }
+
+  if(r && cr){
+    const n = r.value.length;
+    cr.textContent = n + ' / ' + LIM_RESUMO;
+    cr.classList.toggle('estourou', n > LIM_RESUMO * 0.95);
+    cr.classList.toggle('dica-boa', n >= 100 && n <= LIM_RESUMO * 0.95);
+  }
+
+  if(c && cc){
+    const n = c.value.length;
+    cc.textContent = fmtNum(n) + ' / ' + fmtNum(LIM_CONTEUDO);
+    cc.classList.toggle('estourou', n > LIM_CONTEUDO * 0.95);
+  }
+}
+
+/* ==================== FECHAR FORM ==================== */
+function fecharForm(){
+  clearTimeout(buscaTimer);
+  document.getElementById('formArea').innerHTML = '';
+  document.getElementById('tituloLista').textContent = 'Publicações do blog';
+  editandoId = null;
+  imagemTemp = null;
+}
+
+/* ==================== UPLOAD DE IMAGEM ==================== */
+function enviarImagem(fonte){
+  const LIMITE_BYTES = 8 * 1024 * 1024;
+  const arquivo = fonte && fonte.files ? fonte.files[0] : null;
+
+  if(!arquivo) return;
+
+  if(arquivo.size > LIMITE_BYTES){
+    mostrarToast('❌ Imagem tem ' + (arquivo.size / (1024*1024)).toFixed(1) + ' MB — o limite é 8 MB.', 'erro');
+    return;
+  }
+
+  const fd = new FormData();
+  fd.append('imagem', arquivo);
+
+  mostrarToast('📤 Enviando imagem...');
+
+  fetch(API + '/feed/upload', {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + token },
+    body: fd
+  })
+  .then(r => r.json().then(t => ({ ok: r.ok, t: t })))
+  .then(function(res){
+    if(!res.ok){
+      var msg = res.t.error || 'Falha no upload';
+      if(res.t.detalhe) msg += ' — ' + res.t.detalhe;
+      throw new Error(msg);
+    }
+    imagemTemp = res.t.url;
+    renderPreview();
+    mostrarToast('📷 Imagem enviada!', 'ok');
+  })
+  .catch(function(e){
+    mostrarToast('Erro no upload: ' + e.message, 'erro');
+  })
+  .finally(function(){
+    if(fonte && fonte.value !== undefined) fonte.value = '';
+  });
+}
+
+function renderPreview(){
+  const area = document.getElementById('imgPreviewArea');
+  if(!area) return;
+
+  if(!imagemTemp){
+    area.innerHTML = '';
+    return;
+  }
+
+  area.innerHTML =
+    '<div class="img-preview">' +
+      '<img src="' + esc(imagemTemp) + '" alt="Preview">' +
+      '<button type="button" class="btn-remover" onclick="removerImagem()" title="Remover">×</button>' +
+    '</div>';
+}
+
+function removerImagem(){
+  imagemTemp = null;
+  renderPreview();
+}
+
+/* ==================== SALVAR ==================== */
+async function salvarPost(){
+  const elTitulo   = document.getElementById('fTitulo');
+  const elResumo   = document.getElementById('fResumo');
+  const elConteudo = document.getElementById('fConteudo');
+  const elCat      = document.getElementById('fCategoria');
+  const elPub      = document.getElementById('fPublicado');
+  const elDest     = document.getElementById('fDestaque');
+
+  if(!elTitulo || !elResumo || !elConteudo || !elCat){
+    mostrarToast('Formulário não encontrado. Recarregue a página.', 'erro');
+    return;
+  }
+
+  const titulo   = elTitulo.value.trim();
+  const resumo   = elResumo.value.trim();
+  const conteudo = elConteudo.value.trim();
+  const categoria = elCat.value;
+  const publicado = !!(elPub && elPub.checked);
+  const destaque  = !!(elDest && elDest.checked);
+
+  if(!titulo){ mostrarToast('Digite o título.', 'erro'); return; }
+  if(!resumo){ mostrarToast('Digite o resumo.', 'erro'); return; }
+  if(!conteudo){ mostrarToast('Digite o conteúdo.', 'erro'); return; }
+
+  if(titulo.length > LIM_TITULO){
+    mostrarToast('❌ Título passou do limite de ' + LIM_TITULO + ' caracteres.', 'erro');
+    return;
+  }
+  if(resumo.length > LIM_RESUMO){
+    mostrarToast('❌ Resumo passou do limite de ' + LIM_RESUMO + ' caracteres.', 'erro');
+    return;
+  }
+  if(conteudo.length > LIM_CONTEUDO){
+    mostrarToast('❌ Conteúdo passou do limite de ' + fmtNum(LIM_CONTEUDO) + ' caracteres.', 'erro');
+    return;
+  }
+
+  const btn = document.getElementById('btnSalvar');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+
+  const dados = {
+    titulo: titulo,
+    resumo: resumo,
+    conteudo: conteudo,
+    categoria: categoria,
+    imagem: imagemTemp || null,
+    publicado: publicado,
+    destaque: destaque
+  };
+
+  try{
+    if(editandoId){
+      await api('/feed/' + editandoId, 'PUT', dados);
+    }else{
+      await api('/feed', 'POST', dados);
+    }
+    fecharForm();
+    await carregar();
+    mostrarToast('✅ Publicação salva!', 'ok');
+  }catch(e){
+    mostrarToast('Erro ao salvar: ' + e.message, 'erro');
+  }
+
+  if(btn){
+    btn.disabled = false;
+    btn.textContent = '💾 Salvar publicação';
+  }
+}
+
+/* ==================== TOGGLE PUBLICADO ==================== */
+async function togglePublicado(id){
+  const p = posts.find(x => x.id === id);
+  if(!p) return;
+
+  try{
+    await api('/feed/' + id, 'PUT', { publicado: !p.publicado });
+    await carregar();
+    mostrarToast(p.publicado ? '📤 Publicação voltou para rascunho.' : '✅ Publicação visível no blog.', 'ok');
+  }catch(e){
+    mostrarToast('Erro: ' + e.message, 'erro');
+  }
+}
+
+/* ==================== EXCLUIR ==================== */
+async function excluirPost(id){
+  const p = posts.find(x => x.id === id);
+  if(!confirm('Excluir a publicação "' + (p ? p.titulo : '') + '"? Essa ação não pode ser desfeita.')) return;
+
+  try{
+    await api('/feed/' + id, 'DELETE');
+    await carregar();
+    mostrarToast('🗑️ Publicação excluída.', 'ok');
+  }catch(e){
+    mostrarToast('Erro ao excluir: ' + e.message, 'erro');
+  }
+}
+
+/* ==================== DRAG & DROP ==================== */
+document.addEventListener('dragover', function(e){
+  const area = e.target.closest('.upload-area');
+  if(area){
+    e.preventDefault();
+    area.style.borderColor = '#f26522';
+    area.style.background = '#fff8f4';
+  }
+});
+
+document.addEventListener('dragleave', function(e){
+  const area = e.target.closest('.upload-area');
+  if(area){
+    area.style.borderColor = '#c6cfdd';
+    area.style.background = '';
+  }
+});
+
+document.addEventListener('drop', function(e){
+  const area = e.target.closest('.upload-area');
+  if(!area) return;
+  e.preventDefault();
+  e.stopPropagation();
+  area.style.borderColor = '#c6cfdd';
+  area.style.background = '';
+  const files = e.dataTransfer && e.dataTransfer.files;
+  if(files && files.length){
+    enviarImagem({ files: files });
+  }
+});
+
+/* ==================== INICIALIZAÇÃO ==================== */
+if(token){
+  entrar();
+}
+</script>
+</body>
+</html>

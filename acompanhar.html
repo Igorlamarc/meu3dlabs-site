@@ -2,433 +2,224 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Acompanhar pedido | Meu 3D Labs</title>
 <meta name="description" content="Acompanhe o status do seu pedido na Meu 3D Labs: loja pronta entrega ou encomenda sob medida.">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Acompanhar pedido | Meu 3D Labs">
 <meta property="og:description" content="Acompanhe o status do seu pedido informando o número.">
+<meta property="og:image" content="https://meu3dlabs.com.br/img/logo/logo.png">
 <meta property="og:site_name" content="Meu 3D Labs">
+<meta name="theme-color" content="#0f1e3d">
 <link rel="icon" href="img/logo/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="img/logo/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="acompanhar.css">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZTH0ZSLV0"></script>
-<script>
-window.dataLayer=window.dataLayer||[];
-function gtag(){dataLayer.push(arguments);}
-gtag('js',new Date());
-gtag('config','G-NZTH0ZSLV0');
-</script>
+
 <style>
-:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--light-2:#f0f3f8;--white:#fff;--gray:#4a5161;--border:#e3e8ef;--green:#25d366;--green-dark:#0f7a44;--red:#a93226;--shadow-sm:0 2px 8px rgba(15,30,61,.06);--shadow-md:0 8px 24px rgba(15,30,61,.1);}
-*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;color:#1c2430;line-height:1.6;}a{text-decoration:none;color:inherit;}.container{max-width:1120px;margin:0 auto;padding:0 20px;}.container-narrow{max-width:760px;margin:0 auto;padding:0 20px;}.btn{display:inline-block;background:var(--orange);color:#fff;padding:13px 26px;border-radius:8px;font-weight:600;transition:.25s;border:none;cursor:pointer;font-size:15px;}.btn:hover{background:var(--orange-2);transform:translateY(-2px);}.btn-wa{background:var(--green);color:#fff;}.btn-wa:hover{background:#1fb959;}
-header{background:var(--navy);color:#fff;padding:16px 0;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.15);}.header-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.logo{display:flex;align-items:center;gap:10px;cursor:pointer;}.logo img{height:46px;width:auto;display:block;}.logo-text{font-weight:800;font-size:20px;color:#fff;white-space:nowrap;letter-spacing:-.5px;}.logo-text span{color:var(--orange-2);}.back-link{display:inline-flex;align-items:center;gap:6px;color:#fff;font-size:14px;opacity:.85;transition:.2s;}.back-link:hover{opacity:1;color:var(--orange-2);}
-.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 60%,#1d3a6b 100%);color:#fff;padding:64px 0 56px;text-align:center;}.hero h1{font-size:clamp(28px,4vw,40px);line-height:1.2;margin-bottom:12px;font-weight:800;letter-spacing:-.5px;}.hero h1 span{color:var(--orange-2);}.hero p{font-size:16px;color:rgba(255,255,255,.9);max-width:560px;margin:0 auto;}
-section{padding:40px 0;}
-.busca-card{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-md);padding:30px;text-align:center;margin-top:-40px;position:relative;z-index:5;}
-.busca-card h2{font-size:18px;color:var(--navy);font-weight:800;margin-bottom:6px;}
-.busca-card .bc-sub{font-size:13.5px;color:var(--gray);margin-bottom:20px;}
-.busca-linha{display:flex;gap:10px;max-width:500px;margin:0 auto;}
-.busca-linha input{flex:1;border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:15px;font-family:'Inter',sans-serif;color:var(--navy);text-align:center;letter-spacing:1px;font-weight:700;text-transform:uppercase;transition:.2s;}
-.busca-linha input:focus{outline:2px solid var(--orange);outline-offset:1px;border-color:var(--orange);}
-.busca-linha .btn{padding:14px 24px;font-size:14px;white-space:nowrap;}
-.busca-msg{font-size:13px;margin-top:14px;min-height:20px;font-weight:600;}
-.busca-msg.erro{color:var(--red);}
-.busca-msg.ok{color:var(--green-dark);}
-.busca-msg.carregando{color:var(--navy);}
-.status-box{background:var(--white);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-md);padding:30px;margin-top:22px;display:none;animation:fadeIn .4s ease;}
-.status-box.show{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-.status-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--light-2);}
-.status-num{font-size:18px;font-weight:800;color:var(--navy);}
-.status-num .hash{color:var(--orange);}
-.status-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(37,211,102,.12);border:1px solid rgba(37,211,102,.3);color:var(--green-dark);font-weight:700;font-size:13px;padding:8px 16px;border-radius:30px;}
-.status-pill::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green-dark);animation:pulse 1.6s infinite;}
-.status-pill.cancelado{background:#fde8e8;border-color:rgba(185,28,28,.3);color:#b91c1c;}
-.status-pill.cancelado::before{background:#b91c1c;animation:none;}
-/* Encerrado (Sem resposta): cinza neutro, sem pulso */
-.status-pill.encerrado{background:#f1f3f6;border-color:rgba(15,30,61,.18);color:#5a6472;}
-.status-pill.encerrado::before{background:#8a93a3;animation:none;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
-.timeline{display:flex;flex-direction:column;gap:0;margin:8px 0 4px;}
-.tl-step{display:flex;gap:16px;position:relative;padding-bottom:26px;}
-.tl-step:last-child{padding-bottom:0;}
-.tl-step::before{content:'';position:absolute;left:19px;top:42px;bottom:-4px;width:2px;background:var(--border);}
-.tl-step:last-child::before{display:none;}
-.tl-step.feito::before{background:var(--orange);}
-.tl-dot{width:40px;height:40px;border-radius:50%;border:2px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--gray);flex-shrink:0;z-index:2;transition:.3s;}
-.tl-step.feito .tl-dot{border-color:var(--orange);background:var(--orange);color:#fff;box-shadow:0 3px 10px rgba(242,101,34,.3);}
-.tl-step.ativo .tl-dot{border-color:var(--orange);background:var(--orange);color:#fff;box-shadow:0 0 0 6px rgba(242,101,34,.15);animation:pulseRing 2s infinite;}
-@keyframes pulseRing{0%,100%{box-shadow:0 0 0 6px rgba(242,101,34,.15);}50%{box-shadow:0 0 0 10px rgba(242,101,34,.08);}}
-.tl-info{flex:1;padding-top:6px;}
-.tl-info strong{display:block;font-size:15px;color:var(--navy);}
-.tl-info span{font-size:13px;color:var(--gray);display:block;margin-top:2px;}
-.tl-info .data-status{font-size:12px;color:var(--orange);font-weight:600;margin-top:3px;display:none;}
-.tl-step.feito .tl-info .data-status,.tl-step.ativo .tl-info .data-status{display:block;}
-.tl-step.pendente .tl-info{opacity:.55;}
-.cancel-box{background:#fde8e8;border:1px solid rgba(185,28,28,.25);border-radius:12px;padding:22px 24px;text-align:center;margin:8px 0 4px;}
-.cancel-box strong{display:block;font-size:16px;color:#b91c1c;margin-bottom:6px;}
-.cancel-box span{font-size:13.5px;color:#7a3a3a;line-height:1.6;display:block;}
-/* Caixa de encerrado (Sem resposta): neutra */
-.cancel-box.encerrado-box{background:#f1f3f6;border-color:rgba(15,30,61,.15);}
-.cancel-box.encerrado-box strong{color:#3d4856;}
-.cancel-box.encerrado-box span{color:#5a6472;}
-.resumo{margin-top:24px;background:var(--light);border:1px solid var(--border);border-radius:12px;padding:20px 22px;display:none;}
-.resumo.show{display:block;}
-.resumo h4{font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gray);margin-bottom:12px;}
-.resumo-item{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:#3d4856;padding:5px 0;border-bottom:1px dashed rgba(15,30,61,.08);}
-.resumo-item:last-of-type{border-bottom:none;}
-.resumo-item .ri-nome{flex:1;}
-.resumo-item .ri-valor{font-weight:700;color:var(--navy);text-align:right;}
-.resumo-total{display:flex;justify-content:space-between;font-weight:800;color:var(--navy);font-size:16px;padding:14px 0 0;border-top:2px solid var(--border);margin-top:6px;}
-.resumo-total .valor{color:var(--orange);}
-/* Código de rastreio (se o pedido tiver) */
-.rastreio-box{margin-bottom:14px;background:var(--white);border:1px dashed var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-.rastreio-box .rb-lab{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;}
-.rastreio-box .rb-cod{font-size:15px;font-weight:800;color:var(--navy);letter-spacing:1px;margin-top:2px;}
-.acoes{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;}
-.acoes .btn{flex:1;min-width:220px;text-align:center;}
-.aviso{background:rgba(242,101,34,.07);border-left:4px solid var(--orange);border-radius:0 10px 10px 0;padding:14px 18px;margin-top:10px;font-size:13px;color:#7a3a12;line-height:1.6;}
-.aviso strong{color:#5a2a08;}
-.ajuda{background:var(--light-2);text-align:center;}
-.ajuda-card{max-width:620px;margin:0 auto;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:32px;box-shadow:var(--shadow-sm);}
-.ajuda-card h2{font-size:20px;color:var(--navy);margin-bottom:8px;font-weight:800;}
-.ajuda-card p{font-size:14px;color:var(--gray);line-height:1.6;margin-bottom:22px;}
-footer{background:#0a1428;color:rgba(255,255,255,.7);padding:36px 0 24px;font-size:14px;}.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}.footer-bottom p{font-size:12px;color:rgba(255,255,255,.5);}.footer-links{display:flex;gap:18px;flex-wrap:wrap;}.footer-links a{color:rgba(255,255,255,.7);font-size:13px;transition:.2s;}.footer-links a:hover{color:#fff;}
-@media(max-width:620px){.busca-linha{flex-direction:column;}.busca-linha .btn{width:100%;}.status-box{padding:22px;}.tl-dot{width:36px;height:36px;font-size:13px;}.tl-step::before{left:17px;}}
-.btn-copiar{margin-left:10px;display:inline-flex;align-items:center;gap:5px;background:var(--light);border:1px solid var(--border);color:var(--navy);font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;cursor:pointer;transition:.2s;vertical-align:middle;}
-.btn-copiar:hover{border-color:var(--orange);color:var(--orange);}
-/* ===== RODAPÉ PADRÃO ===== */
-.site-footer{background:#0a1428;color:rgba(255,255,255,.75);padding:40px 20px 24px;}
-.site-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px;}
-.site-footer h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:12px;}
-.site-footer p,.site-footer a{font-size:13px;color:rgba(255,255,255,.7);line-height:1.7;display:block;}
-.site-footer a:hover{color:#ff8a3d;}
-.site-footer .footer-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px;text-align:center;font-size:12px;color:rgba(255,255,255,.45);}
-/* ===== Anti-vazamento mobile ===== */
-html,body{overflow-x:hidden;max-width:100%;}
-img,video{max-width:100%;height:auto;}svg,iframe{max-width:100%;}
+/* ============================================================
+   PIX — BLOCO DE MENSAGEM DE STATUS
+   ============================================================ */
+   /* ============================================================
+   QR CODE DO PEDIDO
+   ============================================================ */
+#qrBox{ display:none; margin:0 0 18px; }
+#qrBox.show{ display:block; }
+
+.qr-wrap{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:16px 18px;
+  background:#f7f9fc;
+  border:1px solid #dfe3ec;
+  border-radius:12px;
+}
+.qr-wrap img{
+  display:block;
+  width:96px;
+  height:96px;
+  border-radius:8px;
+  background:#fff;
+  padding:4px;
+  flex-shrink:0;
+}
+.qr-texto{ display:flex; flex-direction:column; gap:4px; }
+.qr-texto strong{ font-size:14px; color:#0f1e3d; font-weight:800; }
+.qr-texto span{ font-size:12.5px; color:#8a94a8; line-height:1.5; }
+
+@media(max-width:600px){
+  .qr-wrap{ flex-direction:column; text-align:center; gap:10px; padding:14px; }
+  .qr-wrap img{ width:120px; height:120px; }
+}
+.pix-msg{
+  margin:0 0 18px;
+  padding:16px 18px;
+  border-radius:12px;
+  border-left:5px solid;
+  animation:pixFade .35s ease;
+}
+@keyframes pixFade{
+  from{opacity:0;transform:translateY(-6px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.pix-msg h3{
+  margin:0 0 8px;
+  font-size:16px;
+  font-weight:800;
+  line-height:1.3;
+}
+.pix-msg p{
+  margin:0;
+  font-size:13.5px;
+  line-height:1.7;
+}
+
+/* Amarelo — aguardando compensação / em verificação */
+.pix-msg-amarelo{
+  background:#fffdf5;
+  border-color:#e0a800;
+  color:#5a4400;
+}
+.pix-msg-amarelo h3{color:#8a5b00;}
+
+/* Vermelho — não identificado */
+.pix-msg-vermelho{
+  background:#fdecea;
+  border-color:#d73a49;
+  color:#8a1f1f;
+}
+.pix-msg-vermelho h3{color:#a93226;}
+
+/* Botão WhatsApp dentro do bloco vermelho */
+.pix-msg-btn{
+  display:inline-block;
+  margin-top:14px;
+  background:#25d366;
+  color:#fff;
+  padding:11px 20px;
+  border-radius:8px;
+  font-weight:700;
+  font-size:13.5px;
+  text-decoration:none;
+  transition:.2s;
+}
+.pix-msg-btn:hover{background:#1fb959;transform:translateY(-1px);}
+
+/* Lista de motivos */
+.pix-msg ul{
+  margin:12px 0 0;
+  padding-left:20px;
+  font-size:13px;
+  line-height:1.9;
+}
+
+@media(max-width:600px){
+  .pix-msg{padding:14px 15px;}
+}
 </style>
-<meta property="og:type" content="website">
-<meta property="og:title" content="Meu 3D Labs | Acompanhar Pedido">
-<meta property="og:description" content="Impressão 3D personalizada em Nilópolis/RJ. Peças exclusivas, assistência Creality e consultoria.">
-<meta property="og:image" content="https://meu3dlabs.com.br/img/logo/logo.png">
-<meta property="og:site_name" content="Meu 3D Labs">
 </head>
 <body>
+
+<!-- ==================== HEADER ==================== -->
 <header>
-<div class="container header-inner">
-<a href="index.html" class="logo">
-<img src="img/logo/logo.png" alt="Logo Meu 3D Labs">
-<span class="logo-text">Meu<span>3D</span>Labs</span>
-</a>
-<a class="back-link" href="index.html">← Voltar ao site</a>
-</div>
+  <div class="container header-inner">
+    <a href="index.html" class="logo">
+      <img src="img/logo/logo.png" alt="Logo Meu 3D Labs">
+      <span class="logo-text">Meu<span>3D</span>Labs</span>
+    </a>
+    <a href="index.html" class="back-link">← Voltar ao site</a>
+  </div>
 </header>
+
+<!-- ==================== HERO COM BUSCA ==================== -->
 <section class="hero">
-<div class="container">
-<h1>Acompanhe seu <span>pedido</span></h1>
-<p>Informe o número do pedido e veja em qual etapa ele está, da loja ou da encomenda sob medida.</p>
-</div>
+  <div class="container hero-inner">
+    <h1>Acompanhe seu <span>pedido</span></h1>
+    <p class="hero-sub">Informe o número do pedido e veja em qual etapa ele está — da loja pronta entrega ou da encomenda sob medida.</p>
+
+    <div class="busca-card">
+      <h2>Digite o número do pedido</h2>
+      <div class="busca-linha">
+        <input
+          type="text"
+          id="inputPedido"
+          placeholder="M3D-XXXXXX"
+          maxlength="24"
+          autocomplete="off"
+          spellcheck="false"
+          onkeydown="if(event.key==='Enter')buscarPedido()"
+          aria-label="Número do pedido">
+        <button type="button" onclick="buscarPedido()">Verificar</button>
+      </div>
+      <div class="busca-msg" id="buscaMsg"></div>
+    </div>
+  </div>
 </section>
-<section style="padding-top:0;">
-<div class="container-narrow">
-<div class="busca-card">
-<h2>Digite o número do pedido</h2>
-<p class="bc-sub">Exemplo: M3D-000001 ou M3D-2026-019. Você encontra o número na conversa do WhatsApp.</p>
-<div class="busca-linha">
-<input type="text" id="inputPedido" placeholder="M3D-XXXXXX" maxlength="15" autocomplete="off" onkeydown="if(event.key==='Enter')buscarPedido()">
-<button class="btn" onclick="buscarPedido()">Verificar</button>
-</div>
-<div class="busca-msg" id="buscaMsg"></div>
-</div>
-<div class="status-box" id="statusBox">
-<div class="status-top">
-<div class="status-num"><span class="hash">#</span><span id="sNumero">M3D-000000</span><button class="btn-copiar" onclick="copiarNumero()" title="Copiar número do pedido">📋 Copiar</button></div>
-<div class="status-pill" id="statusPill">Consultando…</div>
-</div>
-<h4 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--gray);margin-bottom:18px;">Status do pedido</h4>
-<div class="timeline" id="timeline"></div>
-<div class="resumo" id="detalhesBox">
-<h4>Detalhes do pedido</h4>
-<div id="detalhesItens"></div>
-</div>
-<div class="acoes">
-<a class="btn btn-wa" id="btnZap" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20tirar%20uma%20d%C3%BAvida%20sobre%20o%20meu%20pedido." target="_blank">Falar no WhatsApp</a>
-</div>
-<div class="aviso">
-<strong>Status desatualizado?</strong> As atualizações são feitas pela equipe em cada etapa. Se tiver dúvidas, chame no WhatsApp informando o número do pedido.
-</div>
-</div>
-</div>
+
+<!-- ==================== STATUS ==================== -->
+<section class="secao-status">
+  <div class="container">
+    <div class="status-box" id="statusBox">
+
+      <div class="status-top">
+        <div class="status-num">
+          <span class="hash">#</span>
+          <span id="sNumero">M3D-000000</span>
+          <button class="btn-copiar" onclick="copiarNumero()" title="Copiar número do pedido">📋 Copiar</button>
+        </div>
+        <div class="status-pill" id="statusPill">Consultando…</div>
+      </div>
+
+      <h4 class="status-titulo">Status do pedido</h4>
+
+<!-- QR Code do pedido — preenchido pelo acompanhar.js -->
+<div id="qrBox"></div>
+
+      <!-- Bloco de mensagem do Pix (preenchido pelo acompanhar.js) -->
+      <div id="pixMsgBox"></div>
+
+      <div class="timeline" id="timeline"></div>
+
+      <div class="resumo" id="detalhesBox">
+        <h4>Detalhes do pedido</h4>
+        <div id="detalhesItens"></div>
+      </div>
+
+      <div class="acoes">
+        <a class="btn btn-wa" id="btnZap" href="https://wa.me/5521966594803" target="_blank" rel="noopener">
+          💬 Falar no WhatsApp
+        </a>
+      </div>
+
+      <div class="aviso">
+        <strong>Status desatualizado?</strong>
+        As atualizações são feitas pela equipe em cada etapa. Se tiver dúvidas, chame no WhatsApp informando o número do pedido.
+      </div>
+
+    </div>
+  </div>
 </section>
-<section class="ajuda">
-<div class="container-narrow">
-<div class="ajuda-card">
-<h2>Precisa de ajuda?</h2>
-<p>Chame a gente no WhatsApp com o número do pedido e confirmamos o status na hora. Atendimento rápido, sem enrolação.</p>
-<a class="btn btn-wa" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20acompanhar%20meu%20pedido." target="_blank">Falar com a Meu 3D Labs</a>
-</div>
-</div>
+
+<!-- ==================== AJUDA ==================== -->
+<section class="secao-ajuda">
+  <div class="container">
+    <div class="ajuda-card">
+      <h2>Precisa de ajuda?</h2>
+      <p>Chame a gente no WhatsApp com o número do pedido e confirmamos o status na hora. Atendimento rápido, sem enrolação.</p>
+      <a class="btn btn-wa" href="https://wa.me/5521966594803?text=Ol%C3%A1!%20Quero%20acompanhar%20meu%20pedido." target="_blank" rel="noopener">
+        💬 Falar com a Meu 3D Labs
+      </a>
+    </div>
+  </div>
 </section>
-<footer>
-<div class="container">
-<div class="footer-bottom">
-<p>© 2026 Meu 3D Labs · Todos os direitos reservados</p>
-<div class="footer-links">
-<a href="index.html">Início</a>
-<a href="loja.html">Loja</a>
-<a href="blog.html">Blog</a>
-<a href="avaliacoes.html">Avaliações</a>
-</div>
-</div>
-</div>
-</footer>
-<script>
-var API_LOJA='https://meu3dlabs-backend.onrender.com/api/loja/pedidos/';
-var API_ORC='https://meu3dlabs-backend.onrender.com/api/orcamentos/pedido/';
-function normalizar(v){return String(v||'').toUpperCase().replace(/\s+/g,'').replace(/[^A-Z0-9\-]/g,'');}
-function fmt(v){
-var n=parseFloat(v);
-if(isNaN(n))return '—';
-return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-}
-function fmtData(v){
-if(!v)return '';
-var d=new Date(v);
-if(isNaN(d.getTime()))return String(v);
-return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})+' às '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-}
-/* Escapa texto antes de entrar em HTML montado */
-function escHtml(t){var d=document.createElement('div');d.textContent=(t==null?'':String(t));return d.innerHTML;}
-/* PRIVACIDADE (LGPD): esta página é pública — qualquer pessoa pode digitar um número.
-   Por isso NUNCA exibimos nome, WhatsApp ou e-mail do cliente aqui.
-   Dados pessoais ficam apenas no painel interno (admin, protegido por login). */
-/* Status da loja (pronta entrega): Pedido feito, Pago (Pix/Cartão), Em embalagem, Saiu, Entregue */
-function mapearLoja(v){
-var s=String(v||'').toLowerCase().trim();
-if(s==='cancelado'||s==='cancelada'||s==='sem-resposta'||s==='sem resposta'||s==='sem_resposta')return -1;
-if(['entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 4;
-if(['saiu','enviado','saiu_para_entrega','em_transporte','saiu para entrega'].indexOf(s)>-1)return 3;
-if(['embalagem','em processo de embalagem','em_embalagem','embalando'].indexOf(s)>-1)return 2;
-if(['pago','pago (cartão)','pago (cartao)','pagamento_confirmado','confirmado','aprovado'].indexOf(s)>-1)return 1;
-return 0;
-}
-/* Status da encomenda (orcamento): recebido, orcamento, aprovado, producao, pronto, entregue */
-function mapearOrc(v){
-var s=String(v||'').toLowerCase().trim();
-if(s==='cancelado'||s==='cancelada'||s==='sem-resposta'||s==='sem resposta'||s==='sem_resposta')return -1;
-if(['entregue','finalizado','concluido','concluída','concluído'].indexOf(s)>-1)return 5;
-if(['pronto','pronto_entrega','pronto_para_entrega','aguardando_entrega','para_entrega'].indexOf(s)>-1)return 4;
-if(['producao','em_producao','impressao','imprimindo','em_produção','produção'].indexOf(s)>-1)return 3;
-if(['aprovado','aprovacao','confirmado','em_andamento','aprovada','aprovação'].indexOf(s)>-1)return 2;
-if(['orcamento','orcado','orcamento_enviado','aguardando_aprovacao','orçamento','orçado'].indexOf(s)>-1)return 1;
-return 0;
-}
-/* Tradução fina do status para a pill (mostra o status real, não só a etapa) */
-function tradPill(tipo,s){
-var k=String(s||'').toLowerCase().trim();
-if(tipo==='loja'){
-if(k==='pago')return 'Pago';
-if(k==='pago (cartão)'||k==='pago (cartao)')return 'Pago no cartão';
-if(k.indexOf('aguardando')===0)return 'Aguardando pagamento';
-if(k.indexOf('embal')>-1)return 'Em embalagem';
-if(k.indexOf('saiu')===0||k==='enviado'||k.indexOf('em_transporte')>-1)return 'Saiu para entrega';
-if(k==='entregue')return 'Entregue';
-return 'Pedido feito';
-}
-if(k.indexOf('aguardando_entrega')>-1||k==='para_entrega')return 'Pronto';
-if(k.indexOf('analise')>-1)return 'Em análise';
-if(k.indexOf('orc')===0||k==='orçamento')return 'Em orçamento';
-if(k==='aprovado'||k==='em_andamento'||k==='aprovacao'||k==='aprovada')return 'Aprovado';
-if(k.indexOf('produ')===0)return 'Em produção';
-if(k==='pronto')return 'Pronto';
-if(k==='entregue')return 'Entregue';
-return 'Recebido';
-}
-function etiquetaEntrega(e){
-var s=String(e||'').toLowerCase();
-if(s.indexOf('uber')>-1)return 'Entrega por aplicativo';
-if(s.indexOf('correio')>-1)return 'Envio pelos Correios';
-if(s.indexOf('retirada')>-1)return 'Retirada na loja';
-return s||'Retirada na loja';
-}
-function montarTimeline(tipo,status){
-var passos;
-if(tipo==='loja'){
-passos=[
-{t:'Pedido feito',d:'Recebemos seu pedido e estamos processando.'},
-{t:'Pago',d:'Pagamento confirmado (Pix ou cartão).'},
-{t:'Em embalagem',d:'Sua peça está sendo preparada para envio.'},
-{t:'Saiu para entrega',d:'Seu pedido está a caminho de você.'},
-{t:'Entregue',d:'Pedido entregue. Obrigado pela compra!'}
-];
-}else{
-passos=[
-{t:'Recebido',d:'Recebemos seu pedido e vamos analisar.'},
-{t:'Orçamento',d:'Enviamos o orçamento com prazo e valor.'},
-{t:'Aprovado',d:'Orçamento aprovado e produção confirmada.'},
-{t:'Em produção',d:'Sua peça está sendo impressa.'},
-{t:'Pronto',d:'Pedido finalizado, pronto para entrega.'},
-{t:'Entregue',d:'Pedido entregue. Obrigado pela compra!'}
-];
-}
-var html='';
-passos.forEach(function(p,idx){
-var cls=idx<status?'feito':(idx===status?'ativo':'pendente');
-html+='<div class="tl-step '+cls+'" data-step="'+idx+'">'
-+'<div class="tl-dot">'+(idx+1)+'</div>'
-+'<div class="tl-info"><strong>'+p.t+'</strong><span>'+p.d+'</span>'
-+'<span class="data-status">✓ '+(status>=idx?p.t:'')+'</span></div></div>';
-});
-document.getElementById('timeline').innerHTML=html;
-}
-function buscarPedido(){
-var input=document.getElementById('inputPedido');
-var msg=document.getElementById('buscaMsg');
-var alvo=normalizar(input.value);
-msg.className='busca-msg';
-msg.textContent='';
-if(!alvo){
-msg.className='busca-msg erro';
-msg.textContent='Digite o número do pedido (ex: M3D-000001).';
-return;
-}
-document.getElementById('statusBox').classList.remove('show');
-msg.className='busca-msg carregando';
-msg.textContent='Consultando seu pedido…';
-/* Tenta a loja (M3D-XXXXXX); se não achar, tenta a encomenda (M3D-AAAA-NNN) */
-fetch(API_LOJA+encodeURIComponent(alvo))
-.then(function(r){
-if(r.status===404){
-return fetch(API_ORC+encodeURIComponent(alvo)).then(function(r2){
-if(r2.status===404)return null;
-if(!r2.ok)throw {tipo:'servidor'};
-return r2.json().then(function(j){return {dados:j,tipo:'encomenda'};});
-});
-}
-if(!r.ok)throw {tipo:'servidor'};
-return r.json().then(function(j){return {dados:j,tipo:'loja'};});
-})
-.then(function(res){
-if(!res){
-document.getElementById('statusBox').classList.remove('show');
-msg.className='busca-msg erro';
-msg.textContent='Pedido não encontrado. Confira o número ou fale com a gente no WhatsApp.';
-return;
-}
-exibirPedido(res.dados,res.tipo,alvo);
-msg.className='busca-msg ok';
-msg.textContent='Pedido encontrado!';
-})
-.catch(function(err){
-document.getElementById('statusBox').classList.remove('show');
-msg.className='busca-msg erro';
-msg.textContent='Não foi possível consultar agora. Tente novamente em instantes ou chame no WhatsApp.';
-});
-}
-function exibirPedido(dados,tipo,alvo){
-var numero=dados.pedido_id||dados.numero||dados.id||alvo;
-var sRaw=String(dados.status||dados.estado||dados.etapa||'').toLowerCase().trim();
-var ehCancelado=(sRaw==='cancelado'||sRaw==='cancelada');
-var ehSemResp=(sRaw==='sem-resposta'||sRaw==='sem resposta'||sRaw==='sem_resposta');
-var encerrado=ehCancelado||ehSemResp;
-var status=encerrado?-1:((tipo==='loja')?mapearLoja(dados.status):mapearOrc(dados.status||dados.estado||dados.etapa));
-document.getElementById('sNumero').textContent=numero;
-var pill=document.getElementById('statusPill');
-pill.classList.remove('cancelado','encerrado');
-if(ehCancelado){
-pill.classList.add('cancelado');
-pill.textContent='Cancelado';
-document.getElementById('timeline').innerHTML=
-'<div class="cancel-box"><strong>Este pedido foi cancelado.</strong>'
-+'<span>Se você já fez o pagamento ou quer entender o que aconteceu, chame a gente no WhatsApp que resolvemos rapidinho.</span></div>';
-}else if(ehSemResp){
-pill.classList.add('encerrado');
-pill.textContent='Encerrado';
-document.getElementById('timeline').innerHTML=
-'<div class="cancel-box encerrado-box"><strong>Este pedido foi encerrado.</strong>'
-+'<span>Quer retomar ou tirar dúvidas? Chame a gente no WhatsApp com o número do pedido e retomamos de onde parou.</span></div>';
-}else{
-pill.textContent=tradPill(tipo,dados.status||dados.estado||dados.etapa);
-montarTimeline(tipo,status);
-}
-var detBox=document.getElementById('detalhesBox');
-var html='';
-/* Código de rastreio (se existir no pedido) */
-var rastreio=dados.codigo_rastreio||dados.rastreio||dados.rastreamento||dados.codigo_rastreamento||'';
-if(rastreio){
-html+='<div class="rastreio-box"><div><div class="rb-lab">📦 Código de rastreio</div><div class="rb-cod" id="rastreioCod">'+escHtml(String(rastreio).toUpperCase())+'</div></div><button class="btn-copiar" onclick="copiarRastreio()">📋 Copiar código</button></div>';
-}
-if(tipo==='loja'){
-var itens=dados.itens||[];
-var subtotal=parseFloat(dados.subtotal)||0;
-var desconto=parseFloat(dados.desconto)||0;
-itens.forEach(function(item){
-var qtd=item.qtd||item.quantidade||item.quant||1;
-var nome=item.nome||item.produto||item.descricao||'Item';
-var preco=parseFloat(item.preco||item.valor||0);
-html+='<div class="resumo-item"><span class="ri-nome">'+qtd+'x '+escHtml(nome+(item.cor?' ('+item.cor+')':''))+'</span><span class="ri-valor">'+fmt(preco*qtd)+'</span></div>';
-});
-if(dados.cupom){
-html+='<div class="resumo-item"><span class="ri-nome">Cupom '+escHtml(dados.cupom)+'</span><span class="ri-valor">-'+fmt(desconto)+'</span></div>';
-}
-if(subtotal>0&&(desconto>0||dados.cupom)){
-html+='<div class="resumo-item"><span class="ri-nome">Subtotal</span><span class="ri-valor">'+fmt(subtotal)+'</span></div>';
-}
-html+='<div class="resumo-total"><span>Total</span><span class="valor">'+fmt(dados.total||subtotal-desconto)+'</span></div>';
-html+='<div class="resumo-item" style="border-top:1px dashed rgba(15,30,61,.15);margin-top:8px;padding-top:10px;"><span class="ri-nome">Entrega</span><span class="ri-valor">'+escHtml(etiquetaEntrega(dados.entrega))+'</span></div>';
-if(dados.nota){
-html+='<div class="resumo-item"><span class="ri-nome">Observações</span><span class="ri-valor">'+escHtml(dados.nota)+'</span></div>';
-}
-}else{
-if(dados.tipo_peca){
-html+='<div class="resumo-item"><span class="ri-nome">Tipo de peça</span><span class="ri-valor">'+escHtml(dados.tipo_peca)+'</span></div>';
-}
-}
-if(dados.created_at||dados.data){
-html+='<div class="resumo-item"><span class="ri-nome">Pedido feito em</span><span class="ri-valor">'+fmtData(dados.created_at||dados.data)+'</span></div>';
-}
-if(html){
-document.getElementById('detalhesItens').innerHTML=html;
-detBox.classList.add('show');
-}else{
-detBox.classList.remove('show');
-}
-var btnZap=document.getElementById('btnZap');
-btnZap.href='https://wa.me/5521966594803?text='+encodeURIComponent('Olá! Quero acompanhar o pedido #'+numero);
-btnZap.textContent='Falar no WhatsApp · Pedido #'+numero;
-document.getElementById('statusBox').classList.add('show');
-}
-function copiarNumero(){
-  var n=document.getElementById('sNumero').textContent.trim();
-  if(!n)return;
-  function ok(){var m=document.getElementById('buscaMsg');m.className='busca-msg ok';m.textContent='Número do pedido copiado!';}
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(n).then(ok).catch(function(){fbCopia(n);ok();});}
-  else{fbCopia(n);ok();}
-}
-function copiarRastreio(){
-  var el=document.getElementById('rastreioCod');
-  if(!el)return;
-  var t=el.textContent.trim();
-  function ok(){var m=document.getElementById('buscaMsg');m.className='busca-msg ok';m.textContent='Código de rastreio copiado!';}
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok).catch(function(){fbCopia(t);ok();});}
-  else{fbCopia(t);ok();}
-}
-function fbCopia(t){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}
-/* Preenchimento automático via URL (botão "Rastrear" do painel Minha conta ou links da loja).
-   Aceita os nomes de parâmetro numero, pedido, codigo e order — o que chegar, preenche e busca. */
-(function(){
-var params=new URLSearchParams(window.location.search);
-var num=params.get('numero')||params.get('pedido')||params.get('codigo')||params.get('order');
-if(num){
-document.getElementById('inputPedido').value=String(num).replace(/#/g,'').trim();
-buscarPedido();
-}
-})();
-</script>
+
+<!-- ==================== FOOTER ==================== -->
 <footer class="site-footer">
   <div class="footer-inner">
     <div>
@@ -438,17 +229,81 @@ buscarPedido();
     <div>
       <h4>Navegação</h4>
       <a href="index.html">🏠 Início</a>
-      <a href="loja.html">🛒 Loja</a>
+      <a href="loja.html">🛍️ Loja</a>
       <a href="acompanhar.html">📦 Acompanhar pedido</a>
       <a href="avaliacoes.html">⭐ Avaliações</a>
     </div>
     <div>
       <h4>Atendimento</h4>
-      <a href="https://wa.me/5521966594803" target="_blank">💬 WhatsApp (21) 96659-4803</a>
+      <a href="https://wa.me/5521966594803" target="_blank" rel="noopener">💬 WhatsApp (21) 96659-4803</a>
       <p>Nilópolis · Rio de Janeiro · RJ</p>
     </div>
   </div>
   <div class="footer-bottom">© 2026 Meu 3D Labs · Todos os direitos reservados</div>
 </footer>
+
+<script src="acompanhar.js"></script>
+
+<!-- ============================================================
+     AUTO-BUSCA POR ?pedido= NA URL
+     Fluxo: cliente paga no Pix → clica "Já paguei" → é levado
+     para acompanhar.html?pedido=M3D-000037 → busca automática
+     ============================================================ -->
+<script>
+(function(){
+  var params = new URLSearchParams(location.search);
+  var codigo = params.get('pedido') || params.get('codigo');
+  if(!codigo) return;
+
+  codigo = decodeURIComponent(codigo).trim().toUpperCase();
+  if(!codigo) return;
+
+  var input = document.getElementById('inputPedido');
+
+  function disparar(){
+    if(input){
+      input.value = codigo;
+    }
+
+    /* Tenta as funções possíveis do acompanhar.js */
+    if(typeof window.buscarPedido === 'function'){
+      window.buscarPedido();
+      return;
+    }
+    if(typeof window.consultarPedido === 'function'){
+      window.consultarPedido(codigo);
+      return;
+    }
+    if(typeof window.verificarPedido === 'function'){
+      window.verificarPedido(codigo);
+      return;
+    }
+
+    /* Último recurso: clica no botão Verificar */
+    var btn = document.querySelector('.busca-linha button');
+    if(btn) btn.click();
+  }
+
+  /* Rola até o status logo após buscar */
+  function rolarStatus(){
+    setTimeout(function(){
+      var box = document.getElementById('statusBox');
+      if(box){
+        box.scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+    }, 900);
+  }
+
+  /* Espera o acompanhar.js terminar de carregar */
+  if(document.readyState === 'complete'){
+    setTimeout(function(){ disparar(); rolarStatus(); }, 150);
+  }else{
+    window.addEventListener('load', function(){
+      setTimeout(function(){ disparar(); rolarStatus(); }, 150);
+    });
+  }
+})();
+</script>
+
 </body>
 </html>

@@ -226,6 +226,19 @@ tr.tr-hoje{box-shadow:inset 3px 0 0 #e74c3c;}
 .ver-mais-btn{display:inline-block;margin-top:6px;background:var(--navy);color:#fff;border:none;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;transition:.2s;}
 .ver-mais-btn:hover{background:var(--navy-2);}
 
+/* Pix aguardando confirmação do lojista */
+.status-verificacao{
+  background:#fff4d6;
+  color:#8a5b00;
+  border:1.5px solid #e0a800;
+  animation:blink 1.8s infinite;
+}
+body.dark .status-verificacao{
+  background:#2a2412;
+  color:#fbbf24;
+  border-color:#7a5f10;
+}
+
 /* ===== 13. ESTADOS (VAZIO, ERRO, CARREGANDO) ===== */
 .empty-state{text-align:center;padding:60px 20px;color:var(--gray);}
 .error-box{background:#fde8e8;border:1px solid #f5c6c6;color:#b91c1c;border-radius:10px;padding:16px 20px;margin-bottom:20px;font-size:14px;display:none;}
@@ -416,3 +429,231 @@ body.dark .status-recusado{background:#2a1518;color:#f87171;}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
 }
+
+/* ============================================================
+   24. PIX AGUARDANDO CONFIRMAÇÃO DO LOJISTA
+   Fluxo: cliente informa o Pix no site → status "Pagamento em
+   verificação (Pix)" → lojista confirma aqui no admin.
+   Todos os blocos abaixo são aditivos: não sobrescrevem regras
+   existentes e reaproveitam as variáveis de cor do arquivo.
+   ============================================================ */
+
+/* ===== 24.1 LINHA DESTACADA NA TABELA ===== */
+tbody tr.tr-verificacao{
+  box-shadow:inset 3px 0 0 #e0a800;
+  background:#fffdf5;
+}
+tbody tr.tr-verificacao:nth-child(even){background:#fffdf5;}
+tbody tr.tr-verificacao:hover{background:#fff9e6;}
+
+body.dark tr.tr-verificacao,
+body.dark tbody tr.tr-verificacao:nth-child(even){background:#241f12;}
+body.dark tr.tr-verificacao:hover{background:#2a2418;}
+
+/* Fallback: se o status vier direto do backend sem tradução */
+.status-pagamento-em-verificacao{
+  background:#fff4d6;
+  color:#8a5b00;
+  border:1.5px solid #e0a800;
+}
+
+/* ===== 24.2 BOTÃO CONFIRMAR PAGAMENTO NA CÉLULA ===== */
+.confirmar-pix-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-top:6px;
+  background:var(--green);
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+  padding:5px 12px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  transition:.2s;
+  font-family:inherit;
+  white-space:nowrap;
+}
+.confirmar-pix-btn:hover{background:#1d8a48;transform:translateY(-1px);}
+.confirmar-pix-btn:disabled{opacity:.55;cursor:wait;transform:none;}
+
+body.dark .confirmar-pix-btn{background:#1d8a48;}
+body.dark .confirmar-pix-btn:hover{background:#25a858;}
+
+/* ===== 24.3 CAIXA DE PIX NO MODAL "VER MAIS" ===== */
+.vm-pix-box{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  background:#fffdf5;
+  border:1.5px solid #e0a800;
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:14px;
+}
+.vm-pix-box .vm-pix-titulo{
+  font-size:11px;
+  font-weight:800;
+  color:#8a5b00;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.vm-pix-box .vm-pix-linha{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  font-size:13px;
+}
+.vm-pix-box .vm-pix-linha strong{color:var(--navy);font-weight:800;}
+.vm-pix-box .vm-pix-acoes{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;}
+.vm-pix-box .vm-pix-acoes button{
+  flex:1;
+  min-width:120px;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  font-size:12.5px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:inherit;
+  transition:.2s;
+}
+.vm-pix-confirmar{background:var(--green);color:#fff;}
+.vm-pix-confirmar:hover{background:#1d8a48;}
+.vm-pix-recusar{background:#fdecea;color:#a93226;border:1px solid #f4c7c3 !important;}
+.vm-pix-recusar:hover{background:#fbd9d5;}
+
+body.dark .vm-pix-box{background:#241f12;border-color:#7a5f10;}
+body.dark .vm-pix-box .vm-pix-titulo{color:#fbbf24;}
+body.dark .vm-pix-box .vm-pix-linha strong{color:#e6ecf7;}
+body.dark .vm-pix-recusar{background:#2a1518;color:#f87171;border-color:#5c2a2a !important;}
+
+/* ===== 24.4 BANNER DE ALERTA NO TOPO DO PAINEL ===== */
+.pix-alerta{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:linear-gradient(135deg,#fff8e1,#fffdf5);
+  border:1.5px solid #e0a800;
+  border-left:5px solid #e0a800;
+  border-radius:12px;
+  padding:14px 18px;
+  margin-bottom:18px;
+  font-size:13.5px;
+  color:#8a5b00;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+}
+.pix-alerta:hover{background:#fff3cc;transform:translateX(2px);}
+.pix-alerta .pix-alerta-num{
+  background:#e0a800;
+  color:#fff;
+  font-weight:800;
+  font-size:15px;
+  min-width:26px;
+  height:26px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.pix-alerta .pix-alerta-txt{flex:1;}
+.pix-alerta .pix-alerta-seta{
+  font-size:18px;
+  color:#e0a800;
+  font-weight:800;
+}
+
+body.dark .pix-alerta{
+  background:#241f12;
+  border-color:#7a5f10;
+  border-left-color:#fbbf24;
+  color:#fbbf24;
+}
+body.dark .pix-alerta:hover{background:#2a2418;}
+body.dark .pix-alerta .pix-alerta-num{background:#fbbf24;color:#241f12;}
+body.dark .pix-alerta .pix-alerta-seta{color:#fbbf24;}
+
+/* ===== 24.5 AJUSTE RESPONSIVO ===== */
+@media(max-width:700px){
+  .vm-pix-box .vm-pix-acoes{flex-direction:column;}
+  .vm-pix-box .vm-pix-acoes button{min-width:100%;}
+  .pix-alerta{font-size:12.5px;padding:12px 14px;}
+}
+
+/* ============================================================
+   25. PIX — 3 AÇÕES (verde / amarelo / vermelho)
+   ============================================================ */
+
+.pix-acoes{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  margin-top:8px;
+  padding-top:8px;
+  border-top:1px dashed var(--border);
+}
+
+.pix-acao-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:6px 10px;
+  border-radius:8px;
+  border:none;
+  font-family:inherit;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.18s;
+  white-space:nowrap;
+  line-height:1.3;
+}
+.pix-acao-btn:disabled{opacity:.55;cursor:wait;}
+.pix-acao-btn:hover{transform:translateY(-1px);}
+
+.pix-confirmar{background:var(--green);color:#fff;}
+.pix-confirmar:hover{background:#1d8a48;}
+
+.pix-aguardar{background:var(--yellow);color:#3d2c00;}
+.pix-aguardar:hover{background:#c29000;}
+
+.pix-recusar{background:#fdecea;color:#a93226;border:1.5px solid #f4c7c3;}
+.pix-recusar:hover{background:#fbd9d5;border-color:#e8a9a2;}
+
+/* Modo escuro */
+body.dark .pix-confirmar{background:#1d8a48;}
+body.dark .pix-confirmar:hover{background:#25a858;}
+
+body.dark .pix-aguardar{background:#7a5f10;color:#fbbf24;}
+body.dark .pix-aguardar:hover{background:#9a7a18;}
+
+body.dark .pix-recusar{background:#2a1518;color:#f87171;border-color:#5c2a2a;}
+body.dark .pix-recusar:hover{background:#3a1e22;}
+
+/* Pill de Pix não identificado */
+.status-recusado{
+  background:#fdecea;
+  color:#a93226;
+  border:1.5px solid #f4c7c3;
+  animation:none;
+}
+body.dark .status-recusado{
+  background:#2a1518;
+  color:#f87171;
+  border-color:#5c2a2a;
+}
+
+/* Responsivo */
+@media(max-width:700px){
+  .pix-acao-btn{font-size:10.5px;padding:7px 8px;}
+}
+
