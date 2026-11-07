@@ -1,6 +1,6 @@
 /* Service worker do painel: network-first (nunca serve versão velha),
    cache só como fallback offline. API do backend NUNCA é cacheada. */
-var CACHE = 'm3d-admin-v3';
+var CACHE = 'm3d-admin-v4';
 var ASSETS = [
   'admin.html','admin.css','admin.js','admin-extras.js','admin-extras.css',
   'admin-modelagem.js','admin-modelagem.css',
@@ -44,5 +44,51 @@ self.addEventListener('fetch', function(e){
       }
       return r;
     }).catch(function(){ return caches.match(req); })
+  );
+});
+
+/* ============================================================
+   WEB PUSH — notificações com o app fechado/tela bloqueada
+   ============================================================ */
+
+self.addEventListener('push', function(e){
+  var d = {};
+  try { d = e.data ? e.data.json() : {}; } catch(err){ d = {}; }
+
+  var titulo = d.titulo || 'Meu 3D Labs';
+  var corpo  = d.corpo  || 'Novo pedido recebido';
+
+  e.waitUntil(
+    self.registration.showNotification(titulo, {
+      body: corpo,
+      icon: '/img/logo/logo.png',
+      badge: '/favicon-32x32.png',
+      vibrate: [300, 100, 300, 100, 300],
+      requireInteraction: true,
+      tag: d.tag || 'pedido',
+      renotify: true,
+      data: { url: d.url || '/admin.html' }
+    })
+  );
+});
+
+self.addEventListener('notificationclick', function(e){
+  e.notification.close();
+
+  var destino = (e.notification.data && e.notification.data.url) || '/admin.html';
+
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(lista){
+      for (var i = 0; i < lista.length; i++){
+        var c = lista[i];
+        if (c.url.indexOf(self.location.origin) === 0) {
+          return c.focus().then(function(){
+            if (c.navigate) return c.navigate(destino);
+            return c;
+          });
+        }
+      }
+      return clients.openWindow(destino);
+    })
   );
 });

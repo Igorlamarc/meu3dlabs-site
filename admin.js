@@ -38,6 +38,63 @@ try {
   window.API_BASE = API_URL;
 } catch (e) {}
 
+/* ===== WEB PUSH — declare a função ANTES de qualquer chamada ===== */
+function urlBase64ToUint8Array(base64String) {
+  var padding = '='.repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  var raw = atob(base64);
+  var arr = new Uint8Array(raw.length);
+  for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+
+function registrarPush() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.warn('[push] navegador sem suporte');
+    return;
+  }
+  if (!token) {
+    console.warn('[push] sem token');
+    return;
+  }
+
+  Notification.requestPermission().then(function (perm) {
+    if (perm !== 'granted') {
+      console.warn('[push] permissão negada');
+      return;
+    }
+
+    return navigator.serviceWorker.ready.then(function (reg) {
+      return fetch(API_URL + '/push/vapid-public-key')
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d.key) throw new Error('backend sem VAPID_PUBLIC_KEY');
+          return reg.pushManager.getSubscription().then(function (sub) {
+            if (sub) return sub;
+            return reg.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(d.key)
+            });
+          });
+        })
+        .then(function (sub) {
+          return fetch(API_URL + '/push/subscribe', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(sub)
+          });
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { console.log('[push] registrado:', j); });
+    });
+  }).catch(function (e) {
+    console.warn('[push] falhou:', e.message);
+  });
+}
+
 /* ===== 3. UTILIDADES BASE E CLASSIFICAÇÃO ===== */
 
 function servicoTipo(p) {
@@ -137,6 +194,7 @@ if (token) {
   document.getElementById('loginOverlay').style.display = 'none';
   if (document.body.classList.contains('dark')) document.getElementById('darkBtn').textContent = '☀️';
   iniciar();
+  registrarPush();
 } else {
   document.getElementById('senhaInput').focus();
 }
@@ -161,6 +219,7 @@ function tentarLogin() {
     sessionStorage.setItem('m3d_admin_token', token);
     document.getElementById('loginOverlay').style.display = 'none';
     iniciar();
+    registrarPush();
   })
   .catch(function(err) {
     document.getElementById('loginError').classList.add('show');
