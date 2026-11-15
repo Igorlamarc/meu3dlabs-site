@@ -1,8 +1,9 @@
 /* ==========================================================================
    Meu 3D Labs — admin-modelagem.js
    Aba "Modelagem 3D" do painel administrativo.
-   Carregar DEPOIS de admin.js.
-   v1.1 — botão Cancelar + normalização de status para o acompanhar
+   Carregar DEPOIS de admin.js e admin-extras.js.
+   v1.2 — {PRAZO} resolvido, listeners duplicados removidos,
+          chips de status sempre visíveis, aria-labels
    ========================================================================== */
 (function () {
   'use strict';
@@ -16,8 +17,8 @@
                 'https://meu3dlabs-backend.onrender.com/api';
   window.API = API_URL;
   window.API_BASE = API_URL;
-
   var LS_TOKEN = 'm3d_admin_token';
+  var LOJA_URL = 'https://meu3dlabs.com.br/loja';
 
   var FAIXAS = {
     simples:  { nome: 'Simples',  cor: 'm3d-faixa-simples' },
@@ -38,7 +39,6 @@
     { id: 'cancelado',   label: 'Cancelado',                classe: 'status-cancelado' }
   ];
 
-  /* Mapa: status enviado ao backend → status que o acompanhar.js entende */
   var MAPA_STATUS_ACOMPANHAR = {
     'novo':        'novo',
     'em-analise':  'em analise',
@@ -52,8 +52,6 @@
     'cancelado':   'cancelado'
   };
 
-  var LOJA_URL = 'https://meu3dlabs.com.br/loja';
-
   /* ========================================================================
      02. ESTADO
      ======================================================================== */
@@ -62,7 +60,6 @@
   var modCarregando = false;
   var modAtual = null;
   var modAcaoAtual = null;
-
   var modFiltroPrazo = 'todos';
   var modBuscaTxt = '';
   var modDataIni = '';
@@ -75,44 +72,40 @@
   function modToken() {
     return sessionStorage.getItem(LS_TOKEN) || localStorage.getItem(LS_TOKEN) || '';
   }
-
   function esc(s) {
     return String(s == null ? '' : s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
-
   function brl(v) {
     var n = Number(v) || 0;
     return 'R$ ' + n.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
-
+  function brlSemPrefixo(v) {
+    var n = Number(v) || 0;
+    return n.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
   function modStatusInfo(id) {
     for (var i = 0; i < MOD_STATUS.length; i++) {
       if (MOD_STATUS[i].id === id) return MOD_STATUS[i];
     }
     return MOD_STATUS[0];
   }
-
   function statusParaBackend(id) {
     return MAPA_STATUS_ACOMPANHAR[id] || id;
   }
-
   function modNumero(p) {
     if (!p) return '';
     return p.codigo || p.numero || p.pedido_id || ('M3D-' + String(p.id || '').slice(-4));
   }
-
   function modCliente(p) {
     if (!p) return '—';
     return p.cliente || p.nome_cliente || p.nome || '—';
   }
-
   function modWhats(p) {
     if (!p) return '';
     return p.whatsapp || p.telefone || p.contato || '';
   }
-
   function dataRecebido(p) {
     if (!p) return null;
     var raw = p.criadoEm || p.criado_em || p.created_at || p.dataCriacao || p.data;
@@ -120,13 +113,11 @@
     var d = new Date(raw);
     return isNaN(d.getTime()) ? null : d;
   }
-
   function modData(p) {
     var d = dataRecebido(p);
     if (!d) return '—';
     return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
   }
-
   function diasAte(p) {
     var raw = p && p.prazo;
     if (!raw) return null;
@@ -136,16 +127,20 @@
     d.setHours(0, 0, 0, 0);
     return Math.round((d - hoje) / 86400000);
   }
-
+  function prazoFormatado(p) {
+    var raw = p && p.prazo;
+    if (!raw) return 'a combinar';
+    var d = new Date(raw);
+    if (isNaN(d.getTime())) return 'a combinar';
+    return d.toLocaleDateString('pt-BR');
+  }
   function soDigitos(s) { return String(s || '').replace(/\D/g, ''); }
-
   function waLink(p, texto) {
     var num = soDigitos(modWhats(p));
     if (!num) return '';
     if (num.length <= 11 && num.indexOf('55') !== 0) num = '55' + num;
     return 'https://wa.me/' + num + (texto ? '?text=' + encodeURIComponent(texto) : '');
   }
-
   function toast(msg, tipo) {
     if (typeof window.mostrarToast === 'function') {
       window.mostrarToast(msg, tipo);
@@ -158,7 +153,6 @@
     clearTimeout(t._t);
     t._t = setTimeout(function () { t.className = 'toast'; }, 3200);
   }
-
   function ehModelagem(p) {
     if (!p) return false;
     var s = String(p.servico || p.tipo_servico || p.servico_escolhido || '').toLowerCase().trim();
@@ -175,8 +169,10 @@
   function filtrar() {
     var lista = modItens.slice();
 
-    if (modStatusSel !== 'todos') {
-      lista = lista.filter(function (p) { return (p.status || 'novo') === modStatusSel; });
+    /* ✅ CORRIGIDO: aplica o filtro de status (chip OU select) */
+    var statusFiltro = modStatusSel || modFiltro;
+    if (statusFiltro && statusFiltro !== 'todos') {
+      lista = lista.filter(function (p) { return (p.status || 'novo') === statusFiltro; });
     }
 
     if (modBuscaTxt) {
@@ -227,12 +223,10 @@
     var ini = document.getElementById('modFiltroInicio');
     var fim = document.getElementById('modFiltroFim');
     var sel = document.getElementById('modStatusFilter');
-
     modBuscaTxt = busca ? busca.value.trim() : '';
     modDataIni = ini ? ini.value : '';
     modDataFim = fim ? fim.value : '';
     modStatusSel = sel ? sel.value : 'todos';
-
     modRenderTabela();
     modRenderStats();
   }
@@ -268,7 +262,9 @@
     for (var j = 0; j < MOD_STATUS.length; j++) {
       var s = MOD_STATUS[j];
       var qtd = c[s.id] || 0;
-      if (qtd === 0 && s.id !== 'novo') continue;
+      /* ✅ CORRIGIDO: mostra todos os status (mesmo com 0), exceto "novo" vazio */
+      if (qtd === 0 && s.id !== 'novo' && s.id !== modFiltro) continue;
+
       html += '<button type="button" class="mod-filtro' +
         (modFiltro === s.id ? ' ativo' : '') +
         '" data-filtro="' + s.id + '">' + s.label + ' <b>' + qtd + '</b></button>';
@@ -290,12 +286,10 @@
 
   function modBadgePrazo(p) {
     var dias = diasAte(p);
-    if (dias === null) return '<span style="color:#8a94a8;">—</span>';
-
+    if (dias === null) return '<span style="color:var(--gray);">—</span>';
     var raw = p.prazo;
     var d = new Date(raw);
     var dataTxt = isNaN(d.getTime()) ? '' : d.toLocaleDateString('pt-BR');
-
     var classe, rotulo;
 
     if (dias < 0) {
@@ -326,7 +320,7 @@
     var lista = filtrar();
 
     if (!lista.length) {
-      corpo.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:#8a94a8;">' +
+      corpo.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--gray);">' +
         'Nenhuma solicitação de modelagem' +
         (modFiltro !== 'todos' || modBuscaTxt || modDataIni || modDataFim || modFiltroPrazo !== 'todos'
           ? ' com esses filtros' : ' ainda') + '.</td></tr>';
@@ -364,29 +358,27 @@
       html += '</td>';
 
       html += '<td><span class="m3d-faixa-badge ' + esc(faixa.cor) + '">' + esc(faixa.nome) + '</span></td>';
-
       html += '<td>' + esc(modData(p)) + '</td>';
       html += '<td>' + modBadgePrazo(p) + '</td>';
-
       html += '<td>' + (valor
         ? '<strong>' + esc(brl(valor)) + '</strong>'
         : '<span class="mod-sem-valor">—</span>') + '</td>';
-
       html += '<td><span class="status-pill ' + esc(st.classe) + '">' + esc(st.label) + '</span></td>';
 
-      /* Ações — agora com Cancelar */
       html += '<td class="mod-acoes">';
-      html += '<button type="button" class="mod-btn ver" data-mod-ver="' + esc(pid) + '">Ver</button>';
-      html += '<button type="button" class="mod-btn st" data-mod-status="' + esc(pid) + '">Status</button>';
-      if (p.status === 'pronto' && !p.encomenda_id) {
-        html += '<button type="button" class="mod-btn transf" data-mod-transf="' + esc(pid) + '">📦 Encomenda</button>';
-      }
-            if (!jaCancelado) {
-        html += '<button type="button" class="mod-btn cancelar" data-mod-cancelar="' + esc(pid) + '">🚫 Cancelar</button>';
-      }
-      html += '<button type="button" class="mod-btn excluir" data-mod-excluir="' + esc(pid) + '">🗑️ Excluir</button>';
-      html += '</td>';
+      html += '<button type="button" class="mod-btn ver" data-mod-ver="' + esc(pid) + '" aria-label="Ver detalhes">Ver</button>';
+      html += '<button type="button" class="mod-btn st" data-mod-status="' + esc(pid) + '" aria-label="Alterar status">Status</button>';
 
+      if (p.status === 'pronto' && !p.encomenda_id) {
+        html += '<button type="button" class="mod-btn transf" data-mod-transf="' + esc(pid) + '" aria-label="Transferir para encomenda">📦 Encomenda</button>';
+      }
+
+      if (!jaCancelado) {
+        html += '<button type="button" class="mod-btn cancelar" data-mod-cancelar="' + esc(pid) + '" aria-label="Cancelar pedido">🚫 Cancelar</button>';
+      }
+
+      html += '<button type="button" class="mod-btn excluir" data-mod-excluir="' + esc(pid) + '" aria-label="Excluir pedido">🗑️ Excluir</button>';
+      html += '</td>';
       html += '</tr>';
     }
 
@@ -426,7 +418,7 @@
       });
     }
 
-        var excls = document.querySelectorAll('[data-mod-excluir]');
+    var excls = document.querySelectorAll('[data-mod-excluir]');
     for (var n = 0; n < excls.length; n++) {
       excls[n].addEventListener('click', function () {
         var p = modBuscar(this.getAttribute('data-mod-excluir'));
@@ -441,26 +433,31 @@
   function modCancelarPedido(p) {
     if (!p) return;
     var num = modNumero(p);
+
     if (!confirm('Cancelar a modelagem ' + num + '?\n\nEssa ação muda o status para "Cancelado" e o cliente vê a informação no acompanhamento.')) {
       return;
     }
+
     var dados = {
       status: statusParaBackend('cancelado'),
       servico: p.servico || 'modelagem',
       mensagem_enviada: modMensagem(p, 'cancelado')
     };
+
     modSalvar(p.id, dados, 'Modelagem ' + num + ' cancelada ✅');
   }
 
   /* ========================================================================
-     05.2 EXCLUIR PEDIDO (apaga do banco)
+     05.2 EXCLUIR PEDIDO
      ======================================================================== */
   function modExcluirPedido(p) {
     if (!p) return;
     var num = modNumero(p);
+
     if (!confirm('EXCLUIR DEFINITIVAMENTE a modelagem ' + num + '?\n\nEssa ação apaga o registro do banco de dados e NÃO pode ser desfeita.')) {
       return;
     }
+
     fetch(API_URL + '/orcamentos/' + encodeURIComponent(p.id), {
       method: 'DELETE',
       headers: { 'Authorization': 'Bearer ' + modToken() }
@@ -661,10 +658,12 @@
           'Já está com a nossa equipe. Enquanto isso, se quiser dar uma olhada no que ' +
           'a gente já tem pronto pra entrega imediata, passa na nossa loja: ' + LOJA_URL + '\n\n' +
           'Assim que avaliarmos, voltamos aqui pelo WhatsApp.';
+
       case 'em-analise':
         return 'Olá, ' + nome + '! Recebemos seu pedido ' + pedido + ' ✅\n\n' +
           'Ele já está em análise pela nossa equipe. Assim que tivermos o orçamento, ' +
           'retornamos aqui pelo WhatsApp. Fica de olho!';
+
       case 'orcamento':
         return 'Olá, ' + nome + '! Seu orçamento está pronto 🎯\n\n' +
           'Pedido: ' + pedido + '\n' +
@@ -676,6 +675,7 @@
           '• Prazo: {PRAZO}\n\n' +
           'A execução começa após a confirmação do pagamento. ' +
           'Se estiver de acordo, me confirma por aqui que envio os dados de pagamento.';
+
       case 'aprovado':
         return 'Olá, ' + nome + '! Orçamento aprovado ✅\n\n' +
           'Pedido: ' + pedido + '\n' +
@@ -684,12 +684,14 @@
           'assim que o pagamento for confirmado.\n\n' +
           'Pix (com desconto) ou cartão em até 12x. Me diz qual você prefere que ' +
           'eu passo os dados certinhos.';
+
       case 'pago':
         return 'Olá, ' + nome + '! Pagamento confirmado ✅\n\n' +
           'Pedido: ' + pedido + '\n' +
           'Valor pago: *R$ {VALOR}*\n\n' +
           'Sua modelagem já entrou na programação. ' +
           'Assim que tivermos a prévia, mando aqui para sua aprovação.';
+
       case 'producao':
         return 'Olá, ' + nome + '! Sua modelagem está em produção 🔄\n\n' +
           'Pedido: ' + pedido + '\n\n' +
@@ -698,17 +700,20 @@
           'Enquanto a sua peça fica pronta, dá uma olhada na nossa loja de pronta entrega — ' +
           'as peças saem no mesmo dia, com retirada aqui em Nilópolis ou entrega por aplicativo: ' + LOJA_URL + '\n\n' +
           'Só o envio pelos Correios leva um pouco mais de tempo por causa da embalagem.';
+
       case 'pronto':
         return 'Olá, ' + nome + '! Sua modelagem está pronta 🎉\n\n' +
           'Pedido: ' + pedido + '\n\n' +
           'Segue o arquivo STL/3MF em anexo, pronto para impressão. ' +
           'Qualquer dúvida sobre o arquivo, me chama por aqui.\n\n' +
           'Se quiser a peça física impressa, me avisa que eu monto o orçamento de impressão.';
+
       case 'transferido':
         return 'Olá, ' + nome + '! Pedido registrado ✅\n\n' +
           'Pedido: ' + pedido + '\n\n' +
           'Seu projeto foi transferido para a nossa fila de encomendas. ' +
           'Em breve enviamos o acompanhamento por aqui.';
+
       case 'recusado':
         return 'Olá, ' + nome + '! Sem problemas 😊\n\n' +
           'Pedido: ' + pedido + '\n\n' +
@@ -716,13 +721,25 @@
           'Se quiser, posso tentar ajustar o escopo para caber melhor no seu orçamento — ' +
           'é só me dizer.\n\n' +
           'Fico à disposição!';
+
       case 'cancelado':
         return 'Olá, ' + nome + '! Sua solicitação de modelagem ' + pedido + ' foi cancelada.\n\n' +
           'Se quiser refazer o pedido, ajustar algo ou tirar qualquer dúvida, ' +
           'é só me chamar por aqui — vamos adorar te atender!';
+
       default:
         return '';
     }
+  }
+
+  /* ✅ NOVO: substitui {VALOR} e {PRAZO} de uma vez */
+  function renderMensagem(p, statusId, valor) {
+    var msg = modMensagem(p, statusId);
+    if (!msg) return '';
+    var v = Number(valor) || 0;
+    msg = msg.replace(/\{VALOR\}/g, v > 0 ? brlSemPrefixo(v) : 'a definir');
+    msg = msg.replace(/\{PRAZO\}/g, prazoFormatado(p));
+    return msg;
   }
 
   function modAbrirStatus(id) {
@@ -748,16 +765,17 @@
     html += '</div>';
 
     html += '<div class="m3d-transf-bloco"><h4>Alterar para</h4><div class="mod-status-grid">';
+
     for (var i = 0; i < MOD_STATUS.length; i++) {
       var s = MOD_STATUS[i];
       html += '<button type="button" class="mod-status-opt' +
         (s.id === p.status ? ' atual' : '') +
-        '" data-mod-set="' + s.id + '">' +
+        '" data-mod-set="' + s.id + '" aria-label="Definir status ' + esc(s.label) + '">' +
         '<span class="status-pill ' + esc(s.classe) + '">' + esc(s.label) + '</span>' +
         '</button>';
     }
-    html += '</div></div>';
 
+    html += '</div></div>';
     html += '<div id="modDinamico"></div>';
 
     corpo.innerHTML = html;
@@ -786,7 +804,7 @@
     var p = modAtual;
     var precisaValor = (statusId === 'orcamento' || statusId === 'aprovado' || statusId === 'pago');
     var valorAtual = statusId === 'pago' ? (p.valorPago || '') : (p.valorOrcamento || '');
-    var msg = modMensagem(p, statusId);
+    var msg = renderMensagem(p, statusId, valorAtual);
     var html = '';
 
     if (precisaValor) {
@@ -798,7 +816,7 @@
       html += '<label>' + esc(label) + '</label>';
       html += '<div class="m3d-valor-wrap">';
       html += '<span class="m3d-valor-prefix">R$</span>';
-      html += '<input type="number" id="modValorInput" min="0" step="0.01" value="' + esc(valorAtual) + '" placeholder="0,00">';
+      html += '<input type="number" id="modValorInput" min="0" step="0.01" value="' + esc(valorAtual) + '" placeholder="0,00" inputmode="decimal">';
       html += '</div>';
       html += '<p class="m3d-valor-hint">' + esc(hint) + '</p>';
       html += '</div>';
@@ -819,6 +837,7 @@
         '⚠️ Ao confirmar, será criada uma <b>encomenda</b> com status "Novo", ' +
         'já com os dados do cliente. O registro de modelagem fica marcado como transferido.</div>';
     }
+
     if (statusId === 'transferido' && p.encomendaId) {
       html += '<div class="m3d-transf-aviso">' +
         '✅ Este pedido já foi transferido. Encomenda gerada: <b>' +
@@ -852,9 +871,8 @@
     if (inputValor) {
       inputValor.addEventListener('input', function () {
         var v = Number(this.value) || 0;
-        var nova = modMensagem(p, statusId).replace(/\{VALOR\}/g, brl(v).replace('R$ ', ''));
         var ta = document.getElementById('modMensagem');
-        if (ta) ta.value = nova;
+        if (ta) ta.value = renderMensagem(p, statusId, v);
       });
     }
   }
@@ -885,7 +903,6 @@
 
   function modAplicarStatus() {
     if (!modAtual || !modAcaoAtual) return;
-
     var p = modAtual;
     var sid = modAcaoAtual;
 
@@ -902,19 +919,21 @@
       if (inputValor) inputValor.focus();
       return;
     }
+
     if (sid === 'pago' && valor <= 0) {
       toast('Informe o valor pago', 'erro');
       if (inputValor) inputValor.focus();
       return;
     }
 
-    var msg = modMensagem(p, sid).replace(/\{VALOR\}/g, brl(valor).replace('R$ ', ''));
+    var msg = renderMensagem(p, sid, valor);
 
     var dados = {
       status: statusParaBackend(sid),
       servico: p.servico || 'modelagem',
       mensagem_enviada: msg
     };
+
     if (sid === 'orcamento' || sid === 'aprovado') {
       dados.valor_orcamento = valor;
     }
@@ -922,11 +941,13 @@
       dados.valor_pago = valor;
     }
 
-    modSalvar(p.id, dados, 'Status alterado para "' + modStatusInfo(sid).label + '" ✅');
+    modSalvar(p.id, dados, 'Status alterado para "' + modStatusInfo(sid).label + '" ✅', sid);
   }
 
-  function modSalvar(id, dados, mensagemOk) {
+  /* ✅ CORRIGIDO: restaura o texto correto do botão em caso de erro */
+  function modSalvar(id, dados, mensagemOk, sid) {
     var btn = document.getElementById('modAplicar');
+    var textoOriginal = btn ? btn.textContent : 'Confirmar';
     if (btn) { btn.disabled = true; btn.textContent = 'Salvando…'; }
 
     fetch(API_URL + '/orcamentos/' + encodeURIComponent(id), {
@@ -948,7 +969,10 @@
     })
     .catch(function (e) {
       toast('Erro ao salvar: ' + e.message, 'erro');
-      if (btn) { btn.disabled = false; btn.textContent = 'Confirmar'; }
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = textoOriginal;
+      }
     });
   }
 
@@ -961,7 +985,7 @@
       return;
     }
 
-    var msg = modMensagem(p, 'transferido');
+    var msg = renderMensagem(p, 'transferido', p.valorOrcamento);
 
     var payload = {
       servico: 'encomenda',
@@ -975,6 +999,7 @@
     };
 
     var btn = document.getElementById('modAplicar');
+    var textoOriginal = btn ? btn.textContent : 'Confirmar';
     if (btn) { btn.disabled = true; btn.textContent = 'Transferindo…'; }
 
     fetch(API_URL + '/orcamentos', {
@@ -1018,7 +1043,10 @@
     })
     .catch(function (e) {
       toast('Erro na transferência: ' + e.message, 'erro');
-      if (btn) { btn.disabled = false; btn.textContent = 'Confirmar'; }
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = textoOriginal;
+      }
     });
   }
 
@@ -1084,7 +1112,6 @@
      ======================================================================== */
   function modAtualizarBadge() {
     var total = modItens.length;
-
     ['countModelagem', 'countModelagem2', 'tab-modelagem-count'].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) el.textContent = total;
@@ -1096,7 +1123,6 @@
       ['countConsult', ['countConsult2']],
       ['countLoja',    ['countLoja2']]
     ];
-
     pares.forEach(function (par) {
       var orig = document.getElementById(par[0]);
       if (!orig) return;
@@ -1142,7 +1168,7 @@
     a.href = URL.createObjectURL(blob);
     a.download = 'modelagem-3d-' + new Date().toISOString().slice(0, 10) + '.csv';
     a.click();
-    URL.revokeObjectURL(a.href);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
   }
 
   function modAbrirRelatorioIA() {
@@ -1175,8 +1201,10 @@
 
     var w = window.open('', '_blank');
     if (w) {
+      w.document.open();
       w.document.write('<pre style="font-family:monospace;padding:24px;white-space:pre-wrap;font-size:13px;">' +
-        txt.replace(/</g, '&lt;') + '</pre>');
+        esc(txt) + '</pre>');
+      w.document.close();
     }
   }
 
@@ -1238,12 +1266,7 @@
       });
     }
 
-    var busca = document.getElementById('modBusca');
-    if (busca) busca.addEventListener('input', modAplicarFiltros);
-    var iniF = document.getElementById('modFiltroInicio');
-    if (iniF) iniF.addEventListener('change', modAplicarFiltros);
-    var fimF = document.getElementById('modFiltroFim');
-    if (fimF) fimF.addEventListener('change', modAplicarFiltros);
+    /* ✅ CORRIGIDO: sem listener duplicado — o HTML já tem oninput/onchange */
     var stF = document.getElementById('modStatusFilter');
     if (stF) stF.addEventListener('change', modAplicarFiltros);
 
@@ -1276,5 +1299,4 @@
   } else {
     modIniciar();
   }
-
 })();

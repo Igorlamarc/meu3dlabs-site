@@ -4,7 +4,6 @@
 
 /* ===== 1. CONFIGURAÇÃO ===== */
 var API_URL = 'https://meu3dlabs-backend.onrender.com/api';
-
 /* ⭐ LINK DE AVALIAÇÃO NO GOOGLE */
 var LINK_AVALIACAO_GOOGLE = 'https://g.page/r/CcGSg0AxWsPnEAE/review';
 
@@ -18,6 +17,11 @@ var filtroPrazoAtivo = 'todos';
 var cacheProdutos = null;
 var mensagemAtual = '';
 
+/* Cache do modal "Ver detalhes" */
+var verCache = [];
+var verSeq = 0;
+var verDados = { texto: '' };
+
 /* 🆕 Filtro de visibilidade: 'ativos' | 'entregues' | 'encerrados' | 'todos' */
 var filtroVisao = 'ativos';
 
@@ -29,6 +33,7 @@ var STATUS_COM_RECIBO = [
   'consultoria-paga', 'em-atendimento', 'consultoria-finalizada',
   'finalizado'
 ];
+
 function podeEmitirRecibo(status) {
   return STATUS_COM_RECIBO.indexOf(String(status || '')) !== -1;
 }
@@ -38,7 +43,7 @@ try {
   window.API_BASE = API_URL;
 } catch (e) {}
 
-/* ===== WEB PUSH — declare a função ANTES de qualquer chamada ===== */
+/* ===== WEB PUSH ===== */
 function urlBase64ToUint8Array(base64String) {
   var padding = '='.repeat((4 - base64String.length % 4) % 4);
   var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -63,7 +68,6 @@ function registrarPush() {
       console.warn('[push] permissão negada');
       return;
     }
-
     return navigator.serviceWorker.ready.then(function (reg) {
       return fetch(API_URL + '/push/vapid-public-key')
         .then(function (r) { return r.json(); })
@@ -96,7 +100,6 @@ function registrarPush() {
 }
 
 /* ===== 3. UTILIDADES BASE E CLASSIFICAÇÃO ===== */
-
 function servicoTipo(p) {
   var s = String(p.servico || p.tipo_servico || p.servico_escolhido || p.tipo_peca || p.tipo || '').toLowerCase();
   if (s.indexOf('modelag') !== -1) return 'modelagem';
@@ -117,9 +120,6 @@ function getListaAtiva() {
 /* 🆕 Define se um pedido está encerrado (sai da visão principal) */
 function ehEncerrado(p) {
   var s = String(p.status || statusPadrao());
-  if (tipoAtivo === 'loja') {
-    return s === 'entregue' || s === 'cancelado' || s === 'sem-resposta';
-  }
   return s === 'entregue' || s === 'cancelado' || s === 'sem-resposta';
 }
 
@@ -241,10 +241,10 @@ function iniciar() {
 }
 
 /* ===== 6. CARREGAMENTO DE DADOS ===== */
-
 function carregarPedidos() {
   var btn = document.getElementById('refreshBtn');
   if (btn) btn.disabled = true;
+
   var body = document.getElementById('tabelaBody');
   if (body) {
     body.innerHTML = '<tr class="loading-row"><td colspan="7"><div class="spinner"></div><br>Carregando pedidos...</td></tr>';
@@ -267,10 +267,11 @@ function carregarPedidos() {
   .then(function(resultados) {
     orcamentos = Array.isArray(resultados[0]) ? resultados[0] : [];
     lojaPedidos = Array.isArray(resultados[1]) ? resultados[1] : [];
+
     orcamentos = orcamentos.filter(function(p) {
       return servicoTipo(p) !== 'modelagem';
     });
-    /* ✅ Sincroniza a referência global */
+
     window.orcamentos = orcamentos;
     window.lojaPedidos = lojaPedidos;
 
@@ -280,9 +281,11 @@ function carregarPedidos() {
     renderizar();
 
     if (btn) btn.disabled = false;
+
     var agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     var elUpd = document.getElementById('lastUpdate');
     if (elUpd) elUpd.textContent = 'Atualizado às ' + agora;
+
     var elErr = document.getElementById('errorBox');
     if (elErr) elErr.classList.remove('show');
   })
@@ -301,6 +304,7 @@ function carregarPedidos() {
 
 function carregarPedidosSilencioso() {
   var h1 = { 'Authorization': 'Bearer ' + token };
+
   return Promise.all([
     fetch(API_URL + '/orcamentos?servico=encomenda', { headers: h1 }).then(function(r) {
       if (r.status === 401) { sair(); throw new Error('Sessão expirada'); }
@@ -316,9 +320,11 @@ function carregarPedidosSilencioso() {
   .then(function(resultados) {
     orcamentos = Array.isArray(resultados[0]) ? resultados[0] : [];
     lojaPedidos = Array.isArray(resultados[1]) ? resultados[1] : [];
+
     orcamentos = orcamentos.filter(function(p) {
       return servicoTipo(p) !== 'modelagem';
     });
+
     window.orcamentos = orcamentos;
     window.lojaPedidos = lojaPedidos;
 
@@ -339,10 +345,10 @@ function carregarProdutosLoja() {
     })
     .catch(function() {});
 }
+
 carregarProdutosLoja();
 
 /* ===== 7. PRAZOS ===== */
-
 function diasAtePrazo(p) {
   if (!p || !p.prazo_desejado) return null;
   var m = String(p.prazo_desejado).match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -392,6 +398,7 @@ function verificarPrazosCriticos() {
     var c = classePrazo(p);
     return c === 'atrasado' || c === 'hoje';
   });
+
   if (criticos.length === 0) return;
 
   var jaAlertado = sessionStorage.getItem('m3d_alerta_prazo');
@@ -404,13 +411,16 @@ function verificarPrazosCriticos() {
 
   var banner = document.getElementById('notifyBanner');
   if (!banner) return;
+
   banner.classList.add('alerta-prazo');
   document.getElementById('notifyIcon').textContent = '⏰';
   document.getElementById('notifyTitle').textContent = criticos.length > 1 ? criticos.length + ' pedidos com prazo crítico!' : 'Pedido com prazo crítico!';
   document.getElementById('notifyText').textContent = 'Existem pedidos atrasados ou que vencem hoje. Verifique a coluna Prazo.';
   banner.classList.add('show');
+
   clearTimeout(banner._timer);
   banner._timer = setTimeout(fecharBanner, 10000);
+
   mostrarBalaoPrazo(criticos);
 }
 
@@ -424,6 +434,7 @@ function mostrarBalaoPrazo(criticos) {
             '<span>' + rotulo + ' · Prazo: ' + normalizarData(p.prazo_desejado) + '</span></div>';
   });
   if (criticos.length > 5) html += '<div class="pm-item"><span>+' + (criticos.length - 5) + ' outros pedidos críticos...</span></div>';
+
   document.getElementById('pmLista').innerHTML = html;
   document.getElementById('pmSub').textContent = criticos.length > 1 ? criticos.length + ' pedidos precisam da sua atenção agora.' : '1 pedido precisa da sua atenção agora.';
   document.getElementById('prazoOverlay').classList.add('show');
@@ -449,7 +460,6 @@ function setFiltroPrazo(f) {
 }
 
 /* ===== 8. ABAS, FILTROS E RENDERIZAÇÃO ===== */
-
 var TITULOS_ABA = {
   orcamentos: '📋 Pedidos de orçamento',
   assistencia: '🔧 Pedidos de assistência',
@@ -473,6 +483,7 @@ function mudarAba(tipo) {
     modelagem: 'tab-modelagem',
     loja: 'tab-loja'
   };
+
   Object.keys(idsAbas).forEach(function(k) {
     var btn = document.getElementById(idsAbas[k]);
     if (btn) btn.classList.toggle('active', k === tipo);
@@ -491,12 +502,16 @@ function mudarAba(tipo) {
   if (main) main.style.display = '';
 
   document.querySelectorAll('.prazo-chip').forEach(function(c) { c.classList.remove('active'); });
+
   var elTitulo = document.getElementById('tituloPainel');
   if (elTitulo) elTitulo.textContent = TITULOS_ABA[tipo] || '📋 Pedidos';
+
   var elBusca = document.getElementById('buscaInput');
   if (elBusca) elBusca.value = '';
+
   var elStatus = document.getElementById('statusFilter');
   if (elStatus) elStatus.value = '';
+
   montarFiltroStatus();
   montarThead();
   atualizarBarraVisao();
@@ -543,6 +558,7 @@ function setFiltroVisao(v) {
 function montarFiltroStatus() {
   var sel = document.getElementById('statusFilter');
   if (!sel) return;
+
   sel.innerHTML = '<option value="">Todos os status</option>';
   opcoesTodas().forEach(function(item) {
     sel.innerHTML += '<option value="' + item[0] + '">' + item[1] + '</option>';
@@ -552,6 +568,7 @@ function montarFiltroStatus() {
 function montarThead() {
   var head = document.getElementById('tabelaHead');
   if (!head) return;
+
   if (tipoAtivo === 'loja') {
     head.innerHTML = '<tr><th>ID</th><th>Cliente</th><th>Contato</th><th>Itens</th><th>Recebido em</th><th>Status</th></tr>';
   } else {
@@ -559,9 +576,8 @@ function montarThead() {
   }
 }
 
-/* ✅ CORREÇÃO: novos no topo, o resto por prazo (ordem original) */
+/* ✅ Novos no topo, o resto por prazo */
 function ordenarListas() {
-  /* Cria conjunto de ids novos para ordenação eficiente */
   var novosSet = {};
   (novosIds || []).forEach(function(id) { novosSet[String(id)] = true; });
 
@@ -577,11 +593,8 @@ function ordenarListas() {
   orcamentos.sort(function(a, b) {
     var aNovo = novosSet[String(a.id)] ? 0 : 1;
     var bNovo = novosSet[String(b.id)] ? 0 : 1;
-
-    /* 🆕 Novos primeiro */
     if (aNovo !== bNovo) return aNovo - bNovo;
 
-    /* Dentro do grupo: ordem por prazo (como era antes) */
     var pa = prioridadePrazo(a);
     var pb = prioridadePrazo(b);
     if (pa !== pb) return pa - pb;
@@ -602,7 +615,7 @@ function ordenarListas() {
   });
 }
 
-/* ✅ CORREÇÃO: filtra por visão (ativos/entregues/encerrados/todos) */
+/* ✅ Filtra por visão (ativos/entregues/encerrados/todos) */
 function filtrarPedidos() {
   var elBusca = document.getElementById('buscaInput');
   var elStatus = document.getElementById('statusFilter');
@@ -616,7 +629,6 @@ function filtrarPedidos() {
 
   var lista = getListaAtiva();
 
-  /* 🆕 Aplica a visão selecionada */
   if (filtroVisao === 'ativos') {
     lista = lista.filter(ehAtivo);
   } else if (filtroVisao === 'entregues') {
@@ -629,15 +641,16 @@ function filtrarPedidos() {
       return s === 'cancelado' || s === 'sem-resposta';
     });
   }
-  /* 'todos' não filtra */
 
   return lista.filter(function(p) {
     if (filtroStatus && (p.status || statusPadrao()) !== filtroStatus) return false;
+
     if (dtIni || dtFim) {
       var ts = p.created_at ? new Date(p.created_at).getTime() : 0;
       if (dtIni && ts < new Date(dtIni + 'T00:00:00').getTime()) return false;
       if (dtFim && ts > new Date(dtFim + 'T23:59:59').getTime()) return false;
     }
+
     if (tipoAtivo !== 'loja' && filtroPrazoAtivo !== 'todos') {
       var c = classePrazo(p);
       var d = diasAtePrazo(p);
@@ -645,13 +658,16 @@ function filtrarPedidos() {
       if (filtroPrazoAtivo === 'hoje' && c !== 'hoje') return false;
       if (filtroPrazoAtivo === 'semana' && !(d !== null && d >= 0 && d <= 7)) return false;
     }
+
     if (!busca) return true;
+
     var texto = [];
     if (tipoAtivo === 'loja') {
       texto = [p.id, p.pedido_id, p.nome_cliente, p.whatsapp, p.entrega, p.nota, JSON.stringify(p.itens || [])];
     } else {
       texto = [p.id, p.nome_cliente, p.email, p.whatsapp, p.descricao_peca, p.pedido_id, p.tipo_peca, p.servico, p.tipo_servico];
     }
+
     return texto.filter(Boolean).join(' ').toLowerCase().indexOf(busca) !== -1;
   });
 }
@@ -661,10 +677,12 @@ function aplicarFiltros() {
   var elStatus = document.getElementById('statusFilter');
   var busca = elBusca ? elBusca.value.toLowerCase().trim() : '';
   var filtroStatus = elStatus ? elStatus.value : '';
+
   var body = document.getElementById('tabelaBody');
   if (!body) return;
 
   var filtrados = filtrarPedidos();
+
   verCache = [];
   verSeq = 0;
 
@@ -694,11 +712,11 @@ function aplicarFiltros() {
     var contato = p.whatsapp || p.email || '—';
     var ehNovo = novosIds.indexOf(String(p.id)) !== -1;
     var waLink = montarLinkWhatsApp(p.whatsapp || p.email);
-    var waBtn = waLink ? '<a class="wa-link" href="' + waLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>WhatsApp</a>' : '';
+    var waBtn = waLink ? '<a class="wa-link" href="' + waLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"></path></svg>WhatsApp</a>' : '';
 
     var podeExcluir = status === 'cancelado' || status === 'entregue' || status === 'sem-resposta' || String(status).indexOf('Aguardando') === 0;
     var delBtn = podeExcluir
-      ? '<div style="margin-top:6px;"><button type="button" class="del-btn" data-id="' + p.id + '" onclick="excluirPedido(' + p.id + ')"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Excluir</button></div>'
+      ? '<div style="margin-top:6px;"><button type="button" class="del-btn" data-id="' + p.id + '" onclick="excluirPedido(' + p.id + ')"><svg viewBox="0 0 24 24"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>Excluir</button></div>'
       : '';
 
     var reciboBtn = podeEmitirRecibo(status)
@@ -766,7 +784,7 @@ function aplicarFiltros() {
             opcoesStatus(status) +
           '</select>' +
         '</div>' +
-        reciboBtn + 
+        reciboBtn +
         delBtn +
       '</td>' +
     '</tr>';
@@ -782,7 +800,6 @@ function renderizar() {
 }
 
 /* ===== 9. ESTATÍSTICAS ===== */
-
 function renderizarStats() {
   var grid = document.getElementById('statsGrid');
   if (!grid) return;
@@ -812,6 +829,7 @@ function renderizarStats() {
 
   if (tipoAtivo === 'loja') {
     if (chips) chips.classList.remove('show');
+
     var totalL = lojaPedidos.length;
     var aguardando = lojaPedidos.filter(function(p) {
       return String(p.status || 'feito').indexOf('Aguardando') === 0;
@@ -821,10 +839,11 @@ function renderizarStats() {
       var s = p.status || 'feito';
       return s === 'pago' || s === 'Pago (Cartão)';
     }).length;
-        var gerandoNota = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'gerando nota'; }).length;
+    var gerandoNota = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'gerando nota'; }).length;
     var embalagens = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'embalagem'; }).length;
     var saidas = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'saiu'; }).length;
     var entreguesL = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'entregue'; }).length;
+
     var confirmados = lojaPedidos.filter(function(p) {
       var s = p.status || 'feito';
       return s === 'pago' || s === 'Pago (Cartão)' || s === 'embalagem' || s === 'saiu' || s === 'entregue';
@@ -837,14 +856,17 @@ function renderizarStats() {
       '<div class="stat-card yellow"><div class="stat-ico">⏳</div><div class="stat-label">Aguardando pagamento</div><div class="stat-value">' + aguardando + '</div><div class="stat-detail">Pix + Cartão pendentes</div></div>' +
       '<div class="stat-card blue"><div class="stat-ico">📝</div><div class="stat-label">Pedido feito</div><div class="stat-value">' + feitos + '</div><div class="stat-detail">Aguardando confirmação</div></div>' +
       '<div class="stat-card yellow"><div class="stat-ico">💰</div><div class="stat-label">Pagos</div><div class="stat-value">' + pagos + '</div><div class="stat-detail">Pix + Cartão</div></div>' +
-          '<div class="stat-card purple"><div class="stat-ico">🧾</div><div class="stat-label">Gerando nota</div><div class="stat-value">' + gerandoNota + '</div></div>' +
+      '<div class="stat-card purple"><div class="stat-ico">🧾</div><div class="stat-label">Gerando nota</div><div class="stat-value">' + gerandoNota + '</div></div>' +
       '<div class="stat-card purple"><div class="stat-ico">🚚</div><div class="stat-label">Saiu</div><div class="stat-value">' + saidas + '</div></div>' +
       '<div class="stat-card green"><div class="stat-ico">✅</div><div class="stat-label">Entregues</div><div class="stat-value">' + entreguesL + '</div></div>';
+
   } else {
     if (chips) chips.classList.add('show');
+
     var lista = getListaAtiva();
     var listaAtiva = lista.filter(ehAtivo);
     var total = lista.length;
+
     var novos = listaAtiva.filter(function(p) { return (p.status || 'novo') === 'novo'; }).length;
     var atendimento = listaAtiva.filter(function(p) {
       var s = p.status || 'novo';
@@ -859,6 +881,7 @@ function renderizarStats() {
       var s = p.status || 'novo';
       return s === 'cancelado' || s === 'sem-resposta';
     }).length;
+
     var nAtrasados = listaAtiva.filter(function(p) { return classePrazo(p) === 'atrasado'; }).length;
     var nHoje = listaAtiva.filter(function(p) { return classePrazo(p) === 'hoje'; }).length;
     var nSemana = listaAtiva.filter(function(p) {
@@ -894,7 +917,6 @@ function renderizarStats() {
 }
 
 /* ===== 10. NOVOS PEDIDOS + ALERTA SONORO ===== */
-
 function detectarNovos() {
   var chave = tipoAtivo === 'loja' ? 'm3d_vistos_loja' : 'm3d_vistos';
   var vistos = [];
@@ -908,13 +930,13 @@ function detectarNovos() {
     tocarAlerta();
     mostrarBanner(novosIds.length);
   }
-  localStorage.setItem(chave, JSON.stringify(idsAtuais));
 
-  /* ✅ Reordena agora que sabemos quem é novo */
+  localStorage.setItem(chave, JSON.stringify(idsAtuais));
   ordenarListas();
 }
 
 var _ctxAudio = null;
+
 function ctxAudio() {
   if (!_ctxAudio) {
     try { _ctxAudio = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -957,11 +979,13 @@ function tocarAlerta() {
 function mostrarBanner(qtd) {
   var banner = document.getElementById('notifyBanner');
   if (!banner) return;
+
   banner.classList.remove('alerta-prazo');
   document.getElementById('notifyIcon').textContent = '🔔';
   document.getElementById('notifyTitle').textContent = qtd > 1 ? qtd + ' novos pedidos recebidos!' : 'Novo pedido recebido!';
   document.getElementById('notifyText').textContent = qtd > 1 ? 'Clientes acabaram de enviar pedidos. Responda em ordem de chegada.' : 'Um cliente acabou de enviar um pedido.';
   banner.classList.add('show');
+
   clearTimeout(banner._timer);
   banner._timer = setTimeout(fecharBanner, 8000);
 }
@@ -972,11 +996,6 @@ function fecharBanner() {
 }
 
 /* ===== 11. VER DETALHES (MODAL) ===== */
-
-var verDados = { texto: '' };
-var verCache = [];
-var verSeq = 0;
-
 function montarBotaoVerMais(titulo, meta, texto, html, wa) {
   verCache[verSeq] = {
     t: titulo == null ? '' : String(titulo),
@@ -993,8 +1012,10 @@ function montarBotaoVerMais(titulo, meta, texto, html, wa) {
 function abrirVerMais(i) {
   var d = verCache[i] || {};
   verDados.texto = d.x || '';
+
   document.getElementById('vmTitulo').textContent = d.t || '';
   document.getElementById('vmMeta').textContent = d.m || '';
+
   var el = document.getElementById('vmTexto');
   if (d.h) { el.innerHTML = d.h; }
   else { el.textContent = verDados.texto || '(sem mensagem)'; }
@@ -1038,6 +1059,7 @@ function camposEncomenda(p) {
     }
     return null;
   }
+
   function v(d) {
     if (d === null || d === undefined) return 'Pendente';
     d = String(d).trim();
@@ -1047,6 +1069,7 @@ function camposEncomenda(p) {
   var servico = rotuloServico(pega([p.servico, p.tipo_servico, p.servico_escolhido, p.tipo_peca, p.tipo])) || '🖨️ Impressão 3D';
   var desc = pega([p.descricao_peca, p.descricao, p.observacoes, p.nota, p.mensagem]) || '';
   var descMain = desc.split('|')[0].trim();
+
   var linksExtra = [];
   var partes = desc.split('|');
   for (var i = 1; i < partes.length; i++) {
@@ -1092,10 +1115,12 @@ function montarTextoCompletoLoja(p) {
     var cor = item.cor ? ' (' + item.cor + ')' : '';
     linhas.push(qtd + 'x ' + nome + cor + ' — ' + fmtMoeda(preco * qtd));
   });
+
   if (!linhas.length) linhas.push('Itens: Pendente');
   if (p.cupom && parseFloat(p.desconto) > 0) linhas.push('Cupom ' + p.cupom + ': -' + fmtMoeda(p.desconto));
   linhas.push('Total: ' + fmtMoeda(p.total || (parseFloat(p.subtotal) - parseFloat(p.desconto))));
   linhas.push('Entrega: ' + (etiquetaEntrega(p.entrega) || 'Pendente'));
+
   var tipoE = String(p.entrega || '').toLowerCase();
   if (tipoE.indexOf('correio') !== -1) {
     linhas.push('Endereço: ' + (p.endereco || 'Pendente'));
@@ -1103,14 +1128,17 @@ function montarTextoCompletoLoja(p) {
   if (tipoE.indexOf('retirada') !== -1 || tipoE.indexOf('uber') !== -1) {
     linhas.push('Horário: ' + (p.horario || 'Pendente'));
   }
+
   return linhas.join('\n');
 }
 
 function montarDescricao(texto) {
   if (!texto) return '<span style="color:var(--gray)">—</span>';
+
   var partes = texto.split('|');
   var principal = partes[0].trim();
   var links = [];
+
   for (var i = 1; i < partes.length; i++) {
     var p = partes[i].trim();
     if (p.indexOf('Links:') === 0) {
@@ -1120,12 +1148,14 @@ function montarDescricao(texto) {
       });
     }
   }
+
   var html = '<span class="desc-text" title="' + escapar(texto) + '">' + escapar(principal) + '</span>';
   if (links.length) {
     html += '<small>' + links.map(function(l) {
       return '<a href="' + escapar(l) + '" target="_blank" rel="noopener">Ver referência</a>';
     }).join(' · ') + '</small>';
   }
+
   return html;
 }
 
@@ -1143,14 +1173,18 @@ function montarItensLoja(p) {
     var thumb = img ? '<img class="item-thumb" src="' + escapar(img) + '" alt="">' : '';
     html += '<span class="item-linha">' + thumb + '<span class="item-nome">' + escapar(String(qtd) + 'x ' + nome + cor) + '</span> · ' + fmtMoeda(preco * qtd) + '</span>';
   });
+
   if (p.cupom && parseFloat(p.desconto) > 0) {
     html += '<span class="item-linha" style="color:var(--gray);">Cupom ' + escapar(p.cupom) + ': -' + fmtMoeda(p.desconto) + '</span>';
   }
+
   html += '<span class="total-loja">Total: ' + fmtMoeda(p.total || (parseFloat(p.subtotal) - parseFloat(p.desconto))) + '</span>';
   html += '<span class="entrega-loja">' + etiquetaEntrega(p.entrega) + '</span>';
+
   if (p.nota) {
     html += '<small style="display:block;margin-top:4px;color:var(--gray);font-size:11px;">Obs: ' + escapar(p.nota) + '</small>';
   }
+
   return html;
 }
 
@@ -1173,7 +1207,6 @@ function montarLinkWhatsApp(contato) {
 }
 
 /* ===== 12. STATUS: PILLS, OPÇÕES, MENSAGENS E BALCÃO ===== */
-
 function classeStatusPill(s) {
   if (!s) s = statusPadrao();
   if (s === 'Pago (Cartão)') return 'pagocartao';
@@ -1181,7 +1214,7 @@ function classeStatusPill(s) {
   if (s === 'sem-resposta') return 'semresposta';
   if (s === 'Pagamento em verificação (Pix)') return 'verificacao';
   if (s === 'Pix aguardando compensação') return 'verificacao';
-if (s === 'Pix não identificado') return 'recusado';
+  if (s === 'Pix não identificado') return 'recusado';
   return s;
 }
 
@@ -1310,18 +1343,21 @@ function traduzirStatus(s) {
     'sem-resposta': '📭 Sem resposta',
     cancelado: '✕ Cancelado'
   };
+
   return map[s] || s;
 }
 
 function excluirPedido(id) {
   var p = getListaAtiva().find(function(x) { return x.id === id; });
   var ref = p && p.pedido_id ? p.pedido_id : ('#' + id);
+
   if (!confirm('Excluir o pedido ' + ref + '?\n\nEsta ação não pode ser desfeita.')) return;
 
   var btn = document.querySelector('.del-btn[data-id="' + id + '"]');
   if (btn) { btn.disabled = true; btn.textContent = 'Excluindo...'; }
 
   var endpoint = tipoAtivo === 'loja' ? '/loja/pedidos/' : '/orcamentos/';
+
   fetch(API_URL + endpoint + id, {
     method: 'DELETE',
     headers: { 'Authorization': 'Bearer ' + token }
@@ -1348,23 +1384,19 @@ function excluirPedido(id) {
 }
 
 function mudarStatus(id, novoStatus, extras) {
-  console.log('[mudarStatus] extras recebidos:', extras);
   var p = getListaAtiva().find(function(x) { return x.id === id; });
   var nome = p ? (p.nome_cliente || '') : '';
   var pedidoRef = p && p.pedido_id ? p.pedido_id : ('#' + id);
   var contato = p ? (p.whatsapp || p.email || '') : '';
   var statusAnterior = p ? (p.status || statusPadrao()) : '';
-  var endpoint = tipoAtivo === 'loja' ? '/loja/pedidos/' : '/orcamentos/';
 
+  var endpoint = tipoAtivo === 'loja' ? '/loja/pedidos/' : '/orcamentos/';
   var corpo = { status: novoStatus };
 
-  /* ✅ Campos extras (agendamento) */
   if (extras) {
     if (extras.data_agendamento) corpo.data_agendamento = extras.data_agendamento;
     if (extras.hora_agendamento) corpo.hora_agendamento = extras.hora_agendamento;
   }
-
-  console.log('[mudarStatus] corpo enviado:', corpo);
 
   fetch(API_URL + endpoint + id, {
     method: 'PUT',
@@ -1379,14 +1411,14 @@ function mudarStatus(id, novoStatus, extras) {
     if (!res.ok) throw new Error('Erro ' + res.status);
     return res.json();
   })
-    .then(function(dados) {
-    console.log('[mudarStatus] resposta da API:', dados);
+  .then(function(dados) {
     if (p) {
       p.status = novoStatus;
       if (extras && extras.data_agendamento) p.data_agendamento = extras.data_agendamento;
       if (extras && extras.hora_agendamento) p.hora_agendamento = extras.hora_agendamento;
     }
     renderizar();
+
     if (novoStatus !== statusAnterior) {
       mostrarBalcao(nome, pedidoRef, contato, novoStatus);
     }
@@ -1400,9 +1432,11 @@ function mudarStatus(id, novoStatus, extras) {
 function montarMensagemEntregue(primeiroNome, id) {
   var msg = 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi entregue 🎉\n'
     + 'Obrigado demais pela confiança — foi um prazer produzir sua peça! ⭐\n';
+
   if (LINK_AVALIACAO_GOOGLE) {
     msg += 'Se puder, deixe sua avaliação no Google — ajuda demais a nossa loja:\n' + LINK_AVALIACAO_GOOGLE + '\n';
   }
+
   msg += 'Se precisar de algo, ou quiser encomendar uma nova peça, é só chamar! 💛';
   return msg;
 }
@@ -1416,6 +1450,7 @@ function statusExigeAgendamento(status) {
 function blocoInputsAgendamento(p) {
   var dataAtual = p && p.data_agendamento ? String(p.data_agendamento).slice(0, 10) : '';
   var horaAtual = p && p.hora_agendamento ? String(p.hora_agendamento).slice(0, 5) : '';
+
   return '<div style="margin:14px 0;padding:14px;background:#f0f6ff;border:2px solid #1f6feb;border-radius:12px;">'
     + '<div style="font-size:12px;font-weight:800;color:#0f1e3d;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📅 Data e hora do agendamento</div>'
     + '<div style="display:flex;gap:10px;">'
@@ -1429,6 +1464,7 @@ function blocoInputsAgendamento(p) {
 function montarMensagemStatus(nome, id, status) {
   var primeiroNome = (nome || '').trim().split(' ')[0] || 'Cliente';
   var msgEntregue = montarMensagemEntregue(primeiroNome, id);
+
   var msgSemResposta = 'Olá, *' + primeiroNome + '*! Passando por aqui para saber se ainda tem interesse no pedido *' + id + '* 😊\n'
     + 'Se quiser dar continuidade, é só responder esta mensagem que retomamos tudo do ponto onde paramos. '
     + 'Se preferir deixar para depois, sem problema nenhum! 💛';
@@ -1464,26 +1500,8 @@ function montarMensagemStatus(nome, id, status) {
     'sem-resposta': msgSemResposta,
     cancelado: 'Olá, *' + primeiroNome + '*! Uma atualização sobre o pedido *' + id + '*: ele foi cancelado.\nSe quiser refazer o pedido, ajustar algo ou tirar qualquer dúvida, é só nos chamar — vamos adorar te atender! 💛'
   };
+
   return map[status] || '';
-}
-
-/* Verifica se o status exige agendamento */
-function statusExigeAgendamento(status) {
-  return status === 'agendado';
-}
-
-/* Monta o bloco de inputs de data/hora no balcão */
-function blocoInputsAgendamento(p) {
-  var dataAtual = p && p.data_agendamento ? String(p.data_agendamento).slice(0, 10) : '';
-  var horaAtual = p && p.hora_agendamento ? String(p.hora_agendamento).slice(0, 5) : '';
-  return '<div style="margin:14px 0;padding:14px;background:#f0f6ff;border:2px solid #1f6feb;border-radius:12px;">'
-    + '<div style="font-size:12px;font-weight:800;color:#0f1e3d;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📅 Data e hora do agendamento</div>'
-    + '<div style="display:flex;gap:10px;">'
-    + '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Data</label>'
-    + '<input type="date" id="encAgData" value="' + dataAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;"></div>'
-    + '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Hora</label>'
-    + '<input type="time" id="encAgHora" value="' + horaAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;"></div>'
-    + '</div></div>';
 }
 
 function mostrarBalcao(nome, id, contato, status) {
@@ -1491,15 +1509,18 @@ function mostrarBalcao(nome, id, contato, status) {
   if (!mensagemAtual) return;
 
   document.getElementById('sbTitulo').textContent = 'Status: ' + traduzirStatus(status);
-    /* Inputs de agendamento (consultoria / assistência) */
+
+  /* Inputs de agendamento (consultoria / assistência) */
   var boxAg = document.getElementById('sbAgendamento');
   if (!boxAg) {
     boxAg = document.createElement('div');
     boxAg.id = 'sbAgendamento';
     document.getElementById('sbMensagem').parentNode.insertBefore(boxAg, document.getElementById('sbMensagem'));
   }
+
   var pedidoAtual = getListaAtiva().find(function(x) { return (x.pedido_id || ('#' + x.id)) === id; });
   boxAg.innerHTML = statusExigeAgendamento(status) ? blocoInputsAgendamento(pedidoAtual) : '';
+
   document.getElementById('sbMensagem').textContent = mensagemAtual;
 
   var wa = montarLinkWhatsApp(contato);
@@ -1510,6 +1531,7 @@ function mostrarBalcao(nome, id, contato, status) {
   } else {
     link.style.display = 'none';
   }
+
   document.getElementById('statusOverlay').classList.add('show');
 }
 
@@ -1529,7 +1551,6 @@ function mostrarCopiado() {
 }
 
 /* ===== 13. EXPORTAR CSV E RELATÓRIO PARA IA ===== */
-
 function csvEscape(v) {
   v = String(v == null ? '' : v);
   return '"' + v.replace(/"/g, '""') + '"';
@@ -1556,13 +1577,17 @@ function exportarCSV() {
   var csv = linhas.map(function(r) { return r.map(csvEscape).join(';'); }).join('\r\n');
   var blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
   var url = URL.createObjectURL(blob);
+
   var a = document.createElement('a');
   a.href = url;
+
   var rotuloCsv = tipoAtivo === 'loja' ? 'pedidos-loja' : (tipoAtivo === 'assistencia' ? 'assistencias' : (tipoAtivo === 'consultoria' ? 'consultorias' : 'encomendas'));
   a.download = rotuloCsv + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+
   setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
 }
 
@@ -1582,6 +1607,7 @@ function abrirRelatorioIA() {
     linhas.push('--- Pedido ' + (p.pedido_id || ('#' + p.id)) + ' ---');
     linhas.push('Cliente: ' + (p.nome_cliente || '—'));
     linhas.push('Contato: ' + (p.whatsapp || p.email || '—'));
+
     if (tipoAtivo !== 'loja') {
       linhas.push('Serviço: ' + (rotuloServico(p.servico || p.tipo_servico || p.tipo_peca || p.tipo) || '—'));
       linhas.push('O que quer criar: ' + ((p.descricao_peca || '').split('|')[0].trim() || '—'));
@@ -1596,16 +1622,20 @@ function abrirRelatorioIA() {
       });
       linhas.push('Total: ' + fmtMoeda(p.total || p.subtotal));
       linhas.push('Entrega: ' + (etiquetaEntrega(p.entrega) || '—'));
+
       var tipoR = String(p.entrega || '').toLowerCase();
       if (tipoR.indexOf('correio') !== -1) linhas.push('Endereço: ' + (p.endereco || 'Pendente'));
       if (tipoR.indexOf('retirada') !== -1 || tipoR.indexOf('uber') !== -1) linhas.push('Horário: ' + (p.horario || 'Pendente'));
+
       linhas.push('Status: ' + traduzirStatus(p.status || 'feito'));
       linhas.push('Recebido em: ' + formatarData(p.created_at));
     }
+
     linhas.push('');
   });
 
   linhas.push('=== FIM DO RELATÓRIO ===');
+
   document.getElementById('relatorioTexto').value = linhas.join('\n');
   document.getElementById('relatorioOverlay').classList.add('show');
 }
@@ -1619,7 +1649,6 @@ function copiarRelatorio() {
 }
 
 /* ===== 14. CÓPIA PARA A ÁREA DE TRANSFERÊNCIA ===== */
-
 function copiarTexto(t, aoConcluir) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(t).then(function() { if (aoConcluir) aoConcluir(); }).catch(function() { fbCopia(t); if (aoConcluir) aoConcluir(); });
@@ -1641,7 +1670,7 @@ function fbCopia(t) {
 /* ===== 15. TECLA ESCAPE ===== */
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-        fecharRecibo();
+    fecharRecibo();
     fecharVerMais();
     fecharRelatorio();
     fecharBalaoPrazo();
@@ -1662,7 +1691,6 @@ function abrirRecibo(codigo, ehLoja) {
     ? API_URL + '/loja/pedidos/' + encodeURIComponent(codigo) + '/recibo'
     : API_URL + '/orcamentos/' + encodeURIComponent(codigo) + '/recibo';
 
-  /* Cria (ou reaproveita) o overlay */
   var overlay = document.getElementById('reciboOverlay');
   if (!overlay) {
     overlay = document.createElement('div');
@@ -1784,7 +1812,7 @@ function fecharRecibo() {
 
 /* ===== 16. EXPOSIÇÃO GLOBAL ===== */
 try {
-    window.abrirRecibo = abrirRecibo;
+  window.abrirRecibo = abrirRecibo;
   window.fecharRecibo = fecharRecibo;
   window.orcamentos = orcamentos;
   window.lojaPedidos = lojaPedidos;
@@ -1812,6 +1840,7 @@ try {
    BALCÃO DE STATUS DA ENCOMENDA (padrão visual da Modelagem)
    ===================================================================== */
 (function () {
+
 /* Status por contexto — espelha opcoesTodas() */
 function statusDoContexto() {
   if (tipoAtivo === 'loja') {
@@ -1833,28 +1862,28 @@ function statusDoContexto() {
 
   if (tipoAtivo === 'consultoria') {
     return [
-      { id: 'novo',                  label: 'Novo',                classe: 'status-novo' },
-      { id: 'em-analise',            label: 'Em análise',          classe: 'status-em-analise' },
-      { id: 'aguardando-pagamento',  label: 'Aguardando pagamento', classe: 'status-aguardando' },
-      { id: 'consultoria-paga',      label: 'Consultoria paga',    classe: 'status-pago' },
+      { id: 'novo',                  label: 'Novo',                  classe: 'status-novo' },
+      { id: 'em-analise',            label: 'Em análise',            classe: 'status-em-analise' },
+      { id: 'aguardando-pagamento',  label: 'Aguardando pagamento',  classe: 'status-aguardando' },
+      { id: 'consultoria-paga',      label: 'Consultoria paga',      classe: 'status-pago' },
       { id: 'agendado',              label: 'Agendamento realizado', classe: 'status-em-analise' },
-      { id: 'em-atendimento',        label: 'Em atendimento',      classe: 'status-producao' },
+      { id: 'em-atendimento',        label: 'Em atendimento',        classe: 'status-producao' },
       { id: 'consultoria-finalizada', label: 'Consultoria finalizada', classe: 'status-entregue' },
-      { id: 'sem-resposta',          label: 'Sem resposta',        classe: 'status-semresposta' },
-      { id: 'cancelado',             label: 'Cancelado',           classe: 'status-cancelado' }
+      { id: 'sem-resposta',          label: 'Sem resposta',          classe: 'status-semresposta' },
+      { id: 'cancelado',             label: 'Cancelado',             classe: 'status-cancelado' }
     ];
   }
 
   if (tipoAtivo === 'assistencia') {
     return [
-      { id: 'novo',            label: 'Novo',                  classe: 'status-novo' },
-      { id: 'em-analise',      label: 'Em análise',            classe: 'status-em-analise' },
-      { id: 'agendado',        label: 'Agendamento realizado', classe: 'status-em-analise' },
+      { id: 'novo',            label: 'Novo',                    classe: 'status-novo' },
+      { id: 'em-analise',      label: 'Em análise',              classe: 'status-em-analise' },
+      { id: 'agendado',        label: 'Agendamento realizado',   classe: 'status-em-analise' },
       { id: 'a-caminho',       label: 'A caminho do atendimento', classe: 'status-producao' },
-      { id: 'aguardando-peca', label: 'Aguardando peça',       classe: 'status-aguardando' },
-      { id: 'finalizado',      label: 'Finalizado',            classe: 'status-entregue' },
-      { id: 'sem-resposta',    label: 'Sem resposta',          classe: 'status-semresposta' },
-      { id: 'cancelado',       label: 'Cancelado',             classe: 'status-cancelado' }
+      { id: 'aguardando-peca', label: 'Aguardando peça',         classe: 'status-aguardando' },
+      { id: 'finalizado',      label: 'Finalizado',              classe: 'status-entregue' },
+      { id: 'sem-resposta',    label: 'Sem resposta',            classe: 'status-semresposta' },
+      { id: 'cancelado',       label: 'Cancelado',               classe: 'status-cancelado' }
     ];
   }
 
@@ -1872,10 +1901,10 @@ function statusDoContexto() {
   ];
 }
 
-  var encAtual = null;
-  var encAcao = null;
+var encAtual = null;
+var encAcao = null;
 
- function info(id) {
+function info(id) {
   var lista = statusDoContexto();
   for (var i = 0; i < lista.length; i++) {
     if (lista[i].id === id) return lista[i];
@@ -1883,242 +1912,241 @@ function statusDoContexto() {
   return { id: id, label: id, classe: 'status-novo' };
 }
 
-  function esc(s) {
-    return String(s == null ? '' : s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  var _aplicarOriginal = window.aplicarFiltros;
-  if (typeof _aplicarOriginal === 'function') {
-    window.aplicarFiltros = function () {
-      var r = _aplicarOriginal.apply(this, arguments);
-      trocarSelectPorBotao();
-      return r;
-    };
-  }
-
-  function trocarSelectPorBotao() {
-    var selects = document.querySelectorAll('.status-select');
-    for (var i = 0; i < selects.length; i++) {
-      var sel = selects[i];
-      if (sel.dataset.trocado === '1') continue;
-      sel.dataset.trocado = '1';
-      sel.style.display = 'none';
-
-      var m = (sel.getAttribute('onchange') || '').match(/mudarStatus\((\d+)/);
-      if (!m) continue;
-      var id = m[1];
-
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'mod-btn st';
-      btn.textContent = 'Status';
-      btn.setAttribute('data-enc-status', id);
-      btn.addEventListener('click', function () {
-        abrirBalcaoEncomenda(this.getAttribute('data-enc-status'));
-      });
-
-      sel.parentNode.appendChild(btn);
-    }
-  }
-
-  function buscarPedido(id) {
-    var lista = window.getListaAtiva ? window.getListaAtiva() : [];
-    for (var i = 0; i < lista.length; i++) {
-      if (String(lista[i].id) === String(id)) return lista[i];
-    }
-    return null;
-  }
-
-  function abrirBalcaoEncomenda(id) {
-    var p = buscarPedido(id);
-    if (!p) return;
-    encAtual = p;
-    encAcao = null;
-
-    var overlay = document.getElementById('encStatusOverlay');
-    var corpo = document.getElementById('encStatusCorpo');
-    var titulo = document.getElementById('encStatusTitulo');
-    if (!overlay || !corpo) {
-      if (window.mostrarBalcao) window.mostrarBalcao(p.nome_cliente, p.pedido_id || ('#' + p.id), p.whatsapp || p.email, p.status || 'novo');
-      return;
-    }
-
-    if (titulo) {
-      titulo.textContent = 'Status — ' + (p.pedido_id || ('#' + p.id)) + ' · ' + (p.nome_cliente || '');
-    }
-
-    var st = info(p.status || 'novo');
-    var html = '';
-
-    html += '<div class="m3d-transf-bloco">';
-    html += '<div class="m3d-transf-linha"><strong>Status atual</strong><span>' +
-      '<span class="status-pill ' + st.classe + '">' + esc(st.label) + '</span></span></div>';
-    html += '</div>';
-
-    html += '<div class="m3d-transf-bloco"><h4>Alterar para</h4><div class="mod-status-grid">';
-    var listaStatus = statusDoContexto();
-for (var i = 0; i < listaStatus.length; i++) {
-  var s = listaStatus[i];
-      html += '<button type="button" class="mod-status-opt' +
-        (s.id === (p.status || 'novo') ? ' atual' : '') +
-        '" data-enc-set="' + s.id + '">' +
-        '<span class="status-pill ' + s.classe + '">' + esc(s.label) + '</span>' +
-        '</button>';
-    }
-    html += '</div></div>';
-
-    html += '<div id="encDinamico"></div>';
-
-    corpo.innerHTML = html;
-    overlay.classList.add('aberto');
-    overlay.style.display = 'flex';
-    overlay.style.opacity = '1';
-    overlay.style.visibility = 'visible';
-    overlay.style.pointerEvents = 'auto';
-    overlay.style.zIndex = '9999';
-
-    var opts = corpo.querySelectorAll('[data-enc-set]');
-    for (var j = 0; j < opts.length; j++) {
-      opts[j].addEventListener('click', function () {
-        selecionarStatusEncomenda(this.getAttribute('data-enc-set'));
-      });
-    }
-  }
-
-  function selecionarStatusEncomenda(statusId) {
-    if (!encAtual) return;
-    encAcao = statusId;
-    var box = document.getElementById('encDinamico');
-    if (!box) return;
-
-    var opts = document.querySelectorAll('[data-enc-set]');
-    for (var i = 0; i < opts.length; i++) {
-      opts[i].classList.toggle('sel', opts[i].getAttribute('data-enc-set') === statusId);
-    }
-
-    var p = encAtual;
-    var msg = window.montarMensagemStatus
-      ? window.montarMensagemStatus(p.nome_cliente, p.pedido_id || ('#' + p.id), statusId)
-      : '';
-
-    var html = '';
-
-    /* ✅ NOVO — inputs de data/hora quando o status for "agendado" */
-    if (statusId === 'agendado') {
-      var dataAtual = p.data_agendamento ? String(p.data_agendamento).slice(0, 10) : '';
-      var horaAtual = p.hora_agendamento ? String(p.hora_agendamento).slice(0, 5) : '';
-      html += '<div class="enc-agendamento" style="margin:14px 0;padding:14px;background:#f0f6ff;border:2px solid #1f6feb;border-radius:12px;">';
-      html += '<div style="font-size:12px;font-weight:800;color:#0f1e3d;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📅 Data e hora do agendamento</div>';
-      html += '<div style="display:flex;gap:10px;">';
-      html += '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Data</label>';
-      html += '<input type="date" id="encDataAg" value="' + dataAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;box-sizing:border-box;">';
-      html += '</div>';
-      html += '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Hora</label>';
-      html += '<input type="time" id="encHoraAg" value="' + horaAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;box-sizing:border-box;">';
-      html += '</div>';
-      html += '</div></div>';
-    }
-
-    if (msg) {
-      html += '<div class="mod-msg-box">';
-      html += '<div class="mod-msg-head">';
-      html += '<span class="mod-msg-titulo">Mensagem para o cliente</span>';
-      html += '<button type="button" class="mod-msg-copiar" id="encCopiar">📋 Copiar</button>';
-      html += '</div>';
-      html += '<textarea id="encMensagem" readonly rows="10">' + esc(msg) + '</textarea>';
-      html += '</div>';
-    }
-
-    html += '<div class="mod-status-acoes">';
-    html += '<button type="button" class="mod-btn-cancel" id="encCancelar">Cancelar</button>';
-    html += '<button type="button" class="mod-btn-aplicar" id="encAplicar">' +
-      'Confirmar "' + esc(info(statusId).label) + '"</button>';
-    html += '</div>';
-
-    box.innerHTML = html;
-
-    var copiar = document.getElementById('encCopiar');
-    if (copiar) copiar.addEventListener('click', function () {
-      var ta = document.getElementById('encMensagem');
-      if (!ta) return;
-      ta.removeAttribute('readonly');
-      ta.select();
-      ta.setSelectionRange(0, 99999);
-      try { document.execCommand('copy'); } catch (e) {}
-      ta.setAttribute('readonly', 'readonly');
-    });
-
-    var cancelar = document.getElementById('encCancelar');
-    if (cancelar) cancelar.addEventListener('click', function () {
-      var d = document.getElementById('encDinamico');
-      if (d) d.innerHTML = '';
-      encAcao = null;
-      var ops = document.querySelectorAll('[data-enc-set]');
-      for (var k = 0; k < ops.length; k++) ops[k].classList.remove('sel');
-    });
-
-var aplicar = document.getElementById('encAplicar');
-if (aplicar) aplicar.addEventListener('click', function () {
-  if (!encAtual || !encAcao) return;
-  var idAtual = encAtual.id;
-  var acao = encAcao;
-
-  /* ✅ Lê e valida os campos de agendamento ANTES de fechar o balcão */
-  var dadosAg = null;
-  if (acao === 'agendado') {
-    var elData = document.getElementById('encDataAg');
-    var elHora = document.getElementById('encHoraAg');
-    if (!elData || !elData.value) {
-      alert('Informe a data do agendamento.');
-      return;
-    }
-    if (!elHora || !elHora.value) {
-      alert('Informe a hora do agendamento.');
-      return;
-    }
-    dadosAg = {
-      data_agendamento: elData.value,
-      hora_agendamento: elHora.value
-    };
-    console.log('[balcao] dadosAg montado:', dadosAg);
-  }
-
-  fecharBalcaoEncomenda();
-
-  if (typeof window.mudarStatus === 'function') {
-  var dadosAg = null;
-if (acao === 'agendado') {
-  var elData = document.getElementById('encDataAg');
-  var elHora = document.getElementById('encHoraAg');
-  if (!elData || !elData.value) { alert('Informe a data do agendamento.'); return; }
-  if (!elHora || !elHora.value) { alert('Informe a hora do agendamento.'); return; }
-  dadosAg = { data_agendamento: elData.value, hora_agendamento: elHora.value };
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
-window.mudarStatus(idAtual, acao, dadosAg);
+
+var _aplicarOriginal = window.aplicarFiltros;
+if (typeof _aplicarOriginal === 'function') {
+  window.aplicarFiltros = function () {
+    var r = _aplicarOriginal.apply(this, arguments);
+    trocarSelectPorBotao();
+    return r;
+  };
+}
+
+function trocarSelectPorBotao() {
+  var selects = document.querySelectorAll('.status-select');
+  for (var i = 0; i < selects.length; i++) {
+    var sel = selects[i];
+    if (sel.dataset.trocado === '1') continue;
+    sel.dataset.trocado = '1';
+    sel.style.display = 'none';
+
+    var m = (sel.getAttribute('onchange') || '').match(/mudarStatus\((\d+)/);
+    if (!m) continue;
+
+    var id = m[1];
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'mod-btn st';
+    btn.textContent = 'Status';
+    btn.setAttribute('data-enc-status', id);
+    btn.addEventListener('click', function () {
+      abrirBalcaoEncomenda(this.getAttribute('data-enc-status'));
+    });
+
+    sel.parentNode.appendChild(btn);
   }
-});
+}
+
+function buscarPedido(id) {
+  var lista = window.getListaAtiva ? window.getListaAtiva() : [];
+  for (var i = 0; i < lista.length; i++) {
+    if (String(lista[i].id) === String(id)) return lista[i];
+  }
+  return null;
+}
+
+function abrirBalcaoEncomenda(id) {
+  var p = buscarPedido(id);
+  if (!p) return;
+
+  encAtual = p;
+  encAcao = null;
+
+  var overlay = document.getElementById('encStatusOverlay');
+  var corpo = document.getElementById('encStatusCorpo');
+  var titulo = document.getElementById('encStatusTitulo');
+
+  if (!overlay || !corpo) {
+    if (window.mostrarBalcao) window.mostrarBalcao(p.nome_cliente, p.pedido_id || ('#' + p.id), p.whatsapp || p.email, p.status || 'novo');
+    return;
   }
 
-  function fecharBalcaoEncomenda() {
-    var o = document.getElementById('encStatusOverlay');
-    if (!o) return;
-    o.classList.remove('aberto');
-    o.style.display = 'none';
+  if (titulo) {
+    titulo.textContent = 'Status — ' + (p.pedido_id || ('#' + p.id)) + ' · ' + (p.nome_cliente || '');
   }
 
-  window.encFecharStatus = fecharBalcaoEncomenda;
+  var st = info(p.status || 'novo');
+  var html = '';
 
-  document.addEventListener('click', function () {
-    setTimeout(trocarSelectPorBotao, 120);
+  html += '<div class="m3d-transf-bloco">';
+  html += '<div class="m3d-transf-linha"><strong>Status atual</strong><span>' +
+    '<span class="status-pill ' + st.classe + '">' + esc(st.label) + '</span></span></div>';
+  html += '</div>';
+
+  html += '<div class="m3d-transf-bloco"><h4>Alterar para</h4><div class="mod-status-grid">';
+
+  var listaStatus = statusDoContexto();
+  for (var i = 0; i < listaStatus.length; i++) {
+    var s = listaStatus[i];
+    html += '<button type="button" class="mod-status-opt' +
+      (s.id === (p.status || 'novo') ? ' atual' : '') +
+      '" data-enc-set="' + s.id + '">' +
+      '<span class="status-pill ' + s.classe + '">' + esc(s.label) + '</span>' +
+      '</button>';
+  }
+
+  html += '</div></div>';
+  html += '<div id="encDinamico"></div>';
+
+  corpo.innerHTML = html;
+
+  overlay.classList.add('aberto');
+  overlay.style.display = 'flex';
+  overlay.style.opacity = '1';
+  overlay.style.visibility = 'visible';
+  overlay.style.pointerEvents = 'auto';
+  overlay.style.zIndex = '9999';
+
+  var opts = corpo.querySelectorAll('[data-enc-set]');
+  for (var j = 0; j < opts.length; j++) {
+    opts[j].addEventListener('click', function () {
+      selecionarStatusEncomenda(this.getAttribute('data-enc-set'));
+    });
+  }
+}
+
+function selecionarStatusEncomenda(statusId) {
+  if (!encAtual) return;
+  encAcao = statusId;
+
+  var box = document.getElementById('encDinamico');
+  if (!box) return;
+
+  var opts = document.querySelectorAll('[data-enc-set]');
+  for (var i = 0; i < opts.length; i++) {
+    opts[i].classList.toggle('sel', opts[i].getAttribute('data-enc-set') === statusId);
+  }
+
+  var p = encAtual;
+  var msg = window.montarMensagemStatus
+    ? window.montarMensagemStatus(p.nome_cliente, p.pedido_id || ('#' + p.id), statusId)
+    : '';
+
+  var html = '';
+
+  /* ✅ Inputs de data/hora quando o status for "agendado" */
+  if (statusId === 'agendado') {
+    var dataAtual = p.data_agendamento ? String(p.data_agendamento).slice(0, 10) : '';
+    var horaAtual = p.hora_agendamento ? String(p.hora_agendamento).slice(0, 5) : '';
+    html += '<div class="enc-agendamento" style="margin:14px 0;padding:14px;background:#f0f6ff;border:2px solid #1f6feb;border-radius:12px;">';
+    html += '<div style="font-size:12px;font-weight:800;color:#0f1e3d;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📅 Data e hora do agendamento</div>';
+    html += '<div style="display:flex;gap:10px;">';
+    html += '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Data</label>';
+    html += '<input type="date" id="encDataAg" value="' + dataAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;box-sizing:border-box;">';
+    html += '</div>';
+    html += '<div style="flex:1;"><label style="display:block;font-size:11px;color:#5a6472;margin-bottom:4px;">Hora</label>';
+    html += '<input type="time" id="encHoraAg" value="' + horaAtual + '" style="width:100%;padding:9px;border:1px solid #cfd6e4;border-radius:8px;font-size:14px;box-sizing:border-box;">';
+    html += '</div>';
+    html += '</div></div>';
+  }
+
+  if (msg) {
+    html += '<div class="mod-msg-box">';
+    html += '<div class="mod-msg-head">';
+    html += '<span class="mod-msg-titulo">Mensagem para o cliente</span>';
+    html += '<button type="button" class="mod-msg-copiar" id="encCopiar">📋 Copiar</button>';
+    html += '</div>';
+    html += '<textarea id="encMensagem" readonly rows="10">' + esc(msg) + '</textarea>';
+    html += '</div>';
+  }
+
+  html += '<div class="mod-status-acoes">';
+  html += '<button type="button" class="mod-btn-cancel" id="encCancelar">Cancelar</button>';
+  html += '<button type="button" class="mod-btn-aplicar" id="encAplicar">' +
+    'Confirmar "' + esc(info(statusId).label) + '"</button>';
+  html += '</div>';
+
+  box.innerHTML = html;
+
+  var copiar = document.getElementById('encCopiar');
+  if (copiar) copiar.addEventListener('click', function () {
+    var ta = document.getElementById('encMensagem');
+    if (!ta) return;
+    ta.removeAttribute('readonly');
+    ta.select();
+    ta.setSelectionRange(0, 99999);
+    try { document.execCommand('copy'); } catch (e) {}
+    ta.setAttribute('readonly', 'readonly');
   });
+
+  var cancelar = document.getElementById('encCancelar');
+  if (cancelar) cancelar.addEventListener('click', function () {
+    var d = document.getElementById('encDinamico');
+    if (d) d.innerHTML = '';
+    encAcao = null;
+    var ops = document.querySelectorAll('[data-enc-set]');
+    for (var k = 0; k < ops.length; k++) ops[k].classList.remove('sel');
+  });
+
+  var aplicar = document.getElementById('encAplicar');
+  if (aplicar) aplicar.addEventListener('click', function () {
+    if (!encAtual || !encAcao) return;
+
+    var idAtual = encAtual.id;
+    var acao = encAcao;
+    var dadosAg = null;
+
+    /* ✅ CORRIGIDO: lê e valida os campos ANTES de fechar o balcão */
+    if (acao === 'agendado') {
+      var elData = document.getElementById('encDataAg');
+      var elHora = document.getElementById('encHoraAg');
+
+      if (!elData || !elData.value) {
+        alert('Informe a data do agendamento.');
+        return;
+      }
+      if (!elHora || !elHora.value) {
+        alert('Informe a hora do agendamento.');
+        return;
+      }
+
+      dadosAg = {
+        data_agendamento: elData.value,
+        hora_agendamento: elHora.value
+      };
+    }
+
+    fecharBalcaoEncomenda();
+
+    if (typeof window.mudarStatus === 'function') {
+      window.mudarStatus(idAtual, acao, dadosAg);
+    }
+  });
+}
+
+function fecharBalcaoEncomenda() {
+  var o = document.getElementById('encStatusOverlay');
+  if (!o) return;
+  o.classList.remove('aberto');
+  o.style.display = 'none';
+}
+
+window.encFecharStatus = fecharBalcaoEncomenda;
+
+document.addEventListener('click', function () {
+  setTimeout(trocarSelectPorBotao, 120);
+});
+
 })();
 
 /* ============================================================
    PIX — 3 AÇÕES DO ADMIN (verde / amarelo / vermelho)
    ============================================================ */
-
 function ehPixPendente(status) {
   var s = String(status || '').toLowerCase();
   return s.indexOf('verifica') !== -1
@@ -2152,13 +2180,12 @@ function acaoPix(codigo, acao, btn) {
   .then(function(dados) {
     var p = dados.pedido || {};
 
-    /* Atualiza a lista local */
     var local = lojaPedidos.filter(function(x) {
       return String(x.pedido_id) === String(codigo) || String(x.id) === String(codigo);
     })[0];
+
     if (local && p.status) local.status = p.status;
 
-    /* Atualiza pill sem re-renderizar */
     var pill = document.getElementById('pill-' + (local ? local.id : ''));
     if (pill) {
       if (acao === 'confirmar') {
@@ -2173,7 +2200,6 @@ function acaoPix(codigo, acao, btn) {
       }
     }
 
-    /* Remove os 3 botões da linha — a ação foi tomada */
     var tr = btn ? btn.closest('tr') : null;
     if (tr) {
       tr.querySelectorAll('.pix-acao-btn').forEach(function(b) { b.remove(); });
@@ -2181,7 +2207,6 @@ function acaoPix(codigo, acao, btn) {
 
     renderizar();
 
-    /* Balcão com mensagem pronta */
     if (local && window.mostrarBalcao) {
       var stMap = { confirmar: 'pago', aguardar: 'Pix aguardando compensação', recusar: 'Pix não identificado' };
       mostrarBalcao(local.nome_cliente, local.pedido_id || ('#' + local.id), local.whatsapp || local.email, stMap[acao] || '');
@@ -2207,8 +2232,8 @@ function acaoPix(codigo, acao, btn) {
 
       var match = String(sel.getAttribute('onchange') || '').match(/mudarStatus\((\d+)/);
       if (!match) return;
-      var id = match[1];
 
+      var id = match[1];
       var p = lojaPedidos.filter(function(x) { return String(x.id) === String(id); })[0];
       if (!p || !ehPixPendente(p.status)) return;
 
@@ -2216,7 +2241,6 @@ function acaoPix(codigo, acao, btn) {
       var td = sel.closest('td');
       if (!td) return;
 
-      /* Container */
       var box = document.createElement('div');
       box.className = 'pix-acoes';
 

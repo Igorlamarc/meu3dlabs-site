@@ -2,11 +2,15 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Painel de Pedidos — Meu 3D Labs</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#0f1e3d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Meu 3D Labs">
   <link rel="icon" href="img/logo/logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="img/logo/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,6 +20,7 @@
   <link rel="stylesheet" href="admin-modelagem.css">
 </head>
 <body>
+
 <!-- ===== LOGIN ===== -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
@@ -23,11 +28,12 @@
     <div class="lock-icon">🔒</div>
     <h2>Área restrita</h2>
     <p>Digite a senha para acessar o painel de pedidos.</p>
-    <input type="password" id="senhaInput" placeholder="Senha" autocomplete="off" onkeydown="if(event.key==='Enter')tentarLogin()">
+    <input type="password" id="senhaInput" placeholder="Senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')tentarLogin()">
     <button class="btn" type="button" onclick="tentarLogin()">Entrar</button>
     <div class="login-error" id="loginError">Senha incorreta.</div>
   </div>
 </div>
+
 <!-- ===== HEADER ===== -->
 <header>
   <div class="header-inner">
@@ -38,17 +44,17 @@
     <div class="header-right">
       <a class="back-btn" href="login.html">← Voltar ao menu</a>
       <span class="user" id="userLabel">👤 Meu 3D Labs</span>
-      <button class="dark-btn" type="button" id="darkBtn" onclick="toggleDark()" title="Modo escuro / claro">🌙</button>
+      <button class="dark-btn" type="button" id="darkBtn" onclick="toggleDark()" title="Modo escuro / claro" aria-label="Alternar modo escuro">🌙</button>
       <button class="logout-btn" type="button" onclick="sair()">Sair</button>
     </div>
   </div>
 </header>
+
 <!-- ===== CONTEÚDO PRINCIPAL ===== -->
 <main id="mainContent">
-  <!-- Barra superior: título + ações -->
   <div class="top-bar">
     <h1 id="tituloPainel">📋 Encomendas</h1>
-     <div class="actions">
+    <div class="actions">
       <button class="refresh-btn" type="button" id="btnIrLoja" onclick="irParaAdminLoja()" style="background:#0f7a44;" title="Abrir o painel de produtos da loja">🛍️ Admin Loja</button>
       <button class="refresh-btn ia" type="button" onclick="abrirRelatorioIA()">🤖 Relatório p/ IA</button>
       <button class="refresh-btn export" type="button" onclick="exportarCSV()">⬇️ Exportar CSV</button>
@@ -56,16 +62,17 @@
       <button class="refresh-btn" type="button" id="refreshBtn" onclick="carregarPedidos()">🔄 Atualizar</button>
     </div>
   </div>
-  <!-- Abas -->
+
   <div class="tabs" id="tabs">
-  <button class="tab-btn active" type="button" id="tab-orc" onclick="mudarAba('orcamentos')">📋 Encomendas <span class="tab-count" id="countOrc">0</span></button>
-  <button class="tab-btn" type="button" id="tab-assist" onclick="mudarAba('assistencia')">🔧 Assistência <span class="tab-count" id="countAssist">0</span></button>
-  <button class="tab-btn" type="button" id="tab-consult" onclick="mudarAba('consultoria')">🎓 Consultoria <span class="tab-count" id="countConsult">0</span></button>
-  <button class="tab-btn" type="button" id="tab-modelagem" onclick="mudarAba('modelagem')">🗂️ Modelagem 3D <span class="tab-count" id="countModelagem">0</span></button>
-  <button class="tab-btn" type="button" id="tab-loja" onclick="mudarAba('loja')">🛍️ Loja <span class="tab-count" id="countLoja">0</span></button>
-</div>
-  <!-- Avisos -->
+    <button class="tab-btn active" type="button" id="tab-orc" onclick="mudarAba('orcamentos')">📋 Encomendas <span class="tab-count" id="countOrc">0</span></button>
+    <button class="tab-btn" type="button" id="tab-assist" onclick="mudarAba('assistencia')">🔧 Assistência <span class="tab-count" id="countAssist">0</span></button>
+    <button class="tab-btn" type="button" id="tab-consult" onclick="mudarAba('consultoria')">🎓 Consultoria <span class="tab-count" id="countConsult">0</span></button>
+    <button class="tab-btn" type="button" id="tab-modelagem" onclick="mudarAba('modelagem')">🗂️ Modelagem 3D <span class="tab-count" id="countModelagem">0</span></button>
+    <button class="tab-btn" type="button" id="tab-loja" onclick="mudarAba('loja')">🛍️ Loja <span class="tab-count" id="countLoja">0</span></button>
+  </div>
+
   <div class="error-box" id="errorBox"></div>
+
   <div class="notify-banner" id="notifyBanner">
     <div class="nb-icon" id="notifyIcon">🔔</div>
     <div class="nb-text">
@@ -74,28 +81,28 @@
     </div>
     <button class="nb-close" type="button" onclick="fecharBanner()" aria-label="Fechar">✕</button>
   </div>
-  <!-- Estatísticas -->
+
   <div class="stats-grid" id="statsGrid"></div>
-  <!-- Barra de visão: Ativos / Entregues / Encerrados / Todos -->
+
   <div class="visao-chips" id="visaoChips"></div>
-  <!-- Chips de filtro por prazo -->
+
   <div class="prazo-chips" id="prazoChips">
     <button class="prazo-chip" type="button" data-filtro="atrasados" onclick="setFiltroPrazo('atrasados')">🔴 Atrasados <span class="chip-n" id="chipAtrasados">0</span></button>
     <button class="prazo-chip" type="button" data-filtro="hoje" onclick="setFiltroPrazo('hoje')">⏰ Vence hoje <span class="chip-n" id="chipHoje">0</span></button>
     <button class="prazo-chip" type="button" data-filtro="semana" onclick="setFiltroPrazo('semana')">📅 Esta semana <span class="chip-n" id="chipSemana">0</span></button>
     <button class="prazo-chip" type="button" data-filtro="todos" onclick="setFiltroPrazo('todos')">Todos</button>
   </div>
-  <!-- Controles: busca + filtros -->
+
   <div class="controls">
     <div class="search-box">
-      <span class="icon">🔍</span>
-      <input type="text" id="buscaInput" placeholder="Buscar por nome, contato, descrição ou ID..." oninput="aplicarFiltros()">
+      <span class="icon" aria-hidden="true">🔍</span>
+      <input type="text" id="buscaInput" placeholder="Buscar por nome, contato, descrição ou ID..." oninput="aplicarFiltros()" aria-label="Buscar pedidos">
     </div>
-    <input type="date" id="filtroInicio" class="filter-select" onchange="aplicarFiltros()" title="De (data)">
-    <input type="date" id="filtroFim" class="filter-select" onchange="aplicarFiltros()" title="Até (data)">
-    <select class="filter-select" id="statusFilter" onchange="aplicarFiltros()"></select>
+    <input type="date" id="filtroInicio" class="filter-select" onchange="aplicarFiltros()" title="De (data)" aria-label="Data inicial">
+    <input type="date" id="filtroFim" class="filter-select" onchange="aplicarFiltros()" title="Até (data)" aria-label="Data final">
+    <select class="filter-select" id="statusFilter" onchange="aplicarFiltros()" aria-label="Filtrar por status"></select>
   </div>
-  <!-- Tabela de pedidos -->
+
   <div class="table-wrap" id="tabelaWrapOrc">
     <table>
       <thead id="tabelaHead">
@@ -115,9 +122,9 @@
     </table>
   </div>
 </main>
+
 <!-- ===== PAINEL MODELAGEM 3D ===== -->
 <section id="painelModelagem" style="display:none;">
-  <!-- Barra de título + ações -->
   <div class="top-bar">
     <h1 id="modTituloPainel">🗂️ Modelagem 3D</h1>
     <div class="actions">
@@ -127,7 +134,7 @@
       <button class="refresh-btn" type="button" id="modRecarregar">🔄 Atualizar</button>
     </div>
   </div>
-  <!-- Abas replicadas -->
+
   <div class="tabs" id="tabsModelagem">
     <button class="tab-btn" type="button" onclick="mudarAba('orcamentos')">📋 Encomendas <span class="tab-count" id="countOrc2">0</span></button>
     <button class="tab-btn" type="button" onclick="mudarAba('assistencia')">🔧 Assistência <span class="tab-count" id="countAssist2">0</span></button>
@@ -135,58 +142,61 @@
     <button class="tab-btn active" type="button" onclick="mudarAba('modelagem')">🗂️ Modelagem 3D <span class="tab-count" id="countModelagem2">0</span></button>
     <button class="tab-btn" type="button" onclick="mudarAba('loja')">🛍️ Loja <span class="tab-count" id="countLoja2">0</span></button>
   </div>
+
   <div class="error-box" id="modErrorBox"></div>
-  <!-- CARDS DE MÉTRICAS -->
   <div class="stats-grid" id="modStatsGrid"></div>
-  <!-- CHIPS DE PRAZO -->
+
   <div class="prazo-chips show" id="modPrazoChips">
     <button class="prazo-chip" type="button" data-mod-prazo="atrasados" onclick="modSetFiltroPrazo('atrasados')">🔴 Atrasados <span class="chip-n" id="modChipAtrasados">0</span></button>
     <button class="prazo-chip" type="button" data-mod-prazo="hoje" onclick="modSetFiltroPrazo('hoje')">⏰ Vence hoje <span class="chip-n" id="modChipHoje">0</span></button>
     <button class="prazo-chip" type="button" data-mod-prazo="semana" onclick="modSetFiltroPrazo('semana')">📅 Esta semana <span class="chip-n" id="modChipSemana">0</span></button>
     <button class="prazo-chip" type="button" data-mod-prazo="todos" onclick="modSetFiltroPrazo('todos')">Todos</button>
   </div>
-  <!-- CONTROLES: busca + datas + status -->
+
   <div class="controls">
     <div class="search-box">
-      <span class="icon">🔍</span>
-      <input type="text" id="modBusca" placeholder="Buscar por nome, contato, ideia ou ID..." oninput="modAplicarFiltros()">
+      <span class="icon" aria-hidden="true">🔍</span>
+      <input type="text" id="modBusca" placeholder="Buscar por nome, contato, ideia ou ID..." oninput="modAplicarFiltros()" aria-label="Buscar modelagens">
     </div>
-    <input type="date" id="modFiltroInicio" class="filter-select" onchange="modAplicarFiltros()" title="De (data)">
-    <input type="date" id="modFiltroFim" class="filter-select" onchange="modAplicarFiltros()" title="Até (data)">
-    <select class="filter-select" id="modStatusFilter" onchange="modAplicarFiltros()"></select>
+    <input type="date" id="modFiltroInicio" class="filter-select" onchange="modAplicarFiltros()" title="De (data)" aria-label="Data inicial">
+    <input type="date" id="modFiltroFim" class="filter-select" onchange="modAplicarFiltros()" title="Até (data)" aria-label="Data final">
+    <select class="filter-select" id="modStatusFilter" onchange="modAplicarFiltros()" aria-label="Filtrar por status"></select>
   </div>
-  <!-- FILTROS DE STATUS (chips) -->
+
   <div class="prazo-chips show" id="modFiltros"></div>
-  <!-- TABELA -->
+
   <div class="table-wrap">
     <table>
-<thead>
-  <tr>
-    <th>ID</th>
-    <th>Cliente</th>
-    <th>Contato</th>
-    <th>Faixa</th>
-    <th>Recebido em</th>
-    <th>Prazo</th>
-    <th>Orçamento</th>
-    <th>Status</th>
-    <th>Ações</th>
-  </tr>
-</thead>
-<tbody id="modTbody">
-  <tr class="loading-row"><td colspan="9"><div class="spinner"></div><br>Carregando modelagens...</td></tr>
-</tbody>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Contato</th>
+          <th>Faixa</th>
+          <th>Recebido em</th>
+          <th>Prazo</th>
+          <th>Orçamento</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="modTbody">
+        <tr class="loading-row"><td colspan="9"><div class="spinner"></div><br>Carregando modelagens...</td></tr>
+      </tbody>
     </table>
   </div>
 </section>
+
 <footer>Painel interno · Meu 3D Labs · Apenas para uso da equipe</footer>
-<!-- ===== MODAIS ===== -->
+
+<!-- ===== MODAL: STATUS ATUALIZADO ===== -->
 <div class="status-overlay" id="statusOverlay">
   <div class="status-box">
     <button class="sb-close" type="button" onclick="fecharBalcao()" aria-label="Fechar">✕</button>
     <div class="sb-icon">✅</div>
     <h3 id="sbTitulo">Status atualizado!</h3>
     <p class="sb-sub">Mensagem pronta para enviar ao cliente.</p>
+    <div id="sbAgendamento"></div>
     <div class="sb-msg" id="sbMensagem"></div>
     <div class="sb-actions">
       <button class="btn" type="button" onclick="copiarMensagem()">📋 Copiar mensagem</button>
@@ -195,6 +205,8 @@
   </div>
 </div>
 <div class="sb-copied" id="sbCopiado">Mensagem copiada!</div>
+
+<!-- ===== MODAL: VER MAIS ===== -->
 <div class="ver-overlay" id="verOverlay" onclick="if(event.target===this)fecharVerMais()">
   <div class="ver-modal">
     <button class="vm-close" type="button" onclick="fecharVerMais()" aria-label="Fechar">✕</button>
@@ -208,6 +220,8 @@
     </div>
   </div>
 </div>
+
+<!-- ===== MODAL: PRAZO CRÍTICO ===== -->
 <div class="prazo-overlay" id="prazoOverlay">
   <div class="prazo-modal">
     <div class="pm-icon">⏰</div>
@@ -220,6 +234,8 @@
     </div>
   </div>
 </div>
+
+<!-- ===== MODAL: RELATÓRIO IA ===== -->
 <div class="ver-overlay" id="relatorioOverlay" onclick="if(event.target===this)fecharRelatorio()">
   <div class="ver-modal">
     <button class="vm-close" type="button" onclick="fecharRelatorio()" aria-label="Fechar">✕</button>
@@ -231,6 +247,8 @@
     </div>
   </div>
 </div>
+
+<!-- ===== MODAL: EDITAR PEDIDO ===== -->
 <div class="ver-overlay" id="editOverlay" onclick="if(event.target===this)fecharEditar()">
   <div class="ver-modal">
     <button class="vm-close" type="button" onclick="fecharEditar()" aria-label="Fechar">✕</button>
@@ -254,6 +272,8 @@
     </div>
   </div>
 </div>
+
+<!-- ===== MODAL: VALOR DO PEDIDO ===== -->
 <div class="ver-overlay" id="valorOverlay" onclick="if(event.target===this)fecharValorModal()">
   <div class="ver-modal">
     <button class="vm-close" type="button" onclick="fecharValorModal()" aria-label="Fechar">✕</button>
@@ -282,6 +302,8 @@
     </div>
   </div>
 </div>
+
+<!-- ===== MODAL: PAGAMENTOS ===== -->
 <div class="ver-overlay" id="pagOverlay" onclick="if(event.target===this)fecharPagamentos()">
   <div class="ver-modal">
     <button class="vm-close" type="button" onclick="fecharPagamentos()" aria-label="Fechar">✕</button>
@@ -302,11 +324,13 @@
     <div class="pag-hist" id="pagHist"></div>
   </div>
 </div>
+
+<!-- ===== MODAL: GRÁFICOS ===== -->
 <div class="graf-overlay" id="grafOverlay" onclick="if(event.target===this)fecharGraficos()">
   <div class="graf-modal">
     <button class="graf-close" type="button" onclick="fecharGraficos()" aria-label="Fechar">✕</button>
     <div class="graf-head">
-        <h2>📈 Crescimento da empresa</h2>
+      <h2>📈 Crescimento da empresa</h2>
       <div class="graf-anos" id="grafAnos"></div>
     </div>
     <div class="graf-kpis" id="grafKpis"></div>
@@ -325,6 +349,7 @@
     </div>
   </div>
 </div>
+
 <!-- ===== MODAL: STATUS DA MODELAGEM ===== -->
 <div class="status-overlay" id="modStatusOverlay">
   <div class="status-box" style="max-width:620px;max-height:88vh;overflow-y:auto;">
@@ -334,6 +359,7 @@
     <div id="modStatusCorpo"></div>
   </div>
 </div>
+
 <!-- ===== MODAL: VER DETALHES DA MODELAGEM ===== -->
 <div class="ver-overlay" id="modDetalheOverlay" onclick="if(event.target===this)modFecharDetalhe()">
   <div class="ver-modal">
@@ -343,6 +369,17 @@
     <div class="vm-texto" id="modDetalheCorpo" style="max-height:none;"></div>
   </div>
 </div>
+
+<!-- ===== MODAL: STATUS DA ENCOMENDA ===== -->
+<div class="status-overlay" id="encStatusOverlay">
+  <div class="status-box" style="max-width:620px;max-height:88vh;overflow-y:auto;">
+    <button class="sb-close" type="button" onclick="encFecharStatus()" aria-label="Fechar">✕</button>
+    <h3 id="encStatusTitulo">Alterar status</h3>
+    <p class="sb-sub">Selecione a nova etapa e copie a mensagem pronta.</p>
+    <div id="encStatusCorpo"></div>
+  </div>
+</div>
+
 <script>
 function irParaAdminLoja(){
   var t = sessionStorage.getItem('m3d_admin_token')
@@ -353,16 +390,6 @@ function irParaAdminLoja(){
   window.location.href = 'admin-loja.html';
 }
 </script>
-<!-- ===== MODAL: STATUS DA ENCOMENDA ===== -->
-<div class="status-overlay" id="encStatusOverlay">
-  <div class="status-box" style="max-width:620px;max-height:88vh;overflow-y:auto;">
-    <button class="sb-close" type="button" onclick="encFecharStatus()" aria-label="Fechar">✕</button>
-    <h3 id="encStatusTitulo">Alterar status</h3>
-    <p class="sb-sub">Selecione a nova etapa e copie a mensagem pronta.</p>
-    <div id="encStatusCorpo"></div>
-  </div>
-</div>
-<!-- Lógica separada no admin.js -->
 <script src="admin.js"></script>
 <script src="admin-extras.js"></script>
 <script src="admin-modelagem.js"></script>
