@@ -436,3 +436,64 @@ var link = M3D_LOCAL ? ('produto.html?produto=' + encodeURIComponent(slug)) : ('
     })
     .catch(function () {});
 })();
+
+/* ============================================================
+   SEÇÕES RECOLHÍVEIS — abrir automaticamente quando o link
+   aponta para uma seção fechada (menu, rodapé, âncoras)
+   ============================================================ */
+(function(){
+  'use strict';
+
+  function abrirPorHash(){
+    var hash = window.location.hash;
+    if(!hash || hash.length < 2) return;
+
+    var id = hash.slice(1);
+    var alvo = document.getElementById(id);
+    if(!alvo) return;
+
+    /* Sobe na árvore até achar um <details> que contenha o alvo */
+    var details = alvo.closest('details.sec-collapse');
+    if(!details) return;
+
+    details.open = true;
+
+    /* Rola até ela, com folga para o header fixo */
+    setTimeout(function(){
+      var topo = details.getBoundingClientRect().top + window.pageYOffset - 90;
+      window.scrollTo({ top: topo, behavior: 'smooth' });
+    }, 80);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', abrirPorHash);
+  }else{
+    abrirPorHash();
+  }
+
+  /* Clique em link interno com hash (rodapé → #quem-somos, etc.) */
+  document.addEventListener('click', function(e){
+    var link = e.target.closest('a[href^="#"]');
+    if(!link) return;
+
+    var href = link.getAttribute('href');
+    if(!href || href === '#' || href.length < 2) return;
+
+    var id = href.slice(1);
+    var alvo = document.getElementById(id);
+    if(!alvo) return;
+
+    var details = alvo.closest('details.sec-collapse');
+    if(details && !details.open){
+      e.preventDefault();
+      details.open = true;
+      setTimeout(function(){
+        var topo = details.getBoundingClientRect().top + window.pageYOffset - 90;
+        window.scrollTo({ top: topo, behavior: 'smooth' });
+        history.replaceState(null, '', '#' + id);
+      }, 80);
+    }
+  });
+
+  window.addEventListener('hashchange', abrirPorHash);
+})();
