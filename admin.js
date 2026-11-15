@@ -4,8 +4,35 @@
 
 /* ===== 1. CONFIGURAÇÃO ===== */
 var API_URL = 'https://meu3dlabs-backend.onrender.com/api';
-/* ⭐ LINK DE AVALIAÇÃO NO GOOGLE */
 var LINK_AVALIACAO_GOOGLE = 'https://g.page/r/CcGSg0AxWsPnEAE/review';
+
+/* ===== FOTO DO CLIENTE — Firebase (somente leitura) ===== */
+var FB_CONFIG = {
+  apiKey: "AIzaSyAZwBSpyU9KAsrvqjVaFIShbdhoPu-C11s",
+  authDomain: "meu3dlabs-loja.firebaseapp.com",
+  projectId: "meu3dlabs-loja",
+  storageBucket: "meu3dlabs-loja.firebasestorage.app",
+  messagingSenderId: "429562795244",
+  appId: "1:429562795244:web:d9d54e2b30941ab8eb81c9"
+};
+
+var fdb = null;
+(function iniciarFirebaseAdmin(){
+  try{
+    if(typeof firebase === 'undefined') return;
+    if(!firebase.apps || !firebase.apps.length){
+      firebase.initializeApp(FB_CONFIG);
+    }
+    if(typeof firebase.firestore === 'function'){
+      fdb = firebase.firestore();
+    }
+  }catch(e){
+    console.warn('admin: Firebase não iniciou', e);
+  }
+})();
+
+var cacheFotos = {};
+var fotosCarregando = false;
 
 /* ===== 2. ESTADO GLOBAL ===== */
 var orcamentos = [];
@@ -17,15 +44,12 @@ var filtroPrazoAtivo = 'todos';
 var cacheProdutos = null;
 var mensagemAtual = '';
 
-/* Cache do modal "Ver detalhes" */
 var verCache = [];
 var verSeq = 0;
 var verDados = { texto: '' };
 
-/* 🆕 Filtro de visibilidade: 'ativos' | 'entregues' | 'encerrados' | 'todos' */
 var filtroVisao = 'ativos';
 
-/* Status em que o recibo pode ser emitido */
 var STATUS_COM_RECIBO = [
   'pago', 'Pago (Cartão)',
   'gerando nota', 'embalagem', 'saiu', 'entregue',
@@ -62,7 +86,6 @@ function registrarPush() {
     console.warn('[push] sem token');
     return;
   }
-
   Notification.requestPermission().then(function (perm) {
     if (perm !== 'granted') {
       console.warn('[push] permissão negada');
@@ -117,13 +140,11 @@ function getListaAtiva() {
   });
 }
 
-/* 🆕 Define se um pedido está encerrado (sai da visão principal) */
 function ehEncerrado(p) {
   var s = String(p.status || statusPadrao());
   return s === 'entregue' || s === 'cancelado' || s === 'sem-resposta';
 }
 
-/* 🆕 Define se é "ativo" (aparece na visão principal) */
 function ehAtivo(p) {
   return !ehEncerrado(p);
 }
@@ -177,7 +198,105 @@ function buscarImgProduto(nome) {
   return '';
 }
 
-/* ===== 4. MODO ESCURO ===== */
+/* ===== 4. FOTO DO CLIENTE ===== */
+function iniciaisCliente(nome) {
+  if (!nome) return '👤';
+  var parts = String(nome).trim().split(/\s+/);
+  var a = (parts[0] || '').charAt(0);
+  var b = (parts[1] || '').charAt(0);
+  return ((a + b).toUpperCase()) || '👤';
+}
+
+function carregarFotosClientes() {
+  if (!fdb) return Promise.resolve();
+  if (fotosCarregando) return Promise.resolve();
+  fotosCarregando = true;
+
+  var emails = {};
+  lojaPedidos.forEach(function (p) {
+    var e = String(p.email_cliente || p.email || '').trim().toLowerCase();
+    if (e && e.indexOf('@') !== -1 && cacheFotos[e] === undefined) emails[e] = true;
+  });
+
+  var lista = Object.keys(emails);
+  if (!lista.length) { fotosCarregando = false; return Promise.resolve(); }
+
+  /* Query individual por e-mail — sem "in", sem índice composto */
+  var promessas = lista.map(function (email) {
+    return fdb.collection('clientes_publico')
+      .where('email', '==', email)
+      .limit(1)
+      .get()
+      .then(function (snap) {
+        if (!snap.empty) {
+          var d = snap.docs[0].data() || {};
+          cacheFotos[email] = d.foto || '';
+        } else {
+          cacheFotos[email] = '';
+        }
+      })
+      .catch(function (err) {
+        console.warn('admin: foto não encontrada para ' + email + ' — ' + (err && err.message));
+        /* NÃO grava '' aqui: deixa undefined para tentar de novo */
+      });
+  });
+
+  return Promise.all(promessas).then(function () {
+    fotosCarregando = false;
+  });
+}
+
+function celulaCliente(p) {
+  var nome = p.nome_cliente || '—';
+  var email = p.email_cliente || p.email || '';
+
+  var foto = p.cliente_foto || p.foto_cliente || p.foto || '';
+
+  if (!foto && email) {
+    foto = cacheFotos[String(email).toLowerCase()] || '';
+  }
+
+  var fotoHtml = foto
+    ? '<img src="' + foto + '" alt="" loading="lazy">'
+    : '<span>' + iniciaisCliente(nome) + '</span>';
+
+  var clickAttr = foto
+    ? ' data-foto-click="1" data-foto-src="' + String(foto).replace(/"/g, '&quot;') + '"'
+    : '';
+
+  return '<td class="td-cliente">' +
+    '<div class="cliente-cel">' +
+      '<div class="cliente-foto' + (foto ? '' : ' sem-foto') + '"' + clickAttr + '>' + fotoHtml + '</div>' +
+      '<div class="cliente-info">' +
+        '<div class="td-client">' + escapar(nome) + '</div>' +
+        (email ? '<span class="cliente-email">' + escapar(email) + '</span>' : '') +
+      '</div>' +
+    '</div>' +
+  '</td>';
+}
+
+function abrirFotoGrande(src) {
+  if (!src) return;
+  var ov = document.getElementById('fotoOverlay');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'fotoOverlay';
+    ov.className = 'foto-ov';
+    ov.innerHTML = '<img alt="Foto do cliente">';
+    ov.addEventListener('click', function () { ov.classList.remove('show'); });
+    document.body.appendChild(ov);
+  }
+  ov.querySelector('img').src = src;
+  ov.classList.add('show');
+}
+
+document.addEventListener('click', function (e) {
+  var el = e.target.closest('[data-foto-click]');
+  if (!el) return;
+  abrirFotoGrande(el.getAttribute('data-foto-src'));
+});
+
+/* ===== 5. MODO ESCURO ===== */
 function toggleDark() {
   document.body.classList.toggle('dark');
   var escuro = document.body.classList.contains('dark');
@@ -189,7 +308,7 @@ if (localStorage.getItem('m3d_dark') === '1') {
   document.body.classList.add('dark');
 }
 
-/* ===== 5. LOGIN E SESSÃO ===== */
+/* ===== 6. LOGIN E SESSÃO ===== */
 if (token) {
   document.getElementById('loginOverlay').style.display = 'none';
   if (document.body.classList.contains('dark')) document.getElementById('darkBtn').textContent = '☀️';
@@ -240,7 +359,7 @@ function iniciar() {
   setInterval(carregarPedidosSilencioso, 30000);
 }
 
-/* ===== 6. CARREGAMENTO DE DADOS ===== */
+/* ===== 7. CARREGAMENTO DE DADOS ===== */
 function carregarPedidos() {
   var btn = document.getElementById('refreshBtn');
   if (btn) btn.disabled = true;
@@ -267,25 +386,22 @@ function carregarPedidos() {
   .then(function(resultados) {
     orcamentos = Array.isArray(resultados[0]) ? resultados[0] : [];
     lojaPedidos = Array.isArray(resultados[1]) ? resultados[1] : [];
-
     orcamentos = orcamentos.filter(function(p) {
       return servicoTipo(p) !== 'modelagem';
     });
-
     window.orcamentos = orcamentos;
     window.lojaPedidos = lojaPedidos;
 
     ordenarListas();
     detectarNovos();
     verificarPrazosCriticos();
-    renderizar();
+
+    carregarFotosClientes().then(function () { renderizar(); });
 
     if (btn) btn.disabled = false;
-
     var agora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     var elUpd = document.getElementById('lastUpdate');
     if (elUpd) elUpd.textContent = 'Atualizado às ' + agora;
-
     var elErr = document.getElementById('errorBox');
     if (elErr) elErr.classList.remove('show');
   })
@@ -320,18 +436,17 @@ function carregarPedidosSilencioso() {
   .then(function(resultados) {
     orcamentos = Array.isArray(resultados[0]) ? resultados[0] : [];
     lojaPedidos = Array.isArray(resultados[1]) ? resultados[1] : [];
-
     orcamentos = orcamentos.filter(function(p) {
       return servicoTipo(p) !== 'modelagem';
     });
-
     window.orcamentos = orcamentos;
     window.lojaPedidos = lojaPedidos;
 
     ordenarListas();
     detectarNovos();
     verificarPrazosCriticos();
-    renderizar();
+
+    carregarFotosClientes().then(function () { renderizar(); });
   })
   .catch(function() {});
 }
@@ -348,7 +463,7 @@ function carregarProdutosLoja() {
 
 carregarProdutosLoja();
 
-/* ===== 7. PRAZOS ===== */
+/* ===== 8. PRAZOS ===== */
 function diasAtePrazo(p) {
   if (!p || !p.prazo_desejado) return null;
   var m = String(p.prazo_desejado).match(/^(\d{4})-(\d{2})-(\d{2})/);
@@ -398,29 +513,22 @@ function verificarPrazosCriticos() {
     var c = classePrazo(p);
     return c === 'atrasado' || c === 'hoje';
   });
-
   if (criticos.length === 0) return;
-
   var jaAlertado = sessionStorage.getItem('m3d_alerta_prazo');
   var chaveAtual = criticos.length + '-' + criticos.map(function(p) { return p.id; }).sort().join(',');
   if (jaAlertado === chaveAtual) return;
   sessionStorage.setItem('m3d_alerta_prazo', chaveAtual);
-
   tocarAlerta();
   tocarAlerta();
-
   var banner = document.getElementById('notifyBanner');
   if (!banner) return;
-
   banner.classList.add('alerta-prazo');
   document.getElementById('notifyIcon').textContent = '⏰';
   document.getElementById('notifyTitle').textContent = criticos.length > 1 ? criticos.length + ' pedidos com prazo crítico!' : 'Pedido com prazo crítico!';
   document.getElementById('notifyText').textContent = 'Existem pedidos atrasados ou que vencem hoje. Verifique a coluna Prazo.';
   banner.classList.add('show');
-
   clearTimeout(banner._timer);
   banner._timer = setTimeout(fecharBanner, 10000);
-
   mostrarBalaoPrazo(criticos);
 }
 
@@ -434,7 +542,6 @@ function mostrarBalaoPrazo(criticos) {
             '<span>' + rotulo + ' · Prazo: ' + normalizarData(p.prazo_desejado) + '</span></div>';
   });
   if (criticos.length > 5) html += '<div class="pm-item"><span>+' + (criticos.length - 5) + ' outros pedidos críticos...</span></div>';
-
   document.getElementById('pmLista').innerHTML = html;
   document.getElementById('pmSub').textContent = criticos.length > 1 ? criticos.length + ' pedidos precisam da sua atenção agora.' : '1 pedido precisa da sua atenção agora.';
   document.getElementById('prazoOverlay').classList.add('show');
@@ -459,7 +566,7 @@ function setFiltroPrazo(f) {
   aplicarFiltros();
 }
 
-/* ===== 8. ABAS, FILTROS E RENDERIZAÇÃO ===== */
+/* ===== 9. ABAS, FILTROS E RENDERIZAÇÃO ===== */
 var TITULOS_ABA = {
   orcamentos: '📋 Pedidos de orçamento',
   assistencia: '🔧 Pedidos de assistência',
@@ -518,7 +625,6 @@ function mudarAba(tipo) {
   renderizar();
 }
 
-/* 🆕 Barra de visão: Ativos / Entregues / Encerrados / Todos */
 function atualizarBarraVisao() {
   var barra = document.getElementById('visaoChips');
   if (!barra) return;
@@ -558,7 +664,6 @@ function setFiltroVisao(v) {
 function montarFiltroStatus() {
   var sel = document.getElementById('statusFilter');
   if (!sel) return;
-
   sel.innerHTML = '<option value="">Todos os status</option>';
   opcoesTodas().forEach(function(item) {
     sel.innerHTML += '<option value="' + item[0] + '">' + item[1] + '</option>';
@@ -568,7 +673,6 @@ function montarFiltroStatus() {
 function montarThead() {
   var head = document.getElementById('tabelaHead');
   if (!head) return;
-
   if (tipoAtivo === 'loja') {
     head.innerHTML = '<tr><th>ID</th><th>Cliente</th><th>Contato</th><th>Itens</th><th>Recebido em</th><th>Status</th></tr>';
   } else {
@@ -576,7 +680,6 @@ function montarThead() {
   }
 }
 
-/* ✅ Novos no topo, o resto por prazo */
 function ordenarListas() {
   var novosSet = {};
   (novosIds || []).forEach(function(id) { novosSet[String(id)] = true; });
@@ -594,11 +697,9 @@ function ordenarListas() {
     var aNovo = novosSet[String(a.id)] ? 0 : 1;
     var bNovo = novosSet[String(b.id)] ? 0 : 1;
     if (aNovo !== bNovo) return aNovo - bNovo;
-
     var pa = prioridadePrazo(a);
     var pb = prioridadePrazo(b);
     if (pa !== pb) return pa - pb;
-
     var ta = a.created_at ? new Date(a.created_at).getTime() : 0;
     var tb = b.created_at ? new Date(b.created_at).getTime() : 0;
     return ta - tb;
@@ -608,14 +709,12 @@ function ordenarListas() {
     var aNovo = novosSet[String(a.id)] ? 0 : 1;
     var bNovo = novosSet[String(b.id)] ? 0 : 1;
     if (aNovo !== bNovo) return aNovo - bNovo;
-
     var ta = a.created_at ? new Date(a.created_at).getTime() : 0;
     var tb = b.created_at ? new Date(b.created_at).getTime() : 0;
     return ta - tb;
   });
 }
 
-/* ✅ Filtra por visão (ativos/entregues/encerrados/todos) */
 function filtrarPedidos() {
   var elBusca = document.getElementById('buscaInput');
   var elStatus = document.getElementById('statusFilter');
@@ -663,7 +762,7 @@ function filtrarPedidos() {
 
     var texto = [];
     if (tipoAtivo === 'loja') {
-      texto = [p.id, p.pedido_id, p.nome_cliente, p.whatsapp, p.entrega, p.nota, JSON.stringify(p.itens || [])];
+      texto = [p.id, p.pedido_id, p.nome_cliente, p.whatsapp, p.email, p.email_cliente, p.entrega, p.nota, JSON.stringify(p.itens || [])];
     } else {
       texto = [p.id, p.nome_cliente, p.email, p.whatsapp, p.descricao_peca, p.pedido_id, p.tipo_peca, p.servico, p.tipo_servico];
     }
@@ -682,7 +781,6 @@ function aplicarFiltros() {
   if (!body) return;
 
   var filtrados = filtrarPedidos();
-
   verCache = [];
   verSeq = 0;
 
@@ -709,9 +807,9 @@ function aplicarFiltros() {
     var statusLabel = traduzirStatus(status);
     var data = formatarData(p.created_at);
     var idExibido = p.pedido_id || ('#' + p.id);
-    var contato = p.whatsapp || p.email || '—';
+    var contato = p.whatsapp || p.email || p.email_cliente || '—';
     var ehNovo = novosIds.indexOf(String(p.id)) !== -1;
-    var waLink = montarLinkWhatsApp(p.whatsapp || p.email);
+    var waLink = montarLinkWhatsApp(p.whatsapp || p.email || p.email_cliente);
     var waBtn = waLink ? '<a class="wa-link" href="' + waLink + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"></path></svg>WhatsApp</a>' : '';
 
     var podeExcluir = status === 'cancelado' || status === 'entregue' || status === 'sem-resposta' || String(status).indexOf('Aguardando') === 0;
@@ -721,7 +819,7 @@ function aplicarFiltros() {
 
     var reciboBtn = podeEmitirRecibo(status)
       ? '<div style="margin-top:6px;">'
-        + '<button type="button" class="recibo-btn" onclick="abrirRecibo(\'' + (p.pedido_id || p.id) + '\', ' + (tipoAtivo === 'loja' ? 'true' : 'false') + ')" '
+        + '<button type="button" class="recibo-btn" onclick="abrirRecibo(\'' + (p.pedido_id || p.id) + '\', ' + (tipoAtivo === 'loja' ? 'true' : 'false') + ') " '
         + 'style="width:100%;padding:6px 10px;background:#f0f6ff;border:1px solid #1f6feb;border-radius:8px;color:#1f6feb;font-size:12px;font-weight:700;cursor:pointer;">🧾 Recibo</button>'
         + '</div>'
       : '';
@@ -769,7 +867,7 @@ function aplicarFiltros() {
 
     html += '<tr' + classeTr + '>' +
       '<td class="td-id">' + idExibido + (ehNovo ? '<span class="novo-badge">Novo</span>' : '') + badgeUrgencia(p) + '</td>' +
-      '<td><div class="td-client">' + escapar(p.nome_cliente || '—') + '</div></td>' +
+      celulaCliente(p) +
       '<td class="td-contact">' + escapar(contato) + waBtn + '</td>' +
       '<td class="td-desc">' + detalhes +
         (extra.length ? '<small>' + escapar(extra.join(' · ')) + '</small>' : '') +
@@ -799,7 +897,7 @@ function renderizar() {
   atualizarBarraVisao();
 }
 
-/* ===== 9. ESTATÍSTICAS ===== */
+/* ===== 10. ESTATÍSTICAS ===== */
 function renderizarStats() {
   var grid = document.getElementById('statsGrid');
   if (!grid) return;
@@ -831,14 +929,18 @@ function renderizarStats() {
     if (chips) chips.classList.remove('show');
 
     var totalL = lojaPedidos.length;
+
     var aguardando = lojaPedidos.filter(function(p) {
       return String(p.status || 'feito').indexOf('Aguardando') === 0;
     }).length;
+
     var feitos = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'feito'; }).length;
+
     var pagos = lojaPedidos.filter(function(p) {
       var s = p.status || 'feito';
       return s === 'pago' || s === 'Pago (Cartão)';
     }).length;
+
     var gerandoNota = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'gerando nota'; }).length;
     var embalagens = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'embalagem'; }).length;
     var saidas = lojaPedidos.filter(function(p) { return (p.status || 'feito') === 'saiu'; }).length;
@@ -890,10 +992,10 @@ function renderizarStats() {
     }).length;
 
     var elAtras = document.getElementById('chipAtrasados');
-    var elHoje = document.getElementById('chipHoje');
+    var elHoje2 = document.getElementById('chipHoje');
     var elSem = document.getElementById('chipSemana');
     if (elAtras) elAtras.textContent = nAtrasados;
-    if (elHoje) elHoje.textContent = nHoje;
+    if (elHoje2) elHoje2.textContent = nHoje;
     if (elSem) elSem.textContent = nSemana;
 
     var icoServico = tipoAtivo === 'assistencia' ? '🔧' : (tipoAtivo === 'consultoria' ? '🎓' : '📋');
@@ -916,7 +1018,7 @@ function renderizarStats() {
   }, 60);
 }
 
-/* ===== 10. NOVOS PEDIDOS + ALERTA SONORO ===== */
+/* ===== 11. NOVOS PEDIDOS + ALERTA SONORO ===== */
 function detectarNovos() {
   var chave = tipoAtivo === 'loja' ? 'm3d_vistos_loja' : 'm3d_vistos';
   var vistos = [];
@@ -936,7 +1038,6 @@ function detectarNovos() {
 }
 
 var _ctxAudio = null;
-
 function ctxAudio() {
   if (!_ctxAudio) {
     try { _ctxAudio = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -949,7 +1050,6 @@ function tocarAlerta() {
     var ctx = ctxAudio();
     if (!ctx) return;
     if (ctx.state === 'suspended') ctx.resume();
-
     var osc = ctx.createOscillator();
     var gain = ctx.createGain();
     osc.connect(gain);
@@ -979,13 +1079,11 @@ function tocarAlerta() {
 function mostrarBanner(qtd) {
   var banner = document.getElementById('notifyBanner');
   if (!banner) return;
-
   banner.classList.remove('alerta-prazo');
   document.getElementById('notifyIcon').textContent = '🔔';
   document.getElementById('notifyTitle').textContent = qtd > 1 ? qtd + ' novos pedidos recebidos!' : 'Novo pedido recebido!';
   document.getElementById('notifyText').textContent = qtd > 1 ? 'Clientes acabaram de enviar pedidos. Responda em ordem de chegada.' : 'Um cliente acabou de enviar um pedido.';
   banner.classList.add('show');
-
   clearTimeout(banner._timer);
   banner._timer = setTimeout(fecharBanner, 8000);
 }
@@ -995,7 +1093,7 @@ function fecharBanner() {
   if (b) b.classList.remove('show');
 }
 
-/* ===== 11. VER DETALHES (MODAL) ===== */
+/* ===== 12. VER DETALHES (MODAL) ===== */
 function montarBotaoVerMais(titulo, meta, texto, html, wa) {
   verCache[verSeq] = {
     t: titulo == null ? '' : String(titulo),
@@ -1012,18 +1110,14 @@ function montarBotaoVerMais(titulo, meta, texto, html, wa) {
 function abrirVerMais(i) {
   var d = verCache[i] || {};
   verDados.texto = d.x || '';
-
   document.getElementById('vmTitulo').textContent = d.t || '';
   document.getElementById('vmMeta').textContent = d.m || '';
-
   var el = document.getElementById('vmTexto');
   if (d.h) { el.innerHTML = d.h; }
   else { el.textContent = verDados.texto || '(sem mensagem)'; }
-
   var link = document.getElementById('vmWa');
   if (d.w) { link.href = d.w; link.style.display = ''; }
   else { link.style.display = 'none'; }
-
   document.getElementById('verOverlay').classList.add('show');
 }
 
@@ -1052,24 +1146,20 @@ function rotuloServico(s) {
 
 function camposEncomenda(p) {
   p = p || {};
-
   function pega(sources) {
     for (var i = 0; i < sources.length; i++) {
       if (sources[i] != null && String(sources[i]).trim() !== '') return String(sources[i]).trim();
     }
     return null;
   }
-
   function v(d) {
     if (d === null || d === undefined) return 'Pendente';
     d = String(d).trim();
     return (d === '' || d === 'null' || d === 'undefined') ? 'Pendente' : d;
   }
-
   var servico = rotuloServico(pega([p.servico, p.tipo_servico, p.servico_escolhido, p.tipo_peca, p.tipo])) || '🖨️ Impressão 3D';
   var desc = pega([p.descricao_peca, p.descricao, p.observacoes, p.nota, p.mensagem]) || '';
   var descMain = desc.split('|')[0].trim();
-
   var linksExtra = [];
   var partes = desc.split('|');
   for (var i = 1; i < partes.length; i++) {
@@ -1078,7 +1168,6 @@ function camposEncomenda(p) {
       x.replace(/^links?:/i, '').split(',').forEach(function(u) { u = u.trim(); if (u) linksExtra.push(u); });
     }
   }
-
   return [
     ['Serviço solicitado', servico],
     ['Nome do cliente', v(pega([p.nome_cliente, p.nome, p.cliente]))],
@@ -1115,12 +1204,10 @@ function montarTextoCompletoLoja(p) {
     var cor = item.cor ? ' (' + item.cor + ')' : '';
     linhas.push(qtd + 'x ' + nome + cor + ' — ' + fmtMoeda(preco * qtd));
   });
-
   if (!linhas.length) linhas.push('Itens: Pendente');
   if (p.cupom && parseFloat(p.desconto) > 0) linhas.push('Cupom ' + p.cupom + ': -' + fmtMoeda(p.desconto));
   linhas.push('Total: ' + fmtMoeda(p.total || (parseFloat(p.subtotal) - parseFloat(p.desconto))));
   linhas.push('Entrega: ' + (etiquetaEntrega(p.entrega) || 'Pendente'));
-
   var tipoE = String(p.entrega || '').toLowerCase();
   if (tipoE.indexOf('correio') !== -1) {
     linhas.push('Endereço: ' + (p.endereco || 'Pendente'));
@@ -1128,17 +1215,14 @@ function montarTextoCompletoLoja(p) {
   if (tipoE.indexOf('retirada') !== -1 || tipoE.indexOf('uber') !== -1) {
     linhas.push('Horário: ' + (p.horario || 'Pendente'));
   }
-
   return linhas.join('\n');
 }
 
 function montarDescricao(texto) {
   if (!texto) return '<span style="color:var(--gray)">—</span>';
-
   var partes = texto.split('|');
   var principal = partes[0].trim();
   var links = [];
-
   for (var i = 1; i < partes.length; i++) {
     var p = partes[i].trim();
     if (p.indexOf('Links:') === 0) {
@@ -1148,21 +1232,18 @@ function montarDescricao(texto) {
       });
     }
   }
-
   var html = '<span class="desc-text" title="' + escapar(texto) + '">' + escapar(principal) + '</span>';
   if (links.length) {
     html += '<small>' + links.map(function(l) {
       return '<a href="' + escapar(l) + '" target="_blank" rel="noopener">Ver referência</a>';
     }).join(' · ') + '</small>';
   }
-
   return html;
 }
 
 function montarItensLoja(p) {
   var itens = p.itens || [];
   if (!itens.length) return '<span style="color:var(--gray)">—</span>';
-
   var html = '';
   itens.forEach(function(item) {
     var qtd = item.qtd || item.quantidade || item.quant || 1;
@@ -1173,18 +1254,14 @@ function montarItensLoja(p) {
     var thumb = img ? '<img class="item-thumb" src="' + escapar(img) + '" alt="">' : '';
     html += '<span class="item-linha">' + thumb + '<span class="item-nome">' + escapar(String(qtd) + 'x ' + nome + cor) + '</span> · ' + fmtMoeda(preco * qtd) + '</span>';
   });
-
   if (p.cupom && parseFloat(p.desconto) > 0) {
     html += '<span class="item-linha" style="color:var(--gray);">Cupom ' + escapar(p.cupom) + ': -' + fmtMoeda(p.desconto) + '</span>';
   }
-
   html += '<span class="total-loja">Total: ' + fmtMoeda(p.total || (parseFloat(p.subtotal) - parseFloat(p.desconto))) + '</span>';
   html += '<span class="entrega-loja">' + etiquetaEntrega(p.entrega) + '</span>';
-
   if (p.nota) {
     html += '<small style="display:block;margin-top:4px;color:var(--gray);font-size:11px;">Obs: ' + escapar(p.nota) + '</small>';
   }
-
   return html;
 }
 
@@ -1198,7 +1275,7 @@ function etiquetaEntrega(e) {
 
 function montarLinkWhatsApp(contato) {
   if (!contato) return '';
-  var digitos = contato.replace(/\D/g, '');
+  var digitos = String(contato).replace(/\D/g, '');
   if (digitos.length < 10) return '';
   if (digitos.length === 10 || digitos.length === 11) {
     if (digitos.indexOf('55') !== 0) digitos = '55' + digitos;
@@ -1206,7 +1283,7 @@ function montarLinkWhatsApp(contato) {
   return 'https://wa.me/' + digitos;
 }
 
-/* ===== 12. STATUS: PILLS, OPÇÕES, MENSAGENS E BALCÃO ===== */
+/* ===== 13. STATUS: PILLS, OPÇÕES, MENSAGENS E BALCÃO ===== */
 function classeStatusPill(s) {
   if (!s) s = statusPadrao();
   if (s === 'Pago (Cartão)') return 'pagocartao';
@@ -1263,7 +1340,6 @@ function opcoesTodas() {
     ];
   }
 
-  /* encomenda (padrão) */
   return [
     ['novo', 'Novo'],
     ['em-analise', 'Em análise'],
@@ -1343,7 +1419,6 @@ function traduzirStatus(s) {
     'sem-resposta': '📭 Sem resposta',
     cancelado: '✕ Cancelado'
   };
-
   return map[s] || s;
 }
 
@@ -1392,7 +1467,6 @@ function mudarStatus(id, novoStatus, extras) {
 
   var endpoint = tipoAtivo === 'loja' ? '/loja/pedidos/' : '/orcamentos/';
   var corpo = { status: novoStatus };
-
   if (extras) {
     if (extras.data_agendamento) corpo.data_agendamento = extras.data_agendamento;
     if (extras.hora_agendamento) corpo.hora_agendamento = extras.hora_agendamento;
@@ -1418,7 +1492,6 @@ function mudarStatus(id, novoStatus, extras) {
       if (extras && extras.hora_agendamento) p.hora_agendamento = extras.hora_agendamento;
     }
     renderizar();
-
     if (novoStatus !== statusAnterior) {
       mostrarBalcao(nome, pedidoRef, contato, novoStatus);
     }
@@ -1432,25 +1505,20 @@ function mudarStatus(id, novoStatus, extras) {
 function montarMensagemEntregue(primeiroNome, id) {
   var msg = 'Olá, *' + primeiroNome + '*! Seu pedido *' + id + '* foi entregue 🎉\n'
     + 'Obrigado demais pela confiança — foi um prazer produzir sua peça! ⭐\n';
-
   if (LINK_AVALIACAO_GOOGLE) {
     msg += 'Se puder, deixe sua avaliação no Google — ajuda demais a nossa loja:\n' + LINK_AVALIACAO_GOOGLE + '\n';
   }
-
   msg += 'Se precisar de algo, ou quiser encomendar uma nova peça, é só chamar! 💛';
   return msg;
 }
 
-/* Verifica se o status exige agendamento */
 function statusExigeAgendamento(status) {
   return status === 'agendado';
 }
 
-/* Monta o bloco de inputs de data/hora no balcão */
 function blocoInputsAgendamento(p) {
   var dataAtual = p && p.data_agendamento ? String(p.data_agendamento).slice(0, 10) : '';
   var horaAtual = p && p.hora_agendamento ? String(p.hora_agendamento).slice(0, 5) : '';
-
   return '<div style="margin:14px 0;padding:14px;background:#f0f6ff;border:2px solid #1f6feb;border-radius:12px;">'
     + '<div style="font-size:12px;font-weight:800;color:#0f1e3d;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📅 Data e hora do agendamento</div>'
     + '<div style="display:flex;gap:10px;">'
@@ -1500,7 +1568,6 @@ function montarMensagemStatus(nome, id, status) {
     'sem-resposta': msgSemResposta,
     cancelado: 'Olá, *' + primeiroNome + '*! Uma atualização sobre o pedido *' + id + '*: ele foi cancelado.\nSe quiser refazer o pedido, ajustar algo ou tirar qualquer dúvida, é só nos chamar — vamos adorar te atender! 💛'
   };
-
   return map[status] || '';
 }
 
@@ -1510,14 +1577,12 @@ function mostrarBalcao(nome, id, contato, status) {
 
   document.getElementById('sbTitulo').textContent = 'Status: ' + traduzirStatus(status);
 
-  /* Inputs de agendamento (consultoria / assistência) */
   var boxAg = document.getElementById('sbAgendamento');
   if (!boxAg) {
     boxAg = document.createElement('div');
     boxAg.id = 'sbAgendamento';
     document.getElementById('sbMensagem').parentNode.insertBefore(boxAg, document.getElementById('sbMensagem'));
   }
-
   var pedidoAtual = getListaAtiva().find(function(x) { return (x.pedido_id || ('#' + x.id)) === id; });
   boxAg.innerHTML = statusExigeAgendamento(status) ? blocoInputsAgendamento(pedidoAtual) : '';
 
@@ -1550,7 +1615,7 @@ function mostrarCopiado() {
   el._t = setTimeout(function() { el.classList.remove('show'); }, 2000);
 }
 
-/* ===== 13. EXPORTAR CSV E RELATÓRIO PARA IA ===== */
+/* ===== 14. EXPORTAR CSV E RELATÓRIO PARA IA ===== */
 function csvEscape(v) {
   v = String(v == null ? '' : v);
   return '"' + v.replace(/"/g, '""') + '"';
@@ -1561,6 +1626,7 @@ function exportarCSV() {
   if (!filtrados.length) { alert('Nenhum pedido para exportar com os filtros atuais.'); return; }
 
   var linhas;
+
   if (tipoAtivo === 'loja') {
     linhas = [['ID', 'Pedido', 'Cliente', 'WhatsApp', 'Itens', 'Total', 'Entrega', 'Endereco', 'Horario', 'Status', 'Data']];
     filtrados.forEach(function(p) {
@@ -1577,17 +1643,13 @@ function exportarCSV() {
   var csv = linhas.map(function(r) { return r.map(csvEscape).join(';'); }).join('\r\n');
   var blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
   var url = URL.createObjectURL(blob);
-
   var a = document.createElement('a');
   a.href = url;
-
   var rotuloCsv = tipoAtivo === 'loja' ? 'pedidos-loja' : (tipoAtivo === 'assistencia' ? 'assistencias' : (tipoAtivo === 'consultoria' ? 'consultorias' : 'encomendas'));
   a.download = rotuloCsv + '-' + new Date().toISOString().slice(0, 10) + '.csv';
-
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-
   setTimeout(function() { URL.revokeObjectURL(url); }, 2000);
 }
 
@@ -1607,7 +1669,6 @@ function abrirRelatorioIA() {
     linhas.push('--- Pedido ' + (p.pedido_id || ('#' + p.id)) + ' ---');
     linhas.push('Cliente: ' + (p.nome_cliente || '—'));
     linhas.push('Contato: ' + (p.whatsapp || p.email || '—'));
-
     if (tipoAtivo !== 'loja') {
       linhas.push('Serviço: ' + (rotuloServico(p.servico || p.tipo_servico || p.tipo_peca || p.tipo) || '—'));
       linhas.push('O que quer criar: ' + ((p.descricao_peca || '').split('|')[0].trim() || '—'));
@@ -1622,20 +1683,16 @@ function abrirRelatorioIA() {
       });
       linhas.push('Total: ' + fmtMoeda(p.total || p.subtotal));
       linhas.push('Entrega: ' + (etiquetaEntrega(p.entrega) || '—'));
-
       var tipoR = String(p.entrega || '').toLowerCase();
       if (tipoR.indexOf('correio') !== -1) linhas.push('Endereço: ' + (p.endereco || 'Pendente'));
       if (tipoR.indexOf('retirada') !== -1 || tipoR.indexOf('uber') !== -1) linhas.push('Horário: ' + (p.horario || 'Pendente'));
-
       linhas.push('Status: ' + traduzirStatus(p.status || 'feito'));
       linhas.push('Recebido em: ' + formatarData(p.created_at));
     }
-
     linhas.push('');
   });
 
   linhas.push('=== FIM DO RELATÓRIO ===');
-
   document.getElementById('relatorioTexto').value = linhas.join('\n');
   document.getElementById('relatorioOverlay').classList.add('show');
 }
@@ -1648,7 +1705,7 @@ function copiarRelatorio() {
   copiarTexto(document.getElementById('relatorioTexto').value, mostrarCopiado);
 }
 
-/* ===== 14. CÓPIA PARA A ÁREA DE TRANSFERÊNCIA ===== */
+/* ===== 15. CÓPIA PARA A ÁREA DE TRANSFERÊNCIA ===== */
 function copiarTexto(t, aoConcluir) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(t).then(function() { if (aoConcluir) aoConcluir(); }).catch(function() { fbCopia(t); if (aoConcluir) aoConcluir(); });
@@ -1667,13 +1724,15 @@ function fbCopia(t) {
   document.body.removeChild(ta);
 }
 
-/* ===== 15. TECLA ESCAPE ===== */
+/* ===== 16. TECLA ESCAPE ===== */
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     fecharRecibo();
     fecharVerMais();
     fecharRelatorio();
     fecharBalaoPrazo();
+    var fov = document.getElementById('fotoOverlay');
+    if (fov) fov.classList.remove('show');
     if (window.modFecharStatus) window.modFecharStatus();
     if (window.modFecharDetalhe) window.modFecharDetalhe();
     if (window.encFecharStatus) window.encFecharStatus();
@@ -1692,6 +1751,7 @@ function abrirRecibo(codigo, ehLoja) {
     : API_URL + '/orcamentos/' + encodeURIComponent(codigo) + '/recibo';
 
   var overlay = document.getElementById('reciboOverlay');
+
   if (!overlay) {
     overlay = document.createElement('div');
     overlay.id = 'reciboOverlay';
@@ -1707,7 +1767,6 @@ function abrirRecibo(codigo, ehLoja) {
         '<div id="reciboMsg" style="font-size:12.5px;color:#8a94a8;margin-top:16px;min-height:18px;line-height:1.5;"></div>' +
       '</div>';
     document.body.appendChild(overlay);
-
     document.getElementById('reciboFechar').onclick = fecharRecibo;
     overlay.addEventListener('click', function (e) {
       if (e.target === overlay) fecharRecibo();
@@ -1728,7 +1787,6 @@ function abrirRecibo(codigo, ehLoja) {
   btnBaixar.textContent = '📥 Baixar PDF';
   btnEnviar.textContent = '✉️ Enviar por e-mail';
 
-  /* ---- BAIXAR ---- */
   btnBaixar.onclick = function () {
     btnBaixar.disabled = true;
     btnBaixar.textContent = 'Gerando...';
@@ -1769,7 +1827,6 @@ function abrirRecibo(codigo, ehLoja) {
       });
   };
 
-  /* ---- ENVIAR ---- */
   btnEnviar.onclick = function () {
     btnEnviar.disabled = true;
     btnEnviar.textContent = 'Enviando...';
@@ -1810,7 +1867,7 @@ function fecharRecibo() {
   if (o) o.style.display = 'none';
 }
 
-/* ===== 16. EXPOSIÇÃO GLOBAL ===== */
+/* ===== 17. EXPOSIÇÃO GLOBAL ===== */
 try {
   window.abrirRecibo = abrirRecibo;
   window.fecharRecibo = fecharRecibo;
@@ -1834,6 +1891,9 @@ try {
   window.ehEncerrado = ehEncerrado;
   window.ehAtivo = ehAtivo;
   window.setFiltroVisao = setFiltroVisao;
+  window.celulaCliente = celulaCliente;
+  window.abrirFotoGrande = abrirFotoGrande;
+  window.carregarFotosClientes = carregarFotosClientes;
 } catch (e) {}
 
 /* =====================================================================
@@ -1841,7 +1901,6 @@ try {
    ===================================================================== */
 (function () {
 
-/* Status por contexto — espelha opcoesTodas() */
 function statusDoContexto() {
   if (tipoAtivo === 'loja') {
     return [
@@ -1887,7 +1946,6 @@ function statusDoContexto() {
     ];
   }
 
-  /* encomenda (padrão) */
   return [
     { id: 'novo',         label: 'Novo',         classe: 'status-novo' },
     { id: 'em-analise',   label: 'Em análise',   classe: 'status-em-analise' },
@@ -1934,10 +1992,8 @@ function trocarSelectPorBotao() {
     if (sel.dataset.trocado === '1') continue;
     sel.dataset.trocado = '1';
     sel.style.display = 'none';
-
     var m = (sel.getAttribute('onchange') || '').match(/mudarStatus\((\d+)/);
     if (!m) continue;
-
     var id = m[1];
     var btn = document.createElement('button');
     btn.type = 'button';
@@ -1947,7 +2003,6 @@ function trocarSelectPorBotao() {
     btn.addEventListener('click', function () {
       abrirBalcaoEncomenda(this.getAttribute('data-enc-status'));
     });
-
     sel.parentNode.appendChild(btn);
   }
 }
@@ -1989,7 +2044,6 @@ function abrirBalcaoEncomenda(id) {
   html += '</div>';
 
   html += '<div class="m3d-transf-bloco"><h4>Alterar para</h4><div class="mod-status-grid">';
-
   var listaStatus = statusDoContexto();
   for (var i = 0; i < listaStatus.length; i++) {
     var s = listaStatus[i];
@@ -1999,12 +2053,11 @@ function abrirBalcaoEncomenda(id) {
       '<span class="status-pill ' + s.classe + '">' + esc(s.label) + '</span>' +
       '</button>';
   }
-
   html += '</div></div>';
+
   html += '<div id="encDinamico"></div>';
 
   corpo.innerHTML = html;
-
   overlay.classList.add('aberto');
   overlay.style.display = 'flex';
   overlay.style.opacity = '1';
@@ -2039,7 +2092,6 @@ function selecionarStatusEncomenda(statusId) {
 
   var html = '';
 
-  /* ✅ Inputs de data/hora quando o status for "agendado" */
   if (statusId === 'agendado') {
     var dataAtual = p.data_agendamento ? String(p.data_agendamento).slice(0, 10) : '';
     var horaAtual = p.hora_agendamento ? String(p.hora_agendamento).slice(0, 5) : '';
@@ -2096,16 +2148,13 @@ function selecionarStatusEncomenda(statusId) {
   var aplicar = document.getElementById('encAplicar');
   if (aplicar) aplicar.addEventListener('click', function () {
     if (!encAtual || !encAcao) return;
-
     var idAtual = encAtual.id;
     var acao = encAcao;
     var dadosAg = null;
 
-    /* ✅ CORRIGIDO: lê e valida os campos ANTES de fechar o balcão */
     if (acao === 'agendado') {
       var elData = document.getElementById('encDataAg');
       var elHora = document.getElementById('encHoraAg');
-
       if (!elData || !elData.value) {
         alert('Informe a data do agendamento.');
         return;
@@ -2114,7 +2163,6 @@ function selecionarStatusEncomenda(statusId) {
         alert('Informe a hora do agendamento.');
         return;
       }
-
       dadosAg = {
         data_agendamento: elData.value,
         hora_agendamento: elHora.value
@@ -2122,7 +2170,6 @@ function selecionarStatusEncomenda(statusId) {
     }
 
     fecharBalcaoEncomenda();
-
     if (typeof window.mudarStatus === 'function') {
       window.mudarStatus(idAtual, acao, dadosAg);
     }
@@ -2179,7 +2226,6 @@ function acaoPix(codigo, acao, btn) {
   })
   .then(function(dados) {
     var p = dados.pedido || {};
-
     var local = lojaPedidos.filter(function(x) {
       return String(x.pedido_id) === String(codigo) || String(x.id) === String(codigo);
     })[0];
@@ -2221,6 +2267,7 @@ function acaoPix(codigo, acao, btn) {
 
 /* Injeta os 3 botões nas linhas com Pix pendente */
 (function() {
+
   function injetarBotoesPix() {
     if (tipoAtivo !== 'loja') return;
 
@@ -2270,10 +2317,10 @@ function acaoPix(codigo, acao, btn) {
     };
   }
 
-  var _aplicarOriginal = window.aplicarFiltros;
-  if (typeof _aplicarOriginal === 'function') {
+  var _aplicarOriginal2 = window.aplicarFiltros;
+  if (typeof _aplicarOriginal2 === 'function') {
     window.aplicarFiltros = function() {
-      var r = _aplicarOriginal.apply(this, arguments);
+      var r = _aplicarOriginal2.apply(this, arguments);
       setTimeout(injetarBotoesPix, 60);
       return r;
     };
@@ -2281,4 +2328,5 @@ function acaoPix(codigo, acao, btn) {
 
   window.acaoPix = acaoPix;
   window.addEventListener('load', function() { setTimeout(injetarBotoesPix, 300); });
+
 })();

@@ -148,6 +148,152 @@
       <div class="fgrupo">
         <div class="fgrupo-tit"><span class="ft-num">1</span> Seus dados</div>
 
+        <!-- ---- BLOCO A: cliente NÃO logado ---- -->
+        <div id="blocoVisitante">
+          <div class="cadastro-aviso" id="cadastroAviso">
+            <span class="ca-ico">💡</span>
+            <div class="ca-txt">
+              <strong>Escolha como quer se identificar.</strong>
+              O simples já gera seu código de rastreio. O completo libera <b>cupom de 10% na sua primeira compra na loja</b> e <b>5% de desconto no primeiro projeto personalizado</b>.
+            </div>
+          </div>
+
+          <div class="cadastro-grid" id="cadastroGrid">
+            <div class="cadastro-card selected" data-cadastro="simples" onclick="selecionarCadastro(this)">
+              <span class="cc-ico">📩</span>
+              <span class="cc-nome">Cadastro simples</span>
+              <span class="cc-desc">Nome, WhatsApp e e-mail</span>
+              <span class="cc-badge neutro">Rastreio incluído</span>
+            </div>
+            <div class="cadastro-card" data-cadastro="completo" onclick="selecionarCadastro(this)">
+              <span class="cc-tag">🎁 Recomendado</span>
+              <span class="cc-ico">⭐</span>
+              <span class="cc-nome">Cadastro completo</span>
+              <span class="cc-desc">+ endereço, aniversário e CPF</span>
+              <span class="cc-badge bonus">10% 1ª compra + 5% projeto</span>
+            </div>
+          </div>
+
+          <div class="cadastro-beneficios" id="cadastroBeneficios" style="display:none;">
+            <div class="cb-tit">🎁 O que você ganha com o cadastro completo</div>
+            <ul class="cb-lista">
+              <li>
+                <span class="cb-pct">10%</span>
+                <div>
+                  <b>Cupom de 10% na sua primeira compra na loja</b>
+                  Vale apenas na primeira compra de produtos de pronta entrega. O cupom chega no seu e-mail assim que você confirmar o cadastro.
+                </div>
+              </li>
+              <li>
+                <span class="cb-pct">5%</span>
+                <div>
+                  <b>5% de desconto no primeiro projeto personalizado</b>
+                  Aplicado por nós direto no orçamento, apenas no seu primeiro pedido de impressão, modelagem, consultoria ou assistência.
+                </div>
+              </li>
+              <li>
+                <span class="cb-pct">📦</span>
+                <div>
+                  <b>Acesso ao Minha Conta</b>
+                  Histórico de pedidos, foto de perfil e endereço salvo para as próximas compras.
+                </div>
+              </li>
+            </ul>
+            <button type="button" class="cb-btn" id="btnCriarConta" onclick="abrirCadastroCompleto()">
+              Criar minha conta agora
+            </button>
+          </div>
+
+          <div class="cadastro-extra" id="cadastroExtra" style="display:none;">
+            <div class="ce-cab">
+              <span class="ce-ico">🔐</span>
+              <div>
+                <strong>Dados da sua conta</strong>
+                <span>Usados só para o cadastro e emissão de nota. Você pode editar depois em Minha Conta.</span>
+              </div>
+            </div>
+
+            <div class="ce-status" id="ceStatus"></div>
+
+            <div class="campos-2">
+              <div class="campo">
+                <label for="cadSenha">Senha da conta <span class="obg">*</span></label>
+                <input type="password" id="cadSenha" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+                <span class="dica">Você usará essa senha para entrar em Minha Conta.</span>
+              </div>
+              <div class="campo">
+                <label for="cadSenha2">Confirmar senha <span class="obg">*</span></label>
+                <input type="password" id="cadSenha2" placeholder="Repita a senha" autocomplete="new-password">
+              </div>
+            </div>
+
+            <div class="campos-2">
+              <div class="campo">
+                <label for="cadDia">Dia do nascimento</label>
+                <input type="number" id="cadDia" min="1" max="31" placeholder="Dia">
+              </div>
+              <div class="campo">
+                <label for="cadMes">Mês do nascimento</label>
+                <select id="cadMes">
+                  <option value="">Selecione…</option>
+                  <option value="1">Janeiro</option>
+                  <option value="2">Fevereiro</option>
+                  <option value="3">Março</option>
+                  <option value="4">Abril</option>
+                  <option value="5">Maio</option>
+                  <option value="6">Junho</option>
+                  <option value="7">Julho</option>
+                  <option value="8">Agosto</option>
+                  <option value="9">Setembro</option>
+                  <option value="10">Outubro</option>
+                  <option value="11">Novembro</option>
+                  <option value="12">Dezembro</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label for="cadCep">CEP <span class="opc">(opcional)</span></label>
+              <input type="text" id="cadCep" placeholder="26510-000" maxlength="9" autocomplete="postal-code" oninput="mascararCep(this)">
+              <span class="dica">Preenchemos o endereço automático para as próximas compras.</span>
+            </div>
+
+            <div class="campo">
+              <label for="cadCpf">CPF <span class="opc">(opcional — para nota fiscal)</span></label>
+              <input type="text" id="cadCpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" oninput="mascararCpf(this)">
+            </div>
+
+            <div class="ce-google">
+              <div class="ce-ou"><span>ou</span></div>
+              <button type="button" class="ce-google-btn" id="btnCadGoogle" onclick="cadastroComGoogle()">
+                <svg width="18" height="18" viewBox="0 0 48 48">
+                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                </svg>
+                Preencher com Google
+              </button>
+              <p class="ce-google-nota">Ao usar o Google, criamos sua conta sem senha — você entra com um clique.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---- BLOCO B: cliente JÁ logado ---- -->
+        <div id="blocoLogado" style="display:none;">
+          <div class="logado-card">
+            <div class="lc-avatar" id="lcAvatar">IL</div>
+            <div class="lc-info">
+              <span class="lc-tag">✓ Você está logado</span>
+              <strong id="lcNome">—</strong>
+              <span id="lcEmail">—</span>
+            </div>
+            <a href="minha-conta.html" class="lc-link">Minha conta →</a>
+          </div>
+          <p class="lc-nota">Seus dados já estão salvos. Você só precisa preencher os detalhes do projeto abaixo.</p>
+        </div>
+
+        <!-- ---- Campos base (sempre visíveis) ---- -->
         <div class="campo" id="campoNome">
           <label for="nome">Seu nome <span class="obg">*</span></label>
           <input type="text" id="nome" name="nome" placeholder="Como podemos te chamar?" autocomplete="name" oninput="atualizarProgresso()">
@@ -160,9 +306,8 @@
             <input type="tel" id="whatsapp" name="whatsapp" placeholder="(21) 96659-4803" autocomplete="tel" oninput="formatarWhatsApp(this);atualizarProgresso()">
             <div class="erro-msg" id="err-whatsapp">Informe um WhatsApp válido com DDD.</div>
           </div>
-
           <div class="campo" id="campoEmail">
-            <label for="email">E-mail <span class="opc">(opcional)</span></label>
+            <label for="email">E-mail <span class="obg" id="lblEmailObg">*</span></label>
             <input type="email" id="email" name="email" placeholder="seu@email.com" autocomplete="email" oninput="atualizarProgresso()">
             <span class="dica dica-email">
               <span class="de-ico">📧</span>
@@ -176,7 +321,6 @@
       <!-- ===== 2. SERVIÇO ===== -->
       <div class="fgrupo">
         <div class="fgrupo-tit"><span class="ft-num">2</span> Qual serviço você precisa?</div>
-
         <div class="servico-grid" id="servicoGrid">
           <div class="servico-card selected" data-servico="impressao" onclick="selecionarServico(this)">
             <span class="sc-ico">🧊</span>
@@ -206,7 +350,6 @@
             <input type="number" id="quantidade" name="quantidade" min="1" value="1" placeholder="1" oninput="atualizarProgresso()">
             <div class="erro-msg" id="err-quantidade">Informe a quantidade.</div>
           </div>
-
           <div class="campo" id="campoPrazo">
             <label for="prazo">Prazo desejado <span class="obg">*</span></label>
             <input type="date" id="prazo" name="prazo" onchange="atualizarProgresso()">
@@ -383,7 +526,6 @@
       <p class="form-rodape">
         ⚡ Resposta em até 24h úteis · Orçamento sempre gratuito
       </p>
-
     </form>
   </div>
 </section>
@@ -520,16 +662,13 @@
 <div class="modal-modelagem" id="modalModelagem">
   <div class="mm-card">
     <button type="button" class="mm-close" onclick="fecharModalModelagem()" aria-label="Fechar">✕</button>
-
     <div class="mm-ico">📐</div>
     <h3>Você vai precisar de modelagem 3D</h3>
     <p class="mm-sub">A modelagem é um serviço <b>à parte</b> da impressão — ela cria o arquivo digital do seu projeto.</p>
-
     <div class="mm-bloco">
       <span class="mm-tit">O que é</span>
       <p>A criação do arquivo digital do seu projeto — o modelo que permite imprimir exatamente o que você imaginou.</p>
     </div>
-
     <div class="mm-bloco destaque">
       <span class="mm-tit">É um serviço pago</span>
       <p>A modelagem <b>não está inclusa</b> no valor da impressão. Ela é orçada separadamente:</p>
@@ -539,19 +678,16 @@
         <li><span>Complexa</span><b>A partir de R$ 250</b></li>
       </ul>
     </div>
-
     <div class="mm-bloco">
       <span class="mm-tit">Como funciona</span>
       <p>Você envia referências → recebemos o briefing → enviamos o orçamento → você aprova e paga antecipado → modelamos e enviamos o arquivo em STL/3MF.</p>
     </div>
-
     <div class="mm-atalho">
       <p class="mm-atalho-txt">Você pode continuar por aqui mesmo — orçamos a modelagem junto com a impressão neste mesmo pedido.</p>
       <button type="button" class="mm-atalho-btn" onclick="solicitarModelagemAqui()">
         📐 Solicitar minha modelagem 3D
       </button>
     </div>
-
     <button type="button" class="mm-btn" onclick="fecharModalModelagem()">Entendi, continuar</button>
   </div>
 </div>
@@ -571,6 +707,9 @@
 <!-- ==================== TOAST ==================== -->
 <div class="toast" id="toastPagina"></div>
 
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="enviar-projeto.js"></script>
 </body>
 </html>

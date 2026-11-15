@@ -22,6 +22,7 @@
   css.textContent=
   '.m3l-login-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0f1e3d;border:1.5px solid #fff;border-radius:999px;padding:8px 16px;font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;box-shadow:0 2px 6px rgba(0,0,0,.14);transition:background .15s,transform .15s,box-shadow .15s;}' +
   '.m3l-login-btn:hover{background:#eef1f6;transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.18);}' +
+    '.m3l-login-btn::before,.m3l-login-btn::after{content:none !important;display:none !important;background:none !important;width:0 !important;height:0 !important;}' +
   '.header-inner .m3l-login-btn{margin-left:12px;}' +
   '.m3l-ov{position:fixed;inset:0;background:rgba(15,30,61,.6);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:99998;display:none;align-items:center;justify-content:center;padding:16px;}' +
   '.m3l-ov.open{display:flex;}' +
@@ -66,7 +67,8 @@
   '.m3l-x{position:absolute;top:10px;right:14px;background:none;border:none;font-size:1.5rem;color:#9aa3b2;cursor:pointer;line-height:1;transition:color .15s;}' +
   '.m3l-x:hover{color:#0f1e3d;}' +
   '.m3l-perfil-head{display:flex;align-items:center;gap:12px;margin:6px 0 14px;}' +
-  '.m3l-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#f26522,#e05512);color:#fff;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}' +
+  '.m3l-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#f26522,#e05512);color:#fff;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}' +
+  '.m3l-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}' +
   '.m3l-perfil-nome{font-weight:800;color:#0f1e3d;font-size:1rem;line-height:1.2;}' +
   '.m3l-perfil-email{font-size:.8rem;color:#5a6472;word-break:break-all;}' +
   '.m3l-ptabs{display:flex;gap:6px;margin-bottom:12px;background:#f0f2f6;border-radius:999px;padding:4px;}' +
@@ -77,10 +79,13 @@
   '.m3l-dado:last-child{border-bottom:none;}' +
   '.m3l-dado span{color:#5a6472;font-weight:600;white-space:nowrap;}' +
   '.m3l-dado .v{text-align:right;color:#0f1e3d;font-weight:600;}' +
-  '.m3l-acao{width:100%;padding:11px;border:1.5px solid #e2e6ee;border-radius:10px;background:#fff;color:#0f1e3d;font-weight:700;font-size:.88rem;cursor:pointer;margin-bottom:8px;font-family:inherit;transition:background .15s,border-color .15s;}' +
+  '.m3l-acao{display:block;width:100%;box-sizing:border-box;padding:11px;border:1.5px solid #e2e6ee;border-radius:10px;background:#fff;color:#0f1e3d;font-weight:700;font-size:.88rem;cursor:pointer;margin-bottom:8px;font-family:inherit;transition:background .15s,border-color .15s;text-align:center;line-height:1.4;}' +
   '.m3l-acao:hover{background:#f8f9fc;border-color:#c8cfda;}' +
   '.m3l-acao.sair:hover{background:#fdecea;border-color:#f4c7c3;color:#b3261e;}' +
+  '.m3l-acao.destaque{background:#0f1e3d;color:#fff;border-color:#0f1e3d;font-weight:800;}' +
+  '.m3l-acao.destaque:hover{background:#1a2f57;border-color:#1a2f57;color:#fff;}' +
   '.m3l-gnote{font-size:.75rem;color:#8a94a8;margin-bottom:8px;text-align:center;}' +
+  '.m3l-aviso-conta{font-size:.78rem;color:#5a6472;line-height:1.5;margin:14px 0 10px;text-align:center;padding:10px 12px;background:#f8f9fc;border:1px solid #eef1f6;border-radius:10px;}' +
   '.m3l-pedido{display:flex;align-items:center;gap:10px;border:1.5px solid #e2e6ee;border-radius:12px;padding:10px;margin-bottom:8px;}' +
   '.m3l-pedido-foto{width:52px;height:52px;border-radius:10px;background:#f0f2f6;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-size:1.4rem;}' +
   '.m3l-pedido-foto img{width:100%;height:100%;object-fit:cover;}' +
@@ -225,8 +230,6 @@
     });
   }
   /* ---------- E-mail de boas-vindas para cliente NOVO via Google (via backend) ---------- */
-  /* Cliente que entra pela primeira vez com o Google pula a verificação de e-mail,
-     então o backend dispara o e-mail de agradecimento com o cupom de 10% diretamente. */
   function pedirBoasVindasBackend(email,nome){
     return fetch(API_BASE+'/auth/enviar-boas-vindas',{
       method:'POST',
@@ -280,7 +283,6 @@
       btn.disabled=false;btn.textContent=t;
       falhaReenvioAlerta((e&&e.code)||'erro-desconhecido');
     }
-    /* 1ª opção: backend com a marca Meu 3D Labs. Se cair, usa o envio padrão do Firebase como segurança. */
     pedirEmailVerificacaoBackend().then(ok).catch(function(e){
       console.warn('loja-login: backend falhou no reenvio — tentando envio padrão do Firebase',(e&&e.code)||'');
       cu.sendEmailVerification().then(ok).catch(falhaFirebase);
@@ -474,7 +476,17 @@
     var nome=(p.nome||u.nome||'').trim();
     $('m3lPNome').textContent=nome||'Minha conta';
     $('m3lPEmail').textContent=u.email||'';
-    $('m3lAvatar').textContent=nome?nome.charAt(0).toUpperCase():'👤';
+    var av=$('m3lAvatar');
+    if(av){
+      if(p.foto){
+        av.style.background='none';
+        av.innerHTML='<img src="'+p.foto+'" alt="">';
+      }else{
+        av.style.background='';
+        av.innerHTML='';
+        av.textContent=nome?nome.charAt(0).toUpperCase():'👤';
+      }
+    }
   }
   function setAba(a){
     abaPanel=a;
@@ -495,9 +507,9 @@
     var temEnd=!!(p.cep||p.rua);
     var vEnd='Não informado';
     if(temEnd){
-      vEnd=(p.rua||'Rua —')+(p.numero?', '+p.numero:'')+(p.complemento?' ('+p.complemento+')':'')
-      +((p.bairro||p.cep||p.cidade)?'<br>':'')
-      +(p.bairro?p.bairro+' · ':'')+(p.cep?'CEP '+p.cep:'')+(p.cidade?' · '+p.cidade+(p.uf?' - '+p.uf:''):'');
+      var linha1=(p.rua||'Rua —')+(p.numero?(', '+p.numero):'')+(p.complemento?(' ('+p.complemento+')'):'');
+      var linha2=(p.bairro?p.bairro+' · ':'')+(p.cep?('CEP '+p.cep):'')+(p.cidade?(' · '+p.cidade+(p.uf?(' - '+p.uf):'')):'');
+      vEnd=linha1+(linha2?('<br>'+linha2):'');
     }
     var vAniv=(p.nascimentoDia&&p.nascimentoMes)?(p.nascimentoDia+' de '+mesesN[p.nascimentoMes-1]):'—';
     var html='<div class="m3l-dados">'
@@ -507,112 +519,21 @@
     +'<div class="m3l-dado"><span>🎂 Aniversário</span><div class="v">'+vAniv+'</div></div>'
     +'<div class="m3l-dado"><span>Endereço</span><div class="v">'+vEnd+'</div></div>'
     +'</div>';
-    var ehSenha=false;
-    try{ehSenha=!!(auth.currentUser&&auth.currentUser.providerData.some(function(x){return x.providerId==='password';}));}catch(e){}
-    html+='<button type="button" class="m3l-acao" id="m3lBtnEdit">✏️ Editar meus dados</button>';
-    if(!emailConf){html+='<button type="button" class="m3l-acao" id="m3lBtnVerif">📧 Reenviar e-mail de confirmação</button>';}
-    if(ehSenha){html+='<button type="button" class="m3l-acao" id="m3lBtnSenha">🔑 Trocar senha</button>';}
-    else{html+='<div class="m3l-gnote">Conta Google — a senha é gerenciada pelo Google.</div>';}
-    html+='<button type="button" class="m3l-acao sair" id="m3lSair">Sair da conta</button>';
+    if(!emailConf){
+      html+='<button type="button" class="m3l-acao" id="m3lBtnVerif">📧 Reenviar e-mail de confirmação</button>';
+    }
+    html+='<div class="m3l-aviso-conta">Para editar seus dados, trocar a foto ou alterar a senha, use a conta completa no botão abaixo.</div>';
+    html+='<a href="minha-conta.html" class="m3l-acao destaque" style="text-decoration:none;">📄 Ver minha conta completa</a>';
+    html+='<button type="button" class="m3l-acao sair" id="m3lSair" style="margin-top:10px;">Sair da conta</button>';
     $('pPainelDados').innerHTML=html;
-    $('m3lBtnEdit').onclick=renderEdicao;
     var bvf=$('m3lBtnVerif');
     if(bvf)bvf.onclick=function(){reenviarConfirmacao(this,function(){pok('📬 Enviamos o e-mail de confirmação para '+(u.email||'')+'. Confira a caixa de entrada e o spam.');});};
-    var bs=$('m3lBtnSenha');
-    if(bs)bs.onclick=trocarSenha;
-    $('m3lSair').onclick=function(){
+    var bsair=$('m3lSair');
+    if(bsair)bsair.onclick=function(){
       auth.signOut().then(fechaModal).catch(function(e){perr('Não foi possível sair — tente novamente.');});
     };
   }
-  /* ---------- Editar dados ---------- */
-  function renderEdicao(){
-    perr('');
-    var u=window.m3lUser||{};
-    var p=perfilCache||{};
-    var html='<button type="button" class="m3l-back" id="eVoltar">← Cancelar</button>'
-    +'<div class="m3l-step">Edite seus dados</div>'
-    +'<input type="text" id="eNome" placeholder="Nome e sobrenome" autocomplete="name" value="'+String(p.nome||u.nome||'').replace(/"/g,'&quot;')+'">'
-    +'<input type="tel" id="eFone" placeholder="WhatsApp · (21) 99999-9999" maxlength="16" value="'+(p.whatsapp?formatarFoneLoja(p.whatsapp):'')+'">'
-    +'<div class="m3l-linha2">'
-    +'<input type="number" id="eNascDia" placeholder="Dia" min="1" max="31" value="'+(p.nascimentoDia||'')+'">'
-    +'<select id="eNascMes">'+opcoesMeses(p.nascimentoMes)+'</select>'
-    +'</div>'
-    +'<input type="text" id="eCep" placeholder="CEP · para envios fora do RJ" maxlength="9" value="'+String(p.cep||'').replace(/"/g,'&quot;')+'">'
-    +'<input type="text" id="eRua" placeholder="Rua / Avenida" value="'+String(p.rua||'').replace(/"/g,'&quot;')+'">'
-    +'<div class="m3l-linha2">'
-    +'<input type="text" id="eNum" placeholder="Nº" value="'+String(p.numero||'').replace(/"/g,'&quot;')+'">'
-    +'<input type="text" id="eComp" placeholder="Compl." value="'+String(p.complemento||'').replace(/"/g,'&quot;')+'">'
-    +'</div>'
-    +'<input type="text" id="eBairro" placeholder="Bairro" value="'+String(p.bairro||'').replace(/"/g,'&quot;')+'">'
-    +'<input type="text" id="eCidUf" placeholder="Cidade - UF" value="'+((p.cidade||'')+(p.uf?(' - '+p.uf):'')).replace(/"/g,'&quot;')+'">'
-    +'<button type="button" class="m3l-go" id="eSalvar">Salvar alterações</button>';
-    $('pPainelDados').innerHTML=html;
-    $('eVoltar').onclick=function(){perr('');renderDados();};
-    $('eFone').addEventListener('input',function(){mascaraFoneM3l(this);});
-    var cepTimer2=null;
-    $('eCep').addEventListener('input',function(){
-      mascaraCepM3l(this);
-      var d=this.value.replace(/\D/g,'');
-      clearTimeout(cepTimer2);
-      if(d.length===8){cepTimer2=setTimeout(function(){buscarCepEdit(d);},350);}
-    });
-    $('eSalvar').onclick=salvarEdicao;
-    $('eNome').focus();
-  }
-  function buscarCepEdit(d){
-    perr('');
-    fetch('https://viacep.com.br/ws/'+d+'/json/')
-    .then(function(r){return r.json();})
-    .then(function(dd){
-      if(dd.erro||!dd.logradouro){perr('CEP não encontrado — confira os números ou preencha o endereço manualmente.');return;}
-      var r1=$('eRua'),b1=$('eBairro'),c1=$('eCidUf');
-      if(r1)r1.value=dd.logradouro||'';
-      if(b1)b1.value=dd.bairro||'';
-      if(c1)c1.value=(dd.localidade||'')+((dd.uf)?' - '+dd.uf:'');
-      pok('✅ Endereço encontrado — confira e salve!');
-    })
-    .catch(function(){perr('Não conseguimos consultar o CEP agora — preencha o endereço manualmente.');});
-  }
-  function salvarEdicao(){
-    perr('');
-    var u=window.m3lUser;
-    if(!u||!u.uid){perr('Sessão expirada — entre novamente.');return;}
-    var nome=$('eNome').value.trim();
-    var fone=$('eFone').value.replace(/\D/g,'');
-    var nascDia=parseInt($('eNascDia').value,10);
-    var nascMes=parseInt($('eNascMes').value,10);
-    var cep=$('eCep').value.replace(/\D/g,'');
-    var rua=$('eRua').value.trim();
-    var num=$('eNum').value.trim();
-    var comp=$('eComp').value.trim();
-    var bairro=$('eBairro').value.trim();
-    var cu=$('eCidUf').value.trim().split(' - ');
-    var cidade=(cu[0]||'').trim();
-    var uf=(cu[1]||'').trim();
-    if(nome.length<3){perr('Digite seu nome completo.');return;}
-    if(fone&&fone.length<10){perr('WhatsApp inválido — use DDD + número. Ex.: (21) 99999-9999.');return;}
-    var eAniv=validarAniversario(nascDia,nascMes);
-    if(eAniv){perr(eAniv);return;}
-    if(cep&&cep.length!==8){perr('CEP incompleto — digite os 8 números ou deixe em branco.');return;}
-    var b=$('eSalvar');b.disabled=true;var t=b.textContent;b.textContent='Salvando...';
-    auth.currentUser.updateProfile({displayName:nome}).then(function(){
-      if(!db)return;
-      return db.collection('clientes').doc(u.uid).set({nome:nome,email:u.email,whatsapp:fone,nascimentoDia:nascDia,nascimentoMes:nascMes,cep:cep,rua:rua,numero:num,complemento:comp,bairro:bairro,cidade:cidade,uf:uf},{merge:true});
-    }).then(function(){
-      perfilCache={nome:nome,whatsapp:fone,nascimentoDia:nascDia,nascimentoMes:nascMes,cep:cep,rua:rua,numero:num,complemento:comp,bairro:bairro,cidade:cidade,uf:uf};
-      u.nome=nome;u.fone=fone;
-      u.endereco={cep:cep,rua:rua,numero:num,comp:comp,bairro:bairro,cidade:cidade,uf:uf};
-      try{document.dispatchEvent(new CustomEvent('m3l-user-changed',{detail:u}));}catch(e){}
-      atualizarBotao(auth.currentUser);
-      renderHead();
-      renderDados();
-      pok('✅ Dados atualizados com sucesso!');
-    }).catch(function(e){
-      b.disabled=false;b.textContent=t;
-      perr('Não foi possível salvar: '+((e&&e.message)?e.message:'tente novamente.'));
-    });
-  }
-  /* ---------- Trocar senha (link por e-mail) ---------- */
+  /* ---------- Trocar senha (link por e-mail) — mantida para uso futuro ---------- */
   function trocarSenha(){
     perr('');
     var b=$('m3lBtnSenha');
@@ -632,7 +553,7 @@
       perr(m[e&&e.code]||'Não foi possível enviar agora — tente novamente.');
     });
   }
-  /* ---------- Meus pedidos (status real, retomada de pagamento, busca e lista paginada) ---------- */
+  /* ---------- Meus pedidos ---------- */
   var pedidosCache=[],pedBusca='',pedTodos=false;
   function renderPedidos(){
     perr('');
@@ -683,7 +604,6 @@
         var st='';
         var acao='';
         if(forma==='cartao'&&pendente){
-          /* Cartão escolhido e pagamento não concluído: cliente pode retomar direto no Mercado Pago */
           st='⏳ Aguardando pagamento';
           acao='<button type="button" class="m3l-pedido-tentar" onclick="tentarPagamentoCartao(\''+p.numero+'\')">💳 Tentar pagamento</button>';
         }else if(forma==='cartao'&&p.registrado&&!pendente){
@@ -788,8 +708,6 @@
     function falha(e){erro(traduzErro(e));g.disabled=false;g.textContent=t;}
     auth.createUserWithEmailAndPassword(upEmail,senha)
       .then(function(cred){
-        /* E-mail de verificação com a marca Meu 3D Labs (via backend).
-           Se o backend não responder, cai no envio padrão do Firebase — nada quebra. */
         pedirEmailVerificacaoBackend().then(function(){
           console.info('loja-login: e-mail de verificação enviado com a marca Meu 3D Labs');
         }).catch(function(e){
@@ -807,7 +725,7 @@
       })
       .then(function(cred){
         var dados={nome:nome,email:upEmail,whatsapp:fone,nascimentoDia:nascDia,nascimentoMes:nascMes,cep:cep,rua:ruaV,numero:'',complemento:'',bairro:bairroV,cidade:cidadeV,uf:ufV};
-        perfilCache={nome:nome,whatsapp:fone,nascimentoDia:nascDia,nascimentoMes:nascMes,cep:cep,rua:ruaV,numero:'',complemento:'',bairro:bairroV,cidade:cidadeV,uf:ufV};
+        perfilCache={nome:nome,whatsapp:fone,nascimentoDia:nascDia,nascimentoMes:nascMes,cep:cep,rua:ruaV,numero:'',complemento:'',bairro:bairroV,cidade:cidadeV,uf:ufV,foto:''};
         return salvarPerfil(cred.user.uid,dados).then(function(){aplicarPerfilLocal(dados);return cred;});
       })
       .then(function(cred){atualizarBotao(cred.user);fechaModal();})
@@ -825,9 +743,6 @@
     gBtn.disabled=true;
     auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
       .then(function(cred){
-        /* Cliente NOVO via Google: o e-mail já vem verificado, então o fluxo de
-           confirmação (que libera o cupom) nunca dispara. Pedimos ao backend que
-           envie o e-mail de boas-vindas com o cupom de 10% para não perder o cliente. */
         try{
           if(cred.additionalUserInfo&&cred.additionalUserInfo.isNewUser&&cred.user&&cred.user.email){
             pedirBoasVindasBackend(cred.user.email,cred.user.displayName||'')
@@ -849,10 +764,64 @@
     window.m3lUser.endereco={cep:dados.cep||'',rua:dados.rua||'',numero:dados.numero||'',comp:dados.complemento||'',bairro:dados.bairro||'',cidade:dados.cidade||'',uf:dados.uf||''};
     try{document.dispatchEvent(new CustomEvent('m3l-user-changed',{detail:window.m3lUser}));}catch(e){}
   }
+  /* ---------- Esconde ícones estáticos do header quando a foto real está ativa ---------- */
+  function esconderIconesHeader(esconder){
+    var hostHdr=document.querySelector('.header-inner');
+    if(!hostHdr)return;
+    var filhos=hostHdr.children;
+    for(var i=0;i<filhos.length;i++){
+      var node=filhos[i];
+      if(!node||node===btn||node.contains(btn)||btn.contains(node))continue;
+      var cls=(node.className&&typeof node.className==='string')?node.className.toLowerCase():'';
+      var ehIconeUsuario=(cls.indexOf('user')!==-1
+        ||cls.indexOf('avatar')!==-1
+        ||cls.indexOf('account')!==-1
+        ||cls.indexOf('conta')!==-1
+        ||cls.indexOf('perfil')!==-1
+        ||cls.indexOf('login')!==-1);
+      if(ehIconeUsuario){
+        node.style.display=esconder?'none':'';
+      }
+    }
+    /* SVG soltos (ícone de pessoa desenhado) que não estão dentro do nosso botão */
+    var svgs=hostHdr.querySelectorAll('svg');
+    Array.prototype.forEach.call(svgs,function(sv){
+      if(btn.contains(sv))return;
+      var pai=sv.parentElement;
+      if(!pai||pai===btn)return;
+      var clsPai=(pai.className&&typeof pai.className==='string')?pai.className.toLowerCase():'';
+      var paiPareceBotao=(clsPai.indexOf('btn')!==-1||clsPai.indexOf('button')!==-1||pai.tagName==='BUTTON'||pai.tagName==='A');
+      if(!paiPareceBotao)return;
+      pai.style.display=esconder?'none':'';
+    });
+  }
+
+  /* ---------- Botão do header: mostra a foto do cliente quando existir ---------- */
   function atualizarBotao(u){
-    if(!u){btn.textContent='Entrar / Cadastrar';return;}
+    if(!u){
+      btn.removeAttribute('style');
+      btn.innerHTML='';
+      btn.textContent='Entrar / Cadastrar';
+      esconderIconesHeader(false);
+      return;
+    }
     var n=(u.displayName||'').trim();
-    btn.textContent=n?('Olá, '+n.split(' ')[0]):'Minha conta';
+    var foto=(perfilCache&&perfilCache.foto)?perfilCache.foto:'';
+    var rotulo=n?('Olá, '+n.split(' ')[0]):'Minha conta';
+
+    btn.removeAttribute('style');
+
+    if(foto){
+      btn.innerHTML='<img src="'+foto+'" alt="" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1.5px solid rgba(15,30,61,.15);">'
+                  +'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rotulo+'</span>';
+      btn.style.gap='7px';
+      btn.style.padding='5px 14px 5px 6px';
+      esconderIconesHeader(true);
+    }else{
+      btn.innerHTML='';
+      btn.textContent=rotulo;
+      esconderIconesHeader(false);
+    }
   }
   auth.onAuthStateChanged(function(u){
     window.m3lUser=u?{uid:u.uid,nome:(u.displayName||''),email:u.email,fone:'',endereco:null}:null;
@@ -864,20 +833,18 @@
       db.collection('clientes').doc(u.uid).get().then(function(snap){
         if(!window.m3lUser)return;
         if(!snap.exists){
-          /* Conta Google sem documento no Firestore (nova ou antiga): cria já com o que
-             o Google fornece (nome + e-mail). WhatsApp, CEP e endereço entram
-             automaticamente no primeiro pedido — o checkout salva no perfil. */
           var nomeGoogle=(u.displayName||'').trim();
-          perfilCache={nome:nomeGoogle,whatsapp:'',nascimentoDia:null,nascimentoMes:null,cep:'',rua:'',numero:'',complemento:'',bairro:'',cidade:'',uf:''};
+          perfilCache={nome:nomeGoogle,whatsapp:'',nascimentoDia:null,nascimentoMes:null,cep:'',rua:'',numero:'',complemento:'',bairro:'',cidade:'',uf:'',foto:''};
           window.m3lUser.nome=nomeGoogle;
           atualizarBotao(auth.currentUser);
           return db.collection('clientes').doc(u.uid).set({nome:nomeGoogle,email:u.email||''},{merge:true});
         }
         var p=snap.data()||{};
-        perfilCache={nome:p.nome||'',whatsapp:p.whatsapp||'',nascimentoDia:p.nascimentoDia||null,nascimentoMes:p.nascimentoMes||null,cep:p.cep||'',rua:p.rua||'',numero:p.numero||'',complemento:p.complemento||'',bairro:p.bairro||'',cidade:p.cidade||'',uf:p.uf||''};
+        perfilCache={nome:p.nome||'',whatsapp:p.whatsapp||'',nascimentoDia:p.nascimentoDia||null,nascimentoMes:p.nascimentoMes||null,cep:p.cep||'',rua:p.rua||'',numero:p.numero||'',complemento:p.complemento||'',bairro:p.bairro||'',cidade:p.cidade||'',uf:p.uf||'',foto:p.foto||''};
         window.m3lUser.fone=p.whatsapp||'';
         window.m3lUser.endereco={cep:p.cep||'',rua:p.rua||'',numero:p.numero||'',comp:p.complemento||'',bairro:p.bairro||'',cidade:p.cidade||'',uf:p.uf||''};
         try{document.dispatchEvent(new CustomEvent('m3l-user-changed',{detail:window.m3lUser}));}catch(e){}
+        atualizarBotao(auth.currentUser);
         if(ov.classList.contains('open')&&window.m3lUser){
           renderHead();
           if(abaPanel==='pedidos')renderPedidos();else renderDados();

@@ -554,3 +554,91 @@ body.dark .prazo-modal .pm-acoes .pm-ok{background:#0d1424;border-color:#2a3a5c;
   table{min-width:0;font-size:11px;}
   thead th{background:#eee !important;color:#000 !important;}
 }
+
+/* ===== 27. FOTO DO CLIENTE ===== */
+.cliente-cel{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+
+.cliente-foto{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#f26522,#d9541a);
+  color:#fff;
+  font-size:14px;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  overflow:hidden;
+  cursor:pointer;
+  border:2px solid #fff;
+  box-shadow:0 2px 6px rgba(15,30,61,.15);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.cliente-foto:hover{
+  transform:scale(1.08);
+  box-shadow:0 4px 12px rgba(15,30,61,.25);
+}
+.cliente-foto img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+}
+.cliente-foto.sem-foto{cursor:default;}
+.cliente-foto.sem-foto:hover{transform:none;box-shadow:0 2px 6px rgba(15,30,61,.15);}
+
+.cliente-info{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  gap:1px;
+}
+.cliente-info .td-client{
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--navy);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.cliente-info .cliente-email{
+  font-size:11.5px;
+  color:var(--gray);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.cliente-cel + *{vertical-align:middle;}
+
+.foto-ov{
+  position:fixed;
+  inset:0;
+  background:rgba(10,21,40,.8);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  padding:20px;
+  cursor:zoom-out;
+}
+.foto-ov.show{display:flex;}
+.foto-ov img{
+  max-width:min(90vw,420px);
+  max-height:90vh;
+  border-radius:16px;
+  box-shadow:0 24px 70px rgba(0,0,0,.55);
+  object-fit:contain;
+}
+
+body.dark .cliente-info .td-client{color:#e6ecf7;}
+body.dark .cliente-foto{border-color:#16203a;}

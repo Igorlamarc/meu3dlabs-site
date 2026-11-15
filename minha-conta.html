@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha conta — Meu 3D Labs</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="img/logo/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="minha-conta.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="mc-header">
+  <div class="mc-header-inner">
+    <a href="index.html" class="mc-logo" aria-label="Meu 3D Labs — página inicial">
+      <img src="img/logo/logo.png" alt="Logo Meu 3D Labs">
+      <span>Meu<b>3D</b>Labs</span>
+    </a>
+    <div class="mc-header-actions">
+      <a href="loja.html" class="mc-btn-voltar">← Voltar para a loja</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============ LOADING ============ -->
+<div class="mc-loading" id="mcLoading">
+  <div class="mc-spinner"></div>
+  <span>Carregando sua conta...</span>
+</div>
+
+<!-- ============ TELA DE ACESSO (sem login) ============ -->
+<section class="mc-acesso" id="mcAcesso" style="display:none;">
+  <div class="mc-acesso-card">
+
+    <div class="mc-acesso-logo">
+      <img src="img/logo/logo.png" alt="Meu 3D Labs">
+      <span>Meu<b>3D</b>Labs</span>
+    </div>
+
+    <div class="mc-acesso-aviso">
+      <span class="ico">👋</span>
+      <div>
+        <strong>Você ainda não tem conta.</strong>
+        <p>Crie agora para acessar seus pedidos, salvar seu endereço e finalizar compras mais rápido.</p>
+      </div>
+    </div>
+
+    <div class="mc-acesso-tabs">
+      <button type="button" class="mc-acesso-tab ativo" data-aba="entrar">Entrar</button>
+      <button type="button" class="mc-acesso-tab" data-aba="criar">Criar conta</button>
+    </div>
+
+    <div class="mc-acesso-erro" id="acessoErro"></div>
+
+    <!-- ---------- PAINEL: ENTRAR ---------- -->
+    <div class="mc-acesso-painel ativo" id="acessoEntrar">
+      <label class="mc-acesso-label" for="acessoEmailIn">E-mail</label>
+      <input type="email" id="acessoEmailIn" class="mc-acesso-input" placeholder="seu@email.com" autocomplete="username">
+
+      <label class="mc-acesso-label" for="acessoSenhaIn">Senha</label>
+      <div class="mc-acesso-pw">
+        <input type="password" id="acessoSenhaIn" class="mc-acesso-input" placeholder="Sua senha" autocomplete="current-password">
+        <button type="button" class="mc-acesso-olho" data-alvo="acessoSenhaIn" aria-label="Mostrar senha">👁</button>
+      </div>
+
+      <button type="button" class="mc-acesso-btn" id="acessoEntrarBtn">Entrar na minha conta</button>
+
+      <button type="button" class="mc-acesso-link" id="acessoEsqueci">Esqueci minha senha</button>
+    </div>
+
+    <!-- ---------- PAINEL: CRIAR (Etapa 1) ---------- -->
+    <div class="mc-acesso-painel" id="acessoCriar1">
+      <div class="mc-acesso-etapa">Etapa 1 de 2 · comece pelo seu e-mail</div>
+
+      <label class="mc-acesso-label" for="acessoEmailCriar">E-mail</label>
+      <input type="email" id="acessoEmailCriar" class="mc-acesso-input" placeholder="seu@email.com" autocomplete="email">
+
+      <button type="button" class="mc-acesso-btn" id="acessoContinuar">Continuar</button>
+
+      <button type="button" class="mc-acesso-voltar" id="acessoVoltarEntrar">← Já tenho conta, quero entrar</button>
+    </div>
+
+    <!-- ---------- PAINEL: CRIAR (Etapa 2) ---------- -->
+    <div class="mc-acesso-painel" id="acessoCriar2">
+      <button type="button" class="mc-acesso-voltar" id="acessoVoltarEmail">← Trocar e-mail</button>
+      <div class="mc-acesso-etapa" id="acessoEtapa2">Etapa 2 de 2 · complete seu cadastro</div>
+
+      <label class="mc-acesso-label" for="acessoNome">Nome completo</label>
+      <input type="text" id="acessoNome" class="mc-acesso-input" placeholder="Nome e sobrenome" autocomplete="name">
+
+      <label class="mc-acesso-label" for="acessoSenha">Senha</label>
+      <div class="mc-acesso-pw">
+        <input type="password" id="acessoSenha" class="mc-acesso-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        <button type="button" class="mc-acesso-olho" data-alvo="acessoSenha" aria-label="Mostrar senha">👁</button>
+      </div>
+
+      <label class="mc-acesso-label" for="acessoSenha2">Confirmar senha</label>
+      <div class="mc-acesso-pw">
+        <input type="password" id="acessoSenha2" class="mc-acesso-input" placeholder="Repita a senha" autocomplete="new-password">
+        <button type="button" class="mc-acesso-olho" data-alvo="acessoSenha2" aria-label="Mostrar senha">👁</button>
+      </div>
+
+      <label class="mc-acesso-label" for="acessoFone">WhatsApp</label>
+      <input type="tel" id="acessoFone" class="mc-acesso-input" placeholder="(21) 99999-9999" autocomplete="tel" maxlength="16">
+
+      <div class="mc-acesso-linha2">
+        <div>
+          <label class="mc-acesso-label" for="acessoDia">Dia</label>
+          <input type="number" id="acessoDia" class="mc-acesso-input" placeholder="Dia" min="1" max="31">
+        </div>
+        <div>
+          <label class="mc-acesso-label" for="acessoMes">Mês</label>
+          <select id="acessoMes" class="mc-acesso-input">
+            <option value="">Mês</option>
+            <option value="1">Janeiro</option>
+            <option value="2">Fevereiro</option>
+            <option value="3">Março</option>
+            <option value="4">Abril</option>
+            <option value="5">Maio</option>
+            <option value="6">Junho</option>
+            <option value="7">Julho</option>
+            <option value="8">Agosto</option>
+            <option value="9">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezembro</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="mc-acesso-label" for="acessoCep">CEP</label>
+      <input type="text" id="acessoCep" class="mc-acesso-input" placeholder="26510-000" autocomplete="postal-code" maxlength="9">
+      <span class="mc-acesso-hint" id="acessoCepHint"></span>
+
+      <button type="button" class="mc-acesso-btn" id="acessoCriarBtn">Criar minha conta</button>
+
+      <button type="button" class="mc-acesso-voltar" id="acessoVoltarEmail2">← Trocar e-mail</button>
+    </div>
+
+    <div class="mc-acesso-ou"><span>ou</span></div>
+
+    <button type="button" class="mc-acesso-google" id="acessoGoogle">
+      <svg width="18" height="18" viewBox="0 0 48 48">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      Continuar com Google
+    </button>
+
+    <a href="loja.html" class="mc-acesso-loja">← Voltar para a loja</a>
+
+  </div>
+</section>
+
+<!-- ============ MAIN ============ -->
+<main class="mc-main" id="mcMain" style="display:none;">
+  <div class="mc-container">
+    <div class="mc-grid">
+
+      <!-- SIDEBAR -->
+      <aside class="mc-sidebar">
+        <div class="mc-user-box">
+          <div class="mc-avatar" id="mcAvatar">?</div>
+          <div class="mc-user-info">
+            <div class="mc-user-name" id="mcUserName">Cliente</div>
+            <div class="mc-user-mail" id="mcUserMail">—</div>
+          </div>
+        </div>
+        <nav class="mc-nav">
+          <button type="button" class="mc-nav-btn active" data-panel="dados">
+            <span class="ico">👤</span> Minha conta
+          </button>
+          <button type="button" class="mc-nav-btn" data-panel="pedidos">
+            <span class="ico">📦</span> Meus pedidos
+          </button>
+          <button type="button" class="mc-nav-btn" data-panel="pagamento">
+            <span class="ico">💳</span> Formas de pagamento
+          </button>
+          <div class="mc-nav-sep"></div>
+          <button type="button" class="mc-nav-btn" data-panel="seguranca">
+            <span class="ico">🔐</span> Segurança
+          </button>
+          <button type="button" class="mc-nav-btn sair" id="mcBtnSair">
+            <span class="ico">↩</span> Sair da conta
+          </button>
+        </nav>
+      </aside>
+
+      <!-- CONTEÚDO -->
+      <section class="mc-content">
+
+        <!-- PAINEL: DADOS -->
+        <div class="mc-panel active" id="panel-dados">
+          <div class="mc-panel-head">
+            <h1>Minha conta</h1>
+            <p>Mantenha seus dados atualizados para receber seus pedidos sem problemas.</p>
+          </div>
+
+          <!-- FOTO DE PERFIL -->
+          <div class="foto-bloco">
+            <div class="foto-preview" id="fotoPreview" role="button" tabindex="0" aria-label="Alterar foto de perfil">
+              <span id="fotoIniciais">?</span>
+              <img id="fotoImg" alt="Foto de perfil" style="display:none;">
+              <div class="foto-overlay">📷</div>
+            </div>
+            <div class="foto-info">
+              <h3>Sua foto</h3>
+              <p>Uma foto ajuda a gente a te reconhecer no atendimento.</p>
+              <div class="foto-botoes">
+                <button type="button" class="foto-btn-upload" id="fotoBtnUpload">Escolher foto</button>
+                <button type="button" class="foto-btn-remover" id="fotoBtnRemover" style="display:none;">Remover</button>
+              </div>
+              <input type="file" id="fotoInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+              <span class="foto-hint">JPG, PNG ou WebP · máximo 5MB</span>
+            </div>
+          </div>
+
+          <form id="formDados" autocomplete="on">
+            <div class="mc-form-grid">
+
+              <div class="field full">
+                <label for="fNome">Nome completo</label>
+                <input type="text" id="fNome" name="nome" autocomplete="name" required>
+              </div>
+
+              <div class="field">
+                <label for="fEmail">E-mail</label>
+                <input type="email" id="fEmail" name="email" autocomplete="email" required>
+                <span class="hint" id="hintEmail">Este é o e-mail que você usa para entrar na conta.</span>
+              </div>
+
+              <div class="field">
+                <label for="fWhats">WhatsApp</label>
+                <input type="tel" id="fWhats" name="whatsapp" autocomplete="tel" inputmode="numeric" placeholder="(21) 96659-4803">
+              </div>
+
+              <div class="field">
+                <label for="fCpf">CPF <span class="lock" id="cpfLockTag" style="display:none;">🔒 não editável</span></label>
+
+                <button type="button" class="cpf-add-btn" id="cpfAddBtn">
+                  <span class="cpf-add-ico">+</span> Adicionar CPF
+                </button>
+
+                <div class="cpf-input-wrap" id="cpfInputWrap" style="display:none;">
+                  <input type="text" id="fCpf" name="cpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00">
+                  <div class="cpf-actions">
+                    <button type="button" class="cpf-btn-cancel" id="cpfCancel">Cancelar</button>
+                    <button type="button" class="cpf-btn-save" id="cpfSave">Salvar CPF</button>
+                  </div>
+                </div>
+
+                <input type="text" id="fCpfLocked" disabled placeholder="—" style="display:none;">
+
+                <span class="hint" id="cpfHint">O CPF é usado apenas para emissão de nota fiscal.</span>
+              </div>
+
+              <div class="field">
+                <label for="fNasc">Data de nascimento <span class="lock">🔒 não editável</span></label>
+                <input type="text" id="fNasc" name="nascimento" disabled placeholder="—">
+                <span class="hint bloq">Usada no cupom de aniversário. Para corrigir, fale com a gente no WhatsApp.</span>
+              </div>
+
+              <div class="field full">
+                <label for="fCep">CEP</label>
+                <input type="text" id="fCep" name="cep" autocomplete="postal-code" inputmode="numeric" placeholder="26510-000" maxlength="9">
+              </div>
+
+              <div class="field full">
+                <label for="fRua">Rua / Avenida</label>
+                <input type="text" id="fRua" name="rua" autocomplete="address-line1" placeholder="Nome da rua">
+              </div>
+
+              <div class="field">
+                <label for="fNum">Número</label>
+                <input type="text" id="fNum" name="numero" autocomplete="address-line2" placeholder="123">
+              </div>
+
+              <div class="field">
+                <label for="fComp">Complemento</label>
+                <input type="text" id="fComp" name="complemento" placeholder="Apto, bloco, casa">
+              </div>
+
+              <div class="field">
+                <label for="fBairro">Bairro</label>
+                <input type="text" id="fBairro" name="bairro" placeholder="Centro">
+              </div>
+
+              <div class="field">
+                <label for="fCidade">Cidade - UF</label>
+                <input type="text" id="fCidade" name="cidade" autocomplete="address-level2" placeholder="Nilópolis - RJ">
+              </div>
+
+            </div>
+
+            <div class="mc-form-actions">
+              <button type="submit" class="btn-salvar" id="btnSalvarDados">Salvar alterações</button>
+              <button type="button" class="btn-secundario" id="btnDescartar">Descartar</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PAINEL: PEDIDOS -->
+        <div class="mc-panel" id="panel-pedidos">
+          <div class="mc-panel-head">
+            <h1>Meus pedidos</h1>
+            <p>Acompanhe o status e consulte o histórico das suas compras.</p>
+          </div>
+          <div id="listaPedidos">
+            <div class="mc-empty">
+              <div class="ico">📦</div>
+              <h3>Carregando pedidos...</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAINEL: PAGAMENTO -->
+        <div class="mc-panel" id="panel-pagamento">
+          <div class="mc-panel-head">
+            <h1>Formas de pagamento</h1>
+            <p>Cadastre seus cartões para agilizar as próximas compras.</p>
+          </div>
+          <div class="mc-manutencao">
+            <div class="ico">💳</div>
+            <h3>Em breve</h3>
+            <p>Estamos preparando um ambiente seguro para você salvar seus cartões e pagar em 1 clique.</p>
+            <p>Enquanto isso, você continua pagando com Pix ou cartão normalmente no checkout da loja.</p>
+            <span class="tag-manut">Em manutenção</span>
+          </div>
+        </div>
+
+        <!-- PAINEL: SEGURANÇA -->
+        <div class="mc-panel" id="panel-seguranca">
+          <div class="mc-panel-head">
+            <h1>Segurança</h1>
+            <p>Gerencie a senha de acesso à sua conta.</p>
+          </div>
+
+          <div class="mc-form-grid">
+            <div class="field full">
+              <label>Senha de acesso</label>
+              <input type="text" value="••••••••••" disabled>
+              <span class="hint">Alterações de senha são feitas por link seguro enviado ao seu e-mail.</span>
+            </div>
+          </div>
+
+          <div class="mc-form-actions">
+            <button type="button" class="btn-salvar" id="btnAbrirSenha">Alterar senha</button>
+          </div>
+
+          <div class="seguranca-sair">
+            <h3>Encerrar sessão</h3>
+            <p>Se você está em um dispositivo compartilhado, saia da conta para proteger seus dados.</p>
+            <button type="button" class="btn-secundario btn-danger" id="btnSairSeguranca">Sair da conta</button>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- ============ MODAL: ALTERAR SENHA ============ -->
+<div class="mc-overlay" id="overlaySenha">
+  <div class="mc-modal">
+    <h3>Alterar senha</h3>
+    <p class="sub">Enviaremos um link seguro para <strong id="senhaEmailAlvo">seu e-mail</strong>. Basta clicar nele e definir a nova senha.</p>
+
+    <div class="mc-modal-actions">
+      <button type="button" class="btn-secundario" id="btnFecharSenha">Cancelar</button>
+      <button type="button" class="btn-salvar" id="btnSalvarSenha">Enviar link</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: RECORTE DA FOTO ============ -->
+<div class="crop-overlay" id="cropOverlay">
+  <div class="crop-card">
+    <div class="crop-head">
+      <h3>Ajustar foto</h3>
+      <p>Arraste a imagem para posicionar e use a barra para dar zoom.</p>
+    </div>
+
+    <div class="crop-stage" id="cropStage">
+      <canvas id="cropCanvas"></canvas>
+      <div class="crop-mask"></div>
+      <div class="crop-ring"></div>
+    </div>
+
+    <div class="crop-zoom">
+      <button type="button" class="crop-zoom-btn" id="cropMenos" aria-label="Diminuir zoom">−</button>
+      <input type="range" class="crop-slider" id="cropSlider" min="1" max="3" step="0.01" value="1">
+      <button type="button" class="crop-zoom-btn" id="cropMais" aria-label="Aumentar zoom">+</button>
+    </div>
+
+    <div class="crop-acoes">
+      <button type="button" class="btn-secundario" id="cropCancelar">Cancelar</button>
+      <button type="button" class="btn-salvar" id="cropAplicar">Aplicar foto</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOAST ============ -->
+<div class="mc-toast" id="mcToast"></div>
+
+<!-- ============ FIREBASE SDK v8 (compat) ============ -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="minha-conta.js" defer></script>
+</body>
+</html>

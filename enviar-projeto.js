@@ -1,9 +1,11 @@
 /* ============================================================
-   MEU 3D LABS — enviar-projeto.js v2.2
+   MEU 3D LABS — enviar-projeto.js v3.1
    Formulário condicional com 3 serviços, prazo via date,
    urgência com taxas (0 / +10 / +20), arquivo 3D obrigatório
    com modal de modelagem e atalho que mantém o cliente na página.
    Assistência técnica é 100% remota (sem opção presencial).
+   Cadastro simples (padrão) vs completo com conta Firebase.
+   Cliente já logado: seletor some e dados vêm prontos.
    ============================================================ */
 
 (function(){
@@ -11,14 +13,49 @@
 
   /* ==================== CONFIG ==================== */
   var API_ORCAMENTOS = 'https://meu3dlabs-backend.onrender.com/api/orcamentos';
+  var API_VERIFICACAO = 'https://meu3dlabs-backend.onrender.com/api/auth/enviar-verificacao';
   var WA_NUM = '5521966594803';
+
   var TAXA_URGENCIA = { 'sem-urgencia': 0, 'moderada': 10, 'muito-urgente': 20 };
   var MAPA_URGENCIA = {
     'sem-urgencia': 'Sem urgência (sem taxa)',
     'moderada': 'Urgência moderada (+ R$ 10)',
     'muito-urgente': 'Muito urgente (+ R$ 20)'
   };
+
   var servicoAtual = 'impressao';
+  var tipoCadastro = 'simples';
+  var clienteLogado = null;
+
+  /* ==================== FIREBASE ==================== */
+  var FB_CONFIG = {
+    apiKey: "AIzaSyAZwBSpyU9KAsrvqjVaFIShbdhoPu-C11s",
+    authDomain: "meu3dlabs-loja.firebaseapp.com",
+    projectId: "meu3dlabs-loja",
+    storageBucket: "meu3dlabs-loja.firebasestorage.app",
+    messagingSenderId: "429562795244",
+    appId: "1:429562795244:web:d9d54e2b30941ab8eb81c9"
+  };
+
+  var fbAuth = null;
+  var fbDb = null;
+
+  (function iniciarFirebase(){
+    try{
+      if(typeof firebase === 'undefined'){
+        console.warn('[enviar-projeto] SDK do Firebase não carregado.');
+        return;
+      }
+      if(!firebase.apps || !firebase.apps.length){
+        firebase.initializeApp(FB_CONFIG);
+      }
+      if(typeof firebase.auth === 'function') fbAuth = firebase.auth();
+      if(typeof firebase.firestore === 'function') fbDb = firebase.firestore();
+      if(fbAuth) fbAuth.languageCode = 'pt-BR';
+    }catch(e){
+      console.warn('[enviar-projeto] Firebase não iniciou:', e && e.message);
+    }
+  })();
 
   /* ==================== HELPERS ==================== */
   function $(id){ return document.getElementById(id); }
@@ -73,6 +110,188 @@
     } else {
       input.value = '(' + v.slice(0, 2) + ') ' + v.slice(2, 7) + '-' + v.slice(7);
     }
+  }
+
+  function formatarTelefone(v){
+    var d = String(v || '').replace(/\D/g, '').slice(0, 11);
+    if(d.length <= 2) return d.length ? '(' + d : '';
+    if(d.length <= 6) return '(' + d.slice(0,2) + ') ' + d.slice(2);
+    if(d.length <= 10) return '(' + d.slice(0,2) + ') ' + d.slice(2,6) + '-' + d.slice(6);
+    return '(' + d.slice(0,2) + ') ' + d.slice(2,7) + '-' + d.slice(7);
+  }
+
+  /* ==================== MÁSCARAS DO CADASTRO ==================== */
+  function mascararCep(input){
+    var v = input.value.replace(/\D/g, '').slice(0, 8);
+    input.value = v.length > 5 ? v.slice(0, 5) + '-' + v.slice(5) : v;
+  }
+
+  function mascararCpf(input){
+    var d = input.value.replace(/\D/g, '').slice(0, 11);
+    if(d.length > 9){
+      input.value = d.slice(0,3) + '.' + d.slice(3,6) + '.' + d.slice(6,9) + '-' + d.slice(9);
+    } else if(d.length > 6){
+      input.value = d.slice(0,3) + '.' + d.slice(3,6) + '.' + d.slice(6);
+    } else if(d.length > 3){
+      input.value = d.slice(0,3) + '.' + d.slice(3);
+    } else {
+      input.value = d;
+    }
+  }
+
+  /* ==================== ESTADO DE LOGIN ==================== */
+  function aplicarEstadoLogado(u){
+    clienteLogado = u || null;
+
+    var blocoVisitante = $('blocoVisitante');
+    var blocoLogado    = $('blocoLogado');
+    var lblObg         = $('lblEmailObg');
+
+    if(u){
+      if(blocoVisitante) blocoVisitante.style.display = 'none';
+      if(blocoLogado) blocoLogado.style.display = 'block';
+
+      tipoCadastro = 'logado';
+
+      var nome  = (u.displayName || '').trim();
+      var email = u.email || '';
+
+      var lcNome   = $('lcNome');
+      var lcEmail  = $('lcEmail');
+      var lcAvatar = $('lcAvatar');
+
+      if(lcNome)  lcNome.textContent = nome || 'Cliente';
+      if(lcEmail) lcEmail.textContent = email || '—';
+
+      if(lcAvatar){
+        var partes = nome.split(/\s+/);
+        var ini = ((partes[0] || '').charAt(0) + (partes[1] || '').charAt(0)).toUpperCase();
+        lcAvatar.textContent = ini || '👤';
+      }
+
+      var nomeEl  = $('nome');
+      var emailEl = $('email');
+      if(nomeEl && !nomeEl.value.trim() && nome) nomeEl.value = nome;
+      if(emailEl && !emailEl.value.trim() && email) emailEl.value = email;
+
+      if(lblObg) lblObg.style.display = 'none';
+
+      if(fbDb){
+        fbDb.collection('clientes').doc(u.uid).get()
+          .then(function(doc){
+            if(!doc.exists) return;
+            var d = doc.data() || {};
+
+            var wEl = $('whatsapp');
+            if(wEl && !wEl.value && d.whatsapp){
+              wEl.value = formatarTelefone(d.whatsapp);
+            }
+            if(d.foto && lcAvatar){
+              lcAvatar.style.background = 'none';
+              lcAvatar.innerHTML = '<img src="' + d.foto + '" alt="">';
+            }
+            atualizarProgresso();
+          })
+          .catch(function(){});
+      }
+
+    } else {
+      if(blocoVisitante) blocoVisitante.style.display = 'block';
+      if(blocoLogado) blocoLogado.style.display = 'none';
+
+      if(tipoCadastro === 'logado') tipoCadastro = 'simples';
+    }
+
+    atualizarProgresso();
+  }
+
+  /* ==================== TIPO DE CADASTRO ==================== */
+  function selecionarCadastro(card){
+    if(!card) return;
+    if(clienteLogado) return;   /* cliente logado não escolhe cadastro */
+
+    document.querySelectorAll('.cadastro-card').forEach(function(c){
+      c.classList.remove('selected');
+    });
+    card.classList.add('selected');
+    tipoCadastro = card.getAttribute('data-cadastro') || 'simples';
+
+    var beneficios = $('cadastroBeneficios');
+    var extra = $('cadastroExtra');
+    var lblObg = $('lblEmailObg');
+
+    if(tipoCadastro === 'completo'){
+      if(beneficios) beneficios.style.display = 'block';
+      if(extra) extra.style.display = 'block';
+      if(lblObg) lblObg.style.display = '';
+    } else {
+      if(beneficios) beneficios.style.display = 'none';
+      if(extra) extra.style.display = 'none';
+      if(lblObg) lblObg.style.display = 'none';
+    }
+    atualizarProgresso();
+  }
+
+  function abrirCadastroCompleto(){
+    if(clienteLogado) return;
+
+    var cardCompleto = document.querySelector('.cadastro-card[data-cadastro="completo"]');
+    if(cardCompleto) selecionarCadastro(cardCompleto);
+
+    var extra = $('cadastroExtra');
+    if(extra){
+      setTimeout(function(){
+        extra.scrollIntoView({ behavior:'smooth', block:'center' });
+        var s = $('cadSenha');
+        if(s) s.focus();
+      }, 240);
+    }
+    toast('⭐ Preencha os dados da conta para garantir os descontos.');
+  }
+
+  function ceStatus(msg, tipo){
+    var el = $('ceStatus');
+    if(!el) return;
+    if(!msg){
+      el.className = 'ce-status';
+      el.textContent = '';
+      return;
+    }
+    el.className = 'ce-status show ' + (tipo || 'info');
+    el.textContent = msg;
+  }
+
+  function cadastroComGoogle(){
+    if(!fbAuth){
+      ceStatus('Não foi possível iniciar o Google. Atualize a página e tente novamente.', 'err');
+      return;
+    }
+    var btn = $('btnCadGoogle');
+    var rotulo = btn ? btn.innerHTML : '';
+    if(btn){ btn.disabled = true; btn.textContent = 'Conectando…'; }
+
+    fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+      .then(function(cred){
+        var u = cred.user;
+        var nomeEl = $('nome');
+        var emailEl = $('email');
+        if(u.displayName && nomeEl && !nomeEl.value.trim()) nomeEl.value = u.displayName;
+        if(u.email && emailEl) emailEl.value = u.email;
+        ceStatus('✓ Conectado como ' + (u.email || '') + '. Complete os dados restantes.', 'ok');
+        atualizarProgresso();
+      })
+      .catch(function(e){
+        var m = {
+          'auth/popup-closed-by-user': 'Você fechou a janela antes de concluir.',
+          'auth/popup-blocked': 'O navegador bloqueou a janela. Permita popups e tente novamente.',
+          'auth/cancelled-popup-request': 'Operação cancelada.',
+          'auth/account-exists-with-different-credential': 'Esse e-mail já tem conta com outro método.'
+        };
+        ceStatus(m[e && e.code] || 'Não foi possível conectar com o Google.', 'err');
+      })
+      .then(function(){
+        if(btn){ btn.disabled = false; btn.innerHTML = rotulo; }
+      });
   }
 
   /* ==================== SERVIÇO ==================== */
@@ -157,12 +376,8 @@
   }
 
   /* ==================== ATALHO: SOLICITAR MODELAGEM ==================== */
-  /* Mantém o cliente na página. Fecha o modal, confirma a escolha
-     "Não, preciso de modelagem" e leva o foco para a descrição,
-     onde ele detalha o projeto e a modelagem é orçada junto. */
   function solicitarModelagemAqui(){
     fecharModalModelagem();
-
     var radioNao = document.querySelector('input[name="temArquivo"][value="nao"]');
     if(radioNao){
       radioNao.checked = true;
@@ -172,7 +387,6 @@
       var cardNao = radioNao.closest('.arquivo-card');
       if(cardNao) cardNao.classList.add('selected');
     }
-
     var alvo = $('campoDescricao');
     if(alvo){
       setTimeout(function(){
@@ -181,7 +395,6 @@
         if(txt) txt.focus();
       }, 260);
     }
-
     toast('📐 Continue aqui: descreva a peça e orçamos a modelagem junto.');
     atualizarProgresso();
   }
@@ -246,12 +459,18 @@
     if(nome) campos.push(nome.value.trim().length >= 2);
     if(whats) campos.push(whats.value.replace(/\D/g, '').length >= 10);
 
+    if(tipoCadastro === 'completo'){
+      var em = $('email');
+      if(em) campos.push(!!em.value.trim());
+    }
+
     if(servicoAtual === 'impressao'){
       var qtd = $('quantidade');
       var desc = $('descricao');
       var prazoEl = $('prazo');
       var arqSel = document.querySelector('input[name="temArquivo"]:checked');
       var urgSel = document.querySelector('input[name="urgencia"]:checked');
+
       if(qtd) campos.push(parseInt(qtd.value, 10) > 0);
       if(desc) campos.push(desc.value.trim().length >= 10);
       if(prazoEl) campos.push(prazoEl.value !== '');
@@ -293,10 +512,22 @@
     } else limparErro('campoWhatsapp', 'err-whatsapp');
 
     var emailEl = $('email');
-    if(emailEl && emailEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim())){
+    var emailVal = emailEl ? emailEl.value.trim() : '';
+    var emailOk = !emailVal || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+
+    if(tipoCadastro === 'completo' && !emailVal){
       mostrarErro('campoEmail', 'err-email');
+      var errEm = $('err-email');
+      if(errEm) errEm.textContent = 'Informe um e-mail para criar sua conta.';
       ok = false;
-    } else limparErro('campoEmail', 'err-email');
+    } else if(!emailOk){
+      mostrarErro('campoEmail', 'err-email');
+      var errEm2 = $('err-email');
+      if(errEm2) errEm2.textContent = 'E-mail inválido.';
+      ok = false;
+    } else {
+      limparErro('campoEmail', 'err-email');
+    }
 
     if(servicoAtual === 'impressao'){
       var qtd = $('quantidade');
@@ -375,7 +606,6 @@
       var primeiroErro = document.querySelector('.campo-erro');
       if(primeiroErro) primeiroErro.scrollIntoView({ behavior:'smooth', block:'center' });
     }
-
     return ok;
   }
 
@@ -436,11 +666,18 @@
       }
       linhas.push('Impressora: ' + modVal);
       linhas.push('Problema: ' + $('ass-problema').value.trim());
-      /* Assistência é 100% remota — formato fixo, sem campo no formulário */
       linhas.push('Formato: Remoto (videochamada)');
 
       var prio = document.querySelector('input[name="prioridade"]:checked');
       if(prio) linhas.push('Prioridade: ' + (prio.value === 'urgente' ? 'Urgente' : 'Normal'));
+    }
+
+    if(tipoCadastro === 'completo'){
+      linhas.push('Cadastro: completo (cupom 10% 1ª compra na loja + 5% no 1º projeto)');
+    } else if(tipoCadastro === 'logado'){
+      linhas.push('Cliente: já cadastrado');
+    } else {
+      linhas.push('Cadastro: simples');
     }
 
     return linhas.join('\n');
@@ -463,9 +700,15 @@
     txt += '\n*Nome:* ' + nome;
     txt += '\n*WhatsApp:* ' + whats;
     if(email) txt += '\n*E-mail:* ' + email;
+
+    if(tipoCadastro === 'completo'){
+      txt += '\n*Cadastro:* completo 🎁 (cupom 10% 1ª compra na loja + 5% 1º projeto)';
+    } else if(tipoCadastro === 'logado'){
+      txt += '\n*Cliente:* já cadastrado';
+    }
+
     txt += '\n\n' + montarDescricao();
     txt += '\n\n_Enviado pelo site meu3dlabs.com.br_';
-
     return txt;
   }
 
@@ -478,6 +721,96 @@
     return 'M3D-' + aleat + '-' + dia + mes;
   }
 
+  /* ==================== CONTA (CADASTRO COMPLETO) ==================== */
+  function criarContaSeCompleto(){
+    /* Cliente logado: usa o usuário atual */
+    if(clienteLogado) return Promise.resolve(clienteLogado);
+    if(tipoCadastro !== 'completo') return Promise.resolve(null);
+    if(!fbAuth) return Promise.resolve(null);
+
+    var emailCad = $('email') ? $('email').value.trim() : '';
+    var senha    = $('cadSenha') ? $('cadSenha').value : '';
+    var senha2   = $('cadSenha2') ? $('cadSenha2').value : '';
+    var nomeCli  = $('nome') ? $('nome').value.trim() : '';
+
+    if(fbAuth.currentUser) return Promise.resolve(fbAuth.currentUser);
+
+    if(!emailCad) return Promise.reject(new Error('Informe um e-mail para criar a conta.'));
+    if(senha.length < 6) return Promise.reject(new Error('A senha precisa ter pelo menos 6 caracteres.'));
+    if(senha !== senha2) return Promise.reject(new Error('As senhas não conferem.'));
+
+    return fbAuth.createUserWithEmailAndPassword(emailCad, senha)
+      .then(function(cred){
+        return cred.user.updateProfile({ displayName: nomeCli })
+          .then(function(){ return cred.user; });
+      })
+      .then(function(user){
+        user.getIdToken(true)
+          .then(function(tk){
+            return fetch(API_VERIFICACAO, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ idToken: tk })
+            });
+          })
+          .catch(function(){ user.sendEmailVerification().catch(function(){}); });
+        return user;
+      })
+      .catch(function(e){
+        if(e && e.code === 'auth/email-already-in-use'){
+          return fbAuth.signInWithEmailAndPassword(emailCad, senha)
+            .then(function(c){ return c.user; });
+        }
+        if(e && e.code === 'auth/weak-password'){
+          throw new Error('A senha precisa ter pelo menos 6 caracteres.');
+        }
+        if(e && e.code === 'auth/invalid-email'){
+          throw new Error('E-mail inválido.');
+        }
+        throw e;
+      });
+  }
+
+  function salvarPerfilFirestore(usuario){
+    if(!usuario || !fbDb) return Promise.resolve();
+
+    /* Cliente logado: só atualiza o WhatsApp se foi preenchido */
+    if(clienteLogado){
+      var w = $('whatsapp').value.replace(/\D/g, '');
+      if(!w) return Promise.resolve();
+      return fbDb.collection('clientes').doc(usuario.uid)
+        .set({ whatsapp: w }, { merge: true })
+        .catch(function(){});
+    }
+
+    var dados = {
+      nome: $('nome').value.trim(),
+      email: usuario.email || ($('email') ? $('email').value.trim() : ''),
+      whatsapp: $('whatsapp').value.replace(/\D/g, '')
+    };
+
+    var dia = $('cadDia') ? parseInt($('cadDia').value, 10) : null;
+    var mes = $('cadMes') ? parseInt($('cadMes').value, 10) : null;
+    var cep = $('cadCep') ? $('cadCep').value.replace(/\D/g, '') : '';
+    var cpf = $('cadCpf') ? $('cadCpf').value.replace(/\D/g, '') : '';
+
+    if(dia) dados.nascimentoDia = dia;
+    if(mes) dados.nascimentoMes = mes;
+    if(cep) dados.cep = cep;
+    if(cpf) dados.cpf = cpf;
+
+    return fbDb.collection('clientes').doc(usuario.uid)
+      .set(dados, { merge: true })
+      .then(function(){
+        return fbDb.collection('clientes_publico').doc(usuario.uid)
+          .set({ email: String(dados.email || '').toLowerCase(), foto: '' }, { merge: true })
+          .catch(function(){});
+      })
+      .catch(function(err){
+        console.warn('[enviar-projeto] perfil não salvo:', err && err.message);
+      });
+  }
+
   /* ==================== ENVIAR ==================== */
   function enviarProjeto(ev){
     if(ev) ev.preventDefault();
@@ -485,6 +818,7 @@
 
     var btn = $('btnEnviar');
     var btnTxt = btn ? btn.querySelector('.btn-txt') : null;
+
     if(btn){
       btn.disabled = true;
       btn.classList.add('loading');
@@ -496,18 +830,22 @@
       whatsapp: $('whatsapp').value.trim(),
       email: $('email').value.trim() || null,
       servico: servicoAtual,
-      descricao: montarDescricao()
+      descricao: montarDescricao(),
+      tipo_cadastro: tipoCadastro,
+      cliente_novo: tipoCadastro === 'completo'
     };
 
     if(servicoAtual === 'impressao'){
       var urgVal = document.querySelector('input[name="urgencia"]:checked');
       var urgKey = urgVal ? urgVal.value : 'sem-urgencia';
+
       payload.quantidade = parseInt($('quantidade').value, 10) || 1;
       payload.prazo = $('prazo').value || null;
       payload.urgencia = urgKey;
       payload.taxa_urgencia = TAXA_URGENCIA[urgKey] || 0;
       payload.tem_arquivo = temArquivoPronto();
       payload.precisa_modelagem = !temArquivoPronto();
+
       var links = [];
       document.querySelectorAll('#links-container input').forEach(function(inp){
         if(inp.value.trim()) links.push(inp.value.trim());
@@ -527,38 +865,56 @@
       payload.problema = $('ass-problema').value.trim();
       var prioSel = document.querySelector('input[name="prioridade"]:checked');
       payload.prioridade = prioSel ? prioSel.value : 'normal';
-      /* Assistência é 100% remota — formato fixo */
       payload.formato = 'remoto';
     }
 
-    fetch(API_ORCAMENTOS, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(function(r){
-      if(!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function(res){
-      var idRes = res && (res.pedido_id || res.id || res.numero);
-      var pedidoId = (idRes && String(idRes).trim()) ? String(idRes).trim() : gerarPedidoId();
-      sucesso(pedidoId, false);
-    })
-    .catch(function(err){
-      if(window.console && console.warn){
-        console.warn('[enviar-projeto] Falha ao registrar:', err && err.message);
-      }
-      var pedidoId = gerarPedidoId();
-      sucesso(pedidoId, true);
-    })
-    .then(function(){
-      if(btn){
-        btn.disabled = false;
-        btn.classList.remove('loading');
-      }
-      if(btnTxt) btnTxt.textContent = 'Enviar projeto e falar no WhatsApp';
-    });
+    criarContaSeCompleto()
+      .then(function(usuario){
+        if(usuario){
+          payload.uid = usuario.uid;
+          return salvarPerfilFirestore(usuario).then(function(){ return usuario; });
+        }
+        return null;
+      })
+      .catch(function(err){
+        if(err && err.message){
+          ceStatus(err.message + ' Enviando como cadastro simples.', 'err');
+          toast('⚠️ ' + err.message);
+        }
+        payload.tipo_cadastro = 'simples';
+        payload.cliente_novo = false;
+        return null;
+      })
+      .then(function(){
+        return fetch(API_ORCAMENTOS, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      })
+      .then(function(r){
+        if(!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(res){
+        var idRes = res && (res.pedido_id || res.id || res.numero);
+        var pedidoId = (idRes && String(idRes).trim()) ? String(idRes).trim() : gerarPedidoId();
+        sucesso(pedidoId, false);
+      })
+      .catch(function(err){
+        if(window.console && console.warn){
+          console.warn('[enviar-projeto] Falha ao registrar:', err && err.message);
+        }
+        var pedidoId = gerarPedidoId();
+        sucesso(pedidoId, true);
+      })
+      .then(function(){
+        if(btn){
+          btn.disabled = false;
+          btn.classList.remove('loading');
+        }
+        if(btnTxt) btnTxt.textContent = 'Enviar projeto e falar no WhatsApp';
+      });
   }
 
   /* ==================== SUCESSO ==================== */
@@ -580,7 +936,6 @@
       toast('Projeto preparado. Se o WhatsApp não abrir, clique no botão.');
     }
 
-    /* --- Reset completo do formulário --- */
     var form = $('projetoForm');
     if(form) form.reset();
 
@@ -600,6 +955,7 @@
       primeiro.classList.add('selected');
       servicoAtual = 'impressao';
     }
+
     var imp = $('campos-impressao');
     var con = $('campos-consultoria');
     var ass = $('campos-assistencia');
@@ -647,10 +1003,43 @@
     if(consOutro) consOutro.style.display = 'none';
     var consOutroTxt = $('cons-outro-texto');
     if(consOutroTxt) consOutroTxt.value = '';
+
     var assOutro = $('ass-outro-box');
     if(assOutro) assOutro.style.display = 'none';
     var assOutroTxt = $('ass-outro-texto');
     if(assOutroTxt) assOutroTxt.value = '';
+
+    /* Cadastro: mantém estado de logado ou volta para simples */
+    if(clienteLogado){
+      tipoCadastro = 'logado';
+      var bVis = $('blocoVisitante');
+      var bLog = $('blocoLogado');
+      if(bVis) bVis.style.display = 'none';
+      if(bLog) bLog.style.display = 'block';
+    } else {
+      document.querySelectorAll('.cadastro-card').forEach(function(c){
+        c.classList.remove('selected');
+      });
+      var cadSimples = document.querySelector('.cadastro-card[data-cadastro="simples"]');
+      if(cadSimples){
+        cadSimples.classList.add('selected');
+        tipoCadastro = 'simples';
+      }
+      var beneficios = $('cadastroBeneficios');
+      if(beneficios) beneficios.style.display = 'none';
+      var extraCad = $('cadastroExtra');
+      if(extraCad) extraCad.style.display = 'none';
+      var lblObg = $('lblEmailObg');
+      if(lblObg) lblObg.style.display = 'none';
+    }
+
+    ['cadSenha','cadSenha2','cadDia','cadCep','cadCpf'].forEach(function(id){
+      var elx = $(id);
+      if(elx) elx.value = '';
+    });
+    var cadMesEl = $('cadMes');
+    if(cadMesEl) cadMesEl.value = '';
+    ceStatus('');
 
     document.querySelectorAll('.campo-erro').forEach(function(el){
       el.classList.remove('campo-erro');
@@ -671,6 +1060,11 @@
   /* ==================== EXPOR PARA O HTML ==================== */
   window.enviarProjeto = enviarProjeto;
   window.selecionarServico = selecionarServico;
+  window.selecionarCadastro = selecionarCadastro;
+  window.abrirCadastroCompleto = abrirCadastroCompleto;
+  window.cadastroComGoogle = cadastroComGoogle;
+  window.mascararCep = mascararCep;
+  window.mascararCpf = mascararCpf;
   window.marcarPill = marcarPill;
   window.marcarArquivo = marcarArquivo;
   window.abrirModalModelagem = abrirModalModelagem;
@@ -709,14 +1103,10 @@
 
   /* ==================== INICIALIZAÇÃO ==================== */
   function iniciar(){
-    /* Data mínima = hoje */
     var p = $('prazo');
     if(p){
       p.setAttribute('min', hojeISO());
 
-      /* Clique em qualquer área do campo abre o calendário nativo.
-         O guard impede disparo duplo quando o clique foi no próprio
-         indicador (que já abre por padrão). */
       p.addEventListener('click', function(e){
         if(typeof p.showPicker !== 'function') return;
         if(e.target === p) return;
@@ -736,12 +1126,12 @@
       });
     }
 
-    /* Limpa erro ao digitar */
     var mapaErros = {
       'nome': ['campoNome', 'err-nome'],
       'whatsapp': ['campoWhatsapp', 'err-whatsapp'],
       'email': ['campoEmail', 'err-email']
     };
+
     Object.keys(mapaErros).forEach(function(id){
       var el = $(id);
       if(!el) return;
@@ -751,7 +1141,6 @@
       });
     });
 
-    /* Limpa erro do prazo ao alterar */
     var prazoEl = $('prazo');
     if(prazoEl){
       prazoEl.addEventListener('change', function(){
@@ -762,6 +1151,15 @@
       });
     }
 
+    /* Estado de login */
+    if(fbAuth){
+      fbAuth.onAuthStateChanged(function(u){
+        aplicarEstadoLogado(u);
+      });
+    } else {
+      aplicarEstadoLogado(null);
+    }
+
     atualizarProgresso();
   }
 
@@ -770,5 +1168,4 @@
   } else {
     iniciar();
   }
-
 })();
