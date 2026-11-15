@@ -497,3 +497,261 @@ var link = M3D_LOCAL ? ('produto.html?produto=' + encodeURIComponent(slug)) : ('
 
   window.addEventListener('hashchange', abrirPorHash);
 })();
+
+/* ============================================================
+   HERO CARROSSEL — produtos mais recentes da loja
+   Ordenação em 3 níveis:
+     1. data de criação (se a API fornecer)
+     2. ordem inversa do array (último cadastrado primeiro)
+     3. fallback: mantém a ordem retornada
+   Atualiza automaticamente: a cada carregamento da página
+   ============================================================ */
+(function(){
+  'use strict';
+
+  var elCarrossel = document.getElementById('heroCarrossel');
+  var elTrack     = document.getElementById('hcTrack');
+  var elDots      = document.getElementById('hcDots');
+  var elPrev      = document.getElementById('hcPrev');
+  var elNext      = document.getElementById('hcNext');
+  if(!elCarrossel || !elTrack) return;
+
+  var API = 'https://meu3dlabs-backend.onrender.com/api/loja/produtos';
+  var INTERVALO = 5000;      /* 5 segundos */
+  var MAX_SLIDES = 6;        /* limita o peso do carregamento */
+
+  var slides = [];
+  var idx = 0;
+  var timer = null;
+  var pausado = false;
+
+  /* ---------- HELPERS ---------- */
+  function brl(v){
+    return 'R$ ' + (parseFloat(v) || 0).toFixed(2).replace('.', ',');
+  }
+  function esc(s){
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+  function isLocal(){
+    return location.protocol === 'file:' ||
+           location.hostname === 'localhost' ||
+           location.hostname === '127.0.0.1';
+  }
+  function linkProduto(slug){
+    return isLocal()
+      ? 'produto.html?produto=' + encodeURIComponent(slug)
+      : 'produto/' + encodeURIComponent(slug);
+  }
+
+  /* ---------- EXTRAI DATA DE CRIAÇÃO ---------- */
+  function dataCriacao(p){
+    var campos = [
+      'criadoEm','criado_em','createdAt','created_at',
+      'dataCriacao','data_criacao','dt_cadastro','cadastradoEm'
+    ];
+    for(var i = 0; i < campos.length; i++){
+      var v = p[campos[i]];
+      if(v){
+        var t = new Date(v).getTime();
+        if(t && !isNaN(t)) return t;
+      }
+    }
+    return 0;
+  }
+
+  /* ---------- ORDENA: MAIS RECENTE PRIMEIRO ---------- */
+  function ordenarRecentes(lista){
+    var comData = lista.filter(function(p){ return dataCriacao(p) > 0; });
+    var semData = lista.filter(function(p){ return !dataCriacao(p); });
+
+    if(comData.length){
+      comData.sort(function(a, b){
+        return dataCriacao(b) - dataCriacao(a);
+      });
+    }
+    /* Sem data: assume que a API retorna em ordem de cadastro,
+       então invertemos para pegar o último cadastrado primeiro */
+    semData.reverse();
+
+    return comData.concat(semData);
+  }
+
+  /* ---------- MONTA OS SLIDES ---------- */
+  function montar(produtos){
+    elTrack.innerHTML = '';
+    elDots.innerHTML = '';
+    slides = [];
+
+    produtos.slice(0, MAX_SLIDES).forEach(function(p, i){
+      var img = (p.imagens && p.imagens[0]) ? p.imagens[0] : '';
+      if(!img) return;
+
+      var precoN = parseFloat(p.preco) || 0;
+      var promo = p.promo &&
+                  parseFloat(p.precoPromo) > 0 &&
+                  parseFloat(p.precoPromo) < precoN;
+      var precoV = promo ? parseFloat(p.precoPromo) : precoN;
+      var descPct = promo ? Math.round((1 - precoV / precoN) * 100) : 0;
+
+      var a = document.createElement('a');
+      a.className = 'hc-slide';
+      a.href = linkProduto(p.slug || '');
+      a.setAttribute('aria-label', 'Ver produto: ' + (p.nome || ''));
+
+      var html = '';
+      html += '<img src="' + esc(img) + '" alt="' + esc(p.nome) + '"' +
+              (i === 0 ? ' fetchpriority="high"' : ' loading="lazy"') + '>';
+      if(promo && descPct > 0){
+        html += '<span class="hc-badge">-' + descPct + '%</span>';
+      }
+      html += '<span class="hc-selo">' +
+                '<span class="hc-nome">' + esc(p.nome) + '</span>' +
+                '<span class="hc-preco">' + brl(precoV) + '</span>' +
+              '</span>';
+
+      a.innerHTML = html;
+      elTrack.appendChild(a);
+      slides.push(a);
+
+      /* Bolinha */
+      var b = document.createElement('button');
+      b.className = 'hc-dot' + (i === 0 ? ' on' : '');
+      b.setAttribute('aria-label', 'Ir para o produto ' + (i + 1));
+      b.onclick = (function(n){
+        return function(e){
+          e.preventDefault();
+          e.stopPropagation();
+          irPara(n);
+          reiniciar();
+        };
+      })(i);
+      elDots.appendChild(b);
+    });
+
+    /* Esconde controles se houver 1 slide só */
+    var soUm = slides.length <= 1;
+    elDots.style.display = soUm ? 'none' : 'flex';
+    if(elPrev) elPrev.style.display = soUm ? 'none' : '';
+    if(elNext) elNext.style.display = soUm ? 'none' : '';
+
+    if(slides.length) irPara(0);
+  }
+
+  /* ---------- NAVEGAÇÃO ---------- */
+  function irPara(n){
+    if(!slides.length) return;
+    idx = (n + slides.length) % slides.length;
+    elTrack.style.transform = 'translateX(-' + (idx * 100) + '%)';
+
+    var dots = elDots.children;
+    for(var i = 0; i < dots.length; i++){
+      dots[i].className = 'hc-dot' + (i === idx ? ' on' : '');
+    }
+  }
+
+  function proximo(){ irPara(idx + 1); }
+  function anterior(){ irPara(idx - 1); }
+
+  /* ---------- AUTOMÁTICO ---------- */
+  function iniciar(){
+    parar();
+    if(slides.length <= 1) return;
+    timer = setInterval(function(){
+      if(!pausado && !document.hidden) proximo();
+    }, INTERVALO);
+  }
+  function parar(){
+    if(timer){ clearInterval(timer); timer = null; }
+  }
+  function reiniciar(){ iniciar(); }
+
+  /* ---------- EVENTOS ---------- */
+  if(elPrev) elPrev.addEventListener('click', function(e){
+    e.preventDefault();
+    anterior();
+    reiniciar();
+  });
+  if(elNext) elNext.addEventListener('click', function(e){
+    e.preventDefault();
+    proximo();
+    reiniciar();
+  });
+
+  /* Pausa no hover (desktop) */
+  elCarrossel.addEventListener('mouseenter', function(){ pausado = true; });
+  elCarrossel.addEventListener('mouseleave', function(){ pausado = false; });
+
+  /* Swipe no mobile */
+  var x0 = null;
+  elCarrossel.addEventListener('touchstart', function(e){
+    x0 = e.touches[0].clientX;
+    pausado = true;
+  }, { passive: true });
+
+  elCarrossel.addEventListener('touchend', function(e){
+    if(x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if(Math.abs(dx) > 40){
+      if(dx < 0) proximo();
+      else anterior();
+      reiniciar();
+    }
+    setTimeout(function(){ pausado = false; }, 3000);
+    x0 = null;
+  }, { passive: true });
+
+  /* Pausa quando a aba está escondida */
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden) parar();
+    else iniciar();
+  });
+
+  /* ---------- CARREGA OS PRODUTOS ---------- */
+  fetch(API, { cache: 'no-store' })
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(d){
+      var lista = d.produtos || d || [];
+      if(!Array.isArray(lista)) lista = [];
+
+      /* Filtra: ativo e com estoque */
+      lista = lista.filter(function(p){
+        return p.ativo !== false && (parseInt(p.estoque, 10) || 0) > 0;
+      });
+
+      /* Filtra: só com imagem (sem imagem não tem slide) */
+      lista = lista.filter(function(p){
+        return p.imagens && p.imagens.length && p.imagens[0];
+      });
+
+      if(!lista.length){
+        /* Sem produtos: mantém o carrossel escondido e mostra a
+           imagem padrão de fallback */
+        elCarrossel.innerHTML =
+          '<img src="img/portfolio/Hero.png" ' +
+          'alt="Peça 3D personalizada feita pela Meu 3D Labs" ' +
+          'fetchpriority="high" style="width:100%;height:100%;object-fit:cover;">' +
+          '<span class="hero-selo">✦ Feito sob medida</span>';
+        return;
+      }
+
+      /* Ordena: mais recentes primeiro */
+      var ordenados = ordenarRecentes(lista);
+
+      /* Monta e inicia */
+      montar(ordenados);
+      iniciar();
+    })
+    .catch(function(){
+      /* Falha na API: fallback para a imagem estática */
+      elCarrossel.innerHTML =
+        '<img src="img/portfolio/Hero.png" ' +
+        'alt="Peça 3D personalizada feita pela Meu 3D Labs" ' +
+        'fetchpriority="high" style="width:100%;height:100%;object-fit:cover;">' +
+        '<span class="hero-selo">✦ Feito sob medida</span>';
+    });
+})();
