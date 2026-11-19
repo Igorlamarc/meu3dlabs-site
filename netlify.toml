@@ -1,0 +1,51 @@
+[build]
+  publish = "."
+
+# ============================================================
+# PÁGINAS DE PRODUTO
+# Rewrite para o HTML. A Edge Function valida se o slug existe.
+# ============================================================
+[[redirects]]
+  from = "/produto/*"
+  to = "/produto.html"
+  status = 200
+
+# ============================================================
+# SITEMAP DE PRODUTOS
+# Serve o XML gerado pelo backend, mas no seu domínio.
+# O Google exige que todo sitemap de um índice esteja no mesmo host.
+# ============================================================
+[[redirects]]
+  from = "/sitemap-produtos.xml"
+  to = "https://meu3dlabs-backend.onrender.com/api/sitemap-produtos.xml"
+  status = 200
+  force = true
+
+# ============================================================
+# HEADERS DOS SITEMAPS
+# Garante o Content-Type correto para o Google indexar como XML.
+# ============================================================
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/sitemap-paginas.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/sitemap-produtos.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+    Cache-Control = "public, max-age=1800"
+
+# ============================================================
+# EDGE FUNCTION — 404 real para produto inexistente
+# ============================================================
+[[edge_functions]]
+  path = "/produto/*"
+  function = "produto-404"

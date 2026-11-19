@@ -22,7 +22,7 @@
   css.textContent=
   '.m3l-login-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#0f1e3d;border:1.5px solid #fff;border-radius:999px;padding:8px 16px;font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;box-shadow:0 2px 6px rgba(0,0,0,.14);transition:background .15s,transform .15s,box-shadow .15s;}' +
   '.m3l-login-btn:hover{background:#eef1f6;transform:translateY(-1px);box-shadow:0 4px 10px rgba(0,0,0,.18);}' +
-    '.m3l-login-btn::before,.m3l-login-btn::after{content:none !important;display:none !important;background:none !important;width:0 !important;height:0 !important;}' +
+  '.m3l-login-btn::before,.m3l-login-btn::after{content:none !important;display:none !important;background:none !important;width:0 !important;height:0 !important;}' +
   '.header-inner .m3l-login-btn{margin-left:12px;}' +
   '.m3l-ov{position:fixed;inset:0;background:rgba(15,30,61,.6);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:99998;display:none;align-items:center;justify-content:center;padding:16px;}' +
   '.m3l-ov.open{display:flex;}' +
@@ -157,12 +157,12 @@
   '<input type="text" id="m3lNome" placeholder="Nome e sobrenome" autocomplete="name">' +
   '<div class="m3l-pw"><input type="password" id="m3lSenha" placeholder="Senha (mínimo 6 caracteres)" autocomplete="new-password"><button type="button" class="m3l-eye" data-alvo="m3lSenha" aria-label="Mostrar senha">👁</button></div>' +
   '<div class="m3l-pw"><input type="password" id="m3lSenha2" placeholder="Confirmar senha" autocomplete="new-password"><button type="button" class="m3l-eye" data-alvo="m3lSenha2" aria-label="Mostrar senha">👁</button></div>' +
-  '<input type="tel" id="m3lFone" placeholder="WhatsApp · (21) 99999-9999" autocomplete="tel" maxlength="16">' +
+  '<input type="tel" id="m3lFone" placeholder="WhatsApp · (21) 99999-9999" autocomplete="tel" inputmode="numeric" maxlength="16">' +
   '<div class="m3l-linha2">' +
-  '<input type="number" id="m3lNascDia" placeholder="Dia" min="1" max="31">' +
+  '<input type="number" id="m3lNascDia" placeholder="Dia" min="1" max="31" inputmode="numeric">' +
   '<select id="m3lNascMes"><option value="">Mês de nascimento</option><option value="1">Janeiro</option><option value="2">Fevereiro</option><option value="3">Março</option><option value="4">Abril</option><option value="5">Maio</option><option value="6">Junho</option><option value="7">Julho</option><option value="8">Agosto</option><option value="9">Setembro</option><option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option></select>' +
   '</div>' +
-  '<input type="text" id="m3lCep" placeholder="CEP · para envios fora do RJ" autocomplete="postal-code" maxlength="9">' +
+  '<input type="text" id="m3lCep" placeholder="CEP · para envios fora do RJ" autocomplete="postal-code" inputmode="numeric" maxlength="9">' +
   '<div class="m3l-hint" id="m3lCepHint"></div>' +
   '<div class="m3l-cepinfo" id="m3lCepInfo">' +
   '<label>Endereço encontrado</label>' +
@@ -190,6 +190,62 @@
   var cepTimer=null;
   var abaPanel='dados';
   var perfilCache=null;
+  /* ---------- BÔNUS: cache local do perfil (prefill instantâneo) ---------- */
+  var CHAVE_PERFIL_LOCAL='m3l_perfil_local';
+  function cachearPerfilLocal(dados,email,uid){
+    try{
+      if(!dados)return;
+      uid=uid||(window.m3lUser&&window.m3lUser.uid)||'';
+      var c={
+        uid:uid,
+        nome:String(dados.nome||'').trim(),
+        whatsapp:String(dados.whatsapp||'').replace(/\D/g,''),
+        email:email||'',
+        endereco:{
+          cep:dados.cep||'',
+          rua:dados.rua||'',
+          numero:dados.numero||'',
+          comp:dados.complemento||dados.comp||'',
+          bairro:dados.bairro||'',
+          cidade:dados.cidade||'',
+          uf:dados.uf||''
+        }
+      };
+      if(!c.nome&&!c.whatsapp&&!c.endereco.cep&&!c.endereco.rua){return;}
+      localStorage.setItem(CHAVE_PERFIL_LOCAL,JSON.stringify(c));
+    }catch(e){}
+  }
+  /* Preenche o m3lUser com o último perfil conhecido deste navegador,
+     antes de o Firestore responder. Só roda quando o uid bate com a sessão. */
+  function hidratarPerfilLocal(uidAtual){
+    try{
+      var raw=localStorage.getItem(CHAVE_PERFIL_LOCAL);
+      if(!raw||!window.m3lUser)return;
+      var c=JSON.parse(raw);
+      if(!c)return;
+      if(c.uid&&uidAtual&&c.uid!==uidAtual)return;
+      if(!window.m3lUser.nome&&c.nome)window.m3lUser.nome=c.nome;
+      if(!window.m3lUser.fone&&c.whatsapp)window.m3lUser.fone=c.whatsapp;
+      if(!window.m3lUser.endereco&&c.endereco)window.m3lUser.endereco=c.endereco;
+      if(!perfilCache){
+        perfilCache={
+          nome:c.nome||'',
+          whatsapp:c.whatsapp||'',
+          nascimentoDia:null,nascimentoMes:null,
+          cep:(c.endereco&&c.endereco.cep)||'',
+          rua:(c.endereco&&c.endereco.rua)||'',
+          numero:(c.endereco&&c.endereco.numero)||'',
+          complemento:(c.endereco&&c.endereco.comp)||'',
+          bairro:(c.endereco&&c.endereco.bairro)||'',
+          cidade:(c.endereco&&c.endereco.cidade)||'',
+          uf:(c.endereco&&c.endereco.uf)||'',
+          foto:''
+        };
+      }
+      try{document.dispatchEvent(new CustomEvent('m3l-user-changed',{detail:window.m3lUser}));}catch(e){}
+      atualizarBotao(auth.currentUser);
+    }catch(e){}
+  }
   /* ---------- Aviso de confirmação de e-mail ---------- */
   var verbar=document.createElement('div');
   verbar.className='m3l-verbar';verbar.id='m3lVerbar';
@@ -653,6 +709,7 @@
       'auth/too-many-requests':'Muitas tentativas seguidas. Tente novamente em alguns minutos.',
       'auth/network-request-failed':'Falha de conexão. Verifique sua internet.',
       'auth/missing-password':'Digite a senha.',
+      'auth/user-disabled':'Esta conta foi desativada. Fale com a gente pelo WhatsApp para reativar.',
       'auth/operation-not-allowed':'Este método de login não está ativado no Firebase.',
       'auth/popup-closed-by-user':'Você fechou a janela do Google antes de concluir.',
       'auth/cancelled-popup-request':'Operação cancelada. Tente novamente.',
@@ -726,6 +783,7 @@
       .then(function(cred){
         var dados={nome:nome,email:upEmail,whatsapp:fone,nascimentoDia:nascDia,nascimentoMes:nascMes,cep:cep,rua:ruaV,numero:'',complemento:'',bairro:bairroV,cidade:cidadeV,uf:ufV};
         perfilCache={nome:nome,whatsapp:fone,nascimentoDia:nascDia,nascimentoMes:nascMes,cep:cep,rua:ruaV,numero:'',complemento:'',bairro:bairroV,cidade:cidadeV,uf:ufV,foto:''};
+        cachearPerfilLocal(dados,upEmail,cred.user.uid);
         return salvarPerfil(cred.user.uid,dados).then(function(){aplicarPerfilLocal(dados);return cred;});
       })
       .then(function(cred){atualizarBotao(cred.user);fechaModal();})
@@ -795,7 +853,6 @@
       pai.style.display=esconder?'none':'';
     });
   }
-
   /* ---------- Botão do header: mostra a foto do cliente quando existir ---------- */
   function atualizarBotao(u){
     if(!u){
@@ -808,9 +865,7 @@
     var n=(u.displayName||'').trim();
     var foto=(perfilCache&&perfilCache.foto)?perfilCache.foto:'';
     var rotulo=n?('Olá, '+n.split(' ')[0]):'Minha conta';
-
     btn.removeAttribute('style');
-
     if(foto){
       btn.innerHTML='<img src="'+foto+'" alt="" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1.5px solid rgba(15,30,61,.15);">'
                   +'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+rotulo+'</span>';
@@ -827,6 +882,8 @@
     window.m3lUser=u?{uid:u.uid,nome:(u.displayName||''),email:u.email,fone:'',endereco:null}:null;
     if(!u){perfilCache=null;abaPanel='dados';}
     try{document.dispatchEvent(new CustomEvent('m3l-user-changed',{detail:window.m3lUser}));}catch(e){}
+    /* BÔNUS: prefill instantâneo com o último perfil salvo neste navegador */
+    if(u)hidratarPerfilLocal(u.uid);
     atualizarBotao(u);
     checarVerif();
     if(u&&db){
@@ -836,13 +893,28 @@
           var nomeGoogle=(u.displayName||'').trim();
           perfilCache={nome:nomeGoogle,whatsapp:'',nascimentoDia:null,nascimentoMes:null,cep:'',rua:'',numero:'',complemento:'',bairro:'',cidade:'',uf:'',foto:''};
           window.m3lUser.nome=nomeGoogle;
+          cachearPerfilLocal({nome:nomeGoogle,whatsapp:''},u.email||'',u.uid);
           atualizarBotao(auth.currentUser);
           return db.collection('clientes').doc(u.uid).set({nome:nomeGoogle,email:u.email||''},{merge:true});
         }
         var p=snap.data()||{};
+        /* ===== CORREÇÃO: backfill do nome para contas antigas =====
+           Contas criadas antes do campo "nome" existir no banco ficam sem nome.
+           Se o Auth tem displayName (Google), grava uma vez com merge e segue
+           com o perfil completo no mesmo carregamento. */
+        var faltando={};
+        if(!p.nome&&(u.displayName||'').trim()){
+          faltando.nome=u.displayName.trim();
+          p.nome=faltando.nome;
+        }
+        if(Object.keys(faltando).length){
+          db.collection('clientes').doc(u.uid).set(faltando,{merge:true}).catch(function(){});
+        }
         perfilCache={nome:p.nome||'',whatsapp:p.whatsapp||'',nascimentoDia:p.nascimentoDia||null,nascimentoMes:p.nascimentoMes||null,cep:p.cep||'',rua:p.rua||'',numero:p.numero||'',complemento:p.complemento||'',bairro:p.bairro||'',cidade:p.cidade||'',uf:p.uf||'',foto:p.foto||''};
+        window.m3lUser.nome=p.nome||window.m3lUser.nome||'';
         window.m3lUser.fone=p.whatsapp||'';
         window.m3lUser.endereco={cep:p.cep||'',rua:p.rua||'',numero:p.numero||'',comp:p.complemento||'',bairro:p.bairro||'',cidade:p.cidade||'',uf:p.uf||''};
+        cachearPerfilLocal(p,u.email||'',u.uid);
         try{document.dispatchEvent(new CustomEvent('m3l-user-changed',{detail:window.m3lUser}));}catch(e){}
         atualizarBotao(auth.currentUser);
         if(ov.classList.contains('open')&&window.m3lUser){
@@ -853,16 +925,25 @@
     }
   });
   /* ---------- Abrir cadastro de fora (convite no checkout) ---------- */
-  window.m3lAbrirCadastro=function(){
-    if(window.m3lUser){abreModal();return;}
-    abreModal();
-    setModo('up');
-    try{$('m3lEmailUp').focus();}catch(e){}
-  };
-  /* ---------- Salvar perfil de fora (checkout salva endereço após pedido) ---------- */
+ window.m3lAbrirCadastro=function(){
+  if(window.m3lUser){abreModal();return;}
+  abreModal();
+  setModo('up');
+  try{$('m3lEmailUp').focus();}catch(e){}
+};
+/* Abre direto na aba Entrar — usado pelo checkout obrigatório */
+window.m3lAbrirLogin=function(){
+  if(window.m3lUser){abreModal();return;}
+  abreModal();
+  setModo('in');
+  try{$('m3lEmailIn').focus();}catch(e){}
+};
+  /* ---------- Salvar perfil de fora (checkout salva dados após preencher) ---------- */
   window.m3lSalvarPerfil=function(dados){
     if(!db||!window.m3lUser||!window.m3lUser.uid||!dados)return Promise.resolve();
     var d={};
+    /* CORREÇÃO: o nome agora também persiste (antes era ignorado) */
+    if(dados.nome!==undefined&&String(dados.nome).trim()!=='')d.nome=String(dados.nome).trim();
     if(dados.whatsapp!==undefined)d.whatsapp=String(dados.whatsapp).replace(/\D/g,'');
     ['cep','rua','numero','complemento','bairro','cidade','uf'].forEach(function(k){
       if(dados[k]!==undefined&&String(dados[k]).trim()!=='')d[k]=String(dados[k]).trim();
@@ -870,9 +951,11 @@
     if(!Object.keys(d).length)return Promise.resolve();
     return db.collection('clientes').doc(window.m3lUser.uid).set(d,{merge:true}).then(function(){
       if(perfilCache){
+        if(d.nome!==undefined)perfilCache.nome=d.nome;
         if(d.whatsapp!==undefined)perfilCache.whatsapp=d.whatsapp;
         ['cep','rua','numero','complemento','bairro','cidade','uf'].forEach(function(k){if(d[k]!==undefined)perfilCache[k]=d[k];});
       }
+      if(d.nome!==undefined)window.m3lUser.nome=d.nome;
       if(d.whatsapp!==undefined)window.m3lUser.fone=d.whatsapp;
       var mudou=false;
       ['cep','rua','numero','complemento','bairro','cidade','uf'].forEach(function(k){
@@ -882,26 +965,22 @@
           mudou=true;
         }
       });
+      if(d.nome!==undefined)atualizarBotao(auth.currentUser);
+      var endc=window.m3lUser.endereco||{};
+      cachearPerfilLocal({
+        nome:window.m3lUser.nome,
+        whatsapp:window.m3lUser.fone,
+        cep:endc.cep,rua:endc.rua,numero:endc.numero,complemento:endc.comp,
+        bairro:endc.bairro,cidade:endc.cidade,uf:endc.uf
+      },window.m3lUser.email,window.m3lUser.uid);
       if(mudou){try{document.dispatchEvent(new CustomEvent('m3l-user-changed',{detail:window.m3lUser}));}catch(e){}}
     }).catch(function(e){console.warn('loja-login: perfil não salvo',e);});
   };
   /* ---------- Bloqueio: checkout e cupom até confirmar o e-mail ---------- */
   window.m3lEmailVerificado=emailVerificado;
-  (function guardaCheckout(){
-    var tent=0;
-    (function tenta(){
-      var orig=window.abrirCheckout;
-      if(typeof orig==='function'){
-        window.abrirCheckout=function(){
-          var cu=auth.currentUser;
-          if(cu&&!cu.emailVerified){checarVerif();return;}
-          return orig.apply(this,arguments);
-        };
-        return;
-      }
-      if(++tent<40)setTimeout(tenta,300);
-    })();
-  })();
+  /* Checkout NÃO é mais bloqueado por e-mail não verificado.
+   O cliente compra normalmente; o cupom de 10% continua exigindo
+   a confirmação (ver guardaCupom logo abaixo). */
   /* ---------- Retorno da confirmação: aviso na loja ---------- */
   if(location.search.indexOf('verificado=1')!==-1){
     try{history.replaceState(null,'',location.pathname);}catch(e){}

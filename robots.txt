@@ -7,5 +7,6 @@ Disallow: /admin-feed.html
 Disallow: /admin-modelagem.html
 Disallow: /login.html
 Disallow: /teste-api.html
+Disallow: /minha-conta.html
 
 Sitemap: https://meu3dlabs.com.br/sitemap.xml

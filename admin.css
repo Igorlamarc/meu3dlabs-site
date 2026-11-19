@@ -642,3 +642,106 @@ body.dark .prazo-modal .pm-acoes .pm-ok{background:#0d1424;border-color:#2a3a5c;
 
 body.dark .cliente-info .td-client{color:#e6ecf7;}
 body.dark .cliente-foto{border-color:#16203a;}
+
+/* ============================================================
+   CORES NO PEDIDO
+   ============================================================ */
+.cor-chip-admin{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-left:6px;
+  padding:2px 9px 2px 4px;
+  background:#eef2f8;
+  border:1px solid #d7dfec;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:800;
+  color:var(--navy);
+  vertical-align:middle;
+  white-space:nowrap;
+  letter-spacing:.2px;
+  line-height:1.5;
+}
+.cor-chip-admin i{
+  width:11px;
+  height:11px;
+  border-radius:50%;
+  display:inline-block;
+  border:1px solid rgba(0,0,0,.18);
+  flex-shrink:0;
+}
+.cor-chip-admin.sem-cor{
+  background:#fff4d6;
+  border-color:#f0dca8;
+  color:#8a5a00;
+  padding:2px 9px;
+}
+.item-thumb.vazio{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  background:#eef1f6;
+  color:#b9c2d2;
+}
+/* Detalhes do pedido — item com miniatura da cor */
+.vm-itens{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:14px;
+}
+.vm-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+}
+.vm-item img{
+  width:56px;
+  height:56px;
+  object-fit:contain;
+  border-radius:10px;
+  background:#f0f2f7;
+  border:1px solid var(--border);
+  flex-shrink:0;
+}
+.vm-item-noimg{
+  width:56px;
+  height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  background:#f0f2f7;
+  border:1px solid var(--border);
+  font-size:22px;
+  flex-shrink:0;
+}
+.vm-item-info{flex:1;min-width:0;}
+.vm-item-nome{
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--navy);
+  line-height:1.35;
+  word-break:break-word;
+}
+.vm-item-preco{
+  font-size:14px;
+  font-weight:800;
+  color:var(--orange);
+  white-space:nowrap;
+  flex-shrink:0;
+}
+/* Modo escuro */
+body.dark .cor-chip-admin{background:#1c2a48;border-color:#2f4370;color:#e6ecf7;}
+body.dark .cor-chip-admin.sem-cor{background:#2a2412;border-color:#7a5f10;color:#fbbf24;}
+body.dark .item-thumb.vazio{background:#1c2438;color:#5a6b88;}
+body.dark .vm-item{background:#16203a;border-color:#2a3a5c;}
+body.dark .vm-item img,
+body.dark .vm-item-noimg{background:#0d1424;border-color:#2a3a5c;}
+body.dark .vm-item-nome{color:#e6ecf7;}

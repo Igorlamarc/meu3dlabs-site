@@ -63,37 +63,65 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .p-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:44px;align-items:start;margin-top:8px;}
 .p-info-col{position:sticky;top:90px;}
 /* ===== Galeria ===== */
-.p-g-main{position:relative;background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;cursor:zoom-in;box-shadow:var(--shadow-sm);transition:.25s;}
+.p-g-main{position:relative;background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;cursor:zoom-in;box-shadow:var(--shadow-sm);transition:.25s;touch-action:pan-y;}
 .p-g-main:hover{box-shadow:var(--shadow-md);}
 .p-g-main img{width:100%;height:100%;object-fit:contain;display:block;}
-.p-g-zoom{position:absolute;bottom:12px;right:12px;background:rgba(15,30,61,.75);color:#fff;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;pointer-events:none;opacity:0;transition:.2s;}
+.p-g-main video{width:100%;height:100%;object-fit:contain;display:block;background:transparent;}
+.p-g-zoom{position:absolute;bottom:12px;right:12px;background:rgba(15,30,61,.75);color:#fff;font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;pointer-events:none;opacity:0;transition:.2s;z-index:4;}
 .p-g-main:hover .p-g-zoom{opacity:1;}
+.p-g-count{position:absolute;bottom:12px;left:12px;background:rgba(15,30,61,.78);color:#fff;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:20px;pointer-events:none;z-index:4;letter-spacing:.3px;}
 .p-g-noimg{font-size:72px;color:#b9c2d2;}
+/* ===== MÍDIA: imagem ou vídeo (container) ===== */
+.p-g-media{width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:1;transition:opacity .16s ease;}
+.p-g-media.trocando{opacity:0;}
+/* ===== BOTÃO FLUTUANTE VER VÍDEO ===== */
+.p-ver-video{
+  position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+  display:none;align-items:center;gap:8px;
+  background:var(--orange);color:#fff;border:none;border-radius:30px;
+  padding:10px 20px;font-family:inherit;font-size:13px;font-weight:800;
+  cursor:pointer;z-index:9;letter-spacing:.2px;
+  box-shadow:0 6px 20px rgba(242,101,34,.45);
+  transition:background .2s,transform .2s,opacity .2s;
+}
+.p-ver-video.show{display:inline-flex;}
+.p-ver-video:hover{background:var(--orange-2);transform:translateX(-50%) translateY(-2px);}
+.p-ver-video .pvv-ico{font-size:11px;line-height:1;}
 .p-g-thumbs{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
-.p-thumb{width:72px;height:72px;border:2px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;cursor:pointer;padding:0;transition:.2s;display:flex;align-items:center;justify-content:center;}
+.p-thumb{position:relative;width:72px;height:72px;border:2px solid var(--border);border-radius:12px;overflow:hidden;background:#fff;cursor:pointer;padding:0;transition:.2s;display:flex;align-items:center;justify-content:center;}
 .p-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.p-thumb video{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;background:#0f1e3d;}
+.p-thumb .p-thumb-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,30,61,.4);color:#fff;font-size:15px;line-height:1;pointer-events:none;}
 .p-thumb:hover{border-color:var(--orange-2);}
 .p-thumb.on{border-color:var(--orange);box-shadow:0 0 0 3px rgba(242,101,34,.15);}
 /* Setas de navegação da galeria */
-.p-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:none;background:rgba(15,30,61,.82);color:#fff;font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5;transition:.2s;box-shadow:0 4px 12px rgba(0,0,0,.25);}
+.p-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:50%;border:none;background:rgba(15,30,61,.82);color:#fff;font-size:22px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:7;transition:.2s;box-shadow:0 4px 12px rgba(0,0,0,.25);}
 .p-nav:hover{background:var(--orange);}
 .p-nav.prev{left:12px;}
 .p-nav.next{right:12px;}
 .p-nav[hidden]{display:none;}
-@media(max-width:620px){.p-nav{width:48px;height:48px;font-size:24px;}}
-/* ===== SELO DE DIMENSÕES NA GALERIA ===== */
-.p-selo-dimensoes{
+@media(max-width:620px){.p-nav{width:44px;height:44px;font-size:22px;opacity:.92;}}
+/* ===== SELOS NA GALERIA (dimensões + material) ===== */
+.p-selos{
   position:absolute;
   top:16px;
   left:16px;
   z-index:6;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:8px;
+  pointer-events:none;
+  max-width:calc(100% - 32px);
+}
+.p-selos [hidden]{display:none !important;}
+.p-selo-dimensoes,
+.p-selo-material{
   display:inline-flex;
   align-items:center;
   gap:6px;
   padding:9px 16px;
   border-radius:24px;
-  background:rgba(15,30,61,.82);
-  color:#fff;
   font-size:13px;
   font-weight:700;
   letter-spacing:.3px;
@@ -103,21 +131,20 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
   -webkit-backdrop-filter:blur(6px);
   border:1px solid rgba(255,255,255,.18);
   box-shadow:0 3px 12px rgba(15,30,61,.28);
-  pointer-events:none;
 }
-/* CORREÇÃO: garante que o atributo hidden vença o display:inline-flex */
-.p-selo-dimensoes[hidden]{display:none !important;}
-.p-selo-dimensoes .sd-ico{
-  font-size:13px;
-  opacity:.85;
-  line-height:1;
-}
+.p-selo-dimensoes{background:rgba(15,30,61,.82);color:#fff;}
+.p-selo-material{background:rgba(242,101,34,.94);color:#fff;border-color:rgba(255,255,255,.32);box-shadow:0 3px 12px rgba(242,101,34,.38);}
+.p-selo-dimensoes .sd-ico,
+.p-selo-material .sm-ico{font-size:13px;opacity:.92;line-height:1;}
+.p-selo-material .sm-ico{opacity:1;}
 @media(max-width:620px){
-  .p-selo-dimensoes{top:12px;left:12px;padding:7px 13px;font-size:12px;border-radius:20px;}
-  .p-selo-dimensoes .sd-ico{font-size:12px;}
+  .p-selos{top:12px;left:12px;gap:6px;max-width:calc(100% - 24px);}
+  .p-selo-dimensoes,.p-selo-material{padding:7px 13px;font-size:12px;border-radius:20px;}
+  .p-selo-dimensoes .sd-ico,.p-selo-material .sm-ico{font-size:12px;}
 }
 @media(max-width:400px){
-  .p-selo-dimensoes{top:10px;left:10px;padding:6px 11px;font-size:11px;}
+  .p-selos{top:10px;left:10px;}
+  .p-selo-dimensoes,.p-selo-material{padding:6px 11px;font-size:11px;}
 }
 /* ===== Info ===== */
 .p-cat{display:inline-block;background:rgba(15,30,61,.07);color:var(--navy);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:6px 15px;border-radius:20px;margin-bottom:12px;}
@@ -144,29 +171,50 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 /* Cores */
 .p-cores{margin-bottom:18px;}
 .p-cores .rotulo{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:9px;}
-.cor-chip{border:2px solid var(--border);background:var(--white);color:var(--navy);border-radius:30px;padding:8px 18px;font-size:13.5px;font-weight:600;cursor:pointer;transition:.2s;margin:0 7px 7px 0;font-family:inherit;}
+.cor-chip{border:2px solid var(--border);background:var(--white);color:var(--navy);border-radius:30px;padding:8px 18px 8px 14px;font-size:13.5px;font-weight:600;cursor:pointer;transition:.2s;margin:0 7px 7px 0;font-family:inherit;display:inline-flex;align-items:center;}
 .cor-chip:hover{border-color:var(--orange);}
 .cor-chip.on{border-color:var(--orange);background:rgba(242,101,34,.08);color:var(--orange);}
+.cor-chip .cdot{width:13px;height:13px;border-radius:50%;display:inline-block;margin-right:8px;flex-shrink:0;border:1px solid rgba(15,30,61,.16);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6);}
+.cor-chip.sem-foto .cdot{opacity:.55;}
+.cores-hint{font-size:11.5px;color:#8a94a8;margin-top:2px;line-height:1.45;}
 /* ===== Quantidade ===== */
-.p-qtd{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.p-qtd{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;}
 .p-qtd .rotulo{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);}
 .qtd-ctrl{display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:4px;}
 .qtd-btn{width:34px;height:34px;border:none;border-radius:9px;background:var(--light-2);color:var(--navy);font-size:18px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:flex;align-items:center;justify-content:center;}
 .qtd-btn:hover{background:var(--orange);color:#fff;}
 .qtd-val{min-width:34px;text-align:center;font-size:15px;font-weight:800;color:var(--navy);}
 .qtd-estoque{font-size:12px;color:var(--gray);}
+/* ===== AVISO DINÂMICO DE PRONTA ENTREGA ===== */
+.qtd-aviso{
+  margin:0 0 16px;
+  font-size:12.5px;
+  line-height:1.55;
+  padding:10px 14px;
+  border-radius:10px;
+  background:rgba(37,211,102,.1);
+  border:1px solid rgba(37,211,102,.32);
+  color:var(--green-dark);
+  font-weight:600;
+}
+.qtd-aviso.enc{
+  background:#fff4d6;
+  border-color:#f0dca8;
+  color:#8a5a00;
+}
+.qtd-aviso[hidden]{display:none;}
 /* CTAs */
 .p-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:12px;font-weight:700;transition:.25s;border:none;cursor:pointer;font-size:16px;font-family:inherit;}
 .btn:hover{transform:translateY(-2px);}
 .btn-comprar{flex:1.4;min-width:230px;background:var(--orange);color:#fff;font-size:17px;box-shadow:0 6px 16px rgba(242,101,34,.3);}
 .btn-comprar:hover{background:var(--orange-2);}
+.btn-comprar.bloqueado{background:#b9c2d2;box-shadow:none;cursor:not-allowed;}
+.btn-comprar.bloqueado:hover{background:#b9c2d2;transform:none;}
 .btn-wa{flex:1;min-width:170px;background:var(--white);color:var(--green-dark);border:2px solid var(--green);font-size:15px;}
 .btn-wa:hover{background:rgba(37,211,102,.08);}
 .btn-shr{flex:0 1 auto;min-width:0;background:transparent;color:var(--navy);border:2px solid var(--border);font-size:14px;padding:14px 18px;}
 .btn-shr:hover{border-color:var(--navy);background:var(--light-2);}
-.btn-comprar.voltar{background:var(--green);box-shadow:0 6px 16px rgba(37,211,102,.3);}
-.btn-comprar.voltar:hover{background:#1fb959;}
 /* ===== Linha de confiança ===== */
 .p-trust{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0 4px;}
 .trust-item{display:flex;align-items:center;gap:9px;background:var(--light-2);border:1px solid var(--border);border-radius:10px;padding:10px 13px;font-size:12.5px;font-weight:600;color:var(--navy);}
@@ -211,6 +259,7 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .rel-card:hover{box-shadow:var(--shadow-md);transform:translateY(-4px);border-color:var(--orange);}
 .rel-img{height:190px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid var(--light-2);}
 .rel-img img{width:100%;height:100%;object-fit:contain;}
+.rel-img video{width:100%;height:100%;object-fit:contain;background:#0f1e3d;}
 .rel-noimg{font-size:48px;color:#b9c2d2;}
 .rel-body{padding:14px 16px;display:flex;flex-direction:column;flex:1;}
 .rel-body h3{font-size:14.5px;color:var(--navy);font-weight:700;margin-bottom:6px;line-height:1.35;}
@@ -228,9 +277,8 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .vistos-card:hover{border-color:var(--orange);transform:translateY(-3px);box-shadow:var(--shadow-sm);}
 .vistos-img{height:100px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .vistos-img img{width:100%;height:100%;object-fit:contain;}
+.vistos-img video{width:100%;height:100%;object-fit:contain;background:#0f1e3d;}
 .vistos-body{padding:8px 10px;overflow:hidden;}
-/* FIX DEFINITIVO do clamp: usa height fixa por linha + todas as propriedades do padrão.
-   2 linhas x 1.3 line-height x 12px = 31.2px → height:31.2px corta exatamente em 2 linhas */
 .vistos-body h4{font-size:12px;color:var(--navy);font-weight:700;line-height:1.3;margin:0 0 2px;padding:0;
   display:-webkit-box;
   -webkit-box-orient:vertical;
@@ -259,16 +307,40 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .erro-box h2{font-size:22px;color:var(--navy);margin-bottom:8px;}
 .erro-box p{font-size:14.5px;color:var(--gray);margin-bottom:24px;}
 /* ===== Lightbox ===== */
-.lightbox{position:fixed;inset:0;background:rgba(10,20,40,.88);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out;}
+.lightbox{position:fixed;inset:0;background:rgba(10,20,40,.92);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out;}
 .lightbox.show{display:flex;}
-.lightbox img{max-width:94vw;max-height:90vh;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.lb-media{display:flex;align-items:center;justify-content:center;max-width:92vw;max-height:88vh;cursor:default;}
+.lb-media img{max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:block;}
+.lb-media video{max-width:92vw;max-height:88vh;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.5);display:block;background:#000;}
+.lightbox .lb-nav{position:fixed;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#fff;font-size:26px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:.2s;z-index:302;}
+.lightbox .lb-nav:hover{background:var(--orange);}
+.lightbox .lb-nav.prev{left:18px;}
+.lightbox .lb-nav.next{right:18px;}
+.lightbox .lb-close{position:fixed;top:16px;right:18px;width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#fff;font-size:22px;cursor:pointer;z-index:302;backdrop-filter:blur(4px);}
+.lightbox .lb-close:hover{background:var(--orange);}
+.lightbox .lb-count{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:13px;font-weight:700;letter-spacing:.5px;z-index:302;}
+@media(max-width:620px){.lightbox .lb-nav{width:44px;height:44px;font-size:22px;}.lightbox .lb-nav.prev{left:8px;}.lightbox .lb-nav.next{right:8px;}}
 /* ===== Toast ===== */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;font-size:14px;font-weight:600;padding:12px 22px;border-radius:30px;box-shadow:var(--shadow-lg);z-index:400;transition:.3s;opacity:0;pointer-events:none;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--navy);color:#fff;font-size:14px;font-weight:600;padding:12px 22px;border-radius:30px;box-shadow:var(--shadow-lg);z-index:400;transition:.3s;opacity:0;pointer-events:none;max-width:90vw;text-align:center;}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 /* ===== WhatsApp flutuante ===== */
 .wa-float{position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(37,211,102,.4);z-index:200;transition:.25s;}
 .wa-float:hover{transform:scale(1.08);background:#1fb959;}
 .wa-float svg{width:28px;height:28px;fill:#fff;}
+/* ===== Barra fixa de compra (mobile) ===== */
+.p-sticky-buy{position:fixed;left:0;right:0;bottom:0;z-index:150;background:#fff;border-top:1px solid var(--border);padding:10px 14px;display:none;align-items:center;gap:12px;box-shadow:0 -8px 24px rgba(15,30,61,.14);transform:translateY(110%);transition:transform .25s ease;}
+.p-sticky-buy.show{transform:translateY(0);}
+.p-sticky-buy .sb-preco{line-height:1.15;white-space:nowrap;}
+.p-sticky-buy .sb-preco small{display:block;font-size:10.5px;color:#8a94a8;font-weight:600;}
+.p-sticky-buy .sb-preco b{font-size:17px;color:var(--orange);font-weight:800;}
+.p-sticky-buy .sb-btn{flex:1;background:var(--orange);color:#fff;border:none;border-radius:10px;padding:13px;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;box-shadow:0 4px 12px rgba(242,101,34,.3);}
+.p-sticky-buy .sb-btn:active{transform:scale(.99);}
+.p-sticky-buy .sb-btn.bloqueado{background:#b9c2d2;box-shadow:none;}
+@media(max-width:940px){
+  .p-sticky-buy{display:flex;}
+  body{padding-bottom:8px;}
+  .wa-float{bottom:84px;}
+}
 /* ===== Rodapé ===== */
 .site-footer{background:#0a1428;color:rgba(255,255,255,.75);padding:44px 20px 24px;margin-top:30px;}
 .site-footer .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px;}
@@ -290,10 +362,18 @@ header{background:var(--navy);color:#fff;padding:14px 0;position:sticky;top:0;z-
 .preco-novo{font-size:32px;}
 .topbar{font-size:11px;}
 .p-trust{grid-template-columns:1fr;}
-.wa-float{width:50px;height:50px;bottom:16px;right:16px;}
+.wa-float{width:50px;height:50px;right:16px;}
 .wa-float svg{width:24px;height:24px;}
+.p-thumb{width:60px;height:60px;}
+.p-g-count{bottom:10px;left:10px;font-size:11px;padding:4px 10px;}
+.p-ver-video{bottom:10px;font-size:12px;padding:9px 16px;}
 }
 html,body{overflow-x:hidden;max-width:100%;}
+/* Acessibilidade: respeita quem desativou animações */
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;scroll-behavior:auto !important;}
+  .btn:hover,.rel-card:hover,.vistos-card:hover,.step:hover,.sv-card:hover{transform:none;}
+}
 </style>
 </head>
 <body>
@@ -330,13 +410,17 @@ html,body{overflow-x:hidden;max-width:100%;}
         <!-- Galeria -->
         <div class="p-galeria">
           <div class="p-g-main" id="gMain" title="Clique para ampliar">
-            <img id="gMainImg" alt="">
+            <div class="p-g-media" id="gMainMedia"></div>
             <div class="p-g-noimg" id="gNoImg" hidden>📦</div>
-            <!-- NOVO: selo de dimensões -->
-            <div class="p-selo-dimensoes" id="pSeloDim" hidden></div>
+            <div class="p-selos" id="pSelos">
+              <div class="p-selo-dimensoes" id="pSeloDim" hidden></div>
+              <div class="p-selo-material" id="pSeloMat" hidden></div>
+            </div>
+            <span class="p-g-count" id="gCount" hidden></span>
             <span class="p-g-zoom">🔍 Ampliar</span>
-            <button class="p-nav prev" id="btnPrevFoto" type="button" title="Foto anterior" hidden>‹</button>
-            <button class="p-nav next" id="btnNextFoto" type="button" title="Próxima foto" hidden>›</button>
+            <button class="p-ver-video" id="btnVerVideo" type="button" onclick="verVideoProduto()" aria-label="Ver vídeo do produto"><span class="pvv-ico">▶</span> Ver vídeo do produto</button>
+            <button class="p-nav prev" id="btnPrevFoto" type="button" title="Mídia anterior" aria-label="Mídia anterior" hidden>‹</button>
+            <button class="p-nav next" id="btnNextFoto" type="button" title="Próxima mídia" aria-label="Próxima mídia" hidden>›</button>
           </div>
           <div class="p-g-thumbs" id="gThumbs"></div>
         </div>
@@ -346,14 +430,15 @@ html,body{overflow-x:hidden;max-width:100%;}
           <h1 id="pNome"></h1>
           <div class="p-stars">
             <span class="st">★★★★★</span>
-            <span>Avaliações reais de clientes</span>
+            <span>Avaliações reais de clientes sobre a Meu 3D Labs</span>
             <a href="avaliacoes.html" target="_blank" rel="noopener">ver todas →</a>
           </div>
           <div class="p-badges" id="pBadges"></div>
           <div class="p-preco" id="pPreco"></div>
           <div class="p-cores" id="pCores" hidden>
-            <div class="rotulo">Cor disponível</div>
+            <div class="rotulo" id="pCoresRotulo">Cor disponível</div>
             <div id="coresChips"></div>
+            <div class="cores-hint" id="coresHint" hidden>👆 Toque numa cor para ver a peça naquela cor.</div>
           </div>
           <div class="p-qtd" id="pQtdWrap" hidden>
             <div class="rotulo">Quantidade</div>
@@ -364,6 +449,7 @@ html,body{overflow-x:hidden;max-width:100%;}
             </div>
             <span class="qtd-estoque" id="qtdEstoque"></span>
           </div>
+          <div class="qtd-aviso" id="qtdAviso" hidden></div>
           <div class="p-ctas">
             <a class="btn btn-comprar" id="btnComprar" href="#">🛒 Comprar</a>
             <a class="btn btn-wa" id="btnWa" href="#" target="_blank" rel="noopener">💬 WhatsApp</a>
@@ -434,7 +520,7 @@ html,body{overflow-x:hidden;max-width:100%;}
           <div class="step">
             <span class="s-num">1</span><span class="s-ico">🛒</span>
             <span class="s-tit">Adicione ao carrinho</span>
-            <span class="s-txt">Escolha a cor e finalize seu pedido na loja</span>
+            <span class="s-txt">Escolha a cor e a quantidade, e finalize seu pedido</span>
           </div>
           <div class="step">
             <span class="s-num">2</span><span class="s-ico">💳</span>
@@ -535,8 +621,18 @@ html,body{overflow-x:hidden;max-width:100%;}
   </div>
   <div class="footer-bottom">© 2026 Meu 3D Labs · Todos os direitos reservados</div>
 </footer>
-<div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose" type="button" aria-label="Fechar">✕</button>
+  <button class="lb-nav prev" id="lbPrev" type="button" aria-label="Anterior">‹</button>
+  <div class="lb-media" id="lbMedia"></div>
+  <button class="lb-nav next" id="lbNext" type="button" aria-label="Próxima">›</button>
+  <div class="lb-count" id="lbCount"></div>
+</div>
 <div class="toast" id="toastPagina"></div>
+<div class="p-sticky-buy" id="pStickyBuy">
+  <div class="sb-preco"><small id="sbCor">Selecione a cor</small><b id="sbValor">R$ 0,00</b></div>
+  <button class="sb-btn" id="sbBtn" type="button">🛒 Comprar</button>
+</div>
 <a class="wa-float" id="waFloat" href="https://wa.me/5521966594803" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
 <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5 14.2c-.2.6-1.2 1.2-1.7 1.2-.4.1-1 .1-1.6-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.3.1.2.1.7-.1 1.3z"/></svg>
 </a>
@@ -544,18 +640,42 @@ html,body{overflow-x:hidden;max-width:100%;}
 var API_PROD='https://meu3dlabs-backend.onrender.com/api/loja/produtos';
 var WA_NUM='5521966594803';
 var BASE_URL='https://meu3dlabs.com.br';
-var CATEGORIAS={chaveiros:'Chaveiros',religiosos:'Religiosos',decoracao:'Decoração',miniaturas:'Miniaturas',colecionaveis:'Colecionáveis',articulados:'Articulados',utilitarios:'Utilitários',outros:'Outros'};
+var CATEGORIAS={chaveiros:'Chaveiros',religiosos:'Religiosos',decoracao:'Decoração',miniaturas:'Miniaturas',colecionaveis:'Colecionáveis',articulados:'Articulados',sensoriais:'Sensoriais',utilitarios:'Utilitários',outros:'Outros'};
+/* Paleta igual à do admin, para as bolinhas dos chips */
+var CORES_HEX={
+  'Preto':'#111111','Branco':'#f5f5f5','Cinza':'#9aa4b8','Vermelho':'#d73a49',
+  'Laranja':'#f26522','Amarelo':'#e8c33a','Verde':'#25a858','Azul':'#1f6feb',
+  'Roxo':'#8250df','Rosa':'#e066a8','Marrom':'#8a5a2b','Dourado':'#d4af37','Prateado':'#c0c6cf'
+};
+/* ===== VÍNCULO FOTO ↔ COR (meta gravada no fim da descrição pelo admin) ===== */
+var MARCA_VAR='M3DVAR:';
+function descricaoLimpa(d){ return String(d||'').split('|')[0].trim(); }
+function urlLimpa(u){ return String(u||'').split('#')[0]; }
 function esc(t){var d=document.createElement('div');d.textContent=(t==null?'':String(t));return d.innerHTML;}
 function fmt(v){var n=parseFloat(v);return isNaN(n)?'R$ 0,00':'R$ '+n.toFixed(2).replace('.',',');}
-function normalizarBase(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
 
-/* ===== SELO DE DIMENSÕES (mesma lógica do loja-vitrine) =====
-   - altura + peso          -> "12 cm · 80 g"
-   - só altura              -> "12 cm"
-   - só peso                -> "80 g"
-   - só comprimento (2D)    -> "15 cm"
-   - nada preenchido        -> sem selo
-   ========================================================== */
+/* =====================================================================
+   MÍDIA: IMAGEM OU VÍDEO
+   O campo imagens[] pode conter fotos (.webp/.jpg/.png) e vídeos
+   curtos em loop (.webm/.mp4). Tudo é detectado pela extensão.
+   ===================================================================== */
+function ehVideoUrl(u){
+  return /\.(webm|mp4|mov|m4v)(\?|#|$)/i.test(urlLimpa(u));
+}
+function midiaHtml(u, alt, opt){
+  var src=urlLimpa(u);
+  if(!src) return '';
+  opt=opt||{};
+  if(ehVideoUrl(src)){
+    var attrs=' muted loop playsinline disablepictureinpicture';
+    if(opt.autoplay) attrs+=' autoplay';
+    attrs+=' preload="'+(opt.preload||'metadata')+'"';
+    var vsrc=src+(opt.frame?'#t=0.1':'');
+    return '<video src="'+esc(vsrc)+'"'+attrs+' aria-label="'+esc(alt||'')+'"></video>';
+  }
+  return '<img src="'+esc(src)+'" alt="'+esc(alt||'')+'"'+(opt.lazy?' loading="lazy"':'')+'>';
+}
+/* ===== SELO DE DIMENSÕES ===== */
 function seloPeso(gramas){
   var g=parseFloat(gramas);
   if(!g||g<=0||isNaN(g))return '';
@@ -581,8 +701,6 @@ function textoDimensoes(p){
   if(peso)partes.push(peso);
   return partes.join(' · ');
 }
-
-/* Pega o slug: /produto/xyz (no ar) ou ?produto=&slug= (funciona até em teste local) */
 function slugDaURL(){
   var m=location.pathname.match(/\/produto\/([^\/?#]+)/);
   if(m&&m[1])return decodeURIComponent(m[1]).replace(/\/+$/,'');
@@ -590,20 +708,127 @@ function slugDaURL(){
   var q=p.get('produto')||p.get('slug')||p.get('order');
   return q?decodeURIComponent(q).replace(/\/+$/,''):null;
 }
+function corDaURLParam(){
+  try{
+    var p=new URLSearchParams(location.search);
+    return (p.get('cor')||'').trim();
+  }catch(e){ return ''; }
+}
 function labelCat(c){return CATEGORIAS[String(c||'').toLowerCase()]||(String(c||'').charAt(0).toUpperCase()+String(c||'').slice(1));}
-var produtoAtual=null,imagens=[],imgAtual=0;
+/* ===== ESTADO ===== */
+var produtoAtual=null;
+var imagensTodas=[];   /* pool completo do produto (fotos + vídeos) */
+var imagens=[];        /* mídias da cor selecionada (o que a galeria mostra) */
+var imgAtual=0;
+var variacoes={};      /* cor → [urls] (a primeira é a principal) */
+var corSel='';
+var slugAtual='';
+var qtdAtual=1, esgotadoAtual=false, prontaEntregaAtual=0;
+var precoVendaAtual=0;
+var QTD_TETO=99;   /* teto do contador: libera o cliente, sem travar em 10 */
+
+/* ===== TROCA DE MÍDIA PRINCIPAL ===== */
 function setMainImg(i){
-  if(!imagens.length)return;
+  var media=document.getElementById('gMainMedia');
+  var noImg=document.getElementById('gNoImg');
+  var count=document.getElementById('gCount');
+  var nome=produtoAtual?produtoAtual.nome:'';
+  if(!imagens.length){
+    media.innerHTML='';
+    noImg.hidden=false;
+    if(count)count.hidden=true;
+    document.getElementById('btnPrevFoto').hidden=true;
+    document.getElementById('btnNextFoto').hidden=true;
+    atualizarBotaoVideo();
+    return;
+  }
   imgAtual=(i+imagens.length)%imagens.length;
-  document.getElementById('gMainImg').src=imagens[imgAtual];
-  document.getElementById('gMainImg').hidden=false;
-  document.getElementById('gNoImg').hidden=true;
+  var nova=imagens[imgAtual];
+  var html=midiaHtml(nova,nome,{autoplay:true,preload:'auto'});
+  if(media.innerHTML!==html){
+    media.classList.add('trocando');
+    media.innerHTML=html;
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){media.classList.remove('trocando');});
+    });
+  }
+  noImg.hidden=true;
   var ths=document.querySelectorAll('.p-thumb');
   ths.forEach(function(t,idx){t.classList.toggle('on',idx===imgAtual);});
   var temMais=imagens.length>1;
   document.getElementById('btnPrevFoto').hidden=!temMais;
   document.getElementById('btnNextFoto').hidden=!temMais;
+  preencherCount();
+  preloadVizinhos();
+  atualizarBotaoVideo();
 }
+function preencherCount(){
+  var c=document.getElementById('gCount');
+  if(!c)return;
+  if(imagens.length>1){
+    c.hidden=false;
+    c.textContent=(imgAtual+1)+' / '+imagens.length;
+  }else{
+    c.hidden=true;
+  }
+}
+function preloadVizinhos(){
+  if(imagens.length<2)return;
+  [imagens[(imgAtual+1)%imagens.length],imagens[(imgAtual-1+imagens.length)%imagens.length]].forEach(function(u){
+    if(ehVideoUrl(u))return;
+    var im=new Image();im.src=u;
+  });
+}
+function montarThumbs(){
+  var box=document.getElementById('gThumbs');
+  box.innerHTML='';
+  imagens.forEach(function(u,i){
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='p-thumb'+(i===0?' on':'');
+    b.setAttribute('aria-label','Mídia '+(i+1));
+    var ehV=ehVideoUrl(u);
+    b.innerHTML=midiaHtml(u,'',{lazy:true,preload:'metadata',frame:ehV})+(ehV?'<span class="p-thumb-play">▶</span>':'');
+    b.onclick=function(){setMainImg(i);};
+    box.appendChild(b);
+  });
+}
+
+/* =====================================================================
+   BOTÃO FLUTUANTE "VER VÍDEO DO PRODUTO"
+   Aparece só quando o produto tem ao menos um vídeo.
+   ===================================================================== */
+function atualizarBotaoVideo(){
+  var btn=document.getElementById('btnVerVideo');
+  if(!btn)return;
+  var tem=false;
+  for(var i=0;i<imagensTodas.length;i++){
+    if(ehVideoUrl(imagensTodas[i])){tem=true;break;}
+  }
+  btn.classList.toggle('show',tem);
+}
+function verVideoProduto(){
+  var idx=-1;
+  for(var i=0;i<imagens.length;i++){
+    if(ehVideoUrl(imagens[i])){idx=i;break;}
+  }
+  if(idx===-1){
+    for(var j=0;j<imagensTodas.length;j++){
+      if(ehVideoUrl(imagensTodas[j])){idx=j;break;}
+    }
+    if(idx===-1)return;
+    /* o vídeo está fora do filtro de cor atual → volta para a galeria completa */
+    corSel='';
+    document.querySelectorAll('.cor-chip').forEach(function(x){x.classList.remove('on');});
+    imagens=imagensTodas.slice();
+    montarThumbs();
+    atualizarComprar();
+    atualizarBarraFixa();
+  }
+  setMainImg(idx);
+  abrirLightbox();
+}
+
 /* Compartilhar a página atual */
 function compartilharPagina(){
   var url=location.href;
@@ -629,12 +854,127 @@ function mostrarErro(){
   document.getElementById('carregandoBox').hidden=true;
   document.getElementById('erroBox').hidden=false;
   document.getElementById('breadcrumb').hidden=true;
+  /* ===== SEO: sinalizar que a URL não tem conteúdo válido ===== */
+  var mr=document.querySelector('meta[name="robots"]');
+  if(!mr){mr=document.createElement('meta');mr.setAttribute('name','robots');document.head.appendChild(mr);}
+  mr.setAttribute('content','noindex, follow');
+  document.title='Peça não encontrada | Meu 3D Labs';
+  var md=document.getElementById('metaDesc');
+  if(md)md.setAttribute('content','Esta peça não está mais disponível. Veja outras peças 3D prontas para entrega na Meu 3D Labs.');
+  /* Canonical aponta para a loja, não para a URL inexistente */
+  var cn=document.getElementById('canonico');
+  if(cn)cn.setAttribute('href',BASE_URL+'/loja.html');
+  var ogT=document.getElementById('ogTitle');
+  if(ogT)ogT.setAttribute('content','Peça não encontrada | Meu 3D Labs');
+  var ogD=document.getElementById('ogDesc');
+  if(ogD)ogD.setAttribute('content','Esta peça não está mais disponível.');
+}
+/* ===== Lê a meta de cores da descrição e traduz índices em URLs ===== */
+function lerVariacoes(desc){
+  var s=String(desc||'');
+  var i=s.indexOf(MARCA_VAR);
+  if(i===-1) return {};
+  try{
+    var obj=JSON.parse(decodeURIComponent(s.slice(i+MARCA_VAR.length).trim()));
+    var out={};
+    Object.keys(obj||{}).forEach(function(c){
+      var urls=(obj[c]||[]).map(function(idx){
+        var u=imagensTodas[idx];
+        return u?urlLimpa(u):null;
+      }).filter(Boolean);
+      if(urls.length) out[c]=urls;
+    });
+    return out;
+  }catch(e){ return {}; }
+}
+/* ===== Troca a galeria conforme a cor escolhida ===== */
+function selecionarCor(cor){
+  corSel=cor||'';
+  document.querySelectorAll('.cor-chip').forEach(function(x){
+    x.classList.toggle('on', x.getAttribute('data-cor')===String(corSel));
+  });
+  var doCor=(corSel&&variacoes[corSel]&&variacoes[corSel].length)?variacoes[corSel]:null;
+  imagens=(doCor?doCor:imagensTodas).slice();
+  montarThumbs();
+  setMainImg(0);
+  atualizarComprar();
+  atualizarBarraFixa();
+  /* No mobile, se a galeria saiu de vista, volta até ela */
+  if(window.innerWidth<=940 && corSel){
+    var gm=document.getElementById('gMain');
+    var r=gm?gm.getBoundingClientRect():null;
+    if(r && r.bottom<80){
+      try{gm.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}
+    }
+  }
+}
+/* ===== CORES DO PRODUTO (para travar o botão Comprar) ===== */
+var CORES_DO_PRODUTO=[];
+function precisaCor(){
+  return CORES_DO_PRODUTO.length>0 && !corSel;
+}
+function atualizarComprar(){
+  var href='loja.html?produto='+encodeURIComponent(slugAtual)+'&carrinho=1&qtd='+qtdAtual;
+  if(corSel)href+='&cor='+encodeURIComponent(corSel);
+  var b=document.getElementById('btnComprar');
+  var sb=document.getElementById('sbBtn');
+  if(precisaCor()){
+    if(b){
+      b.removeAttribute('href');
+      b.classList.add('bloqueado');
+      b.setAttribute('aria-disabled','true');
+      b.innerHTML='🎨 Escolha uma cor';
+    }
+    if(sb){
+      sb.removeAttribute('data-href');
+      sb.classList.add('bloqueado');
+      sb.textContent='🎨 Escolha uma cor';
+    }
+    return;
+  }
+  if(b){
+    b.href=href;
+    b.classList.remove('bloqueado');
+    b.removeAttribute('aria-disabled');
+    b.innerHTML='🛒 Comprar';
+  }
+  if(sb){
+    sb.setAttribute('data-href',href);
+    sb.classList.remove('bloqueado');
+    sb.textContent='🛒 Comprar';
+  }
+}
+/* Balão de aviso + destaque no bloco de cores */
+function avisarEscolhaCor(){
+  var t=document.getElementById('toastPagina');
+  if(t){
+    t.textContent='🎨 Escolha uma cor para continuar';
+    t.classList.add('show');
+    clearTimeout(t._tCor);
+    t._tCor=setTimeout(function(){t.classList.remove('show');},3200);
+  }
+  var box=document.getElementById('pCores');
+  if(box){
+    box.style.transition='box-shadow .25s';
+    box.style.boxShadow='0 0 0 3px rgba(242,101,34,.4)';
+    box.style.borderRadius='12px';
+    setTimeout(function(){box.style.boxShadow='';},1700);
+    try{box.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}
+  }
+}
+function atualizarBarraFixa(){
+  var bar=document.getElementById('pStickyBuy');
+  if(!bar)return;
+  if(esgotadoAtual){bar.classList.remove('show');return;}
+  document.getElementById('sbValor').textContent=fmt(precoVendaAtual*qtdAtual);
+  document.getElementById('sbCor').textContent=corSel?('Cor: '+corSel):'Selecione a cor';
 }
 function render(p,lista){
   var slug=p.slug||'';
+  slugAtual=slug;
   var url=BASE_URL+'/produto/'+encodeURIComponent(slug);
-  var descLimpa=String(p.descricao||'').split('|')[0].trim();
-  /* Histórico: salva este produto como "visto recentemente" (localStorage) */
+  var descLimpa=descricaoLimpa(p.descricao);
+  /* Histórico: salva este produto como "visto recentemente" */
   var HIST_CHAVE='m3d_vistos_recentes';
   var vistosAnteriores=[];
   try{vistosAnteriores=JSON.parse(localStorage.getItem(HIST_CHAVE)||'[]');}catch(e){vistosAnteriores=[];}
@@ -650,52 +990,55 @@ function render(p,lista){
   document.getElementById('ogTitle').setAttribute('content',p.nome+' | Meu 3D Labs');
   document.getElementById('ogDesc').setAttribute('content',(descLimpa||'Peça 3D pronta entrega.').slice(0,155));
   document.getElementById('bcNome').textContent=p.nome;
-  /* Galeria */
-  imagens=(p.imagens&&p.imagens.length)?p.imagens.slice():[];
-  var gThumbs=document.getElementById('gThumbs');
-  if(imagens.length){
-    imagens.forEach(function(u,i){
-      var b=document.createElement('button');
-      b.type='button';b.className='p-thumb'+(i===0?' on':'');
-      b.innerHTML='<img src="'+esc(u)+'" alt="'+esc(p.nome)+' — foto '+(i+1)+'" loading="lazy">';
-      b.onclick=function(){setMainImg(i);};
-      gThumbs.appendChild(b);
-    });
-    setMainImg(0);
-  }else{
-    document.getElementById('gMainImg').hidden=true;
-    document.getElementById('gNoImg').hidden=false;
-  }
-  /* CORRIGIDO: selo de dimensões — esconde por completo quando não há medidas */
+  /* ===== MÍDIAS: pool completo + vínculo por cor ===== */
+  imagensTodas=(p.imagens&&p.imagens.length)?p.imagens.map(urlLimpa):[];
+  variacoes=lerVariacoes(p.descricao);
+  corSel='';
+  imagens=imagensTodas.slice();
+  /* ===== SELO DE DIMENSÕES ===== */
   var elSelo=document.getElementById('pSeloDim');
   var txtDim=textoDimensoes(p);
   if(txtDim){
     elSelo.innerHTML='<span class="sd-ico">📐</span><span>'+esc(txtDim)+'</span>';
     elSelo.hidden=false;
-    elSelo.style.display='inline-flex';
   }else{
     elSelo.hidden=true;
-    elSelo.style.display='none';
     elSelo.innerHTML='';
+  }
+  /* ===== SELO DE MATERIAL ===== */
+  var elMat=document.getElementById('pSeloMat');
+  var matSelo=String(p.material||'').trim().toUpperCase();
+  if(matSelo){
+    elMat.innerHTML='<span class="sm-ico">⬢</span><span>'+esc(matSelo)+'</span>';
+    elMat.hidden=false;
+    elMat.title='Material: '+matSelo;
+  }else{
+    elMat.hidden=true;
+    elMat.innerHTML='';
   }
   /* Info */
   document.getElementById('pCat').textContent=labelCat(p.categoria);
   document.getElementById('pNome').textContent=p.nome;
   var est=parseInt(p.estoque);
   var esgotado=!isNaN(est)&&est===0;
-  var urgente=!isNaN(est)&&est>0&&est<=3;
-  /* Badges: pronta entrega + destaque + urgência de estoque */
+  esgotadoAtual=esgotado;
+  var pronta=(!isNaN(est)&&est>0)?est:0;
+  prontaEntregaAtual=pronta;
+  /* Badges — sem alarme de "restam apenas N" */
   var badges=document.getElementById('pBadges');
   var bh='';
-  bh+=esgotado?'<span class="p-badge ama">⏳ Sob consulta — encomende pelo WhatsApp</span>':'<span class="p-badge ok">✅ Pronta entrega</span>';
+  if(esgotado){
+    bh+='<span class="p-badge ama">⏳ Sob consulta — encomende pelo WhatsApp</span>';
+  }else{
+    bh+='<span class="p-badge ok">✅ Em estoque</span>';
+  }
   if(p.destaque)bh+='<span class="p-badge ama">⭐ Destaque da loja</span>';
-  if(urgente)bh+='<span class="p-badge urg">⚠️ Restam apenas '+est+' unidades!</span>';
   badges.innerHTML=bh;
-  /* Preço detalhado: valor real do Pix 5% OFF + cartão SEM valor de parcela
-     (o valor da parcela depende dos juros da operadora — só aparece no pagamento) */
+  /* Preço */
   var preco=parseFloat(p.preco)||0;
   var promo=p.promo&&parseFloat(p.precoPromo)>0&&parseFloat(p.precoPromo)<preco;
   var precoVenda=promo?parseFloat(p.precoPromo):preco;
+  precoVendaAtual=precoVenda;
   var pixValor=precoVenda*0.95;
   var pc=document.getElementById('pPreco');
   var ph='';
@@ -708,48 +1051,93 @@ function render(p,lista){
   ph+='<div class="preco-sub"><img src="img/logo/pix.png" alt="" style="width:15px;height:15px;vertical-align:-3px;margin-right:5px;"><b>'+fmt(pixValor)+' no Pix</b> — já com 5% de desconto</div>';
   ph+='<div class="preco-sub"><img src="img/logo/cartao.png" alt="" style="height:13px;vertical-align:-2px;margin-right:5px;">ou em até <b>12x no cartão</b> <span style="color:#8a94a8;">(juros da operadora — valor exato da parcela aparece no pagamento)</span></div>';
   pc.innerHTML=ph;
-  /* Cores */
+  /* ===== CORES: cada chip troca a galeria ===== */
   var cores=(p.cores&&p.cores.length)?p.cores.slice():[];
+  CORES_DO_PRODUTO=cores.slice();   /*trava o botão se houver cor e nada escolhido */
+  var wrapCores=document.getElementById('pCores');
+  var boxCores=document.getElementById('coresChips');
+  var hint=document.getElementById('coresHint');
+  boxCores.innerHTML='';
   if(cores.length){
-    document.getElementById('pCores').hidden=false;
-    var box=document.getElementById('coresChips');
-    cores.forEach(function(c,i){
+    wrapCores.hidden=false;
+    if(hint)hint.hidden=(cores.length<2);
+    cores.forEach(function(c){
       var b=document.createElement('button');
-      b.type='button';b.className='cor-chip';b.textContent=c;
-      b.onclick=function(){
-        document.querySelectorAll('.cor-chip').forEach(function(x){x.classList.remove('on');});
-        b.classList.add('on');
-        if(imagens.length===cores.length){setMainImg(i);}
-        else{
-          var alvo=normalizarBase(c),achou=-1;
-          for(var j=0;j<imagens.length;j++){if(normalizarBase(imagens[j]).indexOf(alvo)>-1){achou=j;break;}}
-          if(achou>-1)setMainImg(achou);
-        }
-      };
-      box.appendChild(b);
+      b.type='button';
+      b.className='cor-chip';
+      b.setAttribute('data-cor',c);
+      var semFoto=!(variacoes[c]&&variacoes[c].length);
+      var hex=CORES_HEX[c]||'#dde3ee';
+      b.innerHTML='<span class="cdot" style="background:'+hex+'"></span>'+esc(c);
+      if(semFoto)b.classList.add('sem-foto');
+      b.title=semFoto?('A foto de '+c+' ainda não foi cadastrada — mostrando a galeria geral'):('Ver a peça na cor '+c);
+      b.onclick=function(){selecionarCor(c);};
+      boxCores.appendChild(b);
     });
+    var corInicial=corDaURLParam();
+    if(corInicial&&cores.indexOf(corInicial)>-1){
+      selecionarCor(corInicial);
+    }else if(cores.length===1){
+      selecionarCor(cores[0]);
+    }else{
+      montarThumbs();
+      setMainImg(0);
+    }
+  }else{
+    wrapCores.hidden=true;
+    montarThumbs();
+    setMainImg(0);
   }
-  /* Quantidade (com limite do estoque) */
-  var qtd=1,qtdMax=10;
+  /* =====================================================================
+     QUANTIDADE — PRONTA ENTREGA + PRODUÇÃO
+     O contador é liberado até QTD_TETO. O aviso mostra quantas unidades
+     saem prontas do estoque e quantas entram em produção.
+     ===================================================================== */
+  var qtd=1,qtdMax=QTD_TETO;
   var qtdWrap=document.getElementById('pQtdWrap');
+  var elAviso=document.getElementById('qtdAviso');
+  var elEstoque=document.getElementById('qtdEstoque');
   var btnC=document.getElementById('btnComprar'),btnW=document.getElementById('btnWa');
-  function atualizaComprar(){btnC.href='loja.html?produto='+encodeURIComponent(slug)+'&carrinho=1&qtd='+qtd;}
+
+  function avisoQtd(n){
+    if(!elAviso) return;
+    if(pronta<=0){
+      elAviso.className='qtd-aviso enc';
+      elAviso.textContent='🖨️ Produção sob encomenda — combinamos o prazo com você pelo WhatsApp.';
+      elAviso.hidden=false;
+      return;
+    }
+    var producao=Math.max(0,n-pronta);
+    elAviso.hidden=false;
+    if(producao===0){
+      elAviso.className='qtd-aviso';
+      elAviso.textContent='✅ Temos '+pronta+' pronta'+(pronta>1?'s':'')+' entrega — a sua já sai reservada.';
+    }else{
+      elAviso.className='qtd-aviso enc';
+      elAviso.textContent='📦 '+pronta+' pronta'+(pronta>1?'s':'')+' entrega agora + '+producao+' sob encomenda (produção). Combinamos o prazo pelo WhatsApp.';
+    }
+  }
   function setQtd(n){
     qtd=Math.max(1,Math.min(qtdMax,n));
+    qtdAtual=qtd;
     document.getElementById('qtdVal').textContent=qtd;
-    atualizaComprar();
+    atualizarComprar();
+    atualizarBarraFixa();
+    avisoQtd(qtd);
   }
   if(!esgotado){
-    if(!isNaN(est)&&est>0)qtdMax=Math.min(est,10);
     qtdWrap.hidden=false;
-    document.getElementById('qtdEstoque').textContent=qtdMax<10?('máximo '+qtdMax+(qtdMax>1?' disponíveis':' disponível')+''):'';
+    if(elEstoque)elEstoque.textContent='';
     setQtd(1);
-    document.getElementById('qtdMenos').onclick=function(){setQtd(qtd-1);};
-    document.getElementById('qtdMais').onclick=function(){setQtd(qtd+1);};
+    document.getElementById('qtdMenos').onclick=function(){setQtd(qtdAtual-1);};
+    document.getElementById('qtdMais').onclick=function(){setQtd(qtdAtual+1);};
+  }else{
+    qtdWrap.hidden=true;
+    if(elAviso)elAviso.hidden=true;
   }
   /* Descrição */
   document.getElementById('pDesc').textContent=descLimpa||'Peça 3D pronta entrega da Meu 3D Labs, impressa com acabamento profissional. Dúvidas sobre tamanho, material ou cores? Fale com a gente no WhatsApp!';
-  /* Especificações: tabela com os DADOS REAIS do cadastro (material, tamanho, peso) */
+  /* Especificações */
   var mat=String(p.material||'').trim().toUpperCase();
   var matDesc={PLA:'leve, resistente e biodegradável',PETG:'resistente, semi-flexível e ideal para uso externo',TPU:'flexível como borracha, ideal para peças que dobram',ABS:'rígido e resistente ao calor'};
   var matTxt=mat?('Impressão 3D em '+mat+(matDesc[mat]?' — '+matDesc[mat]:'')):'PLA (leve, resistente e biodegradável)';
@@ -769,7 +1157,15 @@ function render(p,lista){
   if(peso)esp+='<tr><td>Peso</td><td>'+(peso<1000?peso+' g':(peso/1000).toFixed(2).replace('.',',')+' kg')+'</td></tr>';
   esp+='<tr><td>Categoria</td><td>'+esc(labelCat(p.categoria))+'</td></tr>';
   esp+='<tr><td>Cores</td><td>'+(cores.length?esc(cores.join(', ')):'Conforme foto')+'</td></tr>';
-  esp+='<tr><td>Disponibilidade</td><td>'+(esgotado?'Sob consulta (encomenda)':'Pronta entrega'+(!isNaN(est)?' — '+est+' em estoque':''))+'</td></tr>';
+  var dispTxt;
+  if(esgotado){
+    dispTxt='Sob encomenda (consulte o prazo)';
+  }else if(pronta>0){
+    dispTxt='Pronta entrega — '+pronta+' unidade'+(pronta>1?'s':'')+' disponível'+(pronta>1?'is':'')+'. Acima disso, sob encomenda.';
+  }else{
+    dispTxt='Sob encomenda';
+  }
+  esp+='<tr><td>Disponibilidade</td><td>'+esc(dispTxt)+'</td></tr>';
   esp+='<tr><td>Código da peça</td><td>'+esc(slug)+'</td></tr>';
   esp+='<tr><td>Produção</td><td>Impressão 3D artesanal · Nilópolis/RJ</td></tr>';
   document.getElementById('espTabela').innerHTML=esp;
@@ -780,13 +1176,14 @@ function render(p,lista){
     var msgEnc='Olá! Vi a peça *'+p.nome+'* no site ('+url+') e ela está sem estoque. Quero encomendar uma! 😊';
     btnW.href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msgEnc);
   }else{
-    atualizaComprar();
+    atualizarComprar();
     btnC.title='Adicionar ao carrinho na loja';
     var msgWa='Olá! Vi no site a peça *'+p.nome+'* → '+url+'\nQuero saber mais! 😊';
     btnW.href='https://wa.me/'+WA_NUM+'?text='+encodeURIComponent(msgWa);
   }
   document.getElementById('waFloat').href=btnW.href;
-  /* Relacionados: mesma categoria primeiro, complementos depois */
+  atualizarBarraFixa();
+  /* Relacionados */
   var rel=lista.filter(function(x){return x.ativo!==false&&x.slug!==slug&&String(x.categoria)===String(p.categoria);});
   if(rel.length<4){
     lista.forEach(function(x){if(rel.length>=4)return;if(x.ativo!==false&&x.slug!==slug&&String(x.categoria)!==String(p.categoria))rel.push(x);});
@@ -794,33 +1191,45 @@ function render(p,lista){
   rel=rel.slice(0,4);
   if(rel.length){
     var rg=document.getElementById('relGrid');
+    rg.innerHTML='';
     rel.forEach(function(x){
       var rp=parseFloat(x.preco)||0;
       var rPromo=x.promo&&parseFloat(x.precoPromo)>0&&parseFloat(x.precoPromo)<rp;
-      var img=(x.imagens&&x.imagens[0])||'';
+      var img=(x.imagens&&x.imagens[0])?urlLimpa(x.imagens[0]):'';
       var a=document.createElement('a');
       a.className='rel-card';a.href='produto.html?produto='+encodeURIComponent(x.slug||'');
-      a.innerHTML='<div class="rel-img">'+(img?'<img src="'+esc(img)+'" alt="'+esc(x.nome)+'" loading="lazy">':'<span class="rel-noimg">📦</span>')+'</div>'+
+      var imgHtml=img
+        ? (ehVideoUrl(img)
+            ? '<video src="'+esc(img)+'" muted loop playsinline preload="metadata" disablepictureinpicture></video>'
+            : '<img src="'+esc(img)+'" alt="'+esc(x.nome)+'" loading="lazy">')
+        : '<span class="rel-noimg">📦</span>';
+      a.innerHTML='<div class="rel-img">'+imgHtml+'</div>'+
         '<div class="rel-body"><h3>'+esc(x.nome)+'</h3><div class="rel-preco">'+(rPromo?fmt(x.precoPromo):fmt(rp))+(rPromo?' <s style="font-size:11.5px;color:var(--gray);font-weight:500;">'+fmt(rp)+'</s>':'')+'</div></div>';
       rg.appendChild(a);
     });
     document.getElementById('relSec').hidden=false;
   }
-  /* Vistos recentemente: produtos anteriores que ainda existem na loja */
+  /* Vistos recentemente */
   var avus=vistosAnteriores.filter(function(s){return String(s)!==String(slug);}).map(function(s){
     for(var i=0;i<lista.length;i++){if(lista[i].ativo!==false&&String(lista[i].slug)===String(s))return lista[i];}
     return null;
   }).filter(Boolean).slice(0,4);
   if(avus.length){
     var vs=document.getElementById('vistosStrip');
+    vs.innerHTML='';
     var CLAMP='display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;text-overflow:ellipsis;word-break:break-word;max-height:31.2px;';
     avus.forEach(function(x){
       var vp=parseFloat(x.preco)||0;
       var vPromo=x.promo&&parseFloat(x.precoPromo)>0&&parseFloat(x.precoPromo)<vp;
-      var vimg=(x.imagens&&x.imagens[0])||'';
+      var vimg=(x.imagens&&x.imagens[0])?urlLimpa(x.imagens[0]):'';
       var a=document.createElement('a');
       a.className='vistos-card';a.href='produto.html?produto='+encodeURIComponent(x.slug||'');
-      a.innerHTML='<div class="vistos-img">'+(vimg?'<img src="'+esc(vimg)+'" alt="'+esc(x.nome)+'" loading="lazy">':'<span class="rel-noimg" style="font-size:30px;">📦</span>')+'</div>'+
+      var vHtml=vimg
+        ? (ehVideoUrl(vimg)
+            ? '<video src="'+esc(vimg)+'" muted loop playsinline preload="metadata" disablepictureinpicture></video>'
+            : '<img src="'+esc(vimg)+'" alt="'+esc(x.nome)+'" loading="lazy">')
+        : '<span class="rel-noimg" style="font-size:30px;">📦</span>';
+      a.innerHTML='<div class="vistos-img">'+vHtml+'</div>'+
         '<div class="vistos-body">'+
         '<h4 style="'+CLAMP+'">'+esc(x.nome)+'</h4>'+
         '<div class="vistos-preco">'+(vPromo?fmt(x.precoPromo):fmt(vp))+'</div>'+
@@ -829,9 +1238,9 @@ function render(p,lista){
     });
     document.getElementById('vistosSec').hidden=false;
   }
-  /* SEO estruturado */
+  /* SEO estruturado — sempre URLs limpas, todas as mídias */
   var ld={'@context':'https://schema.org','@type':'Product','name':p.nome,'description':descLimpa,'sku':slug,'url':url,
-    'image':imagens.length?imagens:[BASE_URL+'/img/logo/logo.png'],
+    'image':imagensTodas.length?imagensTodas:[BASE_URL+'/img/logo/logo.png'],
     'brand':{'@type':'Brand','name':'Meu 3D Labs'},
     'offers':{'@type':'Offer','url':url,'priceCurrency':'BRL','price':precoVenda,'itemCondition':'https://schema.org/NewCondition','availability':esgotado?'https://schema.org/OutOfStock':'https://schema.org/InStock','seller':{'@type':'Organization','name':'Meu 3D Labs'}}};
   var s=document.createElement('script');s.type='application/ld+json';s.textContent=JSON.stringify(ld);document.head.appendChild(s);
@@ -843,17 +1252,152 @@ function render(p,lista){
   document.getElementById('carregandoBox').hidden=true;
   document.getElementById('produtoBox').hidden=false;
 }
-/* Setas de navegação das fotos */
-document.getElementById('btnPrevFoto').addEventListener('click',function(e){e.stopPropagation();setMainImg(imgAtual-1);});
-document.getElementById('btnNextFoto').addEventListener('click',function(e){e.stopPropagation();setMainImg(imgAtual+1);});
-/* Lightbox */
-document.getElementById('gMain').addEventListener('click',function(){
-  if(!imagens.length)return;
-  document.getElementById('lightboxImg').src=imagens[imgAtual];
-  document.getElementById('lightbox').classList.add('show');
+/* ============================================================
+   SETAS DA GALERIA
+   IMPORTANTE: o zoom é aberto por um listener em fase de CAPTURA
+   no #gMain. Na captura, o stopPropagation() da seta não impede
+   o zoom. Por isso o handler de captura ignora cliques nas setas,
+   no botão de vídeo e nos selos.
+   ============================================================ */
+function irFoto(delta){
+  if(imagens.length<2)return;
+  setMainImg(imgAtual+delta);
+}
+document.getElementById('btnPrevFoto').addEventListener('click',function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  irFoto(-1);
 });
-document.getElementById('lightbox').addEventListener('click',function(){this.classList.remove('show');});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('lightbox').classList.remove('show');});
+/* ===== COMPRAR: só libera com cor escolhida ===== */
+document.getElementById('btnComprar').addEventListener('click',function(e){
+  if(precisaCor()){
+    e.preventDefault();
+    e.stopPropagation();
+    avisarEscolhaCor();
+    return false;
+  }
+});
+document.getElementById('btnNextFoto').addEventListener('click',function(e){
+  e.preventDefault();
+  e.stopPropagation();
+  irFoto(1);
+});
+/* ===== Swipe na galeria (mobile) ===== */
+(function(){
+  var g=document.getElementById('gMain');
+  var x0=null,y0=null,swiped=false;
+  g.addEventListener('touchstart',function(e){
+    if(e.touches.length!==1)return;
+    x0=e.touches[0].clientX;y0=e.touches[0].clientY;swiped=false;
+  },{passive:true});
+  g.addEventListener('touchend',function(e){
+    if(x0===null)return;
+    var dx=e.changedTouches[0].clientX-x0;
+    var dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)){
+      swiped=true;
+      irFoto(dx<0?1:-1);
+    }
+    x0=null;y0=null;
+  },{passive:true});
+  /* Click em captura: decide se abre o zoom */
+  g.addEventListener('click',function(e){
+    /* 1) veio de um swipe → não abre zoom */
+    if(swiped){swiped=false;return;}
+    /* 2) clique nas setas → não abre zoom (a seta trata o clique) */
+    if(e.target.closest('.p-nav'))return;
+    /* 3) clique nos selos → não abre zoom */
+    if(e.target.closest('.p-selos'))return;
+    /* 4) clique no botão de vídeo → não abre zoom (o botão trata o clique) */
+    if(e.target.closest('#btnVerVideo'))return;
+    /* 5) mídia vazia → nada */
+    if(!imagens.length)return;
+    abrirLightbox();
+  },true);
+})();
+/* ===== Lightbox navegável (foto ou vídeo) ===== */
+function renderLightboxMedia(){
+  var box=document.getElementById('lbMedia');
+  if(!box)return;
+  if(!imagens.length){box.innerHTML='';return;}
+  box.innerHTML=midiaHtml(imagens[imgAtual],produtoAtual?produtoAtual.nome:'',{autoplay:true,preload:'auto'});
+}
+function abrirLightbox(){
+  var lb=document.getElementById('lightbox');
+  if(!imagens.length)return;
+  renderLightboxMedia();
+  document.getElementById('lbCount').textContent=imagens.length>1?((imgAtual+1)+' / '+imagens.length):'';
+  document.getElementById('lbPrev').style.display=imagens.length>1?'flex':'none';
+  document.getElementById('lbNext').style.display=imagens.length>1?'flex':'none';
+  lb.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function fecharLightbox(){
+  var box=document.getElementById('lbMedia');
+  if(box)box.innerHTML='';
+  document.getElementById('lightbox').classList.remove('show');
+  document.body.style.overflow='';
+}
+function atualizarLightbox(){
+  var lb=document.getElementById('lightbox');
+  if(!lb.classList.contains('show'))return;
+  renderLightboxMedia();
+  document.getElementById('lbCount').textContent=imagens.length>1?((imgAtual+1)+' / '+imagens.length):'';
+}
+document.getElementById('lightbox').addEventListener('click',function(e){
+  if(e.target.id==='lbPrev')return;
+  if(e.target.id==='lbNext')return;
+  if(e.target.id==='lbClose')return;
+  /* clicar na mídia (vídeo/imagem) não fecha */
+  if(e.target.closest('#lbMedia'))return;
+  fecharLightbox();
+});
+document.getElementById('lbClose').addEventListener('click',function(e){e.stopPropagation();fecharLightbox();});
+document.getElementById('lbPrev').addEventListener('click',function(e){
+  e.stopPropagation();
+  irFoto(-1);
+  atualizarLightbox();
+});
+document.getElementById('lbNext').addEventListener('click',function(e){
+  e.stopPropagation();
+  irFoto(1);
+  atualizarLightbox();
+});
+/* ===== Teclado: setas navegam, Esc fecha ===== */
+document.addEventListener('keydown',function(e){
+  var lbAberto=document.getElementById('lightbox').classList.contains('show');
+  if(e.key==='Escape'){ if(lbAberto)fecharLightbox(); return; }
+  if(imagens.length<2)return;
+  if(e.key==='ArrowLeft'||e.key==='ArrowRight'){
+    if(document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName))return;
+    irFoto(e.key==='ArrowRight'?1:-1);
+    if(lbAberto)atualizarLightbox();
+  }
+});
+/* ===== Barra fixa de compra (mobile) ===== */
+(function(){
+  var bar=document.getElementById('pStickyBuy');
+  var btn=document.getElementById('sbBtn');
+  if(btn){
+    btn.addEventListener('click',function(){
+      if(precisaCor()){ avisarEscolhaCor(); return; }
+      var h=btn.getAttribute('data-href');
+      if(h)location.href=h;
+    });
+  }
+  var alvo=document.getElementById('btnComprar');
+  function checar(){
+    if(!bar||!alvo)return;
+    if(esgotadoAtual){bar.classList.remove('show');return;}
+    if(window.innerWidth>940){bar.classList.remove('show');return;}
+    var r=alvo.getBoundingClientRect();
+    if(r.bottom<40)bar.classList.add('show');
+    else bar.classList.remove('show');
+  }
+  window.addEventListener('scroll',checar,{passive:true});
+  window.addEventListener('resize',checar);
+  setTimeout(checar,600);
+})();
 carregar();
 </script>
 </body>

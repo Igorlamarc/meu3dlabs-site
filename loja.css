@@ -359,7 +359,7 @@ header{
 }
 .bnr-track{display:flex;transition:transform .5s ease;}
 .bnr-slide{flex:0 0 100%;min-width:100%;}
-.bnr-slide img{display:block;width:100%;height:400px;object-fit:cover;object-position:center;}
+.bnr-slide img{display:block;width:100%;height:440px;object-fit:cover;object-position:center;}
 .bnr-link{display:block;}
 .bnr-clicavel{cursor:pointer;}
 .bnr-arrow{
@@ -1135,6 +1135,7 @@ header{
   margin:0;
   display:-webkit-box;
   -webkit-line-clamp:2;
+  line-clamp:2;
   -webkit-box-orient:vertical;
   overflow:hidden;
 }
@@ -2178,7 +2179,7 @@ header{
 
 @media(max-width:900px){
   .chip-nav,.chip-promo{font-size:.75rem;padding:8px 13px;}
-  .bnr-slide img{height:340px;}
+  .bnr-slide img{height:360px;}
   .cat-visual-grid{grid-template-columns:repeat(auto-fill,minmax(118px,1fr));}
 }
 

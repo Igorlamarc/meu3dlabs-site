@@ -185,17 +185,102 @@ function statusPadrao() {
   return tipoAtivo === 'loja' ? 'feito' : 'novo';
 }
 
-function buscarImgProduto(nome) {
-  if (!cacheProdutos || !nome) return '';
+/* =====================================================================
+   CORES NO PEDIDO
+   Resolve o produto do item e escolhe a foto da cor comprada.
+   A meta M3DVAR fica no fim da descrição: "texto|M3DVAR:{...}"
+   ===================================================================== */
+function produtoDoItem(nome){
+  if(!cacheProdutos || !nome) return null;
   var alvo = String(nome).toLowerCase().trim();
-  for (var i = 0; i < cacheProdutos.length; i++) {
+  if(!alvo) return null;
+  /* 1) nome idêntico */
+  for(var i=0;i<cacheProdutos.length;i++){
     var p = cacheProdutos[i];
-    var pn = String(p.nome || '').toLowerCase().trim();
-    if (pn && (alvo.indexOf(pn) !== -1 || pn.indexOf(alvo) !== -1)) {
-      return (p.imagens && p.imagens[0]) || '';
-    }
+    if(String(p.nome||'').toLowerCase().trim() === alvo) return p;
+  }
+  /* 2) um contém o outro */
+  for(var j=0;j<cacheProdutos.length;j++){
+    var q = cacheProdutos[j];
+    var qn = String(q.nome||'').toLowerCase().trim();
+    if(qn && (alvo.indexOf(qn) !== -1 || qn.indexOf(alvo) !== -1)) return q;
+  }
+  return null;
+}
+
+/* cor → [urls] a partir da meta M3DVAR */
+function variacoesDoProduto(prod){
+  var out = {};
+  if(!prod) return out;
+  var desc = String(prod.descricao||'');
+  var pos = desc.indexOf('M3DVAR:');
+  if(pos === -1) return out;
+  try{
+    var mapa = JSON.parse(decodeURIComponent(desc.slice(pos + 7).trim()));
+    var imgs = (prod.imagens||[]).map(function(u){ return String(u||'').split('#')[0]; });
+    Object.keys(mapa||{}).forEach(function(cor){
+      var urls = (mapa[cor]||[]).map(function(idx){ return imgs[idx]; }).filter(Boolean);
+      if(urls.length) out[cor] = urls;
+    });
+  }catch(e){}
+  return out;
+}
+
+/* Foto do item respeitando a cor comprada */
+function fotoDoItem(item){
+  if(!item) return '';
+  var propria = String(item.img||'').split('#')[0];
+  if(propria) return propria;
+  var prod = produtoDoItem(item.nome || item.produto || '');
+  if(!prod) return '';
+  var cor = String(item.cor||'').trim();
+  if(cor){
+    var vars = variacoesDoProduto(prod);
+    if(vars[cor] && vars[cor].length) return vars[cor][0];
+  }
+  var imgs = prod.imagens||[];
+  return imgs.length ? String(imgs[0]).split('#')[0] : '';
+}
+
+/* Swatch pintado com a cor real */
+function corHexAdmin(nome){
+  if(!nome) return '#ccc';
+  var n = String(nome).toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9]/g,'');
+  var mapa = {
+    preto:'#111111', branco:'#f5f5f5', cinza:'#9e9e9e',
+    prata:'#c0c0c0', prateado:'#c0c0c0',
+    vermelho:'#d32f2f', rosa:'#f48fb1', laranja:'#f26522',
+    marrom:'#795548', amarelo:'#fbc02d', dourado:'#d4af37', ouro:'#d4af37',
+    verde:'#2e7d32', verdeclaro:'#8bc34a',
+    azul:'#1565c0', azulclaro:'#42a5f5', azulmarinho:'#0d3b66',
+    roxo:'#7b1fa2', violeta:'#9c27b0', lilas:'#ce93d8',
+    bege:'#d6c6a8', creme:'#f5ecd9', turquesa:'#00bcd4',
+    transparente:'#ffffff'
+  };
+  return mapa[n] || '#ccc';
+}
+
+/* Chip: cor real, ou alerta quando o produto tem cores e o pedido veio sem */
+function chipCorItem(item){
+  if(!item) return '';
+  var cor = String(item.cor||'').trim();
+  if(cor){
+    return '<span class="cor-chip-admin">' +
+      '<i style="background:' + corHexAdmin(cor) + '"></i>' + escapar(cor) +
+    '</span>';
+  }
+  var prod = produtoDoItem(item.nome || item.produto || '');
+  if(prod && prod.cores && prod.cores.length){
+    return '<span class="cor-chip-admin sem-cor" title="Produto com cores cadastradas, mas o pedido veio sem cor definida">⚠️ sem cor</span>';
   }
   return '';
+}
+
+/* Compatibilidade: chamadas antigas continuam funcionando */
+function buscarImgProduto(nome){
+  return fotoDoItem({ nome: nome });
 }
 
 /* ===== 4. FOTO DO CLIENTE ===== */
@@ -833,9 +918,9 @@ function aplicarFiltros() {
       if (p.urgencia) extra.push('Urgência: ' + p.urgencia);
     }
 
-    var imgDestaque = '';
+      var imgDestaque = '';
     if (tipoAtivo === 'loja' && (p.itens || []).length) {
-      var imgPrimeira = buscarImgProduto(p.itens[0].nome || p.itens[0].produto || '');
+      var imgPrimeira = fotoDoItem(p.itens[0]);
       if (imgPrimeira) imgDestaque = '<div style="text-align:center;margin-bottom:14px;"><img src="' + escapar(imgPrimeira) + '" alt="" style="max-width:100%;max-height:300px;border-radius:12px;border:1px solid var(--border);box-shadow:0 4px 14px rgba(15,30,61,.12);object-fit:contain;background:var(--light);"></div>';
     }
 
@@ -1197,25 +1282,60 @@ function montarTextoCompletoEncomenda(p) {
 
 function montarTextoCompletoLoja(p) {
   var linhas = [];
-  (p.itens || []).forEach(function(item) {
-    var qtd = item.qtd || item.quantidade || item.quant || 1;
-    var nome = item.nome || item.produto || item.descricao || 'Item';
-    var preco = parseFloat(item.preco || item.valor || 0);
-    var cor = item.cor ? ' (' + item.cor + ')' : '';
-    linhas.push(qtd + 'x ' + nome + cor + ' — ' + fmtMoeda(preco * qtd));
-  });
+  var blocos = '';
+  var itens = p.itens || [];
+
+  if (itens.length) {
+    blocos += '<div class="vm-itens">';
+    itens.forEach(function(item) {
+      var qtd = item.qtd || item.quantidade || item.quant || 1;
+      var nome = item.nome || item.produto || item.descricao || 'Item';
+      var preco = parseFloat(item.preco || item.valor || 0);
+      var img = fotoDoItem(item);
+      blocos += '<div class="vm-item">' +
+        (img ? '<img src="' + escapar(img) + '" alt="" loading="lazy">'
+             : '<span class="vm-item-noimg">📦</span>') +
+        '<div class="vm-item-info">' +
+          '<div class="vm-item-nome">' + escapar(String(qtd) + 'x ' + nome) + '</div>' +
+          chipCorItem(item) +
+        '</div>' +
+        '<div class="vm-item-preco">' + fmtMoeda(preco * qtd) + '</div>' +
+      '</div>';
+      linhas.push(qtd + 'x ' + nome + (item.cor ? ' (' + item.cor + ')' : '') + ' — ' + fmtMoeda(preco * qtd));
+    });
+    blocos += '</div>';
+  }
   if (!linhas.length) linhas.push('Itens: Pendente');
-  if (p.cupom && parseFloat(p.desconto) > 0) linhas.push('Cupom ' + p.cupom + ': -' + fmtMoeda(p.desconto));
-  linhas.push('Total: ' + fmtMoeda(p.total || (parseFloat(p.subtotal) - parseFloat(p.desconto))));
+
+  var resumo = '<div class="vm-lista">';
+  if (p.cupom && parseFloat(p.desconto) > 0) {
+    linhas.push('Cupom ' + p.cupom + ': -' + fmtMoeda(p.desconto));
+    resumo += '<div class="vm-campo"><span class="vm-rot">Cupom ' + escapar(p.cupom) +
+      '</span><span class="vm-valor">-' + fmtMoeda(p.desconto) + '</span></div>';
+  }
+  var total = p.total || (parseFloat(p.subtotal) - parseFloat(p.desconto));
+  linhas.push('Total: ' + fmtMoeda(total));
+  resumo += '<div class="vm-campo"><span class="vm-rot">Total</span>' +
+    '<span class="vm-valor"><strong style="color:#f26522;">' + fmtMoeda(total) + '</strong></span></div>';
+
   linhas.push('Entrega: ' + (etiquetaEntrega(p.entrega) || 'Pendente'));
+  resumo += '<div class="vm-campo"><span class="vm-rot">Entrega</span><span class="vm-valor">' +
+    escapar(etiquetaEntrega(p.entrega) || 'Pendente') + '</span></div>';
+
   var tipoE = String(p.entrega || '').toLowerCase();
   if (tipoE.indexOf('correio') !== -1) {
     linhas.push('Endereço: ' + (p.endereco || 'Pendente'));
+    resumo += '<div class="vm-campo"><span class="vm-rot">Endereço</span><span class="vm-valor">' +
+      escapar(p.endereco || 'Pendente') + '</span></div>';
   }
   if (tipoE.indexOf('retirada') !== -1 || tipoE.indexOf('uber') !== -1) {
     linhas.push('Horário: ' + (p.horario || 'Pendente'));
+    resumo += '<div class="vm-campo"><span class="vm-rot">Horário</span><span class="vm-valor">' +
+      escapar(p.horario || 'Pendente') + '</span></div>';
   }
-  return linhas.join('\n');
+  resumo += '</div>';
+
+  return { html: blocos + resumo, txt: linhas.join('\n') };
 }
 
 function montarDescricao(texto) {
@@ -1249,10 +1369,12 @@ function montarItensLoja(p) {
     var qtd = item.qtd || item.quantidade || item.quant || 1;
     var nome = item.nome || item.produto || item.descricao || 'Item';
     var preco = parseFloat(item.preco || item.valor || 0);
-    var cor = item.cor ? ' (' + item.cor + ')' : '';
-    var img = buscarImgProduto(nome);
-    var thumb = img ? '<img class="item-thumb" src="' + escapar(img) + '" alt="">' : '';
-    html += '<span class="item-linha">' + thumb + '<span class="item-nome">' + escapar(String(qtd) + 'x ' + nome + cor) + '</span> · ' + fmtMoeda(preco * qtd) + '</span>';
+    var img = fotoDoItem(item);
+    var thumb = img
+      ? '<img class="item-thumb" src="' + escapar(img) + '" alt="" loading="lazy">'
+      : '<span class="item-thumb vazio">📦</span>';
+    html += '<span class="item-linha">' + thumb +
+      '<span class="item-nome">' + escapar(String(qtd) + 'x ' + nome) + chipCorItem(item) + '</span> · ' + fmtMoeda(preco * qtd) + '</span>';
   });
   if (p.cupom && parseFloat(p.desconto) > 0) {
     html += '<span class="item-linha" style="color:var(--gray);">Cupom ' + escapar(p.cupom) + ': -' + fmtMoeda(p.desconto) + '</span>';
