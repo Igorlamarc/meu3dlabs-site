@@ -1,18 +1,17 @@
 /* =====================================================================
    netlify/edge-functions/produto-404.js  —  ARQUIVO COMPLETO
-   Intercepta /produto/<slug> ANTES do rewrite.
+   Único dono da rota /produto/*
 
-   1) Valida o slug contra a API (cache de edge + timeout) → 404 real se não existe
+   1) Valida o slug contra a API (cache de edge + timeout)
    2) Serve a página normal para humanos
-   3) Reescreve as metatags (og:title / og:description / og:image) para robôs
-      de preview (WhatsApp, Facebook, Telegram, LinkedIn...)
-   4) Fail-open: nunca quebra a página
+   3) Reescreve metatags para robôs de preview (WhatsApp, Facebook, Googlebot...)
+   4) Fail-open: NUNCA quebra a página
    ===================================================================== */
 
 const API = 'https://meu3dlabs-backend.onrender.com/api/loja/produtos';
 const CACHE_CHAVE = 'https://meu3dlabs.com.br/__cache/lista-produtos';
 const CACHE_TTL_SEGUNDOS = 60;
-const TIMEOUT_MS = 3000;
+const TIMEOUT_MS = 3500;
 const BASE = 'https://meu3dlabs.com.br';
 
 /* Robôs que montam preview de link (não executam JavaScript) */
@@ -21,24 +20,26 @@ const BOT = /whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|linkedi
 export const config = { path: "/produto/*" };
 
 /* ---------------------------------------------------------------------
-   Busca a lista de produtos com cache de edge + timeout.
-   Retorna null quando não foi possível obter (API fria, timeout, erro).
+   Lista de produtos com cache de edge + timeout.
+   Retorna null quando NÃO foi possível validar com segurança.
+   ATENÇÃO: lista vazia também retorna null (fail-open), para nunca
+   transformar um backend vazio/instável em 404 geral do site.
    --------------------------------------------------------------------- */
 async function obterProdutos() {
-  /* 1) Tenta o cache de edge */
+  /* 1) Cache de edge */
   try {
     if (typeof caches !== 'undefined' && caches.default) {
       const hit = await caches.default.match(CACHE_CHAVE);
       if (hit) {
         try {
           const json = await hit.json();
-          if (Array.isArray(json)) return json;
-        } catch (e) { /* cache corrompido → ignora e refaz */ }
+          if (Array.isArray(json) && json.length > 0) return json;
+        } catch (e) { /* cache corrompido → ignora */ }
       }
     }
   } catch (e) { /* sem Cache API → segue sem cache */ }
 
-  /* 2) Busca na API com timeout */
+  /* 2) API com timeout */
   const ctrl = new AbortController();
   const timer = setTimeout(() => { try { ctrl.abort(); } catch (e) {} }, TIMEOUT_MS);
 
@@ -50,8 +51,9 @@ async function obterProdutos() {
     });
     if (r.ok) {
       const d = await r.json();
-      const bruto = Array.isArray(d) ? d : (d.produtos || []);
-      if (Array.isArray(bruto)) lista = bruto;
+      const bruto = Array.isArray(d) ? d : (d.produtos || d.items || []);
+      /* Só aceita lista com conteúdo — lista vazia = não validado */
+      if (Array.isArray(bruto) && bruto.length > 0) lista = bruto;
     }
   } catch (e) {
     lista = null;
@@ -80,7 +82,7 @@ async function obterProdutos() {
 }
 
 /* ---------------------------------------------------------------------
-   Helpers de metatag
+   Helpers
    --------------------------------------------------------------------- */
 function esc(s) {
   return String(s == null ? '' : s)
@@ -98,10 +100,7 @@ function absUrl(u) {
   return BASE + (v.startsWith('/') ? v : '/' + v);
 }
 
-/* ---------------------------------------------------------------------
-   Mapeia os campos do produto.
-   >>> Se o nome dos campos na sua API for diferente, ajuste SÓ aqui. <<<
-   --------------------------------------------------------------------- */
+/* Mapeia os campos do produto (tolerante a variações da API) */
 function dadosDoProduto(p) {
   const nome = p.nome || p.titulo || p.name || p.title || 'Produto';
 
@@ -126,7 +125,7 @@ function dadosDoProduto(p) {
   return { nome, img, desc };
 }
 
-/* Remove as metas antigas e injeta as do produto */
+/* Remove metas antigas e injeta as do produto */
 function reescreverHtml(html, p, slug) {
   const { nome, img, desc } = dadosDoProduto(p);
   const titulo = nome + ' | Meu 3D Labs';
@@ -159,6 +158,47 @@ function reescreverHtml(html, p, slug) {
   return out.replace(/<\/head>/i, '    ' + metas + '\n  </head>');
 }
 
+/* Monta a resposta 404 reaproveitando o HTML do rewrite (sem fetch extra) */
+async function responder404(context) {
+  const res = await context.next();
+  let html = await res.text();
+
+  /* robots: substitui se existir, insere se não existir */
+  if (/<meta[^>]+name=["']robots["'][^>]*>/i.test(html)) {
+    html = html.replace(
+      /<meta[^>]+name=["']robots["'][^>]*>/i,
+      '<meta name="robots" content="noindex, follow">'
+    );
+  } else {
+    html = html.replace(
+      /<\/head>/i,
+      '  <meta name="robots" content="noindex, follow">\n</head>'
+    );
+  }
+
+  /* title: substitui se existir, insere se não existir */
+  if (/<title>[\s\S]*?<\/title>/i.test(html)) {
+    html = html.replace(
+      /<title>[\s\S]*?<\/title>/i,
+      '<title>Peça não encontrada | Meu 3D Labs</title>'
+    );
+  } else {
+    html = html.replace(
+      /<\/head>/i,
+      '  <title>Peça não encontrada | Meu 3D Labs</title>\n</head>'
+    );
+  }
+
+  return new Response(html, {
+    status: 404,
+    headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'X-Robots-Tag': 'noindex, follow',
+      'Cache-Control': 'no-store'
+    }
+  });
+}
+
 /* ---------------------------------------------------------------------
    Handler
    --------------------------------------------------------------------- */
@@ -167,45 +207,28 @@ export default async function handler(request, context) {
     const url = new URL(request.url);
     const match = url.pathname.match(/^\/produto\/([^\/?#]+)\/?$/);
 
-    /* Não é uma URL de produto → segue o fluxo normal */
+    /* Não é URL de produto → fluxo normal */
     if (!match) return context.next();
 
     let slug;
-    try { slug = decodeURIComponent(match[1]); } catch { slug = match[1]; }
+    try { slug = decodeURIComponent(match[1]); } catch (e) { slug = match[1]; }
+    const slugAlvo = String(slug).trim().toLowerCase();
 
     const lista = await obterProdutos();
 
-    /* Não conseguiu validar (API fria / timeout) → fail-open */
+    /* Não conseguiu validar (API fria, timeout, lista vazia) → fail-open */
     if (!lista) return context.next();
 
-    const prod = lista.find(
-      (p) => String(p.slug) === slug && p.ativo !== false
-    );
+    const prod = lista.find(function (p) {
+      if (!p || p.ativo === false) return false;
+      const s = String(p.slug || p.id || '').trim().toLowerCase();
+      return s === slugAlvo;
+    });
 
     /* ===== Produto NÃO existe → 404 real ===== */
     if (!prod) {
       try {
-        const loja = await fetch(new URL('/produto.html', url.origin));
-        let html = await loja.text();
-
-        html = html
-          .replace(
-            /<meta name="robots"[^>]*>/i,
-            '<meta name="robots" content="noindex, follow">'
-          )
-          .replace(
-            /<title>[^<]*<\/title>/i,
-            '<title>Peça não encontrada | Meu 3D Labs</title>'
-          );
-
-        return new Response(html, {
-          status: 404,
-          headers: {
-            'Content-Type': 'text/html; charset=utf-8',
-            'X-Robots-Tag': 'noindex, follow',
-            'Cache-Control': 'no-store'
-          }
-        });
+        return await responder404(context);
       } catch (e) {
         /* Falhou ao montar o 404 → não quebrar a página */
         return context.next();
@@ -229,7 +252,7 @@ export default async function handler(request, context) {
 
     return new Response(reescreverHtml(html, prod, slug), {
       status: 200,
-      headers
+      headers: headers
     });
   } catch (e) {
     /* A função NUNCA pode lançar exceção */
