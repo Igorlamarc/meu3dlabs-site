@@ -1,20 +1,102 @@
+# ============================================================
+# Meu 3D Labs — configuração Netlify
+# Site: meu3dlabs.com.br
+# Backend: https://meu3dlabs-backend.onrender.com
+# ============================================================
+
+# ---------- Build ----------
 [build]
   publish = "."
+  command = ""
+
+[build.environment]
+  NODE_VERSION = "20"
+  TZ = "America/Sao_Paulo"
+
+# ---------- Funções (se usar alguma) ----------
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# ---------- Dev local (netlify dev) ----------
+[dev]
+  framework = "#static"
+  port = 8888
 
 # ============================================================
-# PÁGINAS DE PRODUTO
-# Rewrite para o HTML. A Edge Function valida se o slug existe.
+# HEADERS
 # ============================================================
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# HTML sempre revalidado (evita cache antigo depois de deploy)
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# JS/CSS do site sempre revalidados (evita versão velha em produção)
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Imagens e fontes podem cachear forte
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# API nunca cacheia
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store"
+
+# Painel administrativo fora do índice do Google
+[[headers]]
+  for = "/admin*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# ============================================================
+# REDIRECTS / PROXY (status 200 = rewrite, URL não muda)
+# ============================================================
+
+# API do backend — elimina CORS no front
 [[redirects]]
-  from = "/produto/*"
-  to = "/produto.html"
+  from = "/api/*"
+  to = "https://meu3dlabs-backend.onrender.com/api/:splat"
   status = 200
+  force = true
 
-# ============================================================
-# SITEMAP DE PRODUTOS
-# Serve o XML gerado pelo backend, mas no seu domínio.
-# O Google exige que todo sitemap de um índice esteja no mesmo host.
-# ============================================================
+# Atalho público para o sitemap de produtos gerado pelo backend
 [[redirects]]
   from = "/sitemap-produtos.xml"
   to = "https://meu3dlabs-backend.onrender.com/api/sitemap-produtos.xml"
@@ -22,30 +104,11 @@
   force = true
 
 # ============================================================
-# HEADERS DOS SITEMAPS
-# Garante o Content-Type correto para o Google indexar como XML.
+# ATENÇÃO: /produto/* NÃO entra aqui.
+# Quem responde essa rota é a Edge Function
+# netlify/edge-functions/produto-404.ts, que devolve
+# status 404 real quando o produto não existe.
+# Não declare [[edge_functions]] aqui — o
+# "export const config = { path: '/produto/*' }"
+# dentro do arquivo .ts já faz o registro.
 # ============================================================
-[[headers]]
-  for = "/sitemap.xml"
-  [headers.values]
-    Content-Type = "application/xml; charset=utf-8"
-    Cache-Control = "public, max-age=3600"
-
-[[headers]]
-  for = "/sitemap-paginas.xml"
-  [headers.values]
-    Content-Type = "application/xml; charset=utf-8"
-    Cache-Control = "public, max-age=3600"
-
-[[headers]]
-  for = "/sitemap-produtos.xml"
-  [headers.values]
-    Content-Type = "application/xml; charset=utf-8"
-    Cache-Control = "public, max-age=1800"
-
-# ============================================================
-# EDGE FUNCTION — 404 real para produto inexistente
-# ============================================================
-[[edge_functions]]
-  path = "/produto/*"
-  function = "produto-404"
