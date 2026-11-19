@@ -1239,10 +1239,34 @@ function render(p,lista){
     document.getElementById('vistosSec').hidden=false;
   }
   /* SEO estruturado — sempre URLs limpas, todas as mídias */
+  /* ===== SEO estruturado — inclui dimensões, peso e material ===== */
+  /* Reaproveita mat, da, dl, dp, peso e cores já calculados acima */
   var ld={'@context':'https://schema.org','@type':'Product','name':p.nome,'description':descLimpa,'sku':slug,'url':url,
     'image':imagensTodas.length?imagensTodas:[BASE_URL+'/img/logo/logo.png'],
     'brand':{'@type':'Brand','name':'Meu 3D Labs'},
     'offers':{'@type':'Offer','url':url,'priceCurrency':'BRL','price':precoVenda,'itemCondition':'https://schema.org/NewCondition','availability':esgotado?'https://schema.org/OutOfStock':'https://schema.org/InStock','seller':{'@type':'Organization','name':'Meu 3D Labs'}}};
+
+  /* Material declarado (ex.: PLA, PETG, TPU) */
+  if(mat) ld.material = mat;
+
+  /* Peso em gramas — unidade oficial GRM */
+  if(peso) ld.weight = {'@type':'QuantitativeValue','value':peso,'unitCode':'GRM'};
+
+  /* Dimensões em centímetros — unidade oficial CMT */
+  if(da) ld.height = {'@type':'QuantitativeValue','value':da,'unitCode':'CMT'};
+  if(dl) ld.width  = {'@type':'QuantitativeValue','value':dl,'unitCode':'CMT'};
+  if(dp) ld.depth  = {'@type':'QuantitativeValue','value':dp,'unitCode':'CMT'};
+
+  /* Cores disponíveis */
+  if(cores.length) ld.color = cores.join(', ');
+
+  /* Ficha complementar: categoria e disponibilidade em texto */
+  var ldProps=[];
+  ldProps.push({'@type':'PropertyValue','name':'Categoria','value':labelCat(p.categoria)});
+  ldProps.push({'@type':'PropertyValue','name':'Produção','value':'Impressão 3D artesanal · Nilópolis/RJ'});
+  if(mat) ldProps.push({'@type':'PropertyValue','name':'Material','value':mat});
+  if(peso) ldProps.push({'@type':'PropertyValue','name':'Peso','value':peso+' g'});
+  ld.additionalProperty = ldProps;
   var s=document.createElement('script');s.type='application/ld+json';s.textContent=JSON.stringify(ld);document.head.appendChild(s);
   var bl={'@context':'https://schema.org','@type':'BreadcrumbList','itemListElement':[
     {'@type':'ListItem','position':1,'name':'Início','item':BASE_URL+'/'},
