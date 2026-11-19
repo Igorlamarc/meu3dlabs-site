@@ -18,6 +18,10 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# ---------- Edge Functions ----------
+[edge_functions]
+  directory = "netlify/edge-functions"
+
 # ---------- Dev local (netlify dev) ----------
 [dev]
   framework = "#static"
@@ -35,13 +39,11 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
 
-# HTML sempre revalidado (evita cache antigo depois de deploy)
 [[headers]]
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# JS/CSS sempre revalidados (evita versão velha em produção)
 [[headers]]
   for = "/*.js"
   [headers.values]
@@ -52,7 +54,6 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# Imagens e fontes podem cachear forte
 [[headers]]
   for = "/*.png"
   [headers.values]
@@ -78,26 +79,24 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# API nunca cacheia
 [[headers]]
   for = "/api/*"
   [headers.values]
     Cache-Control = "no-store"
 
-# Login nunca cacheia
 [[headers]]
   for = "/api/auth/login"
   [headers.values]
     Cache-Control = "no-store"
 
-# Painel administrativo fora do índice do Google
 [[headers]]
   for = "/admin*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
 
 # ============================================================
-# REDIRECTS / PROXY (status 200 = rewrite, URL não muda)
+# REDIRECTS / PROXY  (status 200 = rewrite, a URL não muda)
+# A ordem importa: o Netlify processa de cima para baixo.
 # ============================================================
 
 # API do backend — elimina CORS no front
@@ -107,7 +106,7 @@
   status = 200
   force = true
 
-# Atalho público para o sitemap de produtos gerado pelo backend
+# Sitemap gerado pelo backend
 [[redirects]]
   from = "/sitemap-produtos.xml"
   to = "https://meu3dlabs-backend.onrender.com/api/sitemap-produtos.xml"
@@ -115,16 +114,26 @@
   force = true
 
 # ============================================================
-# ATENÇÃO: /produto/* NÃO entra aqui.
-# Quem responde essa rota é a Edge Function
-# netlify/edge-functions/produto-404.js, que devolve
-# status 404 real quando o produto não existe.
-# Não declare [[edge_functions]] aqui. O
-# "export const config = { path: '/produto/*' }"
-# dentro do arquivo já faz o registro.
+# PRODUTOS — ESTA ERA A REGRA QUE FALTAVA
+# ------------------------------------------------------------
+# Sem ela, /produto/<slug> não existe como arquivo e o Netlify
+# devolve o 404 genérico. produto.html lê o slug da própria URL
+# (slugDaURL) e monta a página.
 #
-# login-guard.js também se registra sozinho, mas só intercepta
-# chamadas feitas pelo domínio do site (/api/...). Os painéis
-# hoje chamam o Render direto, então a proteção efetiva
-# continua sendo o limite de tentativas do backend.
+# Se existir a Edge Function produto-404.js registrada em
+# netlify/edge-functions/, ela roda ANTES e continua mandando,
+# com a vantagem de devolver status 404 real para peça inexistente.
+# Este rewrite é a rede de segurança para quando ela não roda.
 # ============================================================
+[[redirects]]
+  from = "/produto/*"
+  to = "/produto.html"
+  status = 200
+  force = true
+
+# Atalho legado: /loja/<slug> também abre a página do produto
+[[redirects]]
+  from = "/loja/:slug"
+  to = "/produto.html?produto=:slug"
+  status = 301
+  force = false
