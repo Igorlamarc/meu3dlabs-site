@@ -18,10 +18,6 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# ---------- Edge Functions ----------
-[edge_functions]
-  directory = "netlify/edge-functions"
-
 # ---------- Dev local (netlify dev) ----------
 [dev]
   framework = "#static"
@@ -114,26 +110,19 @@
   force = true
 
 # ============================================================
-# PRODUTOS — ESTA ERA A REGRA QUE FALTAVA
+# PRODUTOS — ESTA É A REGRA QUE RESOLVE O 404
 # ------------------------------------------------------------
 # Sem ela, /produto/<slug> não existe como arquivo e o Netlify
 # devolve o 404 genérico. produto.html lê o slug da própria URL
-# (slugDaURL) e monta a página.
+# (função slugDaURL) e monta a página inteira.
 #
-# Se existir a Edge Function produto-404.js registrada em
-# netlify/edge-functions/, ela roda ANTES e continua mandando,
-# com a vantagem de devolver status 404 real para peça inexistente.
-# Este rewrite é a rede de segurança para quando ela não roda.
+# O diretório netlify/edge-functions/ é convenção do Netlify:
+# NÃO se declara no netlify.toml. Se produto-404.js existir lá,
+# ele roda antes desta regra e devolve 404 real para peça
+# inexistente. Este rewrite é a rede de segurança.
 # ============================================================
 [[redirects]]
   from = "/produto/*"
   to = "/produto.html"
   status = 200
   force = true
-
-# Atalho legado: /loja/<slug> também abre a página do produto
-[[redirects]]
-  from = "/loja/:slug"
-  to = "/produto.html?produto=:slug"
-  status = 301
-  force = false
