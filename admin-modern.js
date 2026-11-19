@@ -84,12 +84,12 @@
     return el;
   }
 
-  /* alert() nativo -> toast (nao bloqueia a tela) */
+  /* alert() nativo -> toast (nao bloqueia a tela) 
   var _alert = window.alert;
   window.alert = function (msg) {
     try { toast(msg, { tipo: 'warn', titulo: 'Atenção', dur: 6000 }); }
     catch (e) { _alert.call(window, msg); }
-  };
+  }; */
 
   /* ---------- 2. EXCLUSAO COM DESFAZER (5s) ---------- */
   document.addEventListener('click', function (e) {
@@ -503,7 +503,7 @@
           (u.indexOf('/orcamentos?servico=encomenda') !== -1 || /\/loja\/pedidos(\?|$)/.test(u));
 
         /* aba oculta: segura a resposta para nao gastar requisicao nem mexer na tela */
-        if (ehPoll && document.hidden) return new Promise(function () {});
+        if (ehPoll && document.hidden) return Promise.resolve(new Response('{}', { status: 204 }));
 
         var p = _fetch.apply(this, arguments);
         if (!ehPoll) return p;

@@ -3,7 +3,7 @@ const CATEGORIAS = ['chaveiros','religiosos','decoracao','miniaturas','coleciona
 const MATERIAIS = ['PLA','PETG','TPU','ABS'];
 const SLUG_MAX = 70;
 const ACEITA_ARQUIVO = 'image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm,video/x-m4v';
-let token = localStorage.getItem('m3d_token') || '';
+let token = sessionStorage.getItem('m3d_token') || '';
 let produtos = [];
 let editandoId = null;
 let imagensTemp = [];
@@ -150,8 +150,8 @@ function fazerLogin(){
       btn.disabled = false; btn.textContent = 'Entrar';
       return;
     }
-    token = t.token;
-    localStorage.setItem('m3d_token', token);
+      token = t.token;
+    sessionStorage.setItem('m3d_token', token);
     entrar();
   })
   .catch(() => {
@@ -163,7 +163,7 @@ function fazerLogin(){
 
 function sair(){
   token = '';
-  localStorage.removeItem('m3d_token');
+  sessionStorage.removeItem('m3d_token');
   document.getElementById('senha').value = '';
   document.getElementById('loginErr').style.display = 'none';
   document.getElementById('painel').classList.add('hidden');
@@ -1918,9 +1918,8 @@ document.addEventListener('drop', function(e){
 if(token) entrar();
 
 function irParaAdmin(){
-  const t = localStorage.getItem('m3d_token')
-         || sessionStorage.getItem('m3d_token') || '';
-  if(t){ try{ localStorage.setItem('m3d_admin_token', t); }catch(e){} }
+  const t = sessionStorage.getItem('m3d_token') || '';
+  if(t){ try{ sessionStorage.setItem('m3d_admin_token', t); }catch(e){} }
   window.location.href = 'admin.html';
 }
 
@@ -1939,7 +1938,11 @@ let storyProdutoBlobUrl = null;
    - detecta canvas contaminado por CORS e avisa em vez de gerar preto
    - fallback para poster/imagem se o vídeo falhar
    ============================================================ */
-var STORY_DURACAO_SEG = 6;
+/* Duração do vídeo do Story.
+   Padrão: 7 segundos. Pode ser trocada na hora pelo seletor do overlay. */
+var STORY_DURACAO_PADRAO = 7;
+var STORY_DURACAO_SEG = STORY_DURACAO_PADRAO;
+var STORY_DURACAO_MAX = 20;
 var STORY_FPS = 30;
 var STORY_BITRATE_MBPS = 8;
 var STORY_TIMEOUT_MIDIA_MS = 15000;
@@ -2846,6 +2849,26 @@ function storyInjetarBotoesVideo(){
   if(ref && ref.parentNode) ref.parentNode.insertBefore(btn, ref.nextSibling);
   else pai.appendChild(btn);
 
+  /* Seletor de duração do vídeo */
+  if(!document.getElementById('storyDurSel')){
+    var dur = document.createElement('select');
+    dur.id = 'storyDurSel';
+    dur.title = 'Duração do vídeo do Story';
+    dur.style.cssText = 'margin-left:8px;background:#fff;border:1.5px solid #dde3ee;color:#0f1e3d;border-radius:10px;padding:12px 10px;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer;';
+    [5, 7, 10, 15, 20].forEach(function(s){
+      var o = document.createElement('option');
+      o.value = String(s);
+      o.textContent = s + 's';
+      if(s === STORY_DURACAO_PADRAO) o.selected = true;
+      dur.appendChild(o);
+    });
+    dur.onchange = function(){
+      var v = parseInt(this.value, 10);
+      if(v > 0) STORY_DURACAO_SEG = Math.min(v, STORY_DURACAO_MAX);
+    };
+    if(btn.parentNode) btn.parentNode.insertBefore(dur, btn.nextSibling);
+  }
+
   var box = document.createElement('div');
   box.id = 'storyVideoBox';
   box.style.cssText = 'display:none;margin-top:14px;text-align:center;';
@@ -2875,6 +2898,12 @@ function storyGerarVideo(){
 
   var btn  = document.getElementById('btnStoryVideo');
   var hint = document.getElementById('storyHint');
+  /* Lê a duração escolhida no seletor antes de gravar */
+  var selDur = document.getElementById('storyDurSel');
+  if(selDur){
+    var durEscolhida = parseInt(selDur.value, 10);
+    if(durEscolhida > 0) STORY_DURACAO_SEG = Math.min(durEscolhida, STORY_DURACAO_MAX);
+  }
   storyGravando = true;
   if(btn){ btn.disabled = true; btn.textContent = '🎬 Gravando…'; }
   if(hint) hint.textContent = 'Gravando ' + STORY_DURACAO_SEG + 's. Mantenha esta aba visível.';

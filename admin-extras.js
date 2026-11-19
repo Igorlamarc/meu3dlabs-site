@@ -24,7 +24,7 @@ function pedPorChave(k){var a=todosPedidos();for(var i=0;i<a.length;i++){var x=a
 function notasDe(k){return LS('m3l_nota_'+k,'');}
 function tagsDe(k){return LS('m3l_tags_'+k,'[]');}
 function histDe(k){return LS('m3l_hist_'+k,'[]');}
-function metaDe(){return parseFloat(localStorage.getItem('m3l_meta'))||2000;}
+function metaDe(){return parseFloat(localStorage.getItem('m3d_meta_mensal'))||2000;}
 
 var PALETA=['#f26522','#1f6feb','#8250df','#0f9d8f','#d9a406','#d73a49','#2f9e44','#7a55c7'];
 function corTag(t){var h=0;for(var i=0;i<t.length;i++)h=(h*31+t.charCodeAt(i))>>>0;return PALETA[h%PALETA.length];}

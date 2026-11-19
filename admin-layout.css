@@ -1,0 +1,800 @@
+/* ============================================================
+   Meu 3D Labs — admin-layout.css  (v3)
+   Carregar POR ÚLTIMO, depois de admin-modern.css.
+
+   v3 — muda a estratégia:
+   - o modo cartão é controlado pela classe `m3d-cards` no <html>,
+     aplicada pelo admin-mobile.js com base na largura real
+   - não depende mais de media query nem de nth-child
+   - nada é escondido no celular: tudo empilhado no cartão
+   - rolagem horizontal continua disponível como fallback
+
+   Não altera regra de negócio, preço, estoque nem fluxo.
+   ============================================================ */
+
+/* ============================================================
+   1. CONTAINER — usar a tela toda em monitores grandes
+   ============================================================ */
+@media (min-width: 1280px) {
+  main,
+  #painelModelagem {
+    max-width: min(1780px, 100% - 40px);
+    padding-left: clamp(20px, 2vw, 40px);
+    padding-right: clamp(20px, 2vw, 40px);
+  }
+}
+
+@media (min-width: 1700px) {
+  main,
+  #painelModelagem {
+    padding-left: clamp(24px, 2.4vw, 56px);
+    padding-right: clamp(24px, 2.4vw, 56px);
+  }
+}
+
+/* ============================================================
+   2. MODO TABELA — telas grandes
+   ============================================================ */
+html:not(.m3d-cards) #mainContent table,
+html:not(.m3d-cards) #painelModelagem table {
+  min-width: 0 !important;
+  width: 100%;
+  table-layout: auto;
+}
+
+html:not(.m3d-cards) #mainContent thead th,
+html:not(.m3d-cards) #painelModelagem thead th,
+html:not(.m3d-cards) #mainContent tbody td,
+html:not(.m3d-cards) #painelModelagem tbody td {
+  padding: 11px 10px;
+}
+
+html:not(.m3d-cards) .td-desc {
+  max-width: none;
+  min-width: 180px;
+}
+
+html:not(.m3d-cards) .cliente-info .td-client,
+html:not(.m3d-cards) .cliente-info .cliente-email {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  word-break: break-word;
+}
+
+html:not(.m3d-cards) .mod-acoes,
+html:not(.m3d-cards) .acoes {
+  flex-wrap: wrap;
+  white-space: normal;
+}
+
+html:not(.m3d-cards) .mod-acoes .mod-btn {
+  flex: 1 1 auto;
+  min-width: 78px;
+}
+
+html:not(.m3d-cards) .table-wrap {
+  overflow: hidden;
+}
+
+/* ============================================================
+   3. MODO CARTÃO — celular e janelas estreitas
+   ------------------------------------------------------------
+   Gatilho: `m3d-cards` no <html>, aplicado pelo admin-mobile.js.
+   Nada é escondido. Cada célula vira uma linha do cartão.
+   ============================================================ */
+
+/* ---- wrapper deixa de recortar ---- */
+html.m3d-cards #mainContent .table-wrap,
+html.m3d-cards #painelModelagem .table-wrap {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  border-radius: 0 !important;
+}
+
+/* ---- container mais enxuto ---- */
+html.m3d-cards main,
+html.m3d-cards #painelModelagem {
+  max-width: 100%;
+  padding: 14px 10px 46px;
+}
+
+/* ---- tabela desmontada ---- */
+html.m3d-cards #mainContent table,
+html.m3d-cards #painelModelagem table {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  font-size: 13px;
+  border-collapse: separate;
+  table-layout: auto;
+}
+
+html.m3d-cards #mainContent thead,
+html.m3d-cards #painelModelagem thead {
+  display: none !important;
+}
+
+html.m3d-cards #mainContent tbody,
+html.m3d-cards #painelModelagem tbody {
+  display: block !important;
+  width: 100%;
+}
+
+/* ---- o pedido vira cartão ---- */
+html.m3d-cards #mainContent tbody tr,
+html.m3d-cards #painelModelagem tbody tr {
+  display: block !important;
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--white) !important;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 13px;
+  margin: 0 0 11px;
+  box-shadow: 0 1px 3px rgba(15, 30, 61, .07);
+  position: relative;
+  overflow: hidden;
+}
+
+html.m3d-cards #mainContent tbody tr:nth-child(even),
+html.m3d-cards #painelModelagem tbody tr:nth-child(even),
+html.m3d-cards #mainContent tbody tr:hover,
+html.m3d-cards #painelModelagem tbody tr:hover {
+  background: var(--white) !important;
+}
+
+/* faixas de alerta continuam visíveis */
+html.m3d-cards tr.tr-atrasado {
+  box-shadow: inset 4px 0 0 var(--red), 0 1px 3px rgba(15, 30, 61, .07);
+}
+
+html.m3d-cards tr.tr-hoje {
+  box-shadow: inset 4px 0 0 #e74c3c, 0 1px 3px rgba(15, 30, 61, .07);
+}
+
+html.m3d-cards tbody tr.row-novo {
+  box-shadow: inset 4px 0 0 var(--green), 0 1px 3px rgba(15, 30, 61, .07);
+}
+
+html.m3d-cards tbody tr.sel {
+  background: rgba(242, 101, 34, .07) !important;
+  border-color: var(--orange);
+}
+
+html.m3d-cards tr.m3l-velho {
+  box-shadow: inset 4px 0 0 #d9a406, 0 1px 3px rgba(15, 30, 61, .07);
+}
+
+/* linha de carregamento ocupa o cartão inteiro */
+html.m3d-cards .loading-row td {
+  display: block !important;
+  padding: 34px 14px !important;
+}
+
+/* ---- cada célula vira uma linha do cartão ---- */
+html.m3d-cards #mainContent tbody td,
+html.m3d-cards #painelModelagem tbody td {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  text-align: left !important;
+  white-space: normal !important;
+}
+
+html.m3d-cards #mainContent tbody td + td,
+html.m3d-cards #painelModelagem tbody td + td {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+
+/* ==========================================================
+   ID + badges
+   ========================================================== */
+html.m3d-cards #mainContent .td-id,
+html.m3d-cards #painelModelagem .td-id {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.3;
+  word-break: break-word;
+  padding-right: 34px;
+}
+
+body.dark html.m3d-cards #mainContent .td-id,
+html.m3d-cards body.dark #mainContent .td-id {
+  color: #ff8a3d;
+}
+
+html.m3d-cards #mainContent .td-id .novo-badge {
+  display: inline-block;
+  margin: 5px 0 0 0;
+  font-size: 9.5px;
+  padding: 2px 8px;
+  vertical-align: middle;
+}
+
+html.m3d-cards #mainContent .td-id .urg-badge {
+  display: inline-block;
+  margin: 5px 0 0 5px;
+  font-size: 9.5px;
+  padding: 2px 8px;
+}
+
+html.m3d-cards #mainContent .row-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  z-index: 2;
+}
+
+/* ==========================================================
+   Cliente
+   ========================================================== */
+html.m3d-cards #mainContent .td-cliente,
+html.m3d-cards #painelModelagem .td-cliente {
+  padding-top: 9px;
+  border-top: 1px solid var(--border);
+}
+
+html.m3d-cards #mainContent .cliente-cel {
+  gap: 9px;
+  align-items: center;
+}
+
+html.m3d-cards #mainContent .cliente-foto {
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+  border-width: 2px;
+}
+
+html.m3d-cards #mainContent .cliente-info {
+  min-width: 0;
+}
+
+html.m3d-cards #mainContent .cliente-info .td-client {
+  font-size: 14px;
+  font-weight: 700;
+  white-space: normal !important;
+  line-height: 1.3;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+html.m3d-cards #mainContent .cliente-info .cliente-email {
+  display: block;
+  font-size: 11.5px;
+  margin-top: 1px;
+  white-space: normal !important;
+  word-break: break-all;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* ==========================================================
+   Contato
+   ========================================================== */
+html.m3d-cards #mainContent .td-contact,
+html.m3d-cards #painelModelagem .td-contact {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--gray);
+}
+
+html.m3d-cards #mainContent .td-contact::before {
+  content: "📞 ";
+}
+
+html.m3d-cards #mainContent .wa-link {
+  display: inline-flex;
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  padding: 5px 11px;
+  border-radius: 8px;
+}
+
+/* ==========================================================
+   Descrição
+   ========================================================== */
+html.m3d-cards #mainContent .td-desc,
+html.m3d-cards #painelModelagem .td-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+html.m3d-cards #mainContent .td-desc .desc-text {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
+  overflow: visible !important;
+  -webkit-box-orient: unset !important;
+}
+
+html.m3d-cards #mainContent .td-desc small {
+  display: block;
+  font-size: 11.5px;
+  margin-top: 4px;
+  color: var(--gray);
+}
+
+html.m3d-cards #mainContent .td-desc a {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 12px;
+  word-break: break-word;
+}
+
+html.m3d-cards #mainContent .ver-mais-btn {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 9px;
+  font-size: 12.5px;
+  border-radius: 9px;
+  text-align: center;
+}
+
+/* itens da loja empilhados */
+html.m3d-cards #mainContent .item-linha,
+html.m3d-cards #mainContent .td-desc .item-linha {
+  display: flex !important;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 0;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+}
+
+html.m3d-cards #mainContent .item-thumb {
+  width: 34px;
+  height: 34px;
+  margin-right: 0;
+  border-radius: 8px;
+}
+
+html.m3d-cards #mainContent .item-nome {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+}
+
+html.m3d-cards #mainContent .td-desc .total-loja {
+  display: block;
+  margin-top: 8px;
+  padding-top: 8px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+html.m3d-cards #mainContent .td-desc .entrega-loja {
+  display: block;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+html.m3d-cards #mainContent .cor-chip-admin {
+  margin: 3px 0 0;
+  font-size: 11px;
+}
+
+/* ==========================================================
+   Recebido em
+   ========================================================== */
+html.m3d-cards #mainContent .td-date,
+html.m3d-cards #painelModelagem .td-date {
+  font-size: 12.5px;
+  color: var(--gray);
+}
+
+html.m3d-cards #mainContent .td-date::before {
+  content: "📅 Recebido em ";
+  font-weight: 700;
+  color: var(--navy);
+}
+
+html.m3d-cards body.dark #mainContent .td-date::before {
+  color: #e6ecf7;
+}
+
+/* ==========================================================
+   Prazo
+   ========================================================== */
+html.m3d-cards #mainContent .prazo-badge {
+  display: inline-flex;
+  font-size: 12px;
+  padding: 5px 11px;
+  line-height: 1.3;
+}
+
+/* ==========================================================
+   Valor
+   ========================================================== */
+html.m3d-cards #mainContent .valor-col,
+html.m3d-cards #mainContent .th-valor {
+  display: block !important;
+  white-space: normal !important;
+  text-align: left !important;
+}
+
+html.m3d-cards #mainContent .valor-cell {
+  font-size: 13px;
+  white-space: normal;
+  text-align: left;
+}
+
+html.m3d-cards #mainContent .valor-cell.total {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--navy);
+}
+
+html.m3d-cards body.dark #mainContent .valor-cell.total {
+  color: #ff8a3d;
+}
+
+html.m3d-cards #mainContent .valor-cell.pago,
+html.m3d-cards #mainContent .valor-cell.falta,
+html.m3d-cards #mainContent .valor-cell.quitado {
+  display: inline-block;
+  font-size: 12px;
+  margin: 2px 10px 0 0;
+}
+
+/* ==========================================================
+   Status + ações — largura cheia, um botão por linha
+   ========================================================== */
+html.m3d-cards #mainContent tbody td:last-child,
+html.m3d-cards #painelModelagem tbody td:last-child {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+html.m3d-cards #mainContent .status-pill {
+  display: inline-block;
+  font-size: 12px;
+  padding: 6px 13px;
+  line-height: 1.3;
+  border-radius: 20px;
+}
+
+html.m3d-cards #mainContent .status-select {
+  display: block !important;
+  width: 100%;
+  margin-top: 8px;
+  font-size: 16px;
+  padding: 9px 10px;
+  box-sizing: border-box;
+}
+
+html.m3d-cards #mainContent tbody td:last-child > div {
+  display: block;
+  margin-top: 7px;
+}
+
+html.m3d-cards #mainContent .mod-acoes {
+  display: block !important;
+  white-space: normal;
+}
+
+html.m3d-cards #mainContent .mod-acoes .mod-btn,
+html.m3d-cards #mainContent .del-btn,
+html.m3d-cards #mainContent .ver-mais-btn,
+html.m3d-cards #mainContent .recibo-btn,
+html.m3d-cards #mainContent .btn-edit,
+html.m3d-cards #mainContent .btn-pag,
+html.m3d-cards #mainContent .btn-cancelar,
+html.m3d-cards #mainContent .pix-acao-btn {
+  display: flex;
+  width: 100%;
+  margin: 0 0 6px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  justify-content: center;
+  align-items: center;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.3;
+  border-radius: 9px;
+  box-sizing: border-box;
+}
+
+html.m3d-cards #mainContent .pix-acoes {
+  display: block;
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+html.m3d-cards #mainContent .del-btn:last-child,
+html.m3d-cards #mainContent .pix-acao-btn:last-child {
+  margin-bottom: 0;
+}
+
+html.m3d-cards #mainContent .del-btn svg,
+html.m3d-cards #mainContent .wa-link svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* ==========================================================
+   Modelagem
+   ========================================================== */
+html.m3d-cards #painelModelagem tbody td {
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+html.m3d-cards #painelModelagem .mod-wa {
+  display: inline-block;
+  font-size: 12.5px;
+  word-break: break-word;
+}
+
+html.m3d-cards #painelModelagem .m3d-faixa-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 3px 9px;
+  margin-left: 0;
+}
+
+html.m3d-cards #painelModelagem .mod-acoes {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  white-space: normal;
+}
+
+html.m3d-cards #painelModelagem .mod-acoes .mod-btn {
+  width: 100%;
+  font-size: 11.5px;
+  padding: 9px 6px;
+  justify-content: center;
+}
+
+html.m3d-cards #painelModelagem .m3d-nome-tag {
+  font-size: 10.5px;
+  padding: 2px 8px;
+}
+
+/* ==========================================================
+   Topo, abas, chips
+   ========================================================== */
+html.m3d-cards .top-bar h1 {
+  font-size: 18px;
+}
+
+html.m3d-cards .top-bar .actions {
+  width: 100%;
+  gap: 6px;
+}
+
+html.m3d-cards .refresh-btn {
+  font-size: 12px;
+  padding: 8px 11px;
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 0;
+}
+
+html.m3d-cards .tab-btn {
+  font-size: 11.5px;
+  padding: 7px 11px;
+}
+
+html.m3d-cards .visao-chip,
+html.m3d-cards .prazo-chip {
+  font-size: 11px;
+  padding: 6px 11px;
+}
+
+html.m3d-cards .last-update {
+  font-size: 10.5px;
+  padding: 3px 9px;
+}
+
+html.m3d-cards .controls {
+  gap: 8px;
+}
+
+html.m3d-cards .search-box {
+  min-width: 100%;
+  flex-basis: 100%;
+}
+
+html.m3d-cards .filter-select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ==========================================================
+   Tabelas dentro de modais continuam tabelas
+   ========================================================== */
+html.m3d-cards .ver-modal table,
+html.m3d-cards .status-box table,
+html.m3d-cards .graf-modal table {
+  display: table !important;
+}
+
+html.m3d-cards .ver-modal thead,
+html.m3d-cards .status-box thead,
+html.m3d-cards .graf-modal thead {
+  display: table-header-group !important;
+}
+
+html.m3d-cards .ver-modal tbody,
+html.m3d-cards .status-box tbody,
+html.m3d-cards .graf-modal tbody {
+  display: table-row-group !important;
+}
+
+html.m3d-cards .ver-modal tr,
+html.m3d-cards .status-box tr,
+html.m3d-cards .graf-modal tr {
+  display: table-row !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+html.m3d-cards .ver-modal td,
+html.m3d-cards .ver-modal th,
+html.m3d-cards .status-box td,
+html.m3d-cards .status-box th,
+html.m3d-cards .graf-modal td,
+html.m3d-cards .graf-modal th {
+  display: table-cell !important;
+  width: auto !important;
+  text-align: left !important;
+}
+
+/* ============================================================
+   4. TELAS MUITO ESTREITAS
+   ============================================================ */
+@media (max-width: 420px) {
+  html.m3d-cards main,
+  html.m3d-cards #painelModelagem {
+    padding: 12px 8px 40px;
+  }
+
+  html.m3d-cards #mainContent tbody tr,
+  html.m3d-cards #painelModelagem tbody tr {
+    padding: 11px;
+    border-radius: 12px;
+  }
+
+  html.m3d-cards #mainContent .td-id {
+    font-size: 14px;
+  }
+
+  html.m3d-cards #mainContent .cliente-foto {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  html.m3d-cards #mainContent .cliente-info .td-client {
+    font-size: 13px;
+  }
+
+  html.m3d-cards #mainContent .status-pill {
+    font-size: 11.5px;
+    padding: 5px 11px;
+  }
+
+  html.m3d-cards #painelModelagem .mod-acoes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   5. FALLBACK — se o JS não rodar, ao menos permite rolar
+   ============================================================ */
+@media (max-width: 1100px) {
+  html:not(.m3d-cards) #mainContent .table-wrap,
+  html:not(.m3d-cards) #painelModelagem .table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html:not(.m3d-cards) #mainContent table,
+  html:not(.m3d-cards) #painelModelagem table {
+    min-width: 900px;
+  }
+}
+
+/* ============================================================
+   6. "COLUNAS" DESATIVADO
+   Esconde por índice numérico, mas a coluna Valor é inserida em
+   tempo de execução e desloca os índices. Com o layout de cartão
+   ele deixou de ser necessário.
+   Para trazer de volta: apague o bloco.
+   ============================================================ */
+#m3lBtnColunas {
+  display: none !important;
+}
+
+/* ============================================================
+   7. REFINOS
+   ============================================================ */
+body.dark thead th {
+  background: #1a2c55;
+}
+
+.td-desc:empty::after {
+  content: "—";
+  color: var(--gray);
+}
+
+.valor-col,
+.valor-cell {
+  text-align: right;
+}
+
+html.m3d-cards .valor-col,
+html.m3d-cards .valor-cell {
+  text-align: left;
+}
+
+/* Impressão: sempre tabela, sem cortes */
+@media print {
+  main,
+  #painelModelagem {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  #mainContent table,
+  #painelModelagem table {
+    display: table !important;
+    min-width: 0 !important;
+    font-size: 9px;
+  }
+
+  #mainContent thead,
+  #painelModelagem thead {
+    display: table-header-group !important;
+  }
+
+  #mainContent tbody,
+  #painelModelagem tbody {
+    display: table-row-group !important;
+  }
+
+  #mainContent tr,
+  #painelModelagem tr {
+    display: table-row !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+  }
+
+  #mainContent td,
+  #mainContent th,
+  #painelModelagem td,
+  #painelModelagem th {
+    display: table-cell !important;
+    width: auto !important;
+    border: 1px solid #ddd !important;
+    text-align: left !important;
+  }
+
+  #mainContent td::before {
+    content: none !important;
+  }
+}

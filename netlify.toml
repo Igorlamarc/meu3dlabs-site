@@ -13,7 +13,7 @@
   NODE_VERSION = "20"
   TZ = "America/Sao_Paulo"
 
-# ---------- Funções (se usar alguma) ----------
+# ---------- Funções ----------
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
@@ -41,7 +41,7 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# JS/CSS do site sempre revalidados (evita versão velha em produção)
+# JS/CSS sempre revalidados (evita versão velha em produção)
 [[headers]]
   for = "/*.js"
   [headers.values]
@@ -64,6 +64,11 @@
     Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
+  for = "/*.jpeg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
   for = "/*.webp"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
@@ -76,6 +81,12 @@
 # API nunca cacheia
 [[headers]]
   for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-store"
+
+# Login nunca cacheia
+[[headers]]
+  for = "/api/auth/login"
   [headers.values]
     Cache-Control = "no-store"
 
@@ -103,18 +114,17 @@
   status = 200
   force = true
 
-# Rewrite da página de produto. A Edge Function roda ANTES e decide o 404.
-[[redirects]]
-  from = "/produto/*"
-  to = "/produto.html"
-  status = 200
-
 # ============================================================
 # ATENÇÃO: /produto/* NÃO entra aqui.
 # Quem responde essa rota é a Edge Function
-# netlify/edge-functions/produto-404.ts, que devolve
+# netlify/edge-functions/produto-404.js, que devolve
 # status 404 real quando o produto não existe.
-# Não declare [[edge_functions]] aqui — o
+# Não declare [[edge_functions]] aqui. O
 # "export const config = { path: '/produto/*' }"
-# dentro do arquivo .ts já faz o registro.
+# dentro do arquivo já faz o registro.
+#
+# login-guard.js também se registra sozinho, mas só intercepta
+# chamadas feitas pelo domínio do site (/api/...). Os painéis
+# hoje chamam o Render direto, então a proteção efetiva
+# continua sendo o limite de tentativas do backend.
 # ============================================================
