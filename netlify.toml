@@ -103,6 +103,12 @@
   status = 200
   force = true
 
+# Rewrite da página de produto. A Edge Function roda ANTES e decide o 404.
+[[redirects]]
+  from = "/produto/*"
+  to = "/produto.html"
+  status = 200
+
 # ============================================================
 # ATENÇÃO: /produto/* NÃO entra aqui.
 # Quem responde essa rota é a Edge Function

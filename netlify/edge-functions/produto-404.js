@@ -6,6 +6,8 @@ const CACHE_CHAVE = 'https://meu3dlabs.com.br/__cache/lista-produtos';
 const CACHE_TTL_SEGUNDOS = 60;
 const TIMEOUT_MS = 3000;
 
+export const config = { path: "/produto/*" };
+
 /* Busca a lista de produtos com cache de edge + timeout.
    Retorna null quando não foi possível obter (API fria, timeout, erro). */
 async function obterProdutos() {
