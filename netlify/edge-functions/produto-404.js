@@ -100,19 +100,50 @@ function absUrl(u) {
   return BASE + (v.startsWith('/') ? v : '/' + v);
 }
 
+/* Detecta o tipo da imagem pelo final da URL (o crawler gosta de saber) */
+function tipoDaImagem(u) {
+  if (!u) return '';
+  const v = String(u).split('?')[0].toLowerCase();
+  if (v.endsWith('.webp')) return 'image/webp';
+  if (v.endsWith('.png')) return 'image/png';
+  if (v.endsWith('.jpg') || v.endsWith('.jpeg')) return 'image/jpeg';
+  if (v.endsWith('.avif')) return 'image/avif';
+  if (v.endsWith('.gif')) return 'image/gif';
+  return '';
+}
+
+/* É vídeo? O preview de link precisa de FOTO, nunca de vídeo. */
+function ehVideo(u) {
+  if (!u) return false;
+  return /\.(webm|mp4|mov|m4v|avi|mkv|ogv)(\?|#|$)/i.test(String(u));
+}
+
 /* Mapeia os campos do produto (tolerante a variações da API) */
 function dadosDoProduto(p) {
   const nome = p.nome || p.titulo || p.name || p.title || 'Produto';
 
-  let imgRaw = p.imagem || p.img || p.foto || p.capa || p.imagem_url || p.image || p.thumbnail || '';
-  if (Array.isArray(imgRaw)) imgRaw = imgRaw[0] || '';
-  if (imgRaw && typeof imgRaw === 'object') {
-    imgRaw = imgRaw.url || imgRaw.src || imgRaw.imagem || '';
-  }
-  const img = absUrl(imgRaw);
+  /* A API da loja devolve as fotos em "imagens" (plural, array).
+     O array mistura fotos (.webp) e vídeos (.webm): o vídeo é descartado
+     e usa-se a PRIMEIRA FOTO VÁLIDA, que é a foto principal do produto. */
+  let bruto = p.imagens || p.imagem || p.img || p.foto || p.capa ||
+              p.imagem_url || p.image || p.thumbnail || '';
+  if (!Array.isArray(bruto)) bruto = [bruto];
 
-  const preco = Number(p.preco_promo || p.precoPromocional || p.preco || p.price || 0);
-  const precoTxt = preco > 0 ? 'R$ ' + preco.toFixed(2).replace('.', ',') : '';
+  let imgRaw = '';
+  for (let i = 0; i < bruto.length; i++) {
+    let u = bruto[i];
+    if (u && typeof u === 'object') u = u.url || u.src || u.imagem || '';
+    if (!u || typeof u !== 'string') continue;
+    if (ehVideo(u)) continue;          /* vídeo não serve como og:image */
+    imgRaw = u.trim();
+    if (imgRaw) break;                 /* achou a foto principal */
+  }
+
+  const img = absUrl(imgRaw);
+  const imgType = tipoDaImagem(img);
+
+  const precoBase = Number(p.precoPromo || p.preco_promo || p.preco || p.price || 0);
+  const precoTxt = precoBase > 0 ? 'R$ ' + precoBase.toFixed(2).replace('.', ',') : '';
 
   const descricaoCrua = p.descricao || p.desc || p.description || '';
   const desc = [String(descricaoCrua), precoTxt]
@@ -122,12 +153,12 @@ function dadosDoProduto(p) {
     .trim()
     .slice(0, 160) || 'Peça 3D pronta entrega na Meu 3D Labs.';
 
-  return { nome, img, desc };
+  return { nome, img, imgType, desc };
 }
 
 /* Remove metas antigas e injeta as do produto */
 function reescreverHtml(html, p, slug) {
-  const { nome, img, desc } = dadosDoProduto(p);
+  const { nome, img, imgType, desc } = dadosDoProduto(p);
   const titulo = nome + ' | Meu 3D Labs';
   const url = BASE + '/produto/' + slug;
 
@@ -149,7 +180,8 @@ function reescreverHtml(html, p, slug) {
     img ? `<meta property="og:image" content="${esc(img)}">` : '',
     img ? `<meta property="og:image:secure_url" content="${esc(img)}">` : '',
     img ? `<meta property="og:image:alt" content="${esc(nome)}">` : '',
-    `<meta name="twitter:card" content="summary_large_image">`,
+    (img && imgType) ? `<meta property="og:image:type" content="${esc(imgType)}">` : '',
+    ` <meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${esc(titulo)}">`,
     `<meta name="twitter:description" content="${esc(desc)}">`,
     img ? `<meta name="twitter:image" content="${esc(img)}">` : '',
