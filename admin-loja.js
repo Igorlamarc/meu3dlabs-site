@@ -2747,16 +2747,14 @@ function storyGravarVideo(cena){
       return;
     }
 
-    var fps       = STORY_FPS;
-    var durSeg    = Math.max(1, Math.min(Number(STORY_DURACAO_SEG) || STORY_DURACAO_PADRAO, STORY_DURACAO_MAX));
+    var fps = STORY_FPS;
+    var durSeg = Math.max(1, Math.min(Number(STORY_DURACAO_SEG) || STORY_DURACAO_PADRAO, STORY_DURACAO_MAX));
     var intervalo = 1000 / fps;
 
-    /* ---- stream: manual (preferido) ou automático ---- */
     var stream = null, track = null, manual = false;
-
     try{
       stream = cena.canvas.captureStream(0);
-      track  = stream.getVideoTracks()[0];
+      track = stream.getVideoTracks()[0];
       if(track && typeof track.requestFrame === 'function'){
         manual = true;
       }else{
@@ -2765,7 +2763,7 @@ function storyGravarVideo(cena){
     }catch(e){
       try{
         stream = cena.canvas.captureStream(fps);
-        track  = stream.getVideoTracks()[0];
+        track = stream.getVideoTracks()[0];
         manual = false;
       }catch(e2){
         reject(new Error('não foi possível capturar o canvas'));
@@ -2791,9 +2789,9 @@ function storyGravarVideo(cena){
     var parou = new Promise(function(res){ rec.onstop = res; });
 
     if(cena.reiniciarMidia) cena.reiniciarMidia();
-    if(cena.garantirPlay)   cena.garantirPlay();
+    if(cena.garantirPlay) cena.garantirPlay();
     cena.desenhar(0);
-    if(manual && track) { try{ track.requestFrame(); }catch(e){} }
+    if(manual && track){ try{ track.requestFrame(); }catch(e){} }
 
     var timer = null;
     var encerrando = false;
@@ -2811,20 +2809,14 @@ function storyGravarVideo(cena){
       if(t >= durSeg){
         encerrando = true;
         cena.desenhar(durSeg);
-        if(manual && track) { try{ track.requestFrame(); }catch(e){} }
+        if(manual && track){ try{ track.requestFrame(); }catch(e){} }
         timer = setTimeout(function(){ try{ rec.stop(); }catch(e){} }, 400);
         return;
       }
 
       if(cena.garantirPlay) cena.garantirPlay();
-
-      /* desenha TODO tick, mesmo com a mídia travada:
-         o frame repetido mantém a linha de tempo do arquivo */
       cena.desenhar(t);
-
-      if(manual && track){
-        try{ track.requestFrame(); }catch(e){}
-      }
+      if(manual && track){ try{ track.requestFrame(); }catch(e){} }
 
       timer = setTimeout(tick, intervalo);
     }
@@ -2834,17 +2826,22 @@ function storyGravarVideo(cena){
     parou.then(function(){
       if(timer){ clearTimeout(timer); timer = null; }
       stream.getTracks().forEach(function(tr){ try{ tr.stop(); }catch(e){} });
+
       var tipoFinal = (rec.mimeType || mime).split(';')[0];
       var blob = new Blob(chunks, { type: tipoFinal });
+
       if(!blob.size){
         reject(new Error('gravação vazia — mantenha a aba visível durante a geração'));
         return;
       }
+
+      var tempoReal = (performance.now() - inicio) / 1000;
+
       resolve({
         blob: blob,
         mime: tipoFinal,
         ext: (tipoFinal.indexOf('mp4') !== -1) ? 'mp4' : 'webm',
-        duracao: durSeg,
+        duracao: Math.max(durSeg, tempoReal),
         manual: manual
       });
     });
@@ -2943,12 +2940,13 @@ function storyGerarVideo(){
 
   var btn  = document.getElementById('btnStoryVideo');
   var hint = document.getElementById('storyHint');
-  /* Lê a duração escolhida no seletor antes de gravar */
+
   var selDur = document.getElementById('storyDurSel');
   if(selDur){
     var durEscolhida = parseInt(selDur.value, 10);
     if(durEscolhida > 0) STORY_DURACAO_SEG = Math.min(durEscolhida, STORY_DURACAO_MAX);
   }
+
   storyGravando = true;
   if(btn){ btn.disabled = true; btn.textContent = '🎬 Gravando…'; }
   if(hint) hint.textContent = 'Gravando ' + STORY_DURACAO_SEG + 's. Mantenha esta aba visível.';
@@ -2969,28 +2967,34 @@ function storyGerarVideo(){
       });
     })
     .then(function(res){
-      if(storyVideoBlobUrl) URL.revokeObjectURL(storyVideoBlobUrl);
-      storyVideoBlobUrl = URL.createObjectURL(res.blob);
+      return storyCorrigirDuracao(res.blob, res.duracao || STORY_DURACAO_SEG)
+        .then(function(corrigido){
+          if(storyVideoBlobUrl) URL.revokeObjectURL(storyVideoBlobUrl);
+          storyVideoBlobUrl = URL.createObjectURL(corrigido);
 
-      var nome = nomeArquivoStory(copia) + '-story.' + res.ext;
-      var box  = document.getElementById('storyVideoBox');
-      var vid  = document.getElementById('storyPreviewVideo');
-      var info = document.getElementById('storyVideoInfo');
+          var nome = nomeArquivoStory(copia) + '-story.' + res.ext;
+          var box  = document.getElementById('storyVideoBox');
+          var vid  = document.getElementById('storyPreviewVideo');
+          var info = document.getElementById('storyVideoInfo');
 
-      if(box) box.style.display = 'block';
-      if(vid){ vid.src = storyVideoBlobUrl; try{ vid.play(); }catch(e){} }
-      if(info){
-        info.textContent = (res.ext === 'mp4')
-          ? '✅ MP4 gerado — formato aceito pelo Instagram.'
-          : '⚠️ WebM gerado. O Instagram não aceita WebM: converta para MP4 antes de postar (ou gere pelo Safari).';
-      }
-      if(hint){
-        hint.textContent = (res.ext === 'mp4')
-          ? 'Vídeo pronto para o Stories.'
-          : 'Vídeo pronto. Converta para MP4 antes de subir no Instagram.';
-      }
-      baixarBlobUrl(storyVideoBlobUrl, nome);
-      mostrarToast('🎬 Vídeo do card gerado!', 'ok');
+          if(box) box.style.display = 'block';
+          if(vid){ vid.src = storyVideoBlobUrl; try{ vid.play(); }catch(e){} }
+
+          if(info){
+            info.textContent = (res.ext === 'mp4')
+              ? '✅ MP4 gerado — formato aceito pelo Instagram.'
+              : '⚠️ WebM gerado. O Instagram não aceita WebM: converta para MP4 antes de postar (ou gere pelo Safari).';
+          }
+
+          if(hint){
+            hint.textContent = (res.ext === 'mp4')
+              ? 'Vídeo pronto para o Stories.'
+              : 'Vídeo pronto. Converta para MP4 antes de subir no Instagram.';
+          }
+
+          baixarBlobUrl(storyVideoBlobUrl, nome);
+          mostrarToast('🎬 Vídeo do card gerado!', 'ok');
+        });
     })
     .catch(function(e){
       if(hint) hint.textContent = 'Não foi possível gerar o vídeo: ' + e.message;
@@ -3431,33 +3435,313 @@ async function gerarBannerOG(id){
   }
 }
 
-/* Botão 🖼️ Banner em cada card — intercepta o renderGrade original */
-(function(){
-  var original = renderGrade;
-  renderGrade = function(){
-    original.apply(this, arguments);
-    var cards = document.querySelectorAll('#grade .card');
-    for (var i = 0; i < cards.length; i++){
-      var ac = cards[i].querySelector('.acoes');
-      if (!ac || ac.getAttribute('data-og') === '1') continue;
-      ac.setAttribute('data-og', '1');
-      ac.style.gridTemplateColumns = 'repeat(5, 1fr)';
-      var ed = ac.querySelector('button[onclick*="abrirForm("]');
-      if (!ed) continue;
-      var m = /abrirForm\('([^']+)'\)/.exec(ed.getAttribute('onclick') || '');
-      if (!m) continue;
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.style.cssText = 'background:#7c4dd6;color:#fff';
-      b.textContent = '🖼️ Banner';
-      b.title = 'Gera a imagem 1200x630 usada no preview do WhatsApp';
-      b.setAttribute('onclick', "gerarBannerOG('" + m[1] + "')");
-      ac.appendChild(b);
-      var bs = ac.querySelectorAll('button');
-      for (var k = 0; k < bs.length; k++){
-        bs[k].style.fontSize = '11px';
-        bs[k].style.padding = '7px 3px';
+/* ============================================================
+   STORY — CORREÇÃO DA DURAÇÃO NO CONTAINER  [v5]
+   O Android grava os quadros certos, mas declara uma duração
+   menor no cabeçalho (mvhd/mdhd/mehd). A galeria toca até o fim
+   dos dados; o Instagram confia no cabeçalho e corta antes.
+   Aqui reescrevemos a duração declarada com o tempo real.
+   ============================================================ */
+
+function _acharAssinatura(u8, texto, inicio) {
+  var n = texto.length, lim = u8.length - n, i, j, ok;
+  for (i = inicio || 0; i <= lim; i++) {
+    ok = true;
+    for (j = 0; j < n; j++) {
+      if (u8[i + j] !== texto.charCodeAt(j)) { ok = false; break; }
+    }
+    if (ok) return i;
+  }
+  return -1;
+}
+
+function _gravarDuracao(dv, u8, tipo, seg, timescaleFixa) {
+  var i = _acharAssinatura(u8, tipo, 0);
+  var total = 0;
+  while (i !== -1) {
+    var p = i + 4;                      /* version(1) + flags(3) */
+    var ver = u8[p];
+    var tcOff  = (ver === 1) ? p + 20 : p + 12;
+    var durOff = (ver === 1) ? p + 24 : p + 16;
+    var tam    = (ver === 1) ? 8 : 4;
+
+    if (durOff + tam <= u8.length) {
+      var tc = timescaleFixa || dv.getUint32(tcOff);
+      if (tc > 0 && tc < 100000000) {
+        var val = Math.round(seg * tc);
+        if (tam === 8) {
+          dv.setUint32(durOff, 0);
+          dv.setUint32(durOff + 4, val);
+        } else {
+          dv.setUint32(durOff, val > 0xFFFFFFFF ? 0xFFFFFFFF : val);
+        }
+        total++;
       }
     }
+    i = _acharAssinatura(u8, tipo, i + 4);
+  }
+  return total;
+}
+
+async function storyCorrigirDuracao(blob, segundos) {
+  var seg = Number(segundos);
+  if (!isFinite(seg) || seg <= 0) return blob;
+
+  var buf;
+  try { buf = await blob.arrayBuffer(); } catch (e) { return blob; }
+
+  var u8 = new Uint8Array(buf);
+  var dv = new DataView(buf);
+  var tipo = String(blob.type || '');
+  var aplicados = 0;
+
+  if (tipo.indexOf('mp4') !== -1 || tipo.indexOf('mov') !== -1) {
+    var iMvhd = _acharAssinatura(u8, 'mvhd', 0);
+    var timescaleMovie = 0;
+    if (iMvhd !== -1) {
+      var p = iMvhd + 4;
+      var ver = u8[p];
+      timescaleMovie = dv.getUint32(ver === 1 ? p + 20 : p + 12);
+    }
+    aplicados += _gravarDuracao(dv, u8, 'mvhd', seg, 0);
+    aplicados += _gravarDuracao(dv, u8, 'mdhd', seg, 0);
+    if (timescaleMovie > 0) {
+      aplicados += _gravarDuracao(dv, u8, 'mehd', seg, timescaleMovie);
+    }
+  } else if (tipo.indexOf('webm') !== -1) {
+    var iDur = _acharAssinatura(u8, String.fromCharCode(0x44, 0x89), 0);
+    if (iDur !== -1 && iDur + 10 <= u8.length) {
+      var antigo = dv.getFloat64(iDur + 2);
+      if (!isFinite(antigo) || antigo < 0.5) {
+        dv.setFloat64(iDur + 2, seg * 1000);
+        aplicados++;
+      }
+    }
+  }
+
+  if (!aplicados) {
+    console.warn('[story] duração não corrigida — container não reconhecido:', tipo);
+    return blob;
+  }
+  console.log('[story] duração corrigida para', seg.toFixed(2), 's · boxes:', aplicados);
+  return new Blob([u8], { type: blob.type });
+}
+
+/* ============================================================
+   CARD — botões em 2 linhas + contador de fotos e vídeos
+   Substitui o IIFE anterior do botão Banner.
+   ============================================================ */
+(function(){
+  var original = renderGrade;
+
+  renderGrade = function(){
+    original.apply(this, arguments);
+
+    var cards = document.querySelectorAll('#grade .card');
+
+    for (var i = 0; i < cards.length; i++){
+      var card = cards[i];
+      var ac = card.querySelector('.acoes');
+      if (!ac) continue;
+
+      var btnEd = ac.querySelector('button[onclick*="abrirForm("]');
+      if (!btnEd) continue;
+      var mx = /abrirForm\('([^']+)'\)/.exec(btnEd.getAttribute('onclick') || '');
+      if (!mx) continue;
+      var idProd = mx[1];
+
+      /* ---------- 1. Botões: 3 por linha ---------- */
+      if (ac.getAttribute('data-og') !== '1'){
+        ac.setAttribute('data-og', '1');
+        ac.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        ac.style.gap = '5px';
+
+        var btnBanner = document.createElement('button');
+        btnBanner.type = 'button';
+        btnBanner.style.cssText = 'background:#7c4dd6;color:#fff';
+        btnBanner.textContent = '🖼️ Banner';
+        btnBanner.title = 'Gera a imagem 1200x630 usada no preview do WhatsApp';
+        btnBanner.setAttribute('onclick', "gerarBannerOG('" + idProd + "')");
+        ac.appendChild(btnBanner);
+
+        var todos = ac.querySelectorAll('button');
+        for (var k = 0; k < todos.length; k++){
+          todos[k].style.fontSize = '10.5px';
+          todos[k].style.padding = '8px 3px';
+          todos[k].style.whiteSpace = 'nowrap';
+          todos[k].style.overflow = 'hidden';
+          todos[k].style.textOverflow = 'ellipsis';
+        }
+      }
+
+      /* ---------- 2. Contador de fotos e vídeos ---------- */
+      var prod = null;
+      for (var q = 0; q < produtos.length; q++){
+        if (String(produtos[q].id) === String(idProd)){ prod = produtos[q]; break; }
+      }
+      if (!prod) continue;
+
+      var lista = (prod.imagens || []).map(urlLimpa);
+      var vids = 0;
+      for (var v = 0; v < lista.length; v++){
+        if (urlEhVideo(lista[v])) vids++;
+      }
+      var fotos = lista.length - vids;
+
+      var texto = '';
+      if (fotos > 0 && vids > 0) texto = '🖼️ ' + fotos + ' · ▶ ' + vids;
+      else if (vids > 0)         texto = '▶ ' + vids;
+      else if (fotos > 1)        texto = '🖼️ ' + fotos;
+
+      var fotoBox = card.querySelector('.foto');
+      if (!fotoBox) continue;
+
+      if (window.getComputedStyle(fotoBox).position === 'static'){
+        fotoBox.style.position = 'relative';
+      }
+
+      var badge = fotoBox.querySelector('.foto-count');
+
+      if (!texto){
+        if (badge) badge.remove();
+        continue;
+      }
+
+      if (!badge){
+        badge = document.createElement('span');
+        badge.className = 'foto-count';
+        badge.style.cssText =
+          'position:absolute;bottom:8px;right:8px;background:rgba(15,30,61,.84);' +
+          'color:#fff;font-size:11px;font-weight:800;padding:3px 9px;' +
+          'border-radius:20px;z-index:3;letter-spacing:.3px;pointer-events:none;';
+        fotoBox.appendChild(badge);
+      }
+      badge.textContent = texto;
+    }
   };
+})();
+
+/* ============================================================
+   CARD — botões em 2 linhas + contador de fotos e vídeos  [v2]
+   CSS com !important: vence inline e folha de estilo.
+   Guard próprio (não usa data-og).
+   ============================================================ */
+(function () {
+
+  /* ---------- 1. CSS ---------- */
+  if (!document.getElementById('m3d-acoes-css')) {
+    var st = document.createElement('style');
+    st.id = 'm3d-acoes-css';
+    st.textContent =
+      '#grade .card .acoes{' +
+        'display:flex !important;' +
+        'flex-wrap:wrap !important;' +
+        'gap:5px !important;' +
+        'padding:10px 10px 12px !important;' +
+        'grid-template-columns:none !important;' +
+      '}' +
+      '#grade .card .acoes > button{' +
+        'flex:1 1 calc(33.333% - 4px) !important;' +
+        'min-width:0 !important;' +
+        'max-width:none !important;' +
+        'font-size:10.5px !important;' +
+        'font-weight:700 !important;' +
+        'padding:8px 3px !important;' +
+        'white-space:nowrap !important;' +
+        'overflow:hidden !important;' +
+        'text-overflow:ellipsis !important;' +
+        'border-radius:8px !important;' +
+      '}' +
+      '@media(max-width:640px){' +
+        '#grade .card .acoes > button{' +
+          'flex:1 1 calc(50% - 3px) !important;' +
+          'font-size:11px !important;' +
+          'padding:10px 4px !important;' +
+        '}' +
+      '}';
+    document.head.appendChild(st);
+  }
+
+  /* ---------- 2. Reforço no render ---------- */
+  var original = renderGrade;
+
+  renderGrade = function () {
+    original.apply(this, arguments);
+
+    var cards = document.querySelectorAll('#grade .card');
+
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var ac = card.querySelector('.acoes');
+      if (!ac) continue;
+
+      /* Guard próprio: só age se o banner ainda não existe */
+      if (!ac.querySelector('button[onclick*="gerarBannerOG"]')) {
+        var btnEd = ac.querySelector('button[onclick*="abrirForm("]');
+        if (!btnEd) continue;
+
+        var mx = /abrirForm\('([^']+)'\)/.exec(btnEd.getAttribute('onclick') || '');
+        if (!mx) continue;
+
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.style.cssText = 'background:#7c4dd6;color:#fff';
+        b.textContent = '🖼️ Banner';
+        b.title = 'Gera a imagem 1200x630 usada no preview do WhatsApp';
+        b.setAttribute('onclick', "gerarBannerOG('" + mx[1] + "')");
+        ac.appendChild(b);
+      }
+
+      /* ---------- Contador de fotos e vídeos ---------- */
+      var btnBase = ac.querySelector('button[onclick*="abrirForm("]');
+      if (!btnBase) continue;
+      var m2 = /abrirForm\('([^']+)'\)/.exec(btnBase.getAttribute('onclick') || '');
+      if (!m2) continue;
+
+      var prod = null;
+      for (var q = 0; q < produtos.length; q++) {
+        if (String(produtos[q].id) === String(m2[1])) { prod = produtos[q]; break; }
+      }
+      if (!prod) continue;
+
+      var lista = (prod.imagens || []).map(urlLimpa);
+      var vids = 0;
+      for (var v = 0; v < lista.length; v++) {
+        if (urlEhVideo(lista[v])) vids++;
+      }
+      var fotos = lista.length - vids;
+
+      var texto = '';
+      if (fotos > 0 && vids > 0) texto = '🖼️ ' + fotos + ' · ▶ ' + vids;
+      else if (vids > 0)         texto = '▶ ' + vids;
+      else if (fotos > 1)        texto = '🖼️ ' + fotos;
+
+      var fotoBox = card.querySelector('.foto');
+      if (!fotoBox) continue;
+
+      if (window.getComputedStyle(fotoBox).position === 'static') {
+        fotoBox.style.position = 'relative';
+      }
+
+      var badge = fotoBox.querySelector('.foto-count');
+
+      if (!texto) {
+        if (badge) badge.remove();
+        continue;
+      }
+
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'foto-count';
+        badge.style.cssText =
+          'position:absolute;bottom:8px;right:8px;background:rgba(15,30,61,.84);' +
+          'color:#fff;font-size:11px;font-weight:800;padding:3px 9px;' +
+          'border-radius:20px;z-index:3;letter-spacing:.3px;pointer-events:none;';
+        fotoBox.appendChild(badge);
+      }
+      badge.textContent = texto;
+    }
+  };
+
+  if (document.getElementById('grade')) renderGrade();
 })();

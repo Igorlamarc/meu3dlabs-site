@@ -283,8 +283,6 @@ export default async function handler(request, context) {
     const slugAlvo = String(slug).trim().toLowerCase();
 
     const lista = await obterProdutos();
-
-    /* Não conseguiu validar → fail-open */
     if (!lista) return context.next();
 
     const prod = lista.find(function (p) {
@@ -310,12 +308,16 @@ export default async function handler(request, context) {
 
     /* Robô de preview → devolve o HTML com as metas do produto */
     const html = await res.text();
-    const headers = new Headers(res.headers);
+
+    /* ATENÇÃO: Headers NOVOS, nunca herdados do res.
+       Herdar traz Content-Encoding (gzip/br) mentindo sobre um
+       body já descomprimido — isso corrompe o HTML para o crawler,
+       que passa a ignorar og:image:width e corta a imagem. */
+    const headers = new Headers();
     headers.set('Content-Type', 'text/html; charset=utf-8');
     headers.set('Vary', 'User-Agent');
     headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
-    headers.delete('Content-Length');
-    headers.delete('ETag');
+    headers.set('X-Robots-Tag', 'index, follow');
 
     return new Response(reescreverHtml(html, prod, slug), {
       status: 200,
