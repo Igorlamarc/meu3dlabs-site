@@ -2152,7 +2152,16 @@ function storyMidiaVideo(v){
   var h = v.videoHeight || 720;
 
   function garantirPlay(){
-    if(v.ended){ try{ v.currentTime = 0; }catch(e){} }
+    /* religa o vídeo quando chega ao fim — assim 3 s de origem
+       preenchem 10 s de card, repetindo quantas vezes precisar */
+    var dur = isFinite(v.duration) ? v.duration : 0;
+    if(dur > 0){
+      if(v.ended || v.currentTime >= dur - 0.06){
+        try{ v.currentTime = 0; }catch(e){}
+      }
+    }else if(v.ended){
+      try{ v.currentTime = 0; }catch(e){}
+    }
     if(v.paused){
       var p;
       try{ p = v.play(); }catch(e){ p = null; }
@@ -2720,6 +2729,15 @@ function storyMimeVideo(){
   return STORY_MIME_CACHE;
 }
 
+/* ============================================================
+   STORY — GRAVAÇÃO DO VÍDEO  [v4]
+   Correções:
+   1. parada por timer no fps alvo (não por rAF)
+   2. captureStream(0) + track.requestFrame() → entrega um frame
+      por desenho, sem depender do compositor do celular
+   3. fallback para captureStream(fps) em navegadores sem
+      requestFrame (Safari iOS antigo)
+   ============================================================ */
 function storyGravarVideo(cena){
   return new Promise(function(resolve, reject){
     var mime = storyMimeVideo();
@@ -2729,9 +2747,31 @@ function storyGravarVideo(cena){
       return;
     }
 
-    var stream;
-    try{ stream = cena.canvas.captureStream(STORY_FPS); }
-    catch(e){ reject(new Error('não foi possível capturar o canvas')); return; }
+    var fps       = STORY_FPS;
+    var durSeg    = Math.max(1, Math.min(Number(STORY_DURACAO_SEG) || STORY_DURACAO_PADRAO, STORY_DURACAO_MAX));
+    var intervalo = 1000 / fps;
+
+    /* ---- stream: manual (preferido) ou automático ---- */
+    var stream = null, track = null, manual = false;
+
+    try{
+      stream = cena.canvas.captureStream(0);
+      track  = stream.getVideoTracks()[0];
+      if(track && typeof track.requestFrame === 'function'){
+        manual = true;
+      }else{
+        throw new Error('sem requestFrame');
+      }
+    }catch(e){
+      try{
+        stream = cena.canvas.captureStream(fps);
+        track  = stream.getVideoTracks()[0];
+        manual = false;
+      }catch(e2){
+        reject(new Error('não foi possível capturar o canvas'));
+        return;
+      }
+    }
 
     var rec;
     try{
@@ -2750,46 +2790,49 @@ function storyGravarVideo(cena){
     };
     var parou = new Promise(function(res){ rec.onstop = res; });
 
-    /* primeiro frame + mídia posicionada no início */
     if(cena.reiniciarMidia) cena.reiniciarMidia();
-    if(cena.garantirPlay) cena.garantirPlay();
+    if(cena.garantirPlay)   cena.garantirPlay();
     cena.desenhar(0);
+    if(manual && track) { try{ track.requestFrame(); }catch(e){} }
 
-    function parar(){
-      try{ rec.stop(); }catch(e){}
-    }
+    var timer = null;
+    var encerrando = false;
 
     try{ rec.start(250); }
     catch(e){ reject(new Error('não foi possível iniciar a gravação')); return; }
 
     var inicio = performance.now();
-    var encerrando = false;
 
     function tick(){
       if(encerrando) return;
+
       var t = (performance.now() - inicio) / 1000;
 
-      if(t >= STORY_DURACAO_SEG){
+      if(t >= durSeg){
         encerrando = true;
-        cena.desenhar(STORY_DURACAO_SEG);
-        setTimeout(parar, 280);
+        cena.desenhar(durSeg);
+        if(manual && track) { try{ track.requestFrame(); }catch(e){} }
+        timer = setTimeout(function(){ try{ rec.stop(); }catch(e){} }, 400);
         return;
       }
 
       if(cena.garantirPlay) cena.garantirPlay();
+
+      /* desenha TODO tick, mesmo com a mídia travada:
+         o frame repetido mantém a linha de tempo do arquivo */
       cena.desenhar(t);
 
-      if(document.hidden){
-        /* aba oculta trava o rAF e o recorder para de receber frames.
-           Seguimos em frente para não gerar vídeo truncado. */
-        setTimeout(tick, 1000 / STORY_FPS);
-        return;
+      if(manual && track){
+        try{ track.requestFrame(); }catch(e){}
       }
-      requestAnimationFrame(tick);
+
+      timer = setTimeout(tick, intervalo);
     }
+
     tick();
 
     parou.then(function(){
+      if(timer){ clearTimeout(timer); timer = null; }
       stream.getTracks().forEach(function(tr){ try{ tr.stop(); }catch(e){} });
       var tipoFinal = (rec.mimeType || mime).split(';')[0];
       var blob = new Blob(chunks, { type: tipoFinal });
@@ -2800,7 +2843,9 @@ function storyGravarVideo(cena){
       resolve({
         blob: blob,
         mime: tipoFinal,
-        ext: (tipoFinal.indexOf('mp4') !== -1) ? 'mp4' : 'webm'
+        ext: (tipoFinal.indexOf('mp4') !== -1) ? 'mp4' : 'webm',
+        duracao: durSeg,
+        manual: manual
       });
     });
   });
@@ -3181,4 +3226,238 @@ function feedbackStory(msg, erro){
     setTimeout(injetarBotoesFerramentas, 300);
     setTimeout(storyInjetarBotoesVideo, 700);
   });
+})();
+
+/* ============================================================
+   BANNER OG 1200x630 — preview grande no WhatsApp
+   Bloco aditivo: nenhuma função existente é modificada.
+   ============================================================ */
+var OG_MARCA = 'M3DOG:';
+
+function ogDescricaoSemBanner(desc){
+  return String(desc || '').split('|').filter(function(s){
+    return s.trim().indexOf(OG_MARCA) !== 0;
+  }).join('|').replace(/\|+$/, '');
+}
+
+function ogDescricaoComBanner(desc, url){
+  return ogDescricaoSemBanner(desc) + '|' + OG_MARCA + encodeURIComponent(url);
+}
+
+function ogQuebrar(ctx, texto, max){
+  var palavras = String(texto || '').split(/\s+/);
+  var linhas = [], atual = '';
+  for (var i = 0; i < palavras.length; i++){
+    var t = atual ? atual + ' ' + palavras[i] : palavras[i];
+    if (ctx.measureText(t).width > max && atual){ linhas.push(atual); atual = palavras[i]; }
+    else { atual = t; }
+  }
+  if (atual) linhas.push(atual);
+  return linhas;
+}
+
+function ogDesenharBanner(p, img){
+  return new Promise(function(resolve){
+    var W = 1200, H = 630;
+    var cv = document.createElement('canvas');
+    cv.width = W; cv.height = H;
+    var cx = cv.getContext('2d');
+
+    var g = cx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#0f1e3d');
+    g.addColorStop(0.6, '#16294f');
+    g.addColorStop(1, '#1d3a6b');
+    cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+
+    var rg = cx.createRadialGradient(W * 0.86, H * 0.1, 0, W * 0.86, H * 0.1, W * 0.9);
+    rg.addColorStop(0, 'rgba(242,101,34,.22)');
+    rg.addColorStop(1, 'rgba(242,101,34,0)');
+    cx.fillStyle = rg; cx.fillRect(0, 0, W, H);
+
+    cx.strokeStyle = 'rgba(255,255,255,.04)';
+    cx.lineWidth = 1;
+    for (var x = 0; x <= W; x += 60){ cx.beginPath(); cx.moveTo(x, 0); cx.lineTo(x, H); cx.stroke(); }
+    for (var y = 0; y <= H; y += 60){ cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W, y); cx.stroke(); }
+
+    var temFoto = false;
+    if (img && img.width && img.height){
+      try{
+        var mx = 636, my = 58, mw = 506, mh = 514, r = 28;
+        cx.save();
+        cx.beginPath();
+        if (cx.roundRect) cx.roundRect(mx, my, mw, mh, r); else cx.rect(mx, my, mw, mh);
+        cx.clip();
+        cx.fillStyle = 'rgba(255,255,255,.05)';
+        cx.fillRect(mx, my, mw, mh);
+        var esc2 = Math.max(mw / img.width, mh / img.height);
+        var dw = img.width * esc2, dh = img.height * esc2;
+        cx.drawImage(img, mx + (mw - dw) / 2, my + (mh - dh) / 2, dw, dh);
+        cx.restore();
+        cx.save();
+        cx.beginPath();
+        if (cx.roundRect) cx.roundRect(mx, my, mw, mh, r); else cx.rect(mx, my, mw, mh);
+        cx.strokeStyle = 'rgba(255,255,255,.14)';
+        cx.lineWidth = 2;
+        cx.stroke();
+        cx.restore();
+        temFoto = true;
+      }catch(e){ temFoto = false; }
+    }
+
+    var esq = 70;
+    var largTxt = temFoto ? 520 : 1060;
+
+    cx.textAlign = 'left';
+    cx.textBaseline = 'alphabetic';
+    cx.font = '800 34px Inter, Arial, sans-serif';
+    cx.fillStyle = '#ffffff'; cx.fillText('Meu', esq, 112);
+    var w1 = cx.measureText('Meu').width;
+    cx.fillStyle = '#ff8a3d'; cx.fillText('3D', esq + w1, 112);
+    var w2 = cx.measureText('3D').width;
+    cx.fillStyle = '#ffffff'; cx.fillText('Labs', esq + w1 + w2, 112);
+
+    var yNome = 196;
+    var cat = String(p.categoria || '').toUpperCase();
+    if (cat){
+      cx.font = '800 20px Inter, Arial, sans-serif';
+      var lc = cx.measureText(cat).width + 34;
+      cx.fillStyle = 'rgba(242,101,34,.18)';
+      cx.beginPath();
+      if (cx.roundRect) cx.roundRect(esq, 142, lc, 38, 19); else cx.rect(esq, 142, lc, 38);
+      cx.fill();
+      cx.strokeStyle = 'rgba(242,101,34,.55)';
+      cx.lineWidth = 1.5;
+      cx.stroke();
+      cx.fillStyle = '#ff8a3d';
+      cx.textBaseline = 'middle';
+      cx.fillText(cat, esq + 17, 162);
+      cx.textBaseline = 'alphabetic';
+      yNome = 236;
+    }
+
+    cx.font = '800 48px Inter, Arial, sans-serif';
+    cx.fillStyle = '#ffffff';
+    var linhas = ogQuebrar(cx, p.nome || '', largTxt);
+    if (linhas.length > 3){
+      linhas = linhas.slice(0, 3);
+      linhas[2] = linhas[2].replace(/\s+\S*$/, '') + '…';
+    }
+    for (var i = 0; i < linhas.length; i++) cx.fillText(linhas[i], esq, yNome + i * 58);
+
+    var yBase = yNome + (linhas.length - 1) * 58;
+    var preco = parseFloat(p.preco) || 0;
+    var promo = parseFloat(p.precoPromo) || 0;
+    var emPromo = !!p.promo && promo > 0 && promo < preco;
+    var val = emPromo ? promo : preco;
+    var txtVal = 'R$ ' + val.toFixed(2).replace('.', ',');
+
+    var yPreco = yBase + 96;
+    cx.font = '800 64px Inter, Arial, sans-serif';
+    cx.fillStyle = '#ff8a3d';
+    cx.fillText(txtVal, esq, yPreco);
+    if (emPromo){
+      var wv = cx.measureText(txtVal).width;
+      cx.font = '700 26px Inter, Arial, sans-serif';
+      cx.fillStyle = 'rgba(255,255,255,.55)';
+      cx.fillText('R$ ' + preco.toFixed(2).replace('.', ','), esq + wv + 18, yPreco - 6);
+    }
+
+    cx.font = '600 26px Inter, Arial, sans-serif';
+    cx.fillStyle = 'rgba(255,255,255,.75)';
+    cx.fillText('Pix com 5% OFF · Cartão em até 12x', esq, 556);
+
+    cx.font = '700 24px Inter, Arial, sans-serif';
+    cx.fillStyle = 'rgba(255,255,255,.9)';
+    cx.fillText('meu3dlabs.com.br', esq, 598);
+
+    cv.toBlob(function(blob){ resolve(blob); }, 'image/jpeg', 0.9);
+  });
+}
+
+async function gerarBannerOG(id){
+  var p = produtos.find(function(x){ return x.id === id; });
+  if (!p){ mostrarToast('Produto não encontrado.', 'erro'); return; }
+
+  mostrarToast('🖼️ Gerando banner 1200x630…', 'ok');
+
+  var urlFoto = '';
+  var imgs = (p.imagens || []).map(urlLimpa);
+  for (var i = 0; i < imgs.length; i++){
+    var u = imgs[i];
+    if (u && !urlEhVideo(u) && !/\.gif(\?|#|$)/i.test(u)){ urlFoto = u; break; }
+  }
+
+  var img = null;
+  if (urlFoto){
+    try{ img = await storyCarregarImagem(urlFoto); }catch(e){ img = null; }
+  }
+
+  var blob = await ogDesenharBanner(p, img);
+  if (!blob){ mostrarToast('Não foi possível desenhar o banner.', 'erro'); return; }
+
+  var arq = new File([blob], 'og-' + String(p.slug || p.id) + '.jpg', { type: 'image/jpeg' });
+  var novaUrl = '';
+  try{
+    novaUrl = await subirArquivo(arq);
+  }catch(e){
+    mostrarToast('Erro no upload do banner: ' + e.message, 'erro');
+    return;
+  }
+
+  try{
+    await api('/loja/produtos/' + p.id, 'PUT', {
+      nome: p.nome,
+      slug: p.slug || gerarSlug(p.nome),
+      descricao: ogDescricaoComBanner(p.descricao || '', novaUrl),
+      preco: p.preco,
+      estoque: p.estoque,
+      categoria: p.categoria || 'outros',
+      cores: p.cores || [],
+      imagens: (p.imagens || []).map(urlLimpa),
+      destaque: !!p.destaque,
+      ativo: !!p.ativo,
+      promo: !!p.promo,
+      precoPromo: p.promo ? (p.precoPromo || 0) : 0,
+      material: p.material || '',
+      altura: p.altura != null ? p.altura : null,
+      largura: p.largura != null ? p.largura : null,
+      profundidade: p.profundidade != null ? p.profundidade : null,
+      peso: p.peso != null ? p.peso : null
+    });
+    mostrarToast('✅ Banner salvo! O preview do WhatsApp ficará grande.', 'ok');
+    await carregar();
+  }catch(e){
+    mostrarToast('Erro ao salvar o banner: ' + e.message, 'erro');
+  }
+}
+
+/* Botão 🖼️ Banner em cada card — intercepta o renderGrade original */
+(function(){
+  var original = renderGrade;
+  renderGrade = function(){
+    original.apply(this, arguments);
+    var cards = document.querySelectorAll('#grade .card');
+    for (var i = 0; i < cards.length; i++){
+      var ac = cards[i].querySelector('.acoes');
+      if (!ac || ac.getAttribute('data-og') === '1') continue;
+      ac.setAttribute('data-og', '1');
+      ac.style.gridTemplateColumns = 'repeat(5, 1fr)';
+      var ed = ac.querySelector('button[onclick*="abrirForm("]');
+      if (!ed) continue;
+      var m = /abrirForm\('([^']+)'\)/.exec(ed.getAttribute('onclick') || '');
+      if (!m) continue;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.style.cssText = 'background:#7c4dd6;color:#fff';
+      b.textContent = '🖼️ Banner';
+      b.title = 'Gera a imagem 1200x630 usada no preview do WhatsApp';
+      b.setAttribute('onclick', "gerarBannerOG('" + m[1] + "')");
+      ac.appendChild(b);
+      var bs = ac.querySelectorAll('button');
+      for (var k = 0; k < bs.length; k++){
+        bs[k].style.fontSize = '11px';
+        bs[k].style.padding = '7px 3px';
+      }
+    }
+  };
 })();
