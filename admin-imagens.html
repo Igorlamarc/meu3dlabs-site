@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Imagens — Meu 3D Labs</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="img/logo/logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin-imagens.css">
+</head>
+<body>
+
+<div id="telaLogin" class="login-wrap">
+  <div class="login-card">
+    <h1>Admin Imagens</h1>
+    <p class="login-sub">Acesso restrito à equipe.</p>
+
+    <label>Senha do admin</label>
+    <input type="password" id="senha" placeholder="Senha" autocomplete="current-password">
+
+    <label>Chave de edição</label>
+    <input type="password" id="chaveEdicao" placeholder="Chave" autocomplete="off">
+
+    <button id="btnLogin" class="btn btn-primary" onclick="entrar()">Entrar</button>
+    <div id="loginErr" class="login-err"></div>
+    <a class="voltar" href="admin-loja.html">← Voltar ao admin da loja</a>
+  </div>
+</div>
+
+<div id="app" class="app" hidden>
+  <header class="topbar">
+    <strong>Admin Imagens</strong>
+    <nav class="abas" id="abas"></nav>
+    <button class="btn btn-ghost" onclick="sair()">Sair</button>
+  </header>
+
+  <main class="conteudo">
+    <div id="carregando" class="carregando">Carregando…</div>
+    <div id="grupos"></div>
+    <div id="ferramentas" hidden></div>
+  </main>
+</div>
+
+<input type="file" id="arquivo" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden">
+<input type="file" id="arquivoFerramenta" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden">
+<div class="toast" id="toast"></div>
+
+<script src="admin-imagens.js"></script>
+<script src="admin-ferramentas.js"></script>
+</body>
+</html>

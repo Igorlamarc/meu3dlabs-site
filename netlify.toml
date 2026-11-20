@@ -110,19 +110,21 @@
   force = true
 
 # ============================================================
-# PRODUTOS — ESTA É A REGRA QUE RESOLVE O 404
+# PRODUTOS — SSR no Render (card profissional no WhatsApp)
 # ------------------------------------------------------------
-# Sem ela, /produto/<slug> não existe como arquivo e o Netlify
-# devolve o 404 genérico. produto.html lê o slug da própria URL
-# (função slugDaURL) e monta a página inteira.
+# /produto/<slug> passa a ser servida pelo SSR do backend:
+#   - og:image = banner 1200x630 com preço, categoria e marca
+#   - og:url no próprio host
+#   - canonical + JSON-LD
 #
-# O diretório netlify/edge-functions/ é convenção do Netlify:
-# NÃO se declara no netlify.toml. Se produto-404.js existir lá,
-# ele roda antes desta regra e devolve 404 real para peça
-# inexistente. Este rewrite é a rede de segurança.
+# Se o backend estiver fora do ar, SOMENTE /produto/* falha.
+# Home, loja.html, admin-loja e produto.html seguem intactos.
+#
+# IMPORTANTE: /produto.html NÃO é afetado por esta regra —
+# o padrão exige a barra depois de "produto".
 # ============================================================
 [[redirects]]
   from = "/produto/*"
-  to = "/produto.html"
+  to = "https://meu3dlabs-backend.onrender.com/produto/:splat"
   status = 200
   force = true

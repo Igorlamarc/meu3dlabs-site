@@ -10,11 +10,25 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;--light:#f5f7fa;--white:#fff;--gray:#4a5161;--border:#e3e8ef;}
+:root{
+  --navy:#0f1e3d;--navy-2:#16294f;--orange:#f26522;--orange-2:#ff8a3d;
+  --light:#f5f7fa;--white:#fff;--gray:#4a5161;--border:#e3e8ef;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;color:#1c2430;}
+body{
+  font-family:'Inter',system-ui,-apple-system,Arial,sans-serif;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-2) 100%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:20px;color:#1c2430;
+  -webkit-tap-highlight-color:transparent;
+}
 a{text-decoration:none;color:inherit;}
-.login-card{background:var(--white);border-radius:18px;padding:40px 32px;width:100%;max-width:420px;box-shadow:0 24px 70px rgba(0,0,0,.35);}
+
+.login-card{
+  background:var(--white);border-radius:18px;padding:38px 30px;
+  width:100%;max-width:520px;box-shadow:0 24px 70px rgba(0,0,0,.35);
+}
+
 .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;}
 .logo-row img{height:44px;width:auto;}
 .logo-row span{font-weight:800;font-size:22px;color:var(--navy);}
@@ -22,111 +36,127 @@ a{text-decoration:none;color:inherit;}
 .login-card h1{text-align:center;font-size:20px;color:var(--navy);margin-bottom:6px;font-weight:800;}
 .login-card .sub{text-align:center;font-size:13px;color:var(--gray);margin-bottom:22px;}
 
-/* ---- ALERTA CLIENTE ---- */
+/* ---------- CLIENTE ---------- */
 .alerta-cliente{
   background:linear-gradient(135deg,#eef3fb,#dbe4f0);
-  border:1.5px solid #c3d0e4;
-  border-radius:14px;
-  padding:18px 18px 16px;
-  margin-bottom:26px;
+  border:1.5px solid #c3d0e4;border-radius:14px;
+  padding:16px 16px 14px;margin-bottom:22px;
 }
-.alerta-cliente h2{
-  font-size:15px;
-  color:var(--navy);
-  font-weight:800;
-  margin-bottom:6px;
-  line-height:1.35;
+.alerta-cliente h2{font-size:14.5px;color:var(--navy);font-weight:800;margin-bottom:5px;line-height:1.35;}
+.alerta-cliente p{font-size:12.5px;color:var(--gray);line-height:1.55;margin-bottom:12px;}
+.alerta-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.alerta-btns a{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  min-height:42px;padding:0 10px;border-radius:10px;
+  font-size:12.5px;font-weight:700;line-height:1;text-align:center;
+  transition:all .18s ease;
 }
-.alerta-cliente p{
-  font-size:13px;
-  color:var(--gray);
-  line-height:1.55;
-  margin-bottom:14px;
+.alerta-btn-conta{background:var(--navy);color:var(--white);}
+.alerta-btn-conta:hover{background:var(--navy-2);transform:translateY(-1px);}
+.alerta-btn-rastreio{background:var(--white);color:var(--navy);border:1.5px solid #c3d0e4;}
+.alerta-btn-rastreio:hover{border-color:var(--orange);color:var(--orange);transform:translateY(-1px);}
+
+/* ---------- DIVISOR ---------- */
+.divisor-equipe{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.divisor-equipe::before,
+.divisor-equipe::after{content:'';flex:1;height:1px;background:var(--border);}
+.divisor-equipe span{
+  font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.09em;color:#98a3b5;white-space:nowrap;
 }
-.alerta-btns{
+
+.aviso-restrito{
+  margin-bottom:16px;background:#fdeee5;border-left:3px solid var(--orange);
+  padding:10px 12px;border-radius:0 9px 9px 0;
+  font-size:12.5px;color:#7a3a12;line-height:1.5;
+}
+
+/* ---------- GRID 2x2 ---------- */
+.option-list{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:8px;
+  gap:10px;
 }
-.alerta-btns a{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  min-height:42px;
-  padding:0 10px;
-  border-radius:10px;
-  font-size:13px;
-  font-weight:700;
-  line-height:1;
-  text-align:center;
-  transition:all .2s ease;
+
+.option{
+  display:flex;flex-direction:column;
+  padding:16px 14px 14px;
+  border:2px solid var(--border);border-radius:14px;
+  background:var(--white);cursor:pointer;
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+  position:relative;min-height:132px;
 }
-.alerta-btn-conta{
-  background:var(--navy);
-  color:var(--white);
-}
-.alerta-btn-conta:hover{background:var(--navy-2);transform:translateY(-1px);}
-.alerta-btn-rastreio{
-  background:var(--white);
-  color:var(--navy);
-  border:1.5px solid #c3d0e4;
-}
-.alerta-btn-rastreio:hover{
+.option:hover{
   border-color:var(--orange);
-  color:var(--orange);
-  transform:translateY(-1px);
+  box-shadow:0 10px 26px rgba(242,101,34,.14);
+  transform:translateY(-2px);
 }
+.option:hover .option-arrow{transform:translate(2px,-2px);opacity:1;}
 
-/* ---- DIVISOR EQUIPE ---- */
-.divisor-equipe{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:16px;
+.option-icon{
+  width:42px;height:42px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:11px;flex-shrink:0;
+  background:linear-gradient(135deg,#fdeee5,#fbdcc9);
 }
-.divisor-equipe::before,
-.divisor-equipe::after{
-  content:'';
-  flex:1;
-  height:1px;
-  background:var(--border);
-}
-.divisor-equipe span{
-  font-size:11px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.09em;
-  color:#98a3b5;
-  white-space:nowrap;
-}
-
-/* ---- AVISO EQUIPE ---- */
-.aviso-restrito{margin-bottom:18px;background:#fdeee5;border-left:4px solid var(--orange);padding:12px 14px;border-radius:0 10px 10px 0;font-size:13px;color:#7a3a12;line-height:1.5;text-align:left;}
-
-/* ---- OPÇÕES EQUIPE ---- */
-.option-list{display:flex;flex-direction:column;gap:14px;}
-.option{display:flex;align-items:center;gap:16px;padding:18px 20px;border:2px solid var(--border);border-radius:14px;cursor:pointer;transition:.25s;background:var(--white);}
-.option:hover{border-color:var(--orange);box-shadow:0 8px 24px rgba(242,101,34,.12);transform:translateY(-2px);}
-.option-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;background:linear-gradient(135deg,#fdeee5,#fbdcc9);}
 .option-icon.loja{background:linear-gradient(135deg,#eef3fb,#dbe4f0);}
+.option-icon.img{background:linear-gradient(135deg,#e7f6ec,#cfeeda);}
 .option-icon.feed{background:linear-gradient(135deg,#efe9fb,#ded4f5);}
-.option-text h3{font-size:16px;color:var(--navy);font-weight:700;margin-bottom:3px;}
-.option-text p{font-size:13px;color:var(--gray);}
-.option-arrow{margin-left:auto;color:var(--orange);font-size:20px;font-weight:700;}
-.back-link{display:block;text-align:center;margin-top:22px;font-size:13px;color:var(--gray);transition:.2s;}
+
+.option-text{display:flex;flex-direction:column;gap:3px;}
+.option-text h3{
+  font-size:13.5px;color:var(--navy);font-weight:800;
+  line-height:1.25;letter-spacing:-.1px;
+}
+.option-text p{font-size:11.5px;color:var(--gray);line-height:1.45;}
+
+.option-arrow{
+  position:absolute;top:14px;right:13px;
+  color:var(--orange);font-size:17px;font-weight:700;line-height:1;
+  opacity:.55;transition:transform .2s,opacity .2s;
+}
+
+.option-tag{
+  display:inline-block;font-size:9px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.05em;
+  background:#e7f6ec;color:#0f7a44;
+  padding:2px 6px;border-radius:20px;border:1px solid #bfe3cd;
+  margin-left:4px;vertical-align:middle;
+}
+
+/* ---------- FOCO (teclado) ---------- */
+a:focus-visible,
+.option:focus-visible{
+  outline:2.5px solid var(--orange);
+  outline-offset:3px;
+  border-radius:14px;
+}
+
+.back-link{
+  display:block;text-align:center;margin-top:20px;
+  font-size:12.5px;color:var(--gray);transition:color .2s;
+}
 .back-link:hover{color:var(--orange);}
 
-@media (max-width:420px){
-  .login-card{padding:30px 22px;border-radius:14px;}
-  .option{padding:15px 16px;gap:13px;}
-  .option-icon{width:46px;height:46px;font-size:22px;}
-  .option-text h3{font-size:15px;}
-  .option-text p{font-size:12px;}
-  .alerta-cliente{padding:16px 14px;}
+/* ---------- MOBILE ---------- */
+@media (max-width:440px){
+  .login-card{padding:28px 18px;border-radius:14px;}
+  .option-list{grid-template-columns:1fr;gap:9px;}
+  .option{
+    flex-direction:row;align-items:center;gap:13px;
+    min-height:0;padding:14px;
+  }
+  .option-icon{width:42px;height:42px;margin-bottom:0;}
+  .option-arrow{position:static;margin-left:auto;font-size:18px;}
+  .option-text h3{font-size:14px;}
+  .option-text p{font-size:11.5px;}
+  .alerta-cliente{padding:14px 13px;}
   .alerta-cliente h2{font-size:14px;}
-  .alerta-cliente p{font-size:12.5px;}
   .alerta-btns a{font-size:12px;min-height:40px;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important;}
 }
 </style>
 </head>
@@ -139,46 +169,52 @@ a{text-decoration:none;color:inherit;}
   <h1>Área restrita</h1>
   <p class="sub">Acesso reservado para a equipe</p>
 
-  <!-- ALERTA PARA CLIENTE -->
   <div class="alerta-cliente">
     <h2>📦 É cliente e quer ver seu pedido?</h2>
     <p>Esta página é só para a equipe. Se você procura sua conta ou o rastreio de uma compra, use os botões abaixo.</p>
     <div class="alerta-btns">
-      <a class="alerta-btn-conta" href="minha-conta.html">
-        👤 Minha conta
-      </a>
-      <a class="alerta-btn-rastreio" href="acompanhar.html">
-        📍 Rastrear pedido
-      </a>
+      <a class="alerta-btn-conta" href="minha-conta.html">👤 Minha conta</a>
+      <a class="alerta-btn-rastreio" href="acompanhar.html">📍 Rastrear pedido</a>
     </div>
   </div>
 
   <div class="divisor-equipe"><span>Equipe Meu 3D Labs</span></div>
 
-  <div class="aviso-restrito">🔒 Se você é da equipe, escolha abaixo o painel que quer acessar.</div>
+  <div class="aviso-restrito">🔒 Escolha o painel que quer acessar. Cada um pede senha própria.</div>
 
   <div class="option-list">
-    <a class="option" href="admin.html">
+    <a class="option" href="admin.html" aria-label="Orçamentos e pedidos">
       <div class="option-icon">📋</div>
       <div class="option-text">
-        <h3>Orçamentos e pedidos</h3>
-        <p>Acompanhar solicitações e pedidos dos clientes</p>
+        <h3>Orçamentos<br>e pedidos</h3>
+        <p>Pedidos e solicitações dos clientes</p>
       </div>
       <div class="option-arrow">›</div>
     </a>
-    <a class="option" href="admin-loja.html">
+
+    <a class="option" href="admin-loja.html" aria-label="Painel da loja">
       <div class="option-icon loja">🛍️</div>
       <div class="option-text">
-        <h3>Painel da loja</h3>
-        <p>Gerenciar produtos, estoque e vitrine</p>
+        <h3>Painel<br>da loja</h3>
+        <p>Produtos, estoque e Stories</p>
       </div>
       <div class="option-arrow">›</div>
     </a>
-    <a class="option" href="admin-feed.html">
-      <div class="option-icon feed">📸</div>
+
+    <a class="option" href="admin-imagens.html" aria-label="Admin de imagens">
+      <div class="option-icon img">🖼️</div>
       <div class="option-text">
-        <h3>Painel do feed</h3>
-        <p>Publicar e gerenciar os posts do feed</p>
+        <h3>Admin de imagens <span class="option-tag">Novo</span></h3>
+        <p>Trocar imagens do site</p>
+      </div>
+      <div class="option-arrow">›</div>
+    </a>
+
+    <a class="option" href="admin-feed.html" aria-label="Área do marketing">
+      <div class="option-icon feed">📣</div>
+      <div class="option-text">
+        <h3>Área<br>do marketing</h3>
+        <p>Posts do feed e conteúdo das redes</p>
       </div>
       <div class="option-arrow">›</div>
     </a>

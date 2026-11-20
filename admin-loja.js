@@ -1938,13 +1938,19 @@ let storyProdutoBlobUrl = null;
    - detecta canvas contaminado por CORS e avisa em vez de gerar preto
    - fallback para poster/imagem se o vídeo falhar
    ============================================================ */
-/* Duração do vídeo do Story.
-   Padrão: 7 segundos. Pode ser trocada na hora pelo seletor do overlay. */
+/* Duração do vídeo do Story. */
 var STORY_DURACAO_PADRAO = 7;
 var STORY_DURACAO_SEG = STORY_DURACAO_PADRAO;
 var STORY_DURACAO_MAX = 20;
 var STORY_FPS = 30;
-var STORY_BITRATE_MBPS = 8;
+
+/* Qualidade: 14 Mbps em 1080x1920 dá ~3,5 MB/s.
+   8 Mbps era baixo demais e o Android entregava ~2 Mbps reais. */
+var STORY_BITRATE_MBPS = 14;
+
+/* Keyframe a cada 1s. Sem isso o Instagram corta no primeiro keyframe. */
+var STORY_KEYFRAME_MS = 1000;
+
 var STORY_TIMEOUT_MIDIA_MS = 15000;
 
 /* ============================================================
@@ -2613,7 +2619,11 @@ function storyPrepararCena(p, modo){
     var cv = document.createElement('canvas');
     cv.width = W;
     cv.height = H;
-    var ctx = cv.getContext('2d');
+    var ctx = cv.getContext('2d', { colorSpace: 'srgb', alpha: false });
+        /* Canvas fora do DOM não é composto no Android: o captureStream
+       entrega frames irregulares. Mantemos no DOM, invisível. */
+    cv.style.cssText = 'position:fixed;top:0;left:0;width:2px;height:2px;opacity:.02;pointer-events:none;z-index:-9999;';
+    document.body.appendChild(cv);
     var imgLogo = null;
     var midia = null;
     var liberado = false;
@@ -2690,6 +2700,7 @@ function storyPrepararCena(p, modo){
           if(liberado) return;
           liberado = true;
           if(midia && midia.dispose) midia.dispose();
+                    try{ if(cv.parentNode) cv.parentNode.removeChild(cv); }catch(e){}
         }
       });
     }).catch(reject);
@@ -2752,14 +2763,12 @@ function storyGravarVideo(cena){
     var intervalo = 1000 / fps;
 
     var stream = null, track = null, manual = false;
+
     try{
       stream = cena.canvas.captureStream(0);
       track = stream.getVideoTracks()[0];
-      if(track && typeof track.requestFrame === 'function'){
-        manual = true;
-      }else{
-        throw new Error('sem requestFrame');
-      }
+      if(track && typeof track.requestFrame === 'function') manual = true;
+      else throw new Error('sem requestFrame');
     }catch(e){
       try{
         stream = cena.canvas.captureStream(fps);
@@ -2771,21 +2780,32 @@ function storyGravarVideo(cena){
       }
     }
 
+    /* ---- opções do encoder ---- */
+    var bitrate = STORY_BITRATE_MBPS * 1000000;
+    var excesso = {
+      mimeType: mime,
+      videoBitsPerSecond: bitrate,
+      videoKeyFrameIntervalDuration: STORY_KEYFRAME_MS,
+      videoKeyFrameIntervalCount: fps
+    };
+    var simples = { mimeType: mime, videoBitsPerSecond: bitrate };
+
     var rec;
     try{
-      rec = new MediaRecorder(stream, {
-        mimeType: mime,
-        videoBitsPerSecond: STORY_BITRATE_MBPS * 1000000
-      });
+      rec = new MediaRecorder(stream, excesso);
     }catch(e){
-      try{ rec = new MediaRecorder(stream); }
-      catch(e2){ reject(new Error('MediaRecorder recusou o formato')); return; }
+      try{ rec = new MediaRecorder(stream, simples); }
+      catch(e2){
+        try{ rec = new MediaRecorder(stream); }
+        catch(e3){ reject(new Error('MediaRecorder recusou o formato')); return; }
+      }
     }
 
     var chunks = [];
     rec.ondataavailable = function(e){
       if(e.data && e.data.size) chunks.push(e.data);
     };
+
     var parou = new Promise(function(res){ rec.onstop = res; });
 
     if(cena.reiniciarMidia) cena.reiniciarMidia();
@@ -2800,6 +2820,7 @@ function storyGravarVideo(cena){
     catch(e){ reject(new Error('não foi possível iniciar a gravação')); return; }
 
     var inicio = performance.now();
+    var framesDesenhados = 1;
 
     function tick(){
       if(encerrando) return;
@@ -2810,12 +2831,14 @@ function storyGravarVideo(cena){
         encerrando = true;
         cena.desenhar(durSeg);
         if(manual && track){ try{ track.requestFrame(); }catch(e){} }
+        /* 400ms de folga: garante que o último chunk seja emitido */
         timer = setTimeout(function(){ try{ rec.stop(); }catch(e){} }, 400);
         return;
       }
 
       if(cena.garantirPlay) cena.garantirPlay();
       cena.desenhar(t);
+      framesDesenhados++;
       if(manual && track){ try{ track.requestFrame(); }catch(e){} }
 
       timer = setTimeout(tick, intervalo);
@@ -2836,12 +2859,30 @@ function storyGravarVideo(cena){
       }
 
       var tempoReal = (performance.now() - inicio) / 1000;
+      var kbps = Math.round((blob.size * 8 / 1000) / Math.max(tempoReal, 0.1));
+
+      console.log('[story] gravado', {
+        mime: tipoFinal,
+        tamanhoMB: (blob.size / 1048576).toFixed(2),
+        duracaoRealS: tempoReal.toFixed(2),
+        duracaoAlvoS: durSeg,
+        bitrateKbps: kbps,
+        frames: framesDesenhados,
+        manual: manual
+      });
+
+           /* 2500 kbps é o piso real para 1080x1920 ficar nítido.
+         4 Mbps do encoder MP4 do desktop já é adequado. */
+      var bitrateBaixo = kbps < 2500;
 
       resolve({
         blob: blob,
         mime: tipoFinal,
         ext: (tipoFinal.indexOf('mp4') !== -1) ? 'mp4' : 'webm',
-        duracao: Math.max(durSeg, tempoReal),
+        duracao: durSeg,
+        tempoReal: tempoReal,
+        kbps: kbps,
+        bitrateBaixo: bitrateBaixo,
         manual: manual
       });
     });
@@ -2967,34 +3008,53 @@ function storyGerarVideo(){
       });
     })
     .then(function(res){
-      return storyCorrigirDuracao(res.blob, res.duracao || STORY_DURACAO_SEG)
-        .then(function(corrigido){
-          if(storyVideoBlobUrl) URL.revokeObjectURL(storyVideoBlobUrl);
-          storyVideoBlobUrl = URL.createObjectURL(corrigido);
-
-          var nome = nomeArquivoStory(copia) + '-story.' + res.ext;
-          var box  = document.getElementById('storyVideoBox');
-          var vid  = document.getElementById('storyPreviewVideo');
-          var info = document.getElementById('storyVideoInfo');
-
-          if(box) box.style.display = 'block';
-          if(vid){ vid.src = storyVideoBlobUrl; try{ vid.play(); }catch(e){} }
-
-          if(info){
-            info.textContent = (res.ext === 'mp4')
-              ? '✅ MP4 gerado — formato aceito pelo Instagram.'
-              : '⚠️ WebM gerado. O Instagram não aceita WebM: converta para MP4 antes de postar (ou gere pelo Safari).';
-          }
-
-          if(hint){
-            hint.textContent = (res.ext === 'mp4')
-              ? 'Vídeo pronto para o Stories.'
-              : 'Vídeo pronto. Converta para MP4 antes de subir no Instagram.';
-          }
-
-          baixarBlobUrl(storyVideoBlobUrl, nome);
-          mostrarToast('🎬 Vídeo do card gerado!', 'ok');
+      /* 1º ffmpeg do servidor: reescreve o container de verdade.
+         2º se falhar, corrige o header localmente.
+         WebM no celular só funciona no Instagram depois do remux. */
+  return storyRemuxar(res.blob, res.duracao).then(function(final){
+        if(final) return { blob: final, ext: 'mp4', info: res };
+        return storyCorrigirDuracao(res.blob, res.duracao).then(function(corrigido){
+          return { blob: corrigido, ext: res.ext, info: res };
         });
+      });
+    })
+    .then(function(out){
+      var res    = out.info;
+      var final  = out.blob;
+      var ext    = out.ext;
+
+      if(storyVideoBlobUrl) URL.revokeObjectURL(storyVideoBlobUrl);
+      storyVideoBlobUrl = URL.createObjectURL(final);
+
+      var nome = nomeArquivoStory(copia) + '-story.' + ext;
+      var box  = document.getElementById('storyVideoBox');
+      var vid  = document.getElementById('storyPreviewVideo');
+      var info = document.getElementById('storyVideoInfo');
+
+      if(box) box.style.display = 'block';
+      if(vid){ vid.src = storyVideoBlobUrl; try{ vid.play(); }catch(e){} }
+
+      var mb = (final.size / 1048576).toFixed(1);
+
+      if(info){
+        if(ext === 'mp4'){
+          info.innerHTML = '✅ MP4 pronto · ' + mb + ' MB · ' + res.kbps + ' kbps' +
+            (res.bitrateBaixo ? '<br><span style="color:#b26a00">⚠️ Bitrate abaixo do ideal. Se a imagem sair tremida, gere pelo PC.</span>' : '');
+        }else{
+          info.innerHTML = '⚠️ WebM · ' + mb + ' MB · ' + res.kbps + ' kbps<br>' +
+            '<span style="color:#c0392b">O Instagram não aceita WebM de forma confiável no celular. ' +
+            'Se o story cortar, gere este vídeo pelo PC.</span>';
+        }
+      }
+
+      if(hint){
+        hint.textContent = (ext === 'mp4')
+          ? 'Vídeo pronto para o Stories.'
+          : 'Vídeo pronto, mas gere pelo PC para postar no Instagram.';
+      }
+
+      baixarBlobUrl(storyVideoBlobUrl, nome);
+      mostrarToast('🎬 Vídeo do card gerado!', 'ok');
     })
     .catch(function(e){
       if(hint) hint.textContent = 'Não foi possível gerar o vídeo: ' + e.message;
@@ -3443,36 +3503,90 @@ async function gerarBannerOG(id){
    Aqui reescrevemos a duração declarada com o tempo real.
    ============================================================ */
 
-function _acharAssinatura(u8, texto, inicio) {
+function _acharAssinatura(u8, texto, inicio){
   var n = texto.length, lim = u8.length - n, i, j, ok;
-  for (i = inicio || 0; i <= lim; i++) {
+  for(i = inicio || 0; i <= lim; i++){
     ok = true;
-    for (j = 0; j < n; j++) {
-      if (u8[i + j] !== texto.charCodeAt(j)) { ok = false; break; }
+    for(j = 0; j < n; j++){
+      if(u8[i + j] !== texto.charCodeAt(j)){ ok = false; break; }
     }
-    if (ok) return i;
+    if(ok) return i;
   }
   return -1;
 }
 
-function _gravarDuracao(dv, u8, tipo, seg, timescaleFixa) {
+/* Lê um VINT do EBML a partir de pos. */
+function _ebmlVint(u8, pos){
+  if(pos >= u8.length) return null;
+  var b = u8[pos];
+  if(!b) return null;
+  var len = 1, mask = 0x80;
+  while(len <= 8 && !(b & mask)){ mask >>= 1; len++; }
+  if(len > 8) return null;
+  var valor = b & (mask - 1);
+  for(var i = 1; i < len; i++){
+    if(pos + i >= u8.length) return null;
+    valor = valor * 256 + u8[pos + i];
+  }
+  return { valor: valor, bytes: len };
+}
+
+/* TimecodeScale do WebM, em nanossegundos. Default 1000000 (1 ms). */
+function _webmTimecodeScale(u8){
+  var i = _acharAssinatura(u8, String.fromCharCode(0x2A, 0xD7, 0xB1), 0);
+  if(i === -1) return 1000000;
+
+  var v = _ebmlVint(u8, i + 2);
+  if(!v) return 1000000;
+
+  var ini = i + 2 + v.bytes;
+  var escala = 0;
+  for(var k = 0; k < v.valor; k++){
+    if(ini + k >= u8.length) break;
+    escala = escala * 256 + u8[ini + k];
+  }
+  return escala > 0 ? escala : 1000000;
+}
+
+/* Duration no WebM: ID 0x4489 (2 bytes) + Size 0x88 (1 byte) + float64 (8).
+   O dado começa em iDur + 3 — era aqui que estava o bug. */
+function _webmEscreverDuration(u8, dv, seg){
+  var i = _acharAssinatura(u8, String.fromCharCode(0x44, 0x89), 0);
+  if(i === -1) return 0;
+
+  if(u8[i + 2] !== 0x88) return 0;
+
+  var dataOff = i + 3;
+  if(dataOff + 8 > u8.length) return 0;
+
+  var escala = _webmTimecodeScale(u8);
+  var unidades = seg * 1e9 / escala;
+
+  dv.setFloat64(dataOff, unidades);
+  console.log('[story] Duration WebM:', unidades, 'unid. (escala', escala, 'ns)');
+  return 1;
+}
+
+/* MP4: mvhd / mdhd / mehd. */
+function _gravarDuracao(dv, u8, tipo, seg, timescaleFixa){
   var i = _acharAssinatura(u8, tipo, 0);
   var total = 0;
-  while (i !== -1) {
-    var p = i + 4;                      /* version(1) + flags(3) */
+
+  while(i !== -1){
+    var p = i + 4;
     var ver = u8[p];
     var tcOff  = (ver === 1) ? p + 20 : p + 12;
     var durOff = (ver === 1) ? p + 24 : p + 16;
     var tam    = (ver === 1) ? 8 : 4;
 
-    if (durOff + tam <= u8.length) {
+    if(durOff + tam <= u8.length){
       var tc = timescaleFixa || dv.getUint32(tcOff);
-      if (tc > 0 && tc < 100000000) {
+      if(tc > 0 && tc < 100000000){
         var val = Math.round(seg * tc);
-        if (tam === 8) {
+        if(tam === 8){
           dv.setUint32(durOff, 0);
           dv.setUint32(durOff + 4, val);
-        } else {
+        }else{
           dv.setUint32(durOff, val > 0xFFFFFFFF ? 0xFFFFFFFF : val);
         }
         total++;
@@ -3483,46 +3597,39 @@ function _gravarDuracao(dv, u8, tipo, seg, timescaleFixa) {
   return total;
 }
 
-async function storyCorrigirDuracao(blob, segundos) {
+async function storyCorrigirDuracao(blob, segundos){
   var seg = Number(segundos);
-  if (!isFinite(seg) || seg <= 0) return blob;
+  if(!isFinite(seg) || seg <= 0) return blob;
 
   var buf;
-  try { buf = await blob.arrayBuffer(); } catch (e) { return blob; }
+  try{ buf = await blob.arrayBuffer(); }catch(e){ return blob; }
 
   var u8 = new Uint8Array(buf);
   var dv = new DataView(buf);
   var tipo = String(blob.type || '');
   var aplicados = 0;
 
-  if (tipo.indexOf('mp4') !== -1 || tipo.indexOf('mov') !== -1) {
+  if(tipo.indexOf('mp4') !== -1 || tipo.indexOf('mov') !== -1 || tipo.indexOf('avc') !== -1){
     var iMvhd = _acharAssinatura(u8, 'mvhd', 0);
-    var timescaleMovie = 0;
-    if (iMvhd !== -1) {
+    var tsMovie = 0;
+    if(iMvhd !== -1){
       var p = iMvhd + 4;
       var ver = u8[p];
-      timescaleMovie = dv.getUint32(ver === 1 ? p + 20 : p + 12);
+      tsMovie = dv.getUint32(ver === 1 ? p + 20 : p + 12);
     }
     aplicados += _gravarDuracao(dv, u8, 'mvhd', seg, 0);
     aplicados += _gravarDuracao(dv, u8, 'mdhd', seg, 0);
-    if (timescaleMovie > 0) {
-      aplicados += _gravarDuracao(dv, u8, 'mehd', seg, timescaleMovie);
-    }
-  } else if (tipo.indexOf('webm') !== -1) {
-    var iDur = _acharAssinatura(u8, String.fromCharCode(0x44, 0x89), 0);
-    if (iDur !== -1 && iDur + 10 <= u8.length) {
-      var antigo = dv.getFloat64(iDur + 2);
-      if (!isFinite(antigo) || antigo < 0.5) {
-        dv.setFloat64(iDur + 2, seg * 1000);
-        aplicados++;
-      }
-    }
+    if(tsMovie > 0) aplicados += _gravarDuracao(dv, u8, 'mehd', seg, tsMovie);
+
+  }else if(tipo.indexOf('webm') !== -1 || tipo.indexOf('matroska') !== -1){
+    aplicados += _webmEscreverDuration(u8, dv, seg);
   }
 
-  if (!aplicados) {
-    console.warn('[story] duração não corrigida — container não reconhecido:', tipo);
+  if(!aplicados){
+    console.warn('[story] duração não corrigida — container:', tipo);
     return blob;
   }
+
   console.log('[story] duração corrigida para', seg.toFixed(2), 's · boxes:', aplicados);
   return new Blob([u8], { type: blob.type });
 }
@@ -3745,3 +3852,60 @@ async function storyCorrigirDuracao(blob, segundos) {
 
   if (document.getElementById('grade')) renderGrade();
 })();
+
+/* ============================================================
+   STORY — REMUX NO SERVIDOR  [v6]
+   O ffmpeg reescreve o container com a duração correta.
+   Se falhar, mantém o arquivo local (nunca quebra).
+   ============================================================ */
+var STORY_KEY = 'm3dlabs2563';
+
+/* Retorna Blob MP4 em sucesso, ou null em falha.
+   null = o chamador aplica a correção local do header.
+   O ffmpeg do servidor é quem gera MP4 de verdade — o WebM
+   do Android não é aceito pelo Instagram. */
+async function storyRemuxar(blob, duracaoSeg){
+  try{
+    var ctrl = new AbortController();
+    var t = setTimeout(function(){ try{ ctrl.abort(); }catch(e){} }, 60000);
+
+    var r = await fetch(API + '/story/remux', {
+      method: 'POST',
+      headers: {
+        'Content-Type': blob.type || 'application/octet-stream',
+        'x-story-key': STORY_KEY,
+        'x-story-ext': (String(blob.type).indexOf('mp4') !== -1) ? 'mp4' : 'webm',
+        'x-story-dur': String(duracaoSeg || 0)
+      },
+      body: blob,
+      signal: ctrl.signal
+    });
+
+    clearTimeout(t);
+
+      if(!r.ok){
+      var detalhe = '';
+      try{
+        var j = await r.json();
+        detalhe = j.log || j.logNivel1 || j.erro || '';
+      }catch(e){
+        detalhe = await r.text().catch(function(){ return ''; });
+      }
+      console.warn('[story] remux HTTP', r.status, detalhe);
+      return null;
+    }
+
+    var b = await r.blob();
+    if(!b.size){
+      console.warn('[story] remux devolveu vazio');
+      return null;
+    }
+
+    console.log('[story] remux ok ·', (b.size / 1048576).toFixed(2), 'MB');
+    return new Blob([b], { type: 'video/mp4' });
+
+  }catch(e){
+    console.warn('[story] remux falhou:', e.message);
+    return null;
+  }
+}
