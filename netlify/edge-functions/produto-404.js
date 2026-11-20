@@ -5,6 +5,8 @@
    1) Valida o slug contra a API (cache de edge + timeout)
    2) Serve a página normal para humanos
    3) Reescreve metatags para robôs de preview (WhatsApp, Facebook, Googlebot...)
+      · usa o banner 1200x630 gerado no admin (marca M3DOG: na descrição)
+      · declara og:image:width / height — é isso que faz o card GRANDE
    4) Fail-open: NUNCA quebra a página
    ===================================================================== */
 
@@ -14,16 +16,18 @@ const CACHE_TTL_SEGUNDOS = 60;
 const TIMEOUT_MS = 3500;
 const BASE = 'https://meu3dlabs.com.br';
 
+/* Marca que guarda a URL do banner OG dentro da descrição */
+const MARCA_OG = 'M3DOG:';
+
 /* Robôs que montam preview de link (não executam JavaScript) */
-const BOT = /whatsapp|facebookexternalhit|facebot|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|googlebot|bingbot|embedly|iframely|vkshare|w3c_validator/i;
+const BOT = /whatsapp|facebookexternalhit|facebot|meta-externalagent|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|googlebot|bingbot|applebot|embedly|iframely|vkshare|redditbot|w3c_validator/i;
 
 export const config = { path: "/produto/*" };
 
 /* ---------------------------------------------------------------------
    Lista de produtos com cache de edge + timeout.
    Retorna null quando NÃO foi possível validar com segurança.
-   ATENÇÃO: lista vazia também retorna null (fail-open), para nunca
-   transformar um backend vazio/instável em 404 geral do site.
+   Lista vazia também retorna null (fail-open).
    --------------------------------------------------------------------- */
 async function obterProdutos() {
   /* 1) Cache de edge */
@@ -52,7 +56,6 @@ async function obterProdutos() {
     if (r.ok) {
       const d = await r.json();
       const bruto = Array.isArray(d) ? d : (d.produtos || d.items || []);
-      /* Só aceita lista com conteúdo — lista vazia = não validado */
       if (Array.isArray(bruto) && bruto.length > 0) lista = bruto;
     }
   } catch (e) {
@@ -97,19 +100,8 @@ function absUrl(u) {
   const v = String(u).trim();
   if (!v) return '';
   if (/^https?:\/\//i.test(v)) return v;
+  if (v.indexOf('//') === 0) return 'https:' + v;
   return BASE + (v.startsWith('/') ? v : '/' + v);
-}
-
-/* Detecta o tipo da imagem pelo final da URL (o crawler gosta de saber) */
-function tipoDaImagem(u) {
-  if (!u) return '';
-  const v = String(u).split('?')[0].toLowerCase();
-  if (v.endsWith('.webp')) return 'image/webp';
-  if (v.endsWith('.png')) return 'image/png';
-  if (v.endsWith('.jpg') || v.endsWith('.jpeg')) return 'image/jpeg';
-  if (v.endsWith('.avif')) return 'image/avif';
-  if (v.endsWith('.gif')) return 'image/gif';
-  return '';
 }
 
 /* É vídeo? O preview de link precisa de FOTO, nunca de vídeo. */
@@ -118,48 +110,92 @@ function ehVideo(u) {
   return /\.(webm|mp4|mov|m4v|avi|mkv|ogv)(\?|#|$)/i.test(String(u));
 }
 
+/* Texto puro da descrição (sem as marcas internas) */
+function descricaoTexto(d) {
+  return String(d || '')
+    .split('|')
+    .filter(function (seg) {
+      const s = seg.trim();
+      return s.indexOf(MARCA_OG) !== 0 && s.indexOf('M3DVAR:') !== 0;
+    })
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/* Banner 1200x630 gerado no admin, se existir */
+function bannerDaDescricao(d) {
+  const partes = String(d || '').split('|');
+  for (let i = 0; i < partes.length; i++) {
+    const seg = partes[i].trim();
+    if (seg.indexOf(MARCA_OG) === 0) {
+      let u = seg.slice(MARCA_OG.length).trim();
+      if (!u) continue;
+      try { u = decodeURIComponent(u); } catch (e) { /* usa cru */ }
+      if (u) return absUrl(u);
+    }
+  }
+  return '';
+}
+
 /* Mapeia os campos do produto (tolerante a variações da API) */
 function dadosDoProduto(p) {
   const nome = p.nome || p.titulo || p.name || p.title || 'Produto';
 
-  /* A API da loja devolve as fotos em "imagens" (plural, array).
-     O array mistura fotos (.webp) e vídeos (.webm): o vídeo é descartado
-     e usa-se a PRIMEIRA FOTO VÁLIDA, que é a foto principal do produto. */
+  /* Banner primeiro; senão a primeira FOTO válida (nunca vídeo) */
+  const banner = bannerDaDescricao(p.descricao);
+
   let bruto = p.imagens || p.imagem || p.img || p.foto || p.capa ||
               p.imagem_url || p.image || p.thumbnail || '';
   if (!Array.isArray(bruto)) bruto = [bruto];
 
-  let imgRaw = '';
+  let fotoRaw = '';
   for (let i = 0; i < bruto.length; i++) {
     let u = bruto[i];
     if (u && typeof u === 'object') u = u.url || u.src || u.imagem || '';
     if (!u || typeof u !== 'string') continue;
-    if (ehVideo(u)) continue;          /* vídeo não serve como og:image */
-    imgRaw = u.trim();
-    if (imgRaw) break;                 /* achou a foto principal */
+    if (ehVideo(u)) continue;
+    fotoRaw = u.trim();
+    if (fotoRaw) break;
   }
 
-  const img = absUrl(imgRaw);
-  const imgType = tipoDaImagem(img);
+  const foto = absUrl(fotoRaw);
+  const imagem = banner || foto;
 
-  const precoBase = Number(p.precoPromo || p.preco_promo || p.preco || p.price || 0);
-  const precoTxt = precoBase > 0 ? 'R$ ' + precoBase.toFixed(2).replace('.', ',') : '';
+  /* Dimensões declaradas — é isto que decide card grande x miniatura */
+  const largura = banner ? 1200 : 800;
+  const altura  = banner ? 630  : 800;
 
-  const descricaoCrua = p.descricao || p.desc || p.description || '';
-  const desc = [String(descricaoCrua), precoTxt]
-    .filter(Boolean)
-    .join(' — ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 160) || 'Peça 3D pronta entrega na Meu 3D Labs.';
+  /* Título curto para o card */
+  const nomeCurto = nome.length > 66
+    ? nome.slice(0, 65).replace(/\s+\S*$/, '') + '…'
+    : nome;
+  const titulo = nomeCurto + ' · Meu 3D Labs';
 
-  return { nome, img, imgType, desc };
+  /* Descrição com apelo comercial */
+  const base = descricaoTexto(p.descricao);
+  const estoque = parseInt(p.estoque, 10);
+  const temEstoque = isNaN(estoque) ? true : estoque > 0;
+  const cauda = (temEstoque ? 'Pronta entrega · ' : '') +
+    'Pix 5% OFF · Cartão em 12x · Envio para todo o Brasil';
+
+  let desc = cauda;
+  if (base) {
+    const espaco = 190 - cauda.length - 3;
+    if (espaco > 30) {
+      const corte = base.length > espaco
+        ? base.slice(0, espaco).replace(/\s+\S*$/, '') + '…'
+        : base;
+      desc = corte + ' · ' + cauda;
+    }
+  }
+
+  return { nome, titulo, imagem, largura, altura, desc, banner };
 }
 
 /* Remove metas antigas e injeta as do produto */
 function reescreverHtml(html, p, slug) {
-  const { nome, img, imgType, desc } = dadosDoProduto(p);
-  const titulo = nome + ' | Meu 3D Labs';
+  const { nome, titulo, imagem, largura, altura, desc } = dadosDoProduto(p);
   const url = BASE + '/produto/' + slug;
 
   let out = html
@@ -177,14 +213,16 @@ function reescreverHtml(html, p, slug) {
     `<meta property="og:url" content="${esc(url)}">`,
     `<meta property="og:title" content="${esc(titulo)}">`,
     `<meta property="og:description" content="${esc(desc)}">`,
-    img ? `<meta property="og:image" content="${esc(img)}">` : '',
-    img ? `<meta property="og:image:secure_url" content="${esc(img)}">` : '',
-    img ? `<meta property="og:image:alt" content="${esc(nome)}">` : '',
-    (img && imgType) ? `<meta property="og:image:type" content="${esc(imgType)}">` : '',
-    ` <meta name="twitter:card" content="summary_large_image">`,
+    imagem ? `<meta property="og:image" content="${esc(imagem)}">` : '',
+    imagem ? `<meta property="og:image:secure_url" content="${esc(imagem)}">` : '',
+    imagem ? `<meta property="og:image:type" content="image/jpeg">` : '',
+    imagem ? `<meta property="og:image:width" content="${largura}">` : '',
+    imagem ? `<meta property="og:image:height" content="${altura}">` : '',
+    imagem ? `<meta property="og:image:alt" content="${esc(nome)}">` : '',
+    `<meta name="twitter:card" content="summary_large_image">`,
     `<meta name="twitter:title" content="${esc(titulo)}">`,
     `<meta name="twitter:description" content="${esc(desc)}">`,
-    img ? `<meta name="twitter:image" content="${esc(img)}">` : '',
+    imagem ? `<meta name="twitter:image" content="${esc(imagem)}">` : ''
   ].filter(Boolean).join('\n    ');
 
   return out.replace(/<\/head>/i, '    ' + metas + '\n  </head>');
@@ -195,7 +233,6 @@ async function responder404(context) {
   const res = await context.next();
   let html = await res.text();
 
-  /* robots: substitui se existir, insere se não existir */
   if (/<meta[^>]+name=["']robots["'][^>]*>/i.test(html)) {
     html = html.replace(
       /<meta[^>]+name=["']robots["'][^>]*>/i,
@@ -208,7 +245,6 @@ async function responder404(context) {
     );
   }
 
-  /* title: substitui se existir, insere se não existir */
   if (/<title>[\s\S]*?<\/title>/i.test(html)) {
     html = html.replace(
       /<title>[\s\S]*?<\/title>/i,
@@ -239,16 +275,16 @@ export default async function handler(request, context) {
     const url = new URL(request.url);
     const match = url.pathname.match(/^\/produto\/([^\/?#]+)\/?$/);
 
-    /* Não é URL de produto → fluxo normal */
     if (!match) return context.next();
 
     let slug;
     try { slug = decodeURIComponent(match[1]); } catch (e) { slug = match[1]; }
+
     const slugAlvo = String(slug).trim().toLowerCase();
 
     const lista = await obterProdutos();
 
-    /* Não conseguiu validar (API fria, timeout, lista vazia) → fail-open */
+    /* Não conseguiu validar → fail-open */
     if (!lista) return context.next();
 
     const prod = lista.find(function (p) {
@@ -262,15 +298,14 @@ export default async function handler(request, context) {
       try {
         return await responder404(context);
       } catch (e) {
-        /* Falhou ao montar o 404 → não quebrar a página */
         return context.next();
       }
     }
 
     /* ===== Produto existe → página normal para humanos ===== */
     const res = await context.next();
-
     const ua = request.headers.get('user-agent') || '';
+
     if (!BOT.test(ua) || res.status !== 200) return res;
 
     /* Robô de preview → devolve o HTML com as metas do produto */
@@ -286,8 +321,8 @@ export default async function handler(request, context) {
       status: 200,
       headers: headers
     });
+
   } catch (e) {
-    /* A função NUNCA pode lançar exceção */
     console.error('produto-404: ' + (e && e.message));
     try {
       return await context.next();
